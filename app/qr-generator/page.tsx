@@ -1,20 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ArrowLeft, QrCode, Download, Copy, Share2, Eye, Printer } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  QrCode,
+  Download,
+  Copy,
+  Share2,
+  Eye,
+  Printer,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function QRGeneratorPage() {
-  const [selectedMemorial, setSelectedMemorial] = useState("1")
-  const [qrSize, setQrSize] = useState("medium")
-  const [qrStyle, setQrStyle] = useState("standard")
+  const [selectedMemorial, setSelectedMemorial] = useState("1");
+  const [qrSize, setQrSize] = useState("medium");
+  const [qrStyle, setQrStyle] = useState("standard");
 
   const memorials = [
     {
@@ -35,13 +55,13 @@ export default function QRGeneratorPage() {
       status: "active",
       plan: "basic",
     },
-  ]
+  ];
 
-  const selectedMemorialData = memorials.find((m) => m.id === selectedMemorial)
+  const selectedMemorialData = memorials.find((m) => m.id === selectedMemorial);
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-  }
+    navigator.clipboard.writeText(text);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,14 +70,23 @@ export default function QRGeneratorPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <QrCode className="h-6 w-6 text-indigo-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+              >
+                <QrCode className="h-5 w-5 text-white" />{" "}
+              </motion.div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                 QR Generator
               </span>
             </div>
@@ -66,10 +95,18 @@ export default function QRGeneratorPage() {
       </header>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">QR Code Generator</h1>
-            <p className="text-gray-600">Generate and manage QR codes for your memorials</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              QR Code Generator
+            </h1>
+            <p className="text-gray-600">
+              Generate and manage QR codes for your memorials
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -78,12 +115,17 @@ export default function QRGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Select Memorial</CardTitle>
-                  <CardDescription>Choose which memorial to generate a QR code for</CardDescription>
+                  <CardDescription>
+                    Choose which memorial to generate a QR code for
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="memorial">Memorial</Label>
-                    <Select value={selectedMemorial} onValueChange={setSelectedMemorial}>
+                    <Select
+                      value={selectedMemorial}
+                      onValueChange={setSelectedMemorial}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a memorial" />
                       </SelectTrigger>
@@ -92,7 +134,14 @@ export default function QRGeneratorPage() {
                           <SelectItem key={memorial.id} value={memorial.id}>
                             <div className="flex items-center justify-between w-full">
                               <span>{memorial.name}</span>
-                              <Badge variant={memorial.plan === "premium" ? "default" : "secondary"} className="ml-2">
+                              <Badge
+                                variant={
+                                  memorial.plan === "premium"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className="ml-2"
+                              >
                                 {memorial.plan}
                               </Badge>
                             </div>
@@ -104,11 +153,21 @@ export default function QRGeneratorPage() {
 
                   {selectedMemorialData && (
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="font-semibold text-gray-900">{selectedMemorialData.name}</h3>
-                      <p className="text-gray-600">{selectedMemorialData.dates}</p>
-                      <p className="text-sm text-gray-500 mt-2">QR Code: {selectedMemorialData.qrCode}</p>
+                      <h3 className="font-semibold text-gray-900">
+                        {selectedMemorialData.name}
+                      </h3>
+                      <p className="text-gray-600">
+                        {selectedMemorialData.dates}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        QR Code: {selectedMemorialData.qrCode}
+                      </p>
                       <Badge
-                        variant={selectedMemorialData.status === "active" ? "default" : "secondary"}
+                        variant={
+                          selectedMemorialData.status === "active"
+                            ? "default"
+                            : "secondary"
+                        }
                         className="mt-2"
                       >
                         {selectedMemorialData.status}
@@ -121,7 +180,9 @@ export default function QRGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Customization</CardTitle>
-                  <CardDescription>Customize your QR code appearance</CardDescription>
+                  <CardDescription>
+                    Customize your QR code appearance
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
@@ -132,9 +193,13 @@ export default function QRGeneratorPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="small">Small (200x200px)</SelectItem>
-                        <SelectItem value="medium">Medium (400x400px)</SelectItem>
+                        <SelectItem value="medium">
+                          Medium (400x400px)
+                        </SelectItem>
                         <SelectItem value="large">Large (600x600px)</SelectItem>
-                        <SelectItem value="xlarge">Extra Large (800x800px)</SelectItem>
+                        <SelectItem value="xlarge">
+                          Extra Large (800x800px)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -149,7 +214,9 @@ export default function QRGeneratorPage() {
                         <SelectItem value="standard">Standard</SelectItem>
                         <SelectItem value="rounded">Rounded Corners</SelectItem>
                         <SelectItem value="dots">Dots Style</SelectItem>
-                        <SelectItem value="branded">Branded (with logo)</SelectItem>
+                        <SelectItem value="branded">
+                          Branded (with logo)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -159,19 +226,33 @@ export default function QRGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Memorial URL</CardTitle>
-                  <CardDescription>This is the URL that the QR code will link to</CardDescription>
+                  <CardDescription>
+                    This is the URL that the QR code will link to
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {selectedMemorialData && (
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2">
-                        <Input value={selectedMemorialData.url} readOnly className="font-mono text-sm" />
-                        <Button variant="outline" size="sm" onClick={() => copyToClipboard(selectedMemorialData.url)}>
+                        <Input
+                          value={selectedMemorialData.url}
+                          readOnly
+                          className="font-mono text-sm"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            copyToClipboard(selectedMemorialData.url)
+                          }
+                        >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Link href={`/memorial/${selectedMemorialData.qrCode.toLowerCase()}`}>
+                        <Link
+                          href={`/memorial/${selectedMemorialData.qrCode.toLowerCase()}`}
+                        >
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4 mr-2" />
                             Preview Memorial
@@ -193,7 +274,9 @@ export default function QRGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>QR Code Preview</CardTitle>
-                  <CardDescription>Preview and download your QR code</CardDescription>
+                  <CardDescription>
+                    Preview and download your QR code
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
@@ -204,10 +287,10 @@ export default function QRGeneratorPage() {
                           qrSize === "small"
                             ? "w-48 h-48"
                             : qrSize === "medium"
-                              ? "w-64 h-64"
-                              : qrSize === "large"
-                                ? "w-80 h-80"
-                                : "w-96 h-96"
+                            ? "w-64 h-64"
+                            : qrSize === "large"
+                            ? "w-80 h-80"
+                            : "w-96 h-96"
                         } flex items-center justify-center text-white text-sm`}
                       >
                         QR Code
@@ -219,9 +302,12 @@ export default function QRGeneratorPage() {
                     <div className="mt-6 space-y-3">
                       <div className="flex justify-center space-x-3">
                         <Button
-                          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                          className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
                           onClick={() => {
-                            console.log("Download PNG for:", selectedMemorialData?.qrCode)
+                            console.log(
+                              "Download PNG for:",
+                              selectedMemorialData?.qrCode
+                            );
                             // Handle PNG download logic
                           }}
                         >
@@ -231,7 +317,10 @@ export default function QRGeneratorPage() {
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Download SVG for:", selectedMemorialData?.qrCode)
+                            console.log(
+                              "Download SVG for:",
+                              selectedMemorialData?.qrCode
+                            );
                             // Handle SVG download logic
                           }}
                         >
@@ -243,8 +332,11 @@ export default function QRGeneratorPage() {
                         variant="outline"
                         className="w-full bg-transparent"
                         onClick={() => {
-                          console.log("Print QR code for:", selectedMemorialData?.qrCode)
-                          window.print()
+                          console.log(
+                            "Print QR code for:",
+                            selectedMemorialData?.qrCode
+                          );
+                          window.print();
                         }}
                       >
                         <Printer className="h-4 w-4 mr-2" />
@@ -271,19 +363,27 @@ export default function QRGeneratorPage() {
                       <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
                         2
                       </div>
-                      <p>Place it on the memorial site (gravestone, plaque, etc.)</p>
+                      <p>
+                        Place it on the memorial site (gravestone, plaque, etc.)
+                      </p>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
                         3
                       </div>
-                      <p>Visitors can scan with any smartphone camera to view the memorial</p>
+                      <p>
+                        Visitors can scan with any smartphone camera to view the
+                        memorial
+                      </p>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
                         4
                       </div>
-                      <p>No app download required - works with built-in camera apps</p>
+                      <p>
+                        No app download required - works with built-in camera
+                        apps
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -311,5 +411,5 @@ export default function QRGeneratorPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

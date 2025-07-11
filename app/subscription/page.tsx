@@ -1,23 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ArrowLeft, Check, Crown, Star, Zap, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Check, Crown, Star, Zap, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6 },
-}
+};
 
 export default function SubscriptionPage() {
-  const [isYearly, setIsYearly] = useState(false)
+  const [isYearly, setIsYearly] = useState(false);
 
   const plans = [
     {
@@ -29,7 +35,12 @@ export default function SubscriptionPage() {
       color: "text-gray-600",
       bgColor: "bg-gray-50",
       borderColor: "border-gray-200",
-      features: ["Biography & photo", "QR code generation", "Basic memorial page", "Public directory listing"],
+      features: [
+        "Biography & photo",
+        "QR code generation",
+        "Basic memorial page",
+        "Public directory listing",
+      ],
       limitations: [
         "No video upload",
         "No family tree/genealogy",
@@ -83,19 +94,39 @@ export default function SubscriptionPage() {
       ],
       limitations: [],
     },
-  ]
+  ];
 
-  const currentPlan = "free" // This would come from user data
+  const currentPlan = "free"; // This would come from user data
 
   const featureComparison = [
     { feature: "Biography & photo", free: true, basic: true, legacy: true },
     { feature: "QR code", free: true, basic: true, legacy: true },
     { feature: "Video upload", free: false, basic: true, legacy: true },
-    { feature: "Family tree / genealogy", free: false, basic: true, legacy: true },
-    { feature: "GPS location & map pin", free: false, basic: true, legacy: true },
-    { feature: "Multiple admins/collaborators", free: false, basic: false, legacy: true },
-    { feature: "Lifetime access (one-time pay)", free: false, basic: false, legacy: true },
-  ]
+    {
+      feature: "Family tree / genealogy",
+      free: false,
+      basic: true,
+      legacy: true,
+    },
+    {
+      feature: "GPS location & map pin",
+      free: false,
+      basic: true,
+      legacy: true,
+    },
+    {
+      feature: "Multiple admins/collaborators",
+      free: false,
+      basic: false,
+      legacy: true,
+    },
+    {
+      feature: "Lifetime access (one-time pay)",
+      free: false,
+      basic: false,
+      legacy: true,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -104,7 +135,10 @@ export default function SubscriptionPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
@@ -120,20 +154,40 @@ export default function SubscriptionPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Memorial Plan</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Choose Your Memorial Plan
+            </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Select the perfect plan to honor your loved ones with dignity and preserve their memories forever
+              Select the perfect plan to honor your loved ones with dignity and
+              preserve their memories forever
             </p>
 
             {/* Billing Toggle */}
             <div className="flex items-center justify-center space-x-4 mb-8">
-              <span className={`text-sm font-medium ${!isYearly ? "text-gray-900" : "text-gray-500"}`}>Monthly</span>
+              <span
+                className={`text-sm font-medium ${
+                  !isYearly ? "text-gray-900" : "text-gray-500"
+                }`}
+              >
+                Monthly
+              </span>
               <Switch checked={isYearly} onCheckedChange={setIsYearly} />
-              <span className={`text-sm font-medium ${isYearly ? "text-gray-900" : "text-gray-500"}`}>
+              <span
+                className={`text-sm font-medium ${
+                  isYearly ? "text-gray-900" : "text-gray-500"
+                }`}
+              >
                 Yearly
-                <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800">
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-green-100 text-green-800"
+                >
                   Save 20%
                 </Badge>
               </span>
@@ -150,11 +204,18 @@ export default function SubscriptionPage() {
                       <Star className="h-6 w-6 text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Current Plan: Free</h3>
-                      <p className="text-gray-600">Upgrade to unlock premium features</p>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Current Plan: Free
+                      </h3>
+                      <p className="text-gray-600">
+                        Upgrade to unlock premium features
+                      </p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-gray-200 text-gray-800">
+                  <Badge
+                    variant="outline"
+                    className="border-gray-200 text-gray-800"
+                  >
                     Active
                   </Badge>
                 </div>
@@ -175,13 +236,13 @@ export default function SubscriptionPage() {
                 <Card
                   className={`relative h-full ${
                     plan.popular
-                      ? "border-blue-300 shadow-lg ring-2 ring-blue-200"
+                      ? "border-pink-600 shadow-lg "
                       : `${plan.borderColor} hover:shadow-md`
                   } transition-all duration-300`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1">
+                      <Badge className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600 text-white px-4 py-1">
                         Most Popular
                       </Badge>
                     </div>
@@ -193,20 +254,32 @@ export default function SubscriptionPage() {
                     >
                       <plan.icon className={`h-8 w-8 ${plan.color}`} />
                     </div>
-                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                    <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                    <CardTitle className="text-2xl font-bold">
+                      {plan.name}
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      {plan.description}
+                    </CardDescription>
                     <div className="mt-4">
                       <div className="flex items-baseline justify-center">
                         <span className="text-4xl font-bold text-gray-900">
-                          ${plan.isOneTime ? plan.monthlyPrice : isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                          $
+                          {plan.isOneTime
+                            ? plan.monthlyPrice
+                            : isYearly
+                            ? plan.yearlyPrice
+                            : plan.monthlyPrice}
                         </span>
                         <span className="text-gray-600 ml-2">
-                          {plan.isOneTime ? "one-time" : `/${isYearly ? "year" : "month"}`}
+                          {plan.isOneTime
+                            ? "one-time"
+                            : `/${isYearly ? "year" : "month"}`}
                         </span>
                       </div>
                       {isYearly && !plan.isOneTime && plan.monthlyPrice > 0 && (
                         <p className="text-sm text-green-600 mt-1">
-                          Save ${plan.monthlyPrice * 12 - plan.yearlyPrice} per year
+                          Save ${plan.monthlyPrice * 12 - plan.yearlyPrice} per
+                          year
                         </p>
                       )}
                       {plan.isOneTime && (
@@ -221,12 +294,19 @@ export default function SubscriptionPage() {
                     <div className="space-y-6">
                       {/* Features */}
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-3">✅ Included Features</h4>
+                        <h4 className="font-semibold text-gray-900 mb-3">
+                          ✅ Included Features
+                        </h4>
                         <ul className="space-y-2">
                           {plan.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start space-x-3">
+                            <li
+                              key={featureIndex}
+                              className="flex items-start space-x-3"
+                            >
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                              <span className="text-gray-700 text-sm">{feature}</span>
+                              <span className="text-gray-700 text-sm">
+                                {feature}
+                              </span>
                             </li>
                           ))}
                         </ul>
@@ -235,14 +315,23 @@ export default function SubscriptionPage() {
                       {/* Limitations */}
                       {plan.limitations.length > 0 && (
                         <div>
-                          <h4 className="font-semibold text-gray-900 mb-3">❌ Not Included</h4>
+                          <h4 className="font-semibold text-gray-900 mb-3">
+                            ❌ Not Included
+                          </h4>
                           <ul className="space-y-2">
-                            {plan.limitations.map((limitation, limitationIndex) => (
-                              <li key={limitationIndex} className="flex items-start space-x-3">
-                                <X className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-                                <span className="text-gray-500 text-sm">{limitation}</span>
-                              </li>
-                            ))}
+                            {plan.limitations.map(
+                              (limitation, limitationIndex) => (
+                                <li
+                                  key={limitationIndex}
+                                  className="flex items-start space-x-3"
+                                >
+                                  <X className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                  <span className="text-gray-500 text-sm">
+                                    {limitation}
+                                  </span>
+                                </li>
+                              )
+                            )}
                           </ul>
                         </div>
                       )}
@@ -251,17 +340,24 @@ export default function SubscriptionPage() {
 
                       {/* Action Button */}
                       <div className="pt-2">
-                        {currentPlan === plan.name.toLowerCase().replace(/\s+/g, "") ? (
-                          <Button variant="outline" className="w-full bg-transparent" disabled>
+                        {currentPlan ===
+                        plan.name.toLowerCase().replace(/\s+/g, "") ? (
+                          <Button
+                            variant="outline"
+                            className="w-full bg-transparent"
+                            disabled
+                          >
                             Current Plan
                           </Button>
                         ) : plan.name === "Basic Premium" ? (
                           <Button
-                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                            className="w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
                             size="lg"
                             onClick={() => {
-                              console.log("Upgrading to Basic Premium plan")
-                              alert("Redirecting to payment for Basic Premium...")
+                              console.log("Upgrading to Basic Premium plan");
+                              alert(
+                                "Redirecting to payment for Basic Premium..."
+                              );
                             }}
                           >
                             <Crown className="h-4 w-4 mr-2" />
@@ -272,15 +368,22 @@ export default function SubscriptionPage() {
                             className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
                             size="lg"
                             onClick={() => {
-                              console.log("Upgrading to Legacy+ plan")
-                              alert("Redirecting to payment for Legacy+ (One-time payment)...")
+                              console.log("Upgrading to Legacy+ plan");
+                              alert(
+                                "Redirecting to payment for Legacy+ (One-time payment)..."
+                              );
                             }}
                           >
                             <Zap className="h-4 w-4 mr-2" />
                             Get Legacy+ (Lifetime)
                           </Button>
                         ) : (
-                          <Button variant="outline" className="w-full bg-transparent" size="lg" disabled>
+                          <Button
+                            variant="outline"
+                            className="w-full bg-transparent"
+                            size="lg"
+                            disabled
+                          >
                             Current Plan
                           </Button>
                         )}
@@ -297,23 +400,35 @@ export default function SubscriptionPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Feature Comparison</CardTitle>
-                <CardDescription>Compare what's included with each plan</CardDescription>
+                <CardDescription>
+                  Compare what's included with each plan
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Feature</th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">Free</th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">Basic Premium</th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">Legacy+</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">
+                          Feature
+                        </th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
+                          Free
+                        </th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
+                          Basic Premium
+                        </th>
+                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
+                          Legacy+
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {featureComparison.map((row, index) => (
                         <tr key={index}>
-                          <td className="py-3 px-4 text-gray-900">{row.feature}</td>
+                          <td className="py-3 px-4 text-gray-900">
+                            {row.feature}
+                          </td>
                           <td className="py-3 px-4 text-center">
                             {row.free ? (
                               <Check className="h-5 w-5 text-green-500 mx-auto" />
@@ -352,31 +467,42 @@ export default function SubscriptionPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">What's the difference between plans?</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    What's the difference between plans?
+                  </h4>
                   <p className="text-gray-600 text-sm">
-                    Free includes basic features, Basic Premium adds video and family tree, Legacy+ includes everything
-                    plus lifetime access and multiple collaborators.
+                    Free includes basic features, Basic Premium adds video and
+                    family tree, Legacy+ includes everything plus lifetime
+                    access and multiple collaborators.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Is Legacy+ really lifetime access?</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Is Legacy+ really lifetime access?
+                  </h4>
                   <p className="text-gray-600 text-sm">
-                    Yes! Legacy+ is a one-time payment of $199 that gives you lifetime access to all features with no
-                    recurring fees.
+                    Yes! Legacy+ is a one-time payment of $199 that gives you
+                    lifetime access to all features with no recurring fees.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Can I upgrade or downgrade anytime?</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Can I upgrade or downgrade anytime?
+                  </h4>
                   <p className="text-gray-600 text-sm">
-                    Yes, you can change your plan at any time. Upgrades take effect immediately, and we'll prorate any
-                    billing differences.
+                    Yes, you can change your plan at any time. Upgrades take
+                    effect immediately, and we'll prorate any billing
+                    differences.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">What happens if I don't pay my subscription?</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    What happens if I don't pay my subscription?
+                  </h4>
                   <p className="text-gray-600 text-sm">
-                    Your memorial will show as "unavailable" to visitors. You'll have 30 days to update payment before
-                    premium features are disabled.
+                    Your memorial will show as "unavailable" to visitors. You'll
+                    have 30 days to update payment before premium features are
+                    disabled.
                   </p>
                 </div>
               </CardContent>
@@ -385,5 +511,5 @@ export default function SubscriptionPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

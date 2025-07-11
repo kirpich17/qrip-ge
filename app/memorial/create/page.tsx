@@ -1,17 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ArrowLeft, Upload, Calendar, MapPin, Users, Heart, Save, Eye, ImageIcon, Video, FileText } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Upload,
+  Calendar,
+  MapPin,
+  Users,
+  Heart,
+  Save,
+  Eye,
+  ImageIcon,
+  Video,
+  FileText,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 export default function CreateMemorialPage() {
   const [formData, setFormData] = useState({
@@ -23,11 +41,11 @@ export default function CreateMemorialPage() {
     location: "",
     isPublic: true,
     profileImage: null,
-  })
+  });
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,7 +54,10 @@ export default function CreateMemorialPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
@@ -45,20 +66,20 @@ export default function CreateMemorialPage() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  console.log("Preview memorial with current data:", formData)
+                  console.log("Preview memorial with current data:", formData);
                   // Handle preview logic - could open modal or navigate to preview
-                  alert("Preview functionality - would show memorial preview")
+                  alert("Preview functionality - would show memorial preview");
                 }}
               >
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
               </Button>
               <Button
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
                 onClick={() => {
-                  console.log("Save memorial:", formData)
+                  console.log("Save memorial:", formData);
                   // Handle save logic
-                  alert("Memorial saved successfully!")
+                  alert("Memorial saved successfully!");
                 }}
               >
                 <Save className="h-4 w-4 mr-2" />
@@ -70,10 +91,18 @@ export default function CreateMemorialPage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Memorial</h1>
-            <p className="text-gray-600">Honor your loved one with a beautiful digital memorial</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Create Memorial
+            </h1>
+            <p className="text-gray-600">
+              Honor your loved one with a beautiful digital memorial
+            </p>
           </div>
 
           <Tabs defaultValue="basic" className="space-y-6">
@@ -91,7 +120,9 @@ export default function CreateMemorialPage() {
                     <Heart className="h-5 w-5 mr-2 text-red-500" />
                     Basic Information
                   </CardTitle>
-                  <CardDescription>Enter the essential details about your loved one</CardDescription>
+                  <CardDescription>
+                    Enter the essential details about your loved one
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Image */}
@@ -108,7 +139,9 @@ export default function CreateMemorialPage() {
                         <Upload className="h-4 w-4 mr-2" />
                         Upload Photo
                       </Button>
-                      <p className="text-sm text-gray-500">Choose a beautiful photo to represent your loved one</p>
+                      <p className="text-sm text-gray-500">
+                        Choose a beautiful photo to represent your loved one
+                      </p>
                     </div>
                   </div>
 
@@ -120,7 +153,9 @@ export default function CreateMemorialPage() {
                         id="firstName"
                         placeholder="John"
                         value={formData.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("firstName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -130,7 +165,9 @@ export default function CreateMemorialPage() {
                         id="lastName"
                         placeholder="Smith"
                         value={formData.lastName}
-                        onChange={(e) => handleInputChange("lastName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("lastName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -147,7 +184,9 @@ export default function CreateMemorialPage() {
                         id="birthDate"
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("birthDate", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -160,7 +199,9 @@ export default function CreateMemorialPage() {
                         id="deathDate"
                         type="date"
                         value={formData.deathDate}
-                        onChange={(e) => handleInputChange("deathDate", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("deathDate", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -176,7 +217,9 @@ export default function CreateMemorialPage() {
                       id="location"
                       placeholder="Tbilisi, Georgia"
                       value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("location", e.target.value)
+                      }
                       className="h-12"
                     />
                   </div>
@@ -188,7 +231,9 @@ export default function CreateMemorialPage() {
                       id="biography"
                       placeholder="Share the beautiful story of your loved one's life..."
                       value={formData.biography}
-                      onChange={(e) => handleInputChange("biography", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("biography", e.target.value)
+                      }
                       className="min-h-[120px]"
                     />
                   </div>
@@ -203,7 +248,9 @@ export default function CreateMemorialPage() {
                     <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
                     Photos & Videos
                   </CardTitle>
-                  <CardDescription>Add meaningful photos and videos to celebrate their life</CardDescription>
+                  <CardDescription>
+                    Add meaningful photos and videos to celebrate their life
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -211,22 +258,27 @@ export default function CreateMemorialPage() {
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Add Photos</h3>
-                        <p className="text-sm text-gray-500 mb-4">Upload cherished memories</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Add Photos
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Upload cherished memories
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Upload photos")
+                            console.log("Upload photos");
                             // Handle photo upload
-                            const input = document.createElement("input")
-                            input.type = "file"
-                            input.multiple = true
-                            input.accept = "image/*"
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = "image/*";
                             input.onchange = (e) => {
-                              const files = (e.target as HTMLInputElement).files
-                              console.log("Selected photos:", files)
-                            }
-                            input.click()
+                              const files = (e.target as HTMLInputElement)
+                                .files;
+                              console.log("Selected photos:", files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -239,22 +291,27 @@ export default function CreateMemorialPage() {
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <Video className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Add Videos</h3>
-                        <p className="text-sm text-gray-500 mb-4">Share video memories</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Add Videos
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Share video memories
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Upload videos")
+                            console.log("Upload videos");
                             // Handle video upload
-                            const input = document.createElement("input")
-                            input.type = "file"
-                            input.multiple = true
-                            input.accept = "video/*"
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = "video/*";
                             input.onchange = (e) => {
-                              const files = (e.target as HTMLInputElement).files
-                              console.log("Selected videos:", files)
-                            }
-                            input.click()
+                              const files = (e.target as HTMLInputElement)
+                                .files;
+                              console.log("Selected videos:", files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -267,22 +324,27 @@ export default function CreateMemorialPage() {
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Documents</h3>
-                        <p className="text-sm text-gray-500 mb-4">Add important documents</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Documents
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Add important documents
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Upload documents")
+                            console.log("Upload documents");
                             // Handle document upload
-                            const input = document.createElement("input")
-                            input.type = "file"
-                            input.multiple = true
-                            input.accept = ".pdf,.doc,.docx,.txt"
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = ".pdf,.doc,.docx,.txt";
                             input.onchange = (e) => {
-                              const files = (e.target as HTMLInputElement).files
-                              console.log("Selected documents:", files)
-                            }
-                            input.click()
+                              const files = (e.target as HTMLInputElement)
+                                .files;
+                              console.log("Selected documents:", files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -302,21 +364,26 @@ export default function CreateMemorialPage() {
                     <Users className="h-5 w-5 mr-2 text-green-500" />
                     Family Tree
                   </CardTitle>
-                  <CardDescription>Build a family tree to show relationships and connections</CardDescription>
+                  <CardDescription>
+                    Build a family tree to show relationships and connections
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Family Tree Builder</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Family Tree Builder
+                    </h3>
                     <p className="text-gray-500 mb-6">
-                      Create connections between family members and show relationships
+                      Create connections between family members and show
+                      relationships
                     </p>
                     <Button
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
                       onClick={() => {
-                        console.log("Start building family tree")
+                        console.log("Start building family tree");
                         // Handle family tree builder
-                        alert("Family Tree Builder - Coming Soon!")
+                        alert("Family Tree Builder - Coming Soon!");
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
@@ -331,24 +398,32 @@ export default function CreateMemorialPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Privacy & Settings</CardTitle>
-                  <CardDescription>Control who can view and interact with this memorial</CardDescription>
+                  <CardDescription>
+                    Control who can view and interact with this memorial
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Public Memorial</Label>
-                      <p className="text-sm text-gray-500">Allow this memorial to appear in public directory</p>
+                      <p className="text-sm text-gray-500">
+                        Allow this memorial to appear in public directory
+                      </p>
                     </div>
                     <Switch
                       checked={formData.isPublic}
-                      onCheckedChange={(checked) => handleInputChange("isPublic", checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isPublic", checked)
+                      }
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Allow Comments</Label>
-                      <p className="text-sm text-gray-500">Let visitors leave condolences and memories</p>
+                      <p className="text-sm text-gray-500">
+                        Let visitors leave condolences and memories
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -356,7 +431,9 @@ export default function CreateMemorialPage() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Email Notifications</Label>
-                      <p className="text-sm text-gray-500">Get notified when someone visits or comments</p>
+                      <p className="text-sm text-gray-500">
+                        Get notified when someone visits or comments
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -367,5 +444,5 @@ export default function CreateMemorialPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Users,
   Heart,
@@ -18,21 +18,39 @@ import {
   Ban,
   CheckCircle,
   QrCode,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
-}
+};
 
 const staggerContainer = {
   animate: {
@@ -40,17 +58,41 @@ const staggerContainer = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 export default function AdminDashboardPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
   const stats = [
-    { label: "Total Users", value: "1,247", change: "+12%", icon: Users, color: "text-blue-600" },
-    { label: "Active Memorials", value: "3,891", change: "+8%", icon: Heart, color: "text-red-600" },
-    { label: "Monthly Revenue", value: "$12,450", change: "+15%", icon: DollarSign, color: "text-green-600" },
-    { label: "QR Scans", value: "28,392", change: "+23%", icon: TrendingUp, color: "text-purple-600" },
-  ]
+    {
+      label: "Total Users",
+      value: "1,247",
+      change: "+12%",
+      icon: Users,
+      color: "text-blue-600",
+    },
+    {
+      label: "Active Memorials",
+      value: "3,891",
+      change: "+8%",
+      icon: Heart,
+      color: "text-red-600",
+    },
+    {
+      label: "Monthly Revenue",
+      value: "$12,450",
+      change: "+15%",
+      icon: DollarSign,
+      color: "text-green-600",
+    },
+    {
+      label: "QR Scans",
+      value: "28,392",
+      change: "+23%",
+      icon: TrendingUp,
+      color: "text-purple-600",
+    },
+  ];
 
   const users = [
     {
@@ -83,7 +125,7 @@ export default function AdminDashboardPage() {
       joined: "2023-12-10",
       avatar: "/placeholder.svg?height=40&width=40",
     },
-  ]
+  ];
 
   const recentMemorials = [
     {
@@ -110,7 +152,7 @@ export default function AdminDashboardPage() {
       created: "2024-01-18",
       views: 89,
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -119,11 +161,16 @@ export default function AdminDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Shield className="h-8 w-8 text-indigo-400" />
-              <span className="text-2xl font-bold text-white">Admin Dashboard</span>
-              <Badge variant="secondary" className="bg-indigo-900 text-indigo-200">
-                QRIP.ge
-              </Badge>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+              >
+                <QrCode className="h-5 w-5 text-white" />{" "}
+              </motion.div>
+              <span className="text-2xl font-bold text-white">
+                Admin Dashboard
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <Button
@@ -131,7 +178,7 @@ export default function AdminDashboardPage() {
                 size="sm"
                 className="text-gray-300 hover:text-white"
                 onClick={() => {
-                  console.log("Open notifications")
+                  console.log("Open notifications");
                   // Handle notifications logic
                 }}
               >
@@ -143,7 +190,7 @@ export default function AdminDashboardPage() {
                 size="sm"
                 className="text-gray-300 hover:text-white"
                 onClick={() => {
-                  console.log("Open settings")
+                  console.log("Open settings");
                   // Handle settings logic
                 }}
               >
@@ -167,8 +214,12 @@ export default function AdminDashboardPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome back, Admin</h1>
-          <p className="text-gray-400">Monitor and manage the QRIP.ge memorial platform</p>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Welcome back, Admin
+          </h1>
+          <p className="text-gray-400">
+            Monitor and manage the QRIP.ge memorial platform
+          </p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -184,11 +235,19 @@ export default function AdminDashboardPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">{stat.label}</p>
-                      <p className="text-3xl font-bold text-white">{stat.value}</p>
-                      <p className="text-sm text-green-400">{stat.change} from last month</p>
+                      <p className="text-sm font-medium text-gray-400">
+                        {stat.label}
+                      </p>
+                      <p className="text-3xl font-bold text-white">
+                        {stat.value}
+                      </p>
+                      <p className="text-sm text-green-400">
+                        {stat.change} from last month
+                      </p>
                     </div>
-                    <div className={`p-3 rounded-full bg-gray-700 ${stat.color}`}>
+                    <div
+                      className={`p-3 rounded-full bg-gray-700 ${stat.color}`}
+                    >
                       <stat.icon className="h-6 w-6" />
                     </div>
                   </div>
@@ -201,19 +260,34 @@ export default function AdminDashboardPage() {
         {/* Main Content */}
         <Tabs defaultValue="users" className="space-y-6">
           <TabsList className="bg-gray-800 border-gray-700">
-            <TabsTrigger value="users" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger
+              value="users"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+            >
               Users
             </TabsTrigger>
-            <TabsTrigger value="memorials" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger
+              value="memorials"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+            >
               Memorials
             </TabsTrigger>
-            <TabsTrigger value="qr-codes" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger
+              value="qr-codes"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+            >
               QR Codes
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger
+              value="analytics"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+            >
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger
+              value="settings"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+            >
               Settings
             </TabsTrigger>
           </TabsList>
@@ -223,8 +297,12 @@ export default function AdminDashboardPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">User Management</CardTitle>
-                    <CardDescription className="text-gray-400">Manage user accounts and subscriptions</CardDescription>
+                    <CardTitle className="text-white">
+                      User Management
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Manage user accounts and subscriptions
+                    </CardDescription>
                   </div>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -232,7 +310,7 @@ export default function AdminDashboardPage() {
                       placeholder="Search users..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-gray-700 border-gray-600 text-white"
+                      className="pl-10 bg-gray-700 border-gray-600 text-white focus-visible:outline-none"
                     />
                   </div>
                 </div>
@@ -255,7 +333,9 @@ export default function AdminDashboardPage() {
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={user.avatar || "/placeholder.svg"} />
+                              <AvatarImage
+                                src={user.avatar || "/placeholder.svg"}
+                              />
                               <AvatarFallback>
                                 {user.name
                                   .split(" ")
@@ -264,62 +344,85 @@ export default function AdminDashboardPage() {
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-white font-medium">{user.name}</p>
-                              <p className="text-gray-400 text-sm">{user.email}</p>
+                              <p className="text-white font-medium">
+                                {user.name}
+                              </p>
+                              <p className="text-gray-400 text-sm">
+                                {user.email}
+                              </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={user.plan === "Premium" ? "default" : "secondary"}
-                            className={user.plan === "Premium" ? "bg-yellow-600" : ""}
+                            variant={
+                              user.plan === "Premium" ? "default" : "secondary"
+                            }
+                            className={
+                              user.plan === "Premium" ? "bg-yellow-600" : ""
+                            }
                           >
                             {user.plan}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">{user.memorials}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {user.memorials}
+                        </TableCell>
                         <TableCell>
                           <Badge
-                            variant={user.status === "active" ? "default" : "destructive"}
-                            className={user.status === "active" ? "bg-green-600" : ""}
+                            variant={
+                              user.status === "active"
+                                ? "default"
+                                : "destructive"
+                            }
+                            className={
+                              user.status === "active" ? "bg-green-600" : ""
+                            }
                           >
                             {user.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">{user.joined}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {user.joined}
+                        </TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-gray-400 hover:text-white"
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-gray-800 border-gray-700"
+                            >
                               <DropdownMenuItem
                                 className="text-gray-300 hover:text-white cursor-pointer"
                                 onClick={() => {
-                                  console.log("View profile for user:", user.id)
+                                  console.log(
+                                    "View profile for user:",
+                                    user.id
+                                  );
                                   // Handle view profile logic
                                 }}
                               >
                                 <Eye className="h-4 w-4 mr-2" />
                                 View Profile
                               </DropdownMenuItem>
+
                               <DropdownMenuItem
                                 className="text-gray-300 hover:text-white cursor-pointer"
                                 onClick={() => {
-                                  console.log("Edit user:", user.id)
-                                  // Handle edit user logic
-                                }}
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit User
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-gray-300 hover:text-white cursor-pointer"
-                                onClick={() => {
-                                  if (confirm(`Are you sure you want to suspend ${user.name}?`)) {
-                                    console.log("Suspend user:", user.id)
+                                  if (
+                                    confirm(
+                                      `Are you sure you want to suspend ${user.name}?`
+                                    )
+                                  ) {
+                                    console.log("Suspend user:", user.id);
                                     // Handle suspend logic
                                   }
                                 }}
@@ -332,10 +435,10 @@ export default function AdminDashboardPage() {
                                 onClick={() => {
                                   if (
                                     confirm(
-                                      `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+                                      `Are you sure you want to delete ${user.name}? This action cannot be undone.`
                                     )
                                   ) {
-                                    console.log("Delete user:", user.id)
+                                    console.log("Delete user:", user.id);
                                     // Handle delete logic
                                   }
                                 }}
@@ -358,7 +461,9 @@ export default function AdminDashboardPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Recent Memorials</CardTitle>
-                <CardDescription className="text-gray-400">Review and moderate memorial submissions</CardDescription>
+                <CardDescription className="text-gray-400">
+                  Review and moderate memorial submissions
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -375,18 +480,34 @@ export default function AdminDashboardPage() {
                   <TableBody>
                     {recentMemorials.map((memorial) => (
                       <TableRow key={memorial.id} className="border-gray-700">
-                        <TableCell className="text-white font-medium">{memorial.name}</TableCell>
-                        <TableCell className="text-gray-300">{memorial.creator}</TableCell>
+                        <TableCell className="text-white font-medium">
+                          {memorial.name}
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          {memorial.creator}
+                        </TableCell>
                         <TableCell>
                           <Badge
-                            variant={memorial.status === "approved" ? "default" : "secondary"}
-                            className={memorial.status === "approved" ? "bg-green-600" : "bg-yellow-600"}
+                            variant={
+                              memorial.status === "approved"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className={
+                              memorial.status === "approved"
+                                ? "bg-green-600"
+                                : "bg-yellow-600"
+                            }
                           >
                             {memorial.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">{memorial.views}</TableCell>
-                        <TableCell className="text-gray-300">{memorial.created}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {memorial.views}
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          {memorial.created}
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -394,7 +515,7 @@ export default function AdminDashboardPage() {
                               variant="outline"
                               className="border-green-600 text-green-400 hover:bg-green-600 bg-transparent"
                               onClick={() => {
-                                console.log("Approve memorial:", memorial.id)
+                                console.log("Approve memorial:", memorial.id);
                                 // Handle approve logic
                               }}
                             >
@@ -405,8 +526,12 @@ export default function AdminDashboardPage() {
                               variant="outline"
                               className="border-red-600 text-red-400 hover:bg-red-600 bg-transparent"
                               onClick={() => {
-                                if (confirm(`Are you sure you want to reject the memorial for ${memorial.name}?`)) {
-                                  console.log("Reject memorial:", memorial.id)
+                                if (
+                                  confirm(
+                                    `Are you sure you want to reject the memorial for ${memorial.name}?`
+                                  )
+                                ) {
+                                  console.log("Reject memorial:", memorial.id);
                                   // Handle reject logic
                                 }
                               }}
@@ -448,7 +573,9 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="text-center py-8">
                   <QrCode className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">QR Code analytics and management tools</p>
+                  <p className="text-gray-400">
+                    QR Code analytics and management tools
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -461,7 +588,9 @@ export default function AdminDashboardPage() {
                   <CardTitle className="text-white">Platform Growth</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center text-gray-400">Analytics Chart Placeholder</div>
+                  <div className="h-64 flex items-center justify-center text-gray-400">
+                    Analytics Chart Placeholder
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-gray-800 border-gray-700">
@@ -469,7 +598,9 @@ export default function AdminDashboardPage() {
                   <CardTitle className="text-white">Revenue Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center text-gray-400">Revenue Chart Placeholder</div>
+                  <div className="h-64 flex items-center justify-center text-gray-400">
+                    Revenue Chart Placeholder
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -486,18 +617,22 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">General Settings</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">
+                      General Settings
+                    </h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-white">Allow Public Directory</p>
-                          <p className="text-sm text-gray-400">Enable public browsing of memorials</p>
+                          <p className="text-sm text-gray-400">
+                            Enable public browsing of memorials
+                          </p>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            console.log("Configure public directory settings")
+                            console.log("Configure public directory settings");
                             // Handle configuration logic
                           }}
                         >
@@ -507,13 +642,17 @@ export default function AdminDashboardPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-white">Email Notifications</p>
-                          <p className="text-sm text-gray-400">System-wide notification settings</p>
+                          <p className="text-sm text-gray-400">
+                            System-wide notification settings
+                          </p>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            console.log("Configure email notification settings")
+                            console.log(
+                              "Configure email notification settings"
+                            );
                             // Handle configuration logic
                           }}
                         >
@@ -529,5 +668,5 @@ export default function AdminDashboardPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

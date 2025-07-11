@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Plus,
   QrCode,
@@ -15,21 +15,32 @@ import {
   Trash2,
   Crown,
   MapPin,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { UserMenu } from "@/components/user-menu"
-import Link from "next/link"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { UserMenu } from "@/components/user-menu";
+import Link from "next/link";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
-}
+};
 
 const staggerContainer = {
   animate: {
@@ -37,10 +48,10 @@ const staggerContainer = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 export default function DashboardPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
   const memorials = [
     {
@@ -76,14 +87,24 @@ export default function DashboardPage() {
       plan: "premium",
       location: "Kutaisi, Georgia",
     },
-  ]
+  ];
 
   const stats = [
-    { label: "Total Memorials", value: "3", icon: Heart, color: "text-red-600" },
+    {
+      label: "Total Memorials",
+      value: "3",
+      icon: Heart,
+      color: "text-red-600",
+    },
     { label: "Total Views", value: "490", icon: Eye, color: "text-blue-600" },
     { label: "QR Scans", value: "127", icon: QrCode, color: "text-green-600" },
-    { label: "Family Members", value: "12", icon: Users, color: "text-purple-600" },
-  ]
+    {
+      label: "Family Members",
+      value: "12",
+      icon: Users,
+      color: "text-purple-600",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,13 +113,22 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/" className="flex items-center space-x-2">
-                <QrCode className="h-8 w-8 text-indigo-600" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="flex items-center space-x-3">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                >
+                  <QrCode className="h-5 w-5 text-white" />{" "}
+                </motion.div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                   QRIP.ge
                 </span>
-              </Link>
-              <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
+              </div>
+              <Badge
+                variant="secondary"
+                className="bg-indigo-100 text-indigo-800"
+              >
                 Dashboard
               </Badge>
             </div>
@@ -109,7 +139,13 @@ export default function DashboardPage() {
                   Settings
                 </Button>
               </Link>
-              <UserMenu user={{ name: "John Doe", email: "john@example.com", plan: "Basic Premium" }} />
+              <UserMenu
+                user={{
+                  name: "John Doe",
+                  email: "john@example.com",
+                  plan: "Basic Premium",
+                }}
+              />
             </div>
           </div>
         </div>
@@ -123,8 +159,12 @@ export default function DashboardPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, John</h1>
-          <p className="text-gray-600">Manage your memorials and honor the memories of your loved ones</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, John
+          </h1>
+          <p className="text-gray-600">
+            Manage your memorials and honor the memories of your loved ones
+          </p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -140,10 +180,16 @@ export default function DashboardPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        {stat.label}
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900">
+                        {stat.value}
+                      </p>
                     </div>
-                    <div className={`p-3 rounded-full bg-gray-100 ${stat.color}`}>
+                    <div
+                      className={`p-3 rounded-full bg-gray-100 ${stat.color}`}
+                    >
                       <stat.icon className="h-6 w-6" />
                     </div>
                   </div>
@@ -162,10 +208,12 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Your Memorials</CardTitle>
-                    <CardDescription>Manage and view your created memorials</CardDescription>
+                    <CardDescription>
+                      Manage and view your created memorials
+                    </CardDescription>
                   </div>
                   <Link href="/memorial/create">
-                    <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
+                    <Button className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600">
                       <Plus className="h-4 w-4 mr-2" />
                       New Memorial
                     </Button>
@@ -182,12 +230,19 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-4">
+                <motion.div
+                  variants={staggerContainer}
+                  initial="initial"
+                  animate="animate"
+                  className="space-y-4"
+                >
                   {memorials.map((memorial) => (
                     <motion.div key={memorial.id} variants={fadeInUp}>
                       <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src={memorial.image || "/placeholder.svg"} />
+                          <AvatarImage
+                            src={memorial.image || "/placeholder.svg"}
+                          />
                           <AvatarFallback>
                             {memorial.name
                               .split(" ")
@@ -198,11 +253,23 @@ export default function DashboardPage() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="text-lg font-semibold text-gray-900 truncate">{memorial.name}</h3>
-                            {memorial.plan === "premium" && <Crown className="h-4 w-4 text-yellow-500" />}
+                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                              {memorial.name}
+                            </h3>
+                            {memorial.plan === "premium" && (
+                              <Crown className="h-4 w-4 text-yellow-500" />
+                            )}
                             <Badge
-                              variant={memorial.status === "active" ? "default" : "secondary"}
-                              className={memorial.status === "active" ? "bg-green-100 text-green-800" : ""}
+                              variant={
+                                memorial.status === "active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className={
+                                memorial.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : ""
+                              }
                             >
                               {memorial.status}
                             </Badge>
@@ -232,19 +299,28 @@ export default function DashboardPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/memorial/${memorial.qrCode.toLowerCase()}`} className="flex items-center">
+                              <Link
+                                href={`/memorial/${memorial.qrCode.toLowerCase()}`}
+                                className="flex items-center"
+                              >
                                 <Eye className="h-4 w-4 mr-2" />
                                 View Memorial
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                              <Link href={`/memorial/edit/${memorial.id}`} className="flex items-center">
+                              <Link
+                                href={`/memorial/edit/${memorial.id}`}
+                                className="flex items-center"
+                              >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                              <Link href="/qr-generator" className="flex items-center">
+                              <Link
+                                href="/qr-generator"
+                                className="flex items-center"
+                              >
                                 <QrCode className="h-4 w-4 mr-2" />
                                 Download QR
                               </Link>
@@ -252,8 +328,12 @@ export default function DashboardPage() {
                             <DropdownMenuItem
                               className="text-red-600 cursor-pointer"
                               onClick={() => {
-                                if (confirm("Are you sure you want to delete this memorial?")) {
-                                  console.log("Delete memorial:", memorial.id)
+                                if (
+                                  confirm(
+                                    "Are you sure you want to delete this memorial?"
+                                  )
+                                ) {
+                                  console.log("Delete memorial:", memorial.id);
                                 }
                               }}
                             >
@@ -279,19 +359,28 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Link href="/memorial/create">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
+                  <Button
+                    className="w-full justify-start bg-transparent"
+                    variant="outline"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Create Memorial
                   </Button>
                 </Link>
                 <Link href="/qr-generator">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
+                  <Button
+                    className="w-full justify-start bg-transparent"
+                    variant="outline"
+                  >
                     <QrCode className="h-4 w-4 mr-2" />
                     Generate QR Code
                   </Button>
                 </Link>
                 <Link href="/subscription">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
+                  <Button
+                    className="w-full justify-start bg-transparent"
+                    variant="outline"
+                  >
                     <Crown className="h-4 w-4 mr-2" />
                     Manage Subscription
                   </Button>
@@ -308,15 +397,21 @@ export default function DashboardPage() {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-600">QR code scanned for John Smith</span>
+                    <span className="text-gray-600">
+                      QR code scanned for John Smith
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-600">Memorial updated for Mary Johnson</span>
+                    <span className="text-gray-600">
+                      Memorial updated for Mary Johnson
+                    </span>
                   </div>
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-gray-600">New photo added to Robert Wilson</span>
+                    <span className="text-gray-600">
+                      New photo added to Robert Wilson
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -325,5 +420,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

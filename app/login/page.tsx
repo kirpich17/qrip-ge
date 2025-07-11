@@ -1,41 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Eye, EyeOff, QrCode, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, QrCode, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     // Dummy authentication
     if (email === "user@qrip.ge" && password === "user123") {
       setTimeout(() => {
-        router.push("/dashboard")
-      }, 1000)
+        router.push("/dashboard");
+      }, 1000);
     } else {
-      setError("Invalid credentials. Use user@qrip.ge / user123")
-      setIsLoading(false)
+      setError("Invalid credentials. Use user@qrip.ge / user123");
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -46,16 +52,21 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </Link>
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <QrCode className="h-10 w-10 text-indigo-600" />
-            <span className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <Link
+            href="/"
+            className="flex items-center justify-center space-x-3 my-4"
+          >
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+            >
+              <QrCode className="h-5 w-5 text-white" />{" "}
+            </motion.div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
               QRIP.ge
             </span>
-          </div>
+          </Link>
           <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-gray-600 mt-2">Sign in to manage your memorials</p>
         </div>
@@ -63,13 +74,17 @@ export default function LoginPage() {
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl text-center">Sign In</CardTitle>
-            <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               {error && (
                 <Alert className="border-red-200 bg-red-50">
-                  <AlertDescription className="text-red-800">{error}</AlertDescription>
+                  <AlertDescription className="text-red-800">
+                    {error}
+                  </AlertDescription>
                 </Alert>
               )}
 
@@ -115,14 +130,17 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-pink-600 hover:text-indigo-500"
+                >
                   Forgot password?
                 </Link>
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign In"}
@@ -132,23 +150,28 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
+                <Link
+                  href="/signup"
+                  className="text-pink-600 hover:text-indigo-500 font-medium"
+                >
                   Sign up
                 </Link>
               </p>
             </div>
 
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 text-center mb-2">Demo Credentials:</p>
+            {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-600 text-center mb-2">
+                Demo Credentials:
+              </p>
               <p className="text-xs text-gray-800 text-center">
                 Email: user@qrip.ge
                 <br />
                 Password: user123
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
