@@ -93,7 +93,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="user@qrip.ge"
+                  placeholder="Enter Username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -107,7 +107,7 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="user123"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

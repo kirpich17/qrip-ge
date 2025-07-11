@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Upload,
@@ -15,18 +15,28 @@ import {
   Video,
   FileText,
   Trash2,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Link from "next/link"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
-export default function EditMemorialPage({ params }: { params: { id: string } }) {
+export default function EditMemorialPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,7 +46,7 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
     location: "",
     isPublic: true,
     profileImage: null,
-  })
+  });
 
   // Load existing memorial data
   useEffect(() => {
@@ -46,17 +56,18 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
       lastName: "Smith",
       birthDate: "1945-03-15",
       deathDate: "2023-12-03",
-      biography: "Beloved father, grandfather, and community leader who dedicated his life to education.",
+      biography:
+        "Beloved father, grandfather, and community leader who dedicated his life to education.",
       location: "Tbilisi, Georgia",
       isPublic: true,
       profileImage: null,
-    }
-    setFormData(mockData)
-  }, [params.id])
+    };
+    setFormData(mockData);
+  }, [params.id]);
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -65,7 +76,10 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
@@ -74,18 +88,18 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
               <Button
                 variant="outline"
                 onClick={() => {
-                  console.log("Preview memorial with current data:", formData)
-                  alert("Preview functionality - would show memorial preview")
+                  console.log("Preview memorial with current data:", formData);
+                  alert("Preview functionality - would show memorial preview");
                 }}
               >
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
               </Button>
               <Button
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                className="bg-gradient-to-br from-rose-500 to-pink-600"
                 onClick={() => {
-                  console.log("Save memorial changes:", formData)
-                  alert("Memorial updated successfully!")
+                  console.log("Save memorial changes:", formData);
+                  alert("Memorial updated successfully!");
                 }}
               >
                 <Save className="h-4 w-4 mr-2" />
@@ -94,9 +108,13 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
               <Button
                 variant="destructive"
                 onClick={() => {
-                  if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
-                    console.log("Delete memorial:", params.id)
-                    alert("Memorial deleted successfully!")
+                  if (
+                    confirm(
+                      "Are you sure you want to delete this memorial? This action cannot be undone."
+                    )
+                  ) {
+                    console.log("Delete memorial:", params.id);
+                    alert("Memorial deleted successfully!");
                   }
                 }}
               >
@@ -109,11 +127,18 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Memorial</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Edit Memorial
+            </h1>
             <p className="text-gray-600">
-              Update the memorial information for {formData.firstName} {formData.lastName}
+              Update the memorial information for {formData.firstName}{" "}
+              {formData.lastName}
             </p>
           </div>
 
@@ -132,7 +157,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <Heart className="h-5 w-5 mr-2 text-red-500" />
                     Basic Information
                   </CardTitle>
-                  <CardDescription>Update the essential details about your loved one</CardDescription>
+                  <CardDescription>
+                    Update the essential details about your loved one
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Image */}
@@ -149,7 +176,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                         <Upload className="h-4 w-4 mr-2" />
                         Change Photo
                       </Button>
-                      <p className="text-sm text-gray-500">Choose a beautiful photo to represent your loved one</p>
+                      <p className="text-sm text-gray-500">
+                        Choose a beautiful photo to represent your loved one
+                      </p>
                     </div>
                   </div>
 
@@ -161,7 +190,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                         id="firstName"
                         placeholder="John"
                         value={formData.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("firstName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -171,7 +202,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                         id="lastName"
                         placeholder="Smith"
                         value={formData.lastName}
-                        onChange={(e) => handleInputChange("lastName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("lastName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -188,7 +221,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                         id="birthDate"
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("birthDate", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -201,7 +236,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                         id="deathDate"
                         type="date"
                         value={formData.deathDate}
-                        onChange={(e) => handleInputChange("deathDate", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("deathDate", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -217,7 +254,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                       id="location"
                       placeholder="Tbilisi, Georgia"
                       value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("location", e.target.value)
+                      }
                       className="h-12"
                     />
                   </div>
@@ -229,7 +268,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                       id="biography"
                       placeholder="Share the beautiful story of your loved one's life..."
                       value={formData.biography}
-                      onChange={(e) => handleInputChange("biography", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("biography", e.target.value)
+                      }
                       className="min-h-[120px]"
                     />
                   </div>
@@ -244,7 +285,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
                     Photos & Videos
                   </CardTitle>
-                  <CardDescription>Manage photos and videos for this memorial</CardDescription>
+                  <CardDescription>
+                    Manage photos and videos for this memorial
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -252,13 +295,17 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Manage Photos</h3>
-                        <p className="text-sm text-gray-500 mb-4">Add or remove photos</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Manage Photos
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Add or remove photos
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage photos")
-                            alert("Photo management interface would open here")
+                            console.log("Manage photos");
+                            alert("Photo management interface would open here");
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -271,13 +318,17 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <Video className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Manage Videos</h3>
-                        <p className="text-sm text-gray-500 mb-4">Add or remove videos</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Manage Videos
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Add or remove videos
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage videos")
-                            alert("Video management interface would open here")
+                            console.log("Manage videos");
+                            alert("Video management interface would open here");
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -290,13 +341,19 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">Documents</h3>
-                        <p className="text-sm text-gray-500 mb-4">Manage documents</p>
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          Documents
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Manage documents
+                        </p>
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage documents")
-                            alert("Document management interface would open here")
+                            console.log("Manage documents");
+                            alert(
+                              "Document management interface would open here"
+                            );
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -316,18 +373,24 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                     <Users className="h-5 w-5 mr-2 text-green-500" />
                     Family Tree
                   </CardTitle>
-                  <CardDescription>Edit family relationships and connections</CardDescription>
+                  <CardDescription>
+                    Edit family relationships and connections
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Family Tree Editor</h3>
-                    <p className="text-gray-500 mb-6">Edit connections between family members and relationships</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Family Tree Editor
+                    </h3>
+                    <p className="text-gray-500 mb-6">
+                      Edit connections between family members and relationships
+                    </p>
                     <Button
                       className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                       onClick={() => {
-                        console.log("Edit family tree")
-                        alert("Family Tree Editor - Coming Soon!")
+                        console.log("Edit family tree");
+                        alert("Family Tree Editor - Coming Soon!");
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
@@ -342,24 +405,32 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
               <Card>
                 <CardHeader>
                   <CardTitle>Privacy & Settings</CardTitle>
-                  <CardDescription>Update privacy and visibility settings</CardDescription>
+                  <CardDescription>
+                    Update privacy and visibility settings
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Public Memorial</Label>
-                      <p className="text-sm text-gray-500">Allow this memorial to appear in public directory</p>
+                      <p className="text-sm text-gray-500">
+                        Allow this memorial to appear in public directory
+                      </p>
                     </div>
                     <Switch
                       checked={formData.isPublic}
-                      onCheckedChange={(checked) => handleInputChange("isPublic", checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isPublic", checked)
+                      }
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Allow Comments</Label>
-                      <p className="text-sm text-gray-500">Let visitors leave condolences and memories</p>
+                      <p className="text-sm text-gray-500">
+                        Let visitors leave condolences and memories
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -367,7 +438,9 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label className="text-base">Email Notifications</Label>
-                      <p className="text-sm text-gray-500">Get notified when someone visits or comments</p>
+                      <p className="text-sm text-gray-500">
+                        Get notified when someone visits or comments
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -378,5 +451,5 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

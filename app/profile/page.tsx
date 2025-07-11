@@ -1,17 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ArrowLeft, User, Mail, Phone, MapPin, Save, Upload, Crown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Save,
+  Upload,
+  Crown,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState({
@@ -24,11 +39,11 @@ export default function ProfilePage() {
     joinDate: "2024-01-15",
     plan: "Basic Premium",
     avatar: null,
-  })
+  });
 
   const handleInputChange = (field: string, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }))
-  }
+    setProfileData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,14 +52,17 @@ export default function ProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <User className="h-6 w-6 text-indigo-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <User className="h-6 w-6 text-pink-600" />
+              <span className="text-xl font-bold bg-gradient-to-br from-rose-500 to-pink-600 bg-clip-text text-transparent">
                 Profile Settings
               </span>
             </div>
@@ -53,10 +71,18 @@ export default function ProfilePage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
-            <p className="text-gray-600">Manage your account information and preferences</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Profile Settings
+            </h1>
+            <p className="text-gray-600">
+              Manage your account information and preferences
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -80,7 +106,10 @@ export default function ProfilePage() {
                   <p className="text-gray-600 mb-3">{profileData.email}</p>
                   <div className="flex items-center justify-center space-x-2 mb-4">
                     <Crown className="h-4 w-4 text-yellow-600" />
-                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-yellow-100 text-yellow-800"
+                    >
                       {profileData.plan}
                     </Badge>
                   </div>
@@ -89,18 +118,18 @@ export default function ProfilePage() {
                     size="sm"
                     className="w-full bg-transparent"
                     onClick={() => {
-                      console.log("Upload avatar")
-                      const input = document.createElement("input")
-                      input.type = "file"
-                      input.accept = "image/*"
+                      console.log("Upload avatar");
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept = "image/*";
                       input.onchange = (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0]
+                        const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
-                          console.log("Selected avatar:", file)
+                          console.log("Selected avatar:", file);
                           // Handle avatar upload
                         }
-                      }
-                      input.click()
+                      };
+                      input.click();
                     }}
                   >
                     <Upload className="h-4 w-4 mr-2" />
@@ -116,7 +145,9 @@ export default function ProfilePage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Member since</span>
-                    <span className="font-medium">{new Date(profileData.joinDate).toLocaleDateString()}</span>
+                    <span className="font-medium">
+                      {new Date(profileData.joinDate).toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Memorials created</span>
@@ -128,7 +159,11 @@ export default function ProfilePage() {
                   </div>
                   <Separator />
                   <Link href="/subscription">
-                    <Button variant="outline" size="sm" className="w-full bg-transparent">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full bg-transparent"
+                    >
                       <Crown className="h-4 w-4 mr-2" />
                       Manage Subscription
                     </Button>
@@ -142,7 +177,9 @@ export default function ProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Update your personal details and contact information</CardDescription>
+                  <CardDescription>
+                    Update your personal details and contact information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Name Fields */}
@@ -152,7 +189,9 @@ export default function ProfilePage() {
                       <Input
                         id="firstName"
                         value={profileData.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("firstName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -161,7 +200,9 @@ export default function ProfilePage() {
                       <Input
                         id="lastName"
                         value={profileData.lastName}
-                        onChange={(e) => handleInputChange("lastName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("lastName", e.target.value)
+                        }
                         className="h-12"
                       />
                     </div>
@@ -177,7 +218,9 @@ export default function ProfilePage() {
                       id="email"
                       type="email"
                       value={profileData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       className="h-12"
                     />
                   </div>
@@ -191,7 +234,9 @@ export default function ProfilePage() {
                       id="phone"
                       type="tel"
                       value={profileData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       className="h-12"
                     />
                   </div>
@@ -204,7 +249,9 @@ export default function ProfilePage() {
                     <Input
                       id="location"
                       value={profileData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("location", e.target.value)
+                      }
                       className="h-12"
                     />
                   </div>
@@ -226,10 +273,10 @@ export default function ProfilePage() {
                   {/* Save Button */}
                   <div className="flex justify-end">
                     <Button
-                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                      className="bg-gradient-to-br from-rose-500 to-pink-600 "
                       onClick={() => {
-                        console.log("Save profile:", profileData)
-                        alert("Profile updated successfully!")
+                        console.log("Save profile:", profileData);
+                        alert("Profile updated successfully!");
                       }}
                     >
                       <Save className="h-4 w-4 mr-2" />
@@ -243,5 +290,5 @@ export default function ProfilePage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

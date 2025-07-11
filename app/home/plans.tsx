@@ -55,7 +55,7 @@ const plans = [
     borderColor: "border-blue-300",
     popular: true,
     features: [
-      "Everything in Free",
+      "Everything Free in Basic Premium",
       "Video upload",
       "Family tree",
       "GPS location",

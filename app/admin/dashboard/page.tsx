@@ -185,18 +185,7 @@ export default function AdminDashboardPage() {
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-300 hover:text-white"
-                onClick={() => {
-                  console.log("Open settings");
-                  // Handle settings logic
-                }}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
+
               <Avatar>
                 <AvatarImage src="/placeholder.svg?height=32&width=32" />
                 <AvatarFallback className="bg-indigo-600">AD</AvatarFallback>
@@ -524,7 +513,7 @@ export default function AdminDashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-red-600 text-red-400 hover:bg-red-600 bg-transparent"
+                              className="border-red-600 text-red-400 bg-transparent"
                               onClick={() => {
                                 if (
                                   confirm(

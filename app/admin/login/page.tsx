@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@qrip.ge"
+                  placeholder="Enter Username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -115,7 +115,7 @@ export default function AdminLoginPage() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="admin123"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
