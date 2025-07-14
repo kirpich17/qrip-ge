@@ -48,21 +48,21 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31] ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-white hover:underline"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <User className="h-6 w-6 text-pink-600" />
-              <span className="text-xl font-bold bg-gradient-to-br from-rose-500 to-pink-600 bg-clip-text text-transparent">
+              <User className="h-6 w-6 text-white" />
+              <span className="text-xl font-bold text-white">
                 Profile Settings
               </span>
             </div>
@@ -273,7 +273,7 @@ export default function ProfilePage() {
                   {/* Save Button */}
                   <div className="flex justify-end">
                     <Button
-                      className="bg-gradient-to-br from-rose-500 to-pink-600 "
+                      className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                       onClick={() => {
                         console.log("Save profile:", profileData);
                         alert("Profile updated successfully!");

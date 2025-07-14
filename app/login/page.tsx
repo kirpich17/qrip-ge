@@ -44,7 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#ecefdc] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,13 +59,11 @@ export default function LoginPage() {
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+              className="p-2 bg-[#243b31] rounded-xl"
             >
               <QrCode className="h-5 w-5 text-white" />{" "}
             </motion.div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-              QRIP.ge
-            </span>
+            <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-gray-600 mt-2">Sign in to manage your memorials</p>
@@ -132,7 +130,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-pink-600 hover:text-indigo-500"
+                  className="text-sm text-[#243b31] hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -140,7 +138,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg w-full"
+                className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign In"}
@@ -152,7 +150,7 @@ export default function LoginPage() {
                 Don't have an account?{" "}
                 <Link
                   href="/signup"
-                  className="text-pink-600 hover:text-indigo-500 font-medium"
+                  className="text-[#243b31] hover:underline font-medium"
                 >
                   Sign up
                 </Link>

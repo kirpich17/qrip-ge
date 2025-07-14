@@ -7,7 +7,7 @@ import { FaHeart, FaQrcode, FaMobile } from "react-icons/fa";
 const Howitwork = () => {
   return (
     <>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -16,10 +16,10 @@ const Howitwork = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="lg:text-4xl text-2xl font-bold text-gray-900 mb-4">
               How QRIP.ge Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="md:text-xl text-base text-gray-600 max-w-2xl mx-auto">
               Three simple steps to create a lasting digital memorial that
               honors your loved one's memory
             </p>
@@ -58,10 +58,10 @@ const Howitwork = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="text-center group"
+                className="text-center group border border-[#efefef] px-[20px] py-[30px] rounded-[10px]"
               >
                 <div className="relative mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-rose-400 to-pink-200 rounded-2xl mx-auto flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <div className="w-20 h-20 bg-[#547455] rounded-2xl mx-auto flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                     <item.icon className="h-10 w-10 text-white" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold">

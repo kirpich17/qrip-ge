@@ -40,8 +40,8 @@ const plans = [
     price: "$0",
     period: "forever",
     icon: Star,
-    color: "text-gray-600",
-    bgColor: "bg-gray-50",
+    color: "text-black",
+    bgColor: "bg-green-50",
     borderColor: "border-gray-200",
     features: ["Biography & photo", "QR code", "Basic memorial"],
   },
@@ -50,9 +50,9 @@ const plans = [
     price: "$9",
     period: "/month",
     icon: Crown,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-300",
+    color: "text-black",
+    bgColor: "bg-green-50",
+
     popular: true,
     features: [
       "Everything Free in Basic Premium",
@@ -66,9 +66,9 @@ const plans = [
     price: "$199",
     period: "one-time",
     icon: Zap,
-    color: "text-purple-600",
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-300",
+    color: "text-black",
+    bgColor: "bg-green-50",
+    borderColor: "border-gray-200",
     features: [
       "Everything in Premium",
       "Multiple admins",
@@ -81,23 +81,23 @@ const plans = [
 const Plans = () => {
   return (
     <>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center md:mb-16 mb-6"
           >
-            <div className="inline-flex items-center space-x-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <div className="inline-flex items-center space-x-2 bg-[#243b31] text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Crown className="h-4 w-4" />
               <span>Choose Your Memorial Plan</span>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="lg:text-4xl text-2xl font-bold text-gray-900 mb-4">
               Honor Their Memory Your Way
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="md:text-xl text-base text-gray-600 max-w-2xl mx-auto">
               From free basic memorials to comprehensive legacy preservation -
               find the perfect plan for your needs
             </p>
@@ -115,13 +115,13 @@ const Plans = () => {
                 <Card
                   className={`relative h-full ${
                     plan.popular
-                      ? "border-2 border-rose-300 shadow-2xl ring-4 ring-rose-100 scale-105"
+                      ? "border border-[#547455]  md:scale-105"
                       : `${plan.borderColor} hover:shadow-xl border-2`
                   } transition-all duration-300 hover:-translate-y-1`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-2 text-sm font-medium">
+                      <Badge className="bg-[#547455] text-white px-6 py-2 text-sm font-medium hover:bg-black">
                         Most Popular
                       </Badge>
                     </div>
@@ -133,20 +133,20 @@ const Plans = () => {
                     >
                       <plan.icon className={`h-8 w-8 ${plan.color}`} />
                     </div>
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="md:text-2xl text-xl font-bold">
                       {plan.name}
                     </CardTitle>
                     <div className="mt-4">
                       <div className="flex items-baseline justify-center">
-                        <span className="text-5xl font-bold text-gray-900">
+                        <span className="md:text-5xl text-3xl font-bold text-gray-900">
                           {plan.price}
                         </span>
-                        <span className="text-gray-600 ml-2 text-lg">
+                        <span className="text-gray-600 ml-2 md:text-lg text-base">
                           {plan.period}
                         </span>
                       </div>
                       {plan.name === "Legacy+" && (
-                        <p className="text-sm text-purple-600 mt-2 font-medium">
+                        <p className="text-sm text-black mt-2 font-medium">
                           ✨ Lifetime Access - Pay Once, Own Forever
                         </p>
                       )}
@@ -161,7 +161,7 @@ const Plans = () => {
                           className="flex items-start space-x-3"
                         >
                           <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                            <Check className="h-3 w-3 text-green-600" />
+                            <Check className="h-3 w-3 text-[#243b31] " />
                           </div>
                           <span className="text-gray-700 text-sm leading-relaxed">
                             {feature}
@@ -174,10 +174,10 @@ const Plans = () => {
                       <Button
                         className={`w-full text-lg py-3 shadow-lg hover:shadow-xl transition-all duration-300 ${
                           plan.popular
-                            ? "bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700"
+                            ? "bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                             : plan.name === "Legacy+"
-                            ? "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-                            : "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800"
+                            ? "bg-black hover:bg-white hover:text-black border border-black"
+                            : "bg-black hover:bg-white hover:text-black border border-black"
                         }`}
                         size="lg"
                       >
@@ -211,7 +211,7 @@ const Plans = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="bg-white border-2 border-gray-300 hover:bg-gray-50"
+                className="bg-[#547455] text-white  border border-[#547455]  hover:white"
               >
                 View Detailed Comparison
                 <ArrowRight className="ml-2 h-4 w-4" />

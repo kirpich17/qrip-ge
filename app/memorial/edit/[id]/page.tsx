@@ -72,15 +72,15 @@ export default function EditMemorialPage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31] ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-white hover:underline"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
+                <ArrowLeft className="h-5 w-5" />
                 Back to Dashboard
               </Link>
             </div>
@@ -92,17 +92,17 @@ export default function EditMemorialPage({
                   alert("Preview functionality - would show memorial preview");
                 }}
               >
-                <Eye className="h-4 w-4 mr-2" />
+                <Eye className="h-4 w-4" />
                 Preview
               </Button>
               <Button
-                className="bg-gradient-to-br from-rose-500 to-pink-600"
+                className="bg-white text-black border border-white hover hover:bg-transparent hover:text-white"
                 onClick={() => {
                   console.log("Save memorial changes:", formData);
                   alert("Memorial updated successfully!");
                 }}
               >
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4" />
                 Save Changes
               </Button>
               <Button
@@ -118,7 +118,7 @@ export default function EditMemorialPage({
                   }
                 }}
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="h-4 w-4 " />
                 Delete
               </Button>
             </div>
@@ -387,7 +387,7 @@ export default function EditMemorialPage({
                       Edit connections between family members and relationships
                     </p>
                     <Button
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                       onClick={() => {
                         console.log("Edit family tree");
                         alert("Family Tree Editor - Coming Soon!");

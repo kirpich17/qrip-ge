@@ -24,19 +24,19 @@ const staggerContainer = {
 const Features = () => {
   return (
     <>
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section className="lg:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-[#ecefdc]">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center md:mb-16 mb-5"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="lg:text-3xl text-2xl md:text-4xl font-bold text-gray-900 mb-4">
               Everything You Need to Remember
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="md:text-xl text-base text-gray-600 max-w-2xl mx-auto">
               Comprehensive tools to create meaningful, lasting tributes that
               celebrate life and preserve memories
             </p>
@@ -47,7 +47,7 @@ const Features = () => {
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-4"
           >
             {[
               {
@@ -99,7 +99,7 @@ const Features = () => {
                     <div
                       className={`w-16 h-16 bg-gradient-to-br from-${feature.color}-400 to-${feature.color}-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}
                     >
-                      <feature.icon className="h-8 w-8 text-[#f43f5e]" />
+                      <feature.icon className="h-8 w-8 text-[#243b31]" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">
                       {feature.title}

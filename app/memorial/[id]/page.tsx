@@ -159,20 +159,18 @@ John's legacy lives on through the countless lives he touched, the students he i
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-[#243b31] sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-3">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                className="p-2 bg-white rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-white" />{" "}
+                <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                QRIP.ge
-              </span>
+              <span className="text-2xl font-bold text-white">QRIP.ge</span>
             </Link>
             <div className="flex items-center space-x-3">
               <Badge
@@ -182,7 +180,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                 {memorial.views.toLocaleString()} views
               </Badge>
               <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
+                <Share2 className="h-4 w-4 " />
                 Share
               </Button>
             </div>
@@ -201,7 +199,7 @@ John's legacy lives on through the countless lives he touched, the students he i
           <motion.div variants={fadeInUp}>
             <Card className="overflow-hidden">
               <CardContent className="p-0">
-                <div className="relative bg-gradient-to-br from-rose-500 to-pink-600 text-white">
+                <div className="relative bg-gradient-to-br from-[#acc09c] to-[#bce09e]  text-white">
                   <div className="absolute inset-0 bg-black/20"></div>
                   <div className="relative p-8 md:p-12">
                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
@@ -252,7 +250,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Heart className="h-5 w-5 mr-2 text-red-500" />
+                      <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
                       Life Story
                     </CardTitle>
                   </CardHeader>
@@ -337,7 +335,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                                 onClick={() => setCurrentImageIndex(index)}
                                 className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                                   index === currentImageIndex
-                                    ? "border-indigo-500"
+                                    ? "border-[#547455]"
                                     : "border-gray-200"
                                 }`}
                               >
@@ -528,7 +526,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                     <div className="space-y-2">
                       {memorial.achievements.map((achievement, index) => (
                         <div key={index} className="flex items-start space-x-2">
-                          <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2   rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{achievement}</p>
                         </div>
                       ))}

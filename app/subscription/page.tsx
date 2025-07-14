@@ -32,8 +32,8 @@ export default function SubscriptionPage() {
       monthlyPrice: 0,
       yearlyPrice: 0,
       icon: Star,
-      color: "text-gray-600",
-      bgColor: "bg-gray-50",
+      color: "text-black",
+      bgColor: "bg-green-50",
       borderColor: "border-gray-200",
       features: [
         "Biography & photo",
@@ -55,9 +55,9 @@ export default function SubscriptionPage() {
       monthlyPrice: 9,
       yearlyPrice: 90,
       icon: Crown,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-300",
+      color: "text-black",
+      bgColor: "bg-green-50",
+      borderColor: "border-gray-200",
       popular: true,
       features: [
         "Biography & photo",
@@ -77,9 +77,9 @@ export default function SubscriptionPage() {
       yearlyPrice: 199,
       isOneTime: true,
       icon: Zap,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-300",
+      color: "text-black",
+      bgColor: "bg-green-50",
+      borderColor: "border-gray-200",
       features: [
         "Biography & photo",
         "QR code generation",
@@ -131,21 +131,21 @@ export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31] ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-white hover:underline"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <Crown className="h-6 w-6 text-yellow-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+              <Crown className="h-6 w-6 text-white" />
+              <span className="text-xl font-bold text-white">
                 Subscription Plans
               </span>
             </div>
@@ -186,7 +186,7 @@ export default function SubscriptionPage() {
                 Yearly
                 <Badge
                   variant="secondary"
-                  className="ml-2 bg-green-100 text-green-800"
+                  className="ml-2 bg-green-100 text-[#243b31]"
                 >
                   Save 20%
                 </Badge>
@@ -236,13 +236,13 @@ export default function SubscriptionPage() {
                 <Card
                   className={`relative h-full ${
                     plan.popular
-                      ? "border-pink-600 shadow-lg "
+                      ? "border-[#243b31] shadow-lg "
                       : `${plan.borderColor} hover:shadow-md`
                   } transition-all duration-300`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600 text-white px-4 py-1">
+                      <Badge className="bg-[#547455]  text-white px-4 py-1">
                         Most Popular
                       </Badge>
                     </div>
@@ -283,7 +283,7 @@ export default function SubscriptionPage() {
                         </p>
                       )}
                       {plan.isOneTime && (
-                        <p className="text-sm text-purple-600 mt-1 font-medium">
+                        <p className="text-sm text-[#547455] mt-1 font-medium">
                           Lifetime Access - Pay Once, Own Forever
                         </p>
                       )}
@@ -351,7 +351,7 @@ export default function SubscriptionPage() {
                           </Button>
                         ) : plan.name === "Basic Premium" ? (
                           <Button
-                            className="w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
+                            className="w-full bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                             size="lg"
                             onClick={() => {
                               console.log("Upgrading to Basic Premium plan");
@@ -365,7 +365,7 @@ export default function SubscriptionPage() {
                           </Button>
                         ) : plan.name === "Legacy+" ? (
                           <Button
-                            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+                            className="w-full bg-black hover:bg-white hover:text-black border border-black"
                             size="lg"
                             onClick={() => {
                               console.log("Upgrading to Legacy+ plan");

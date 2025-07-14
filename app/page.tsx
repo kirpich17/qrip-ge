@@ -105,13 +105,13 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
       {/* Navigation */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 w-full bg-white/90 backdrop-blur-lg border-b border-rose-100 z-50"
+        className="sticky top-0 w-full bg-[#243b31] z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -119,33 +119,28 @@ export default function HomePage() {
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                className="p-2 bg-white rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-white" />{" "}
+                <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                QRIP.ge
-              </span>
+              <span className="text-2xl font-bold text-white">QRIP.ge</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/login">
-                <Button
-                  variant="ghost"
-                  className="text-gray-600 hover:text-rose-600"
-                >
+                <Button variant="ghost" className="text-white">
                   Sign In
                 </Button>
               </Link>
               <Link href="/admin/login">
                 <Button
                   variant="outline"
-                  className="border-rose-200 text-rose-600 hover:bg-rose-50 bg-transparent"
+                  className="border-white text-white bg-[#243b31] "
                 >
                   Admin
                 </Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg">
+                <Button className="bg-white shadow-lg text-[#243b31] hover:bg-[#243b31] hover:text-white border-white border hidden md:block">
                   Get Started
                 </Button>
               </Link>
@@ -161,7 +156,7 @@ export default function HomePage() {
       <Testimonials />
 
       {/* CTA Section - Enhanced */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 relative overflow-hidden">
+      <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-[#243b31] relative overflow-hidden">
         <div className="absolute inset-0">
           <motion.div
             animate={{ rotate: 360 }}
@@ -191,11 +186,11 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <div className="space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+            <div className="md:space-y-6 space-y-2">
+              <h2 className="md:text-4xl lg:text-5xl text-2xl font-bold text-white leading-tight">
                 Start Honoring Memories Today
               </h2>
-              <p className="text-xl text-rose-100 max-w-2xl mx-auto leading-relaxed">
+              <p className="md:text-xl text-base text-white max-w-2xl mx-auto leading-relaxed">
                 Join thousands of families who trust QRIP.ge to preserve and
                 share their most precious memories. Create your first memorial
                 in minutes.
@@ -206,7 +201,7 @@ export default function HomePage() {
               <Link href="/signup">
                 <Button
                   size="lg"
-                  className="bg-white text-rose-600 hover:bg-gray-50 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="bg-white text-[#243b31]  hover:bg-gray-50 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300"
                 >
                   <FaHeart className="mr-2 h-5 w-5" />
                   Create Your First Memorial
@@ -217,7 +212,7 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-rose-600 bg-transparent backdrop-blur-sm"
+                  className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#243b31]  bg-transparent backdrop-blur-sm"
                 >
                   <Eye className="mr-2 h-5 w-5" />
                   View Demo Memorial
@@ -225,7 +220,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="flex items-center justify-center space-x-8 pt-8 text-rose-100">
+            <div className="flex items-center justify-center space-x-8 md:pt-8 text-rose-100 flex-wrap">
               <div className="flex items-center space-x-2">
                 <Check className="h-5 w-5" />
                 <span>Free to start</span>

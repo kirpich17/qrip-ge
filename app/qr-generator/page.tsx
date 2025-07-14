@@ -66,13 +66,13 @@ export default function QRGeneratorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-white hover:text-gray-900"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
@@ -82,11 +82,11 @@ export default function QRGeneratorPage() {
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                className="p-2 bg-white rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-white" />{" "}
+                <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold text-white ">
                 QR Generator
               </span>
             </div>
@@ -302,7 +302,7 @@ export default function QRGeneratorPage() {
                     <div className="mt-6 space-y-3">
                       <div className="flex justify-center space-x-3">
                         <Button
-                          className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
+                          className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                           onClick={() => {
                             console.log(
                               "Download PNG for:",
@@ -354,13 +354,13 @@ export default function QRGeneratorPage() {
                 <CardContent className="space-y-4">
                   <div className="space-y-3 text-sm text-gray-600">
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                      <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         1
                       </div>
                       <p>Download and print the QR code on durable material</p>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                      <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         2
                       </div>
                       <p>
@@ -368,7 +368,7 @@ export default function QRGeneratorPage() {
                       </p>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                      <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         3
                       </div>
                       <p>
@@ -377,7 +377,7 @@ export default function QRGeneratorPage() {
                       </p>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                      <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         4
                       </div>
                       <p>

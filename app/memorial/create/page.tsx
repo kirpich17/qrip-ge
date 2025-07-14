@@ -50,15 +50,15 @@ export default function CreateMemorialPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-white hover:underline"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
+                <ArrowLeft className="h-5 w-5 " />
                 Back to Dashboard
               </Link>
             </div>
@@ -71,18 +71,18 @@ export default function CreateMemorialPage() {
                   alert("Preview functionality - would show memorial preview");
                 }}
               >
-                <Eye className="h-4 w-4 mr-2" />
+                <Eye className="h-4 w-4" />
                 Preview
               </Button>
               <Button
-                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
+                className="bg-[#547455] hover:bg-white hover:text-[#547455]"
                 onClick={() => {
                   console.log("Save memorial:", formData);
                   // Handle save logic
                   alert("Memorial saved successfully!");
                 }}
               >
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4 " />
                 Save Memorial
               </Button>
             </div>
@@ -117,7 +117,7 @@ export default function CreateMemorialPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Heart className="h-5 w-5 mr-2 text-red-500" />
+                    <Heart className="h-5 w-5 mr-2 text-[#547455]" />
                     Basic Information
                   </CardTitle>
                   <CardDescription>
@@ -379,14 +379,14 @@ export default function CreateMemorialPage() {
                       relationships
                     </p>
                     <Button
-                      className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600"
+                      className="bg-[#547455] hover:bg-[#243b31] text-white"
                       onClick={() => {
                         console.log("Start building family tree");
                         // Handle family tree builder
                         alert("Family Tree Builder - Coming Soon!");
                       }}
                     >
-                      <Users className="h-4 w-4 mr-2" />
+                      <Users className="h-4 w-4" />
                       Start Building Family Tree
                     </Button>
                   </div>

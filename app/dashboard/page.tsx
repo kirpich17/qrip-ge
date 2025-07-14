@@ -109,21 +109,19 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[#243b31] border-b ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center space-x-3 my-4">
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                  className="p-2 bg-white rounded-xl"
                 >
-                  <QrCode className="h-5 w-5 text-white" />{" "}
+                  <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
                 </motion.div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                  QRIP.ge
-                </span>
+                <span className="text-2xl font-bold text-white">QRIP.ge</span>
               </div>
               <Badge
                 variant="secondary"
@@ -132,10 +130,10 @@ export default function DashboardPage() {
                 Dashboard
               </Badge>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               <Link href="/settings">
                 <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
+                  <Settings className="h-4 w-4" />
                   Settings
                 </Button>
               </Link>
@@ -205,7 +203,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-4">
                   <div>
                     <CardTitle>Your Memorials</CardTitle>
                     <CardDescription>
@@ -213,7 +211,7 @@ export default function DashboardPage() {
                     </CardDescription>
                   </div>
                   <Link href="/memorial/create">
-                    <Button className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-from-pink-600 hover:to-pink-600">
+                    <Button className="bg-[#547455] hover:bg-[#243b31] text-white">
                       <Plus className="h-4 w-4 mr-2" />
                       New Memorial
                     </Button>
@@ -360,7 +358,7 @@ export default function DashboardPage() {
               <CardContent className="space-y-3">
                 <Link href="/memorial/create">
                   <Button
-                    className="w-full justify-start bg-transparent"
+                    className="w-full justify-start bg-transparent mb-2"
                     variant="outline"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -369,7 +367,7 @@ export default function DashboardPage() {
                 </Link>
                 <Link href="/qr-generator">
                   <Button
-                    className="w-full justify-start bg-transparent"
+                    className="w-full justify-start bg-transparent mb-2"
                     variant="outline"
                   >
                     <QrCode className="h-4 w-4 mr-2" />

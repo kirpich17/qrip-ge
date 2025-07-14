@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#ecefdc] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,26 +59,24 @@ export default function AdminLoginPage() {
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+              className="p-2 bg-[#243b31] rounded-xl"
             >
               <QrCode className="h-5 w-5 text-white" />{" "}
             </motion.div>
-            <span className="text-2xl font-bold text-white">QRIP.ge</span>
+            <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             Administrator Access
           </h1>
-          <p className="text-gray-400 mt-2">
+          <p className="text-gray-600  mt-2">
             Secure login for system administrators
           </p>
         </div>
 
-        <Card className="shadow-xl border-gray-700 bg-gray-800">
+        <Card className="shadow-xl ">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center text-white">
-              Admin Sign In
-            </CardTitle>
-            <CardDescription className="text-center text-gray-400">
+            <CardTitle className="text-xl text-center">Admin Sign In</CardTitle>
+            <CardDescription className="text-center  ">
               Enter your administrator credentials
             </CardDescription>
           </CardHeader>
@@ -93,7 +91,7 @@ export default function AdminLoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-300">
+                <Label htmlFor="email" className="">
                   Admin Email
                 </Label>
                 <Input
@@ -103,12 +101,12 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  className="h-12 "
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-300">
+                <Label htmlFor="password" className="">
                   Password
                 </Label>
                 <div className="relative">
@@ -119,7 +117,7 @@ export default function AdminLoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-12 pr-12 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                    className="h-12 pr-12 "
                   />
                   <Button
                     type="button"
@@ -139,7 +137,7 @@ export default function AdminLoginPage() {
 
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg w-full"
+                className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Authenticating..." : "Access Admin Panel"}

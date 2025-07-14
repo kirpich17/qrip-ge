@@ -155,18 +155,18 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header className="bg-[#243b31]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl"
+                className="p-2 bg-white rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-white" />{" "}
+                <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
               <span className="text-2xl font-bold text-white">
                 Admin Dashboard
@@ -176,13 +176,13 @@ export default function AdminDashboardPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-300 hover:text-white"
+                className=" text-white"
                 onClick={() => {
                   console.log("Open notifications");
                   // Handle notifications logic
                 }}
               >
-                <Bell className="h-4 w-4 mr-2" />
+                <Bell className="h-4 w-4 " />
                 Notifications
               </Button>
 
@@ -203,12 +203,8 @@ export default function AdminDashboardPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Welcome back, Admin
-          </h1>
-          <p className="text-gray-400">
-            Monitor and manage the QRIP.ge memorial platform
-          </p>
+          <h1 className="text-3xl font-bold mb-2">Welcome back, Admin</h1>
+          <p className="">Monitor and manage the QRIP.ge memorial platform</p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -220,22 +216,18 @@ export default function AdminDashboardPage() {
         >
           {stats.map((stat, index) => (
             <motion.div key={index} variants={fadeInUp}>
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">
-                        {stat.label}
-                      </p>
-                      <p className="text-3xl font-bold text-white">
-                        {stat.value}
-                      </p>
-                      <p className="text-sm text-green-400">
+                      <p className="text-sm font-medium ">{stat.label}</p>
+                      <p className="text-3xl font-bold ">{stat.value}</p>
+                      <p className="text-sm text-[#547455]">
                         {stat.change} from last month
                       </p>
                     </div>
                     <div
-                      className={`p-3 rounded-full bg-gray-700 ${stat.color}`}
+                      className={`p-3 rounded-full bg-[#efefef]  ${stat.color}`}
                     >
                       <stat.icon className="h-6 w-6" />
                     </div>
@@ -248,58 +240,59 @@ export default function AdminDashboardPage() {
 
         {/* Main Content */}
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="bg-gray-800 border-gray-700">
+          <TabsList className="">
             <TabsTrigger
               value="users"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               Users
             </TabsTrigger>
             <TabsTrigger
               value="memorials"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               Memorials
             </TabsTrigger>
             <TabsTrigger
               value="qr-codes"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               QR Codes
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               Analytics
             </TabsTrigger>
             <TabsTrigger
               value="settings"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               Settings
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">
-                      User Management
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
+                    <CardTitle className=" mb-2">User Management</CardTitle>
+                    <CardDescription className="">
                       Manage user accounts and subscriptions
                     </CardDescription>
                   </div>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Search
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 
+                     h-4 w-4"
+                    />
                     <Input
                       placeholder="Search users..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-gray-700 border-gray-600 text-white focus-visible:outline-none"
+                      className="pl-10  text-black focus-visible:outline-none"
                     />
                   </div>
                 </div>
@@ -307,18 +300,18 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-gray-700">
-                      <TableHead className="text-gray-300">User</TableHead>
-                      <TableHead className="text-gray-300">Plan</TableHead>
-                      <TableHead className="text-gray-300">Memorials</TableHead>
-                      <TableHead className="text-gray-300">Status</TableHead>
-                      <TableHead className="text-gray-300">Joined</TableHead>
-                      <TableHead className="text-gray-300">Actions</TableHead>
+                    <TableRow className="">
+                      <TableHead className="">User</TableHead>
+                      <TableHead className="">Plan</TableHead>
+                      <TableHead className="">Memorials</TableHead>
+                      <TableHead className="">Status</TableHead>
+                      <TableHead className="">Joined</TableHead>
+                      <TableHead className="">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users.map((user) => (
-                      <TableRow key={user.id} className="border-gray-700">
+                      <TableRow key={user.id} className="">
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-8 w-8">
@@ -333,12 +326,8 @@ export default function AdminDashboardPage() {
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-white font-medium">
-                                {user.name}
-                              </p>
-                              <p className="text-gray-400 text-sm">
-                                {user.email}
-                              </p>
+                              <p className=" font-medium">{user.name}</p>
+                              <p className=" text-sm">{user.email}</p>
                             </div>
                           </div>
                         </TableCell>
@@ -348,15 +337,13 @@ export default function AdminDashboardPage() {
                               user.plan === "Premium" ? "default" : "secondary"
                             }
                             className={
-                              user.plan === "Premium" ? "bg-yellow-600" : ""
+                              user.plan === "Premium" ? "bg-yellow-600 " : ""
                             }
                           >
                             {user.plan}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {user.memorials}
-                        </TableCell>
+                        <TableCell className="">{user.memorials}</TableCell>
                         <TableCell>
                           <Badge
                             variant={
@@ -371,26 +358,22 @@ export default function AdminDashboardPage() {
                             {user.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {user.joined}
-                        </TableCell>
+                        <TableCell className="">{user.joined}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-gray-400 hover:text-white"
+                                className="
+                                 "
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="end"
-                              className="bg-gray-800 border-gray-700"
-                            >
+                            <DropdownMenuContent align="end" className="">
                               <DropdownMenuItem
-                                className="text-gray-300 hover:text-white cursor-pointer"
+                                className=" hover:text-white cursor-pointer"
                                 onClick={() => {
                                   console.log(
                                     "View profile for user:",
@@ -404,7 +387,7 @@ export default function AdminDashboardPage() {
                               </DropdownMenuItem>
 
                               <DropdownMenuItem
-                                className="text-gray-300 hover:text-white cursor-pointer"
+                                className=" hover:text-white cursor-pointer"
                                 onClick={() => {
                                   if (
                                     confirm(
@@ -447,34 +430,32 @@ export default function AdminDashboardPage() {
           </TabsContent>
 
           <TabsContent value="memorials" className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className=" ">
               <CardHeader>
-                <CardTitle className="text-white">Recent Memorials</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="">Recent Memorials</CardTitle>
+                <CardDescription className="">
                   Review and moderate memorial submissions
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-gray-700">
-                      <TableHead className="text-gray-300">Memorial</TableHead>
-                      <TableHead className="text-gray-300">Creator</TableHead>
-                      <TableHead className="text-gray-300">Status</TableHead>
-                      <TableHead className="text-gray-300">Views</TableHead>
-                      <TableHead className="text-gray-300">Created</TableHead>
-                      <TableHead className="text-gray-300">Actions</TableHead>
+                    <TableRow className="">
+                      <TableHead className="">Memorial</TableHead>
+                      <TableHead className="">Creator</TableHead>
+                      <TableHead className="">Status</TableHead>
+                      <TableHead className="">Views</TableHead>
+                      <TableHead className="">Created</TableHead>
+                      <TableHead className="">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {recentMemorials.map((memorial) => (
-                      <TableRow key={memorial.id} className="border-gray-700">
-                        <TableCell className="text-white font-medium">
+                      <TableRow key={memorial.id} className="">
+                        <TableCell className=" font-medium">
                           {memorial.name}
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {memorial.creator}
-                        </TableCell>
+                        <TableCell className="">{memorial.creator}</TableCell>
                         <TableCell>
                           <Badge
                             variant={
@@ -491,12 +472,8 @@ export default function AdminDashboardPage() {
                             {memorial.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {memorial.views}
-                        </TableCell>
-                        <TableCell className="text-gray-300">
-                          {memorial.created}
-                        </TableCell>
+                        <TableCell className="">{memorial.views}</TableCell>
+                        <TableCell className="">{memorial.created}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -538,31 +515,55 @@ export default function AdminDashboardPage() {
           </TabsContent>
 
           <TabsContent value="qr-codes" className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className=" ">
               <CardHeader>
-                <CardTitle className="text-white">QR Code Management</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="">QR Code Management</CardTitle>
+                <CardDescription
+                  className="
+                "
+                >
                   Monitor QR code usage and generate new codes
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-4 bg-gray-700 rounded-lg">
-                    <p className="text-2xl font-bold text-white">3,891</p>
-                    <p className="text-sm text-gray-400">Total QR Codes</p>
+                  <div className="text-center p-4  rounded-lg">
+                    <p className="text-2xl font-bold ">3,891</p>
+                    <p
+                      className="text-sm 
+                    "
+                    >
+                      Total QR Codes
+                    </p>
                   </div>
-                  <div className="text-center p-4 bg-gray-700 rounded-lg">
-                    <p className="text-2xl font-bold text-white">28,392</p>
-                    <p className="text-sm text-gray-400">Total Scans</p>
+                  <div className="text-center p-4  rounded-lg">
+                    <p className="text-2xl font-bold ">28,392</p>
+                    <p
+                      className="text-sm 
+                    "
+                    >
+                      Total Scans
+                    </p>
                   </div>
-                  <div className="text-center p-4 bg-gray-700 rounded-lg">
-                    <p className="text-2xl font-bold text-white">1,247</p>
-                    <p className="text-sm text-gray-400">This Month</p>
+                  <div className="text-center p-4  rounded-lg">
+                    <p className="text-2xl font-bold ">1,247</p>
+                    <p
+                      className="text-sm 
+                    "
+                    >
+                      This Month
+                    </p>
                   </div>
                 </div>
                 <div className="text-center py-8">
-                  <QrCode className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">
+                  <QrCode
+                    className="h-16 w-16 
+                   mx-auto mb-4"
+                  />
+                  <p
+                    className="
+                  "
+                  >
                     QR Code analytics and management tools
                   </p>
                 </div>
@@ -572,22 +573,28 @@ export default function AdminDashboardPage() {
 
           <TabsContent value="analytics" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="0 ">
                 <CardHeader>
-                  <CardTitle className="text-white">Platform Growth</CardTitle>
+                  <CardTitle className="">Platform Growth</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center text-gray-400">
+                  <div
+                    className="h-64 flex items-center justify-center 
+                  "
+                  >
                     Analytics Chart Placeholder
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className=" ">
                 <CardHeader>
-                  <CardTitle className="text-white">Revenue Trends</CardTitle>
+                  <CardTitle className="">Revenue Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center text-gray-400">
+                  <div
+                    className="h-64 flex items-center justify-center 
+                  "
+                  >
                     Revenue Chart Placeholder
                   </div>
                 </CardContent>
@@ -596,24 +603,30 @@ export default function AdminDashboardPage() {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className=" ">
               <CardHeader>
-                <CardTitle className="text-white">Platform Settings</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="">Platform Settings</CardTitle>
+                <CardDescription
+                  className="
+                "
+                >
                   Configure platform-wide settings and preferences
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">
+                    <h3 className="text-lg font-semibold  mb-4">
                       General Settings
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white">Allow Public Directory</p>
-                          <p className="text-sm text-gray-400">
+                          <p className="">Allow Public Directory</p>
+                          <p
+                            className="text-sm 
+                          "
+                          >
                             Enable public browsing of memorials
                           </p>
                         </div>
@@ -630,8 +643,11 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white">Email Notifications</p>
-                          <p className="text-sm text-gray-400">
+                          <p className="">Email Notifications</p>
+                          <p
+                            className="text-sm 
+                          "
+                          >
                             System-wide notification settings
                           </p>
                         </div>
