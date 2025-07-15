@@ -33,7 +33,7 @@ export default function SettingsPage() {
     publicProfile: true,
     showEmail: false,
     allowComments: true,
-    language: "en",
+    language: "English",
     timezone: "Asia/Tbilisi",
     theme: "light",
   });

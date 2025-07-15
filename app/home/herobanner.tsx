@@ -14,6 +14,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInLeft = {
   initial: { opacity: 0, x: -60 },
@@ -47,6 +49,10 @@ const floatingAnimation = {
 };
 
 const Herobanner = () => {
+  const { t } = useTranslation();
+  const heroTranslations = t("hero");
+  const { language, setLanguage } = useLanguage();
+
   return (
     <>
       <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -89,18 +95,18 @@ const Herobanner = () => {
               >
                 <div className="inline-flex items-center space-x-2 bg-[#243b31] text-white px-4 py-2 rounded-full text-sm font-medium">
                   <FaHeart className="h-4 w-4" />
-                  <span>Preserving Memories Forever</span>
+                  <span>{heroTranslations.tagline}</span>
                 </div>
 
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900">
-                  Honor Their
-                  <span className="block text-[#243b31]">Beautiful Legacy</span>
+                  {heroTranslations.title1}
+                  <span className="block text-[#243b31]">
+                    {heroTranslations.title2}
+                  </span>
                 </h1>
 
                 <p className="text-base md:text-xl text-black leading-relaxed max-w-xl">
-                  Create touching digital memorials that celebrate life,
-                  preserve precious memories, and connect families across
-                  generations through the simple scan of a QR code.
+                  {heroTranslations.description}
                 </p>
               </motion.div>
 
@@ -114,7 +120,7 @@ const Herobanner = () => {
                     className="bg-[#547455] text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white hover:text-black"
                   >
                     <FaHeart className="mr-2 h-5 w-5" />
-                    Create Memorial
+                    {heroTranslations.createButton}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -125,7 +131,7 @@ const Herobanner = () => {
                     className="text-lg px-8 py-4 border-2 border-gray-300 hover:bg-gray-50 bg-white/80 backdrop-blur-sm"
                   >
                     <Play className="mr-2 h-5 w-5" />
-                    View Demo
+                    {heroTranslations.demoButton}
                   </Button>
                 </Link>
               </motion.div>
@@ -136,18 +142,20 @@ const Herobanner = () => {
               >
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900">10K+</div>
-                  <div className="text-sm text-gray-600">Memorials Created</div>
+                  <div className="text-sm text-gray-600">
+                    {heroTranslations.stats.memorials}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900">50K+</div>
                   <div className="text-sm text-gray-600">
-                    Families Connected
+                    {heroTranslations.stats.families}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900">100K+</div>
                   <div className="text-sm text-gray-600">
-                    Memories Preserved
+                    {heroTranslations.stats.memories}
                   </div>
                 </div>
               </motion.div>
@@ -194,26 +202,32 @@ const Herobanner = () => {
 
                     <div className="text-white">
                       <h3 className="text-3xl font-bold tracking-wider">
-                        Eleanor Grace
+                        {heroTranslations.memorialExample.name}
                       </h3>
-                      <p className="text-xl mt-2">1935 - 2023</p>
+                      <p className="text-xl mt-2">
+                        {heroTranslations.memorialExample.years}
+                      </p>
                       <p className="text-lg italic mt-4">
-                        "Beloved Mother & Grandmother"
+                        "{heroTranslations.memorialExample.quote}"
                       </p>
                     </div>
 
                     <div className="flex justify-center space-x-8 pt-4">
                       <div className="flex flex-col items-center text-sm text-white">
                         <FaCamera className="h-5 w-5 text-gray-300" />
-                        <span>24 Photos</span>
+                        <span>
+                          24 {heroTranslations.memorialExample.photos}
+                        </span>
                       </div>
                       <div className="flex flex-col items-center text-sm text-white">
                         <FaVideo className="h-5 w-5 text-gray-300" />
-                        <span>3 Videos</span>
+                        <span>3 {heroTranslations.memorialExample.videos}</span>
                       </div>
                       <div className="flex flex-col items-center text-sm text-white">
                         <FaUsers className="h-5 w-5 text-gray-300" />
-                        <span>12 Family</span>
+                        <span>
+                          12 {heroTranslations.memorialExample.family}
+                        </span>
                       </div>
                     </div>
 
@@ -228,7 +242,7 @@ const Herobanner = () => {
                       <div className="flex items-center justify-center space-x-2">
                         <FaQrcode className="h-5 w-5 text-gray-800" />
                         <span className="text-sm font-medium text-gray-800">
-                          Scan to Visit Memorial
+                          {heroTranslations.memorialExample.scanCta}
                         </span>
                       </div>
                     </div>

@@ -30,8 +30,10 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-
+import { useTranslation } from "@/hooks/useTranslate";
 export default function QRGeneratorPage() {
+  const { t } = useTranslation();
+  const qrGeneratorTranslations = t("qrGenerator");
   const [selectedMemorial, setSelectedMemorial] = useState("1");
   const [qrSize, setQrSize] = useState("medium");
   const [qrStyle, setQrStyle] = useState("standard");
@@ -66,16 +68,16 @@ export default function QRGeneratorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#243b31]">
+      <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between  flex-wrap gap-3">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:text-gray-900"
+                className="flex items-center text-white hover:underline gap-2 text-base"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Dashboard
+                <ArrowLeft className="h-5 w-5" />
+                {qrGeneratorTranslations.header.back}
               </Link>
             </div>
             <div className="flex items-center space-x-2">
@@ -86,8 +88,8 @@ export default function QRGeneratorPage() {
               >
                 <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
-              <span className="text-2xl font-bold text-white ">
-                QR Generator
+              <span className="md:text-2xl text-base font-bold text-white ">
+                {qrGeneratorTranslations.header.title}
               </span>
             </div>
           </div>
@@ -101,33 +103,41 @@ export default function QRGeneratorPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              QR Code Generator
+            <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
+              {qrGeneratorTranslations.title}
             </h1>
-            <p className="text-gray-600">
-              Generate and manage QR codes for your memorials
+            <p className="text-gray-600 text-base">
+              {qrGeneratorTranslations.subtitle}
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 grid-cols-1 md:gap-8 gap-5">
             {/* Configuration Panel */}
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Select Memorial</CardTitle>
+                  <CardTitle>
+                    {qrGeneratorTranslations.selectMemorial.title}
+                  </CardTitle>
                   <CardDescription>
-                    Choose which memorial to generate a QR code for
+                    {qrGeneratorTranslations.selectMemorial.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="memorial">Memorial</Label>
+                    <Label htmlFor="memorial">
+                      {qrGeneratorTranslations.selectMemorial.placeholder}
+                    </Label>
                     <Select
                       value={selectedMemorial}
                       onValueChange={setSelectedMemorial}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a memorial" />
+                        <SelectValue
+                          placeholder={
+                            qrGeneratorTranslations.selectMemorial.placeholder
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {memorials.map((memorial) => (
@@ -179,43 +189,62 @@ export default function QRGeneratorPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Customization</CardTitle>
+                  <CardTitle>
+                    {qrGeneratorTranslations.customization.title}
+                  </CardTitle>
                   <CardDescription>
-                    Customize your QR code appearance
+                    {qrGeneratorTranslations.customization.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="size">Size</Label>
+                    <Label htmlFor="size">
+                      {qrGeneratorTranslations.customization.size}
+                    </Label>
                     <Select value={qrSize} onValueChange={setQrSize}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="small">Small (200x200px)</SelectItem>
-                        <SelectItem value="medium">
-                          Medium (400x400px)
+                        <SelectItem value="small">
+                          {qrGeneratorTranslations.customization.sizes.small}
                         </SelectItem>
-                        <SelectItem value="large">Large (600x600px)</SelectItem>
+                        <SelectItem value="medium">
+                          {qrGeneratorTranslations.customization.sizes.medium}
+                        </SelectItem>
+                        <SelectItem value="large">
+                          {qrGeneratorTranslations.customization.sizes.large}
+                        </SelectItem>
                         <SelectItem value="xlarge">
-                          Extra Large (800x800px)
+                          {qrGeneratorTranslations.customization.sizes.xlarge}
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="style">Style</Label>
+                    <Label htmlFor="style">
+                      {qrGeneratorTranslations.customization.style}
+                    </Label>
                     <Select value={qrStyle} onValueChange={setQrStyle}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="standard">Standard</SelectItem>
-                        <SelectItem value="rounded">Rounded Corners</SelectItem>
-                        <SelectItem value="dots">Dots Style</SelectItem>
+                        <SelectItem value="standard">
+                          {
+                            qrGeneratorTranslations.customization.styles
+                              .standard
+                          }
+                        </SelectItem>
+                        <SelectItem value="rounded">
+                          {qrGeneratorTranslations.customization.styles.rounded}
+                        </SelectItem>
+                        <SelectItem value="dots">
+                          {qrGeneratorTranslations.customization.styles.dots}
+                        </SelectItem>
                         <SelectItem value="branded">
-                          Branded (with logo)
+                          {qrGeneratorTranslations.customization.styles.branded}
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -225,9 +254,11 @@ export default function QRGeneratorPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Memorial URL</CardTitle>
+                  <CardTitle>
+                    {qrGeneratorTranslations.memorialUrl.title}
+                  </CardTitle>
                   <CardDescription>
-                    This is the URL that the QR code will link to
+                    {qrGeneratorTranslations.memorialUrl.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -249,18 +280,18 @@ export default function QRGeneratorPage() {
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
                         <Link
                           href={`/memorial/${selectedMemorialData.qrCode.toLowerCase()}`}
                         >
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4 mr-2" />
-                            Preview Memorial
+                            {qrGeneratorTranslations.memorialUrl.preview}
                           </Button>
                         </Link>
                         <Button variant="outline" size="sm">
                           <Share2 className="h-4 w-4 mr-2" />
-                          Share Link
+                          {qrGeneratorTranslations.memorialUrl.share}
                         </Button>
                       </div>
                     </div>
@@ -273,36 +304,44 @@ export default function QRGeneratorPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>QR Code Preview</CardTitle>
+                  <CardTitle>{qrGeneratorTranslations.preview.title}</CardTitle>
                   <CardDescription>
-                    Preview and download your QR code
+                    {qrGeneratorTranslations.preview.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
                     {/* QR Code Placeholder */}
-                    <div className="inline-block p-8 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
+                    <div className="inline-block p-8 bg-white border-2 border-gray-200 rounded-lg shadow-sm w-full">
                       <div
-                        className={`bg-gray-900 ${
-                          qrSize === "small"
-                            ? "w-48 h-48"
-                            : qrSize === "medium"
-                            ? "w-64 h-64"
-                            : qrSize === "large"
-                            ? "w-80 h-80"
-                            : "w-96 h-96"
-                        } flex items-center justify-center text-white text-sm`}
+                        className={`
+    bg-gray-900
+    ${
+      qrSize === "small"
+        ? "w-48"
+        : qrSize === "medium"
+        ? "w-64"
+        : qrSize === "large"
+        ? "w-80"
+        : "w-96"
+    }
+    aspect-square                      
+    max-w-full                         
+    flex items-center justify-center
+    text-white text-sm
+    overflow-hidden mx-auto                      
+  `}
                       >
-                        QR Code
+                        {qrGeneratorTranslations.memorialUrl.preview}
                         <br />
                         {selectedMemorialData?.qrCode}
                       </div>
                     </div>
 
                     <div className="mt-6 space-y-3">
-                      <div className="flex justify-center space-x-3">
+                      <div className="flex justify-center gap-4 flex-wrap">
                         <Button
-                          className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
+                          className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455] sm:w-auto w-full"
                           onClick={() => {
                             console.log(
                               "Download PNG for:",
@@ -312,9 +351,10 @@ export default function QRGeneratorPage() {
                           }}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download PNG
+                          {qrGeneratorTranslations.preview.downloadPng}
                         </Button>
                         <Button
+                          className="sm:w-auto w-full"
                           variant="outline"
                           onClick={() => {
                             console.log(
@@ -325,7 +365,7 @@ export default function QRGeneratorPage() {
                           }}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download SVG
+                          {qrGeneratorTranslations.preview.downloadSvg}
                         </Button>
                       </div>
                       <Button
@@ -340,7 +380,7 @@ export default function QRGeneratorPage() {
                         }}
                       >
                         <Printer className="h-4 w-4 mr-2" />
-                        Print QR Code
+                        {qrGeneratorTranslations.preview.print}
                       </Button>
                     </div>
                   </div>
@@ -349,7 +389,9 @@ export default function QRGeneratorPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Usage Instructions</CardTitle>
+                  <CardTitle>
+                    {qrGeneratorTranslations.instructions.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3 text-sm text-gray-600">
@@ -357,33 +399,25 @@ export default function QRGeneratorPage() {
                       <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         1
                       </div>
-                      <p>Download and print the QR code on durable material</p>
+                      <p>{qrGeneratorTranslations.instructions.steps[0]}</p>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         2
                       </div>
-                      <p>
-                        Place it on the memorial site (gravestone, plaque, etc.)
-                      </p>
+                      <p>{qrGeneratorTranslations.instructions.steps[1]}</p>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         3
                       </div>
-                      <p>
-                        Visitors can scan with any smartphone camera to view the
-                        memorial
-                      </p>
+                      <p>{qrGeneratorTranslations.instructions.steps[2]}</p>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-[#547455]/10 text-[#547455] rounded-full flex items-center justify-center text-xs font-semibold">
                         4
                       </div>
-                      <p>
-                        No app download required - works with built-in camera
-                        apps
-                      </p>
+                      <p>{qrGeneratorTranslations.instructions.steps[3]}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -391,17 +425,25 @@ export default function QRGeneratorPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>QR Code Statistics</CardTitle>
+                  <CardTitle>{qrGeneratorTranslations.stats.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div>
-                      <p className="text-2xl font-bold text-gray-900">127</p>
-                      <p className="text-sm text-gray-600">Total Scans</p>
+                      <p className="md:text-2xl text-xl font-bold text-gray-900">
+                        127
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {qrGeneratorTranslations.stats.totalScans}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-gray-900">23</p>
-                      <p className="text-sm text-gray-600">This Month</p>
+                      <p className="md:text-2xl text-xl font-bold text-gray-900">
+                        23
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {qrGeneratorTranslations.stats.thisMonth}
+                      </p>
                     </div>
                   </div>
                 </CardContent>

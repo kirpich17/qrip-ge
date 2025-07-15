@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, QrCode, ArrowLeft } from "lucide-react";
@@ -18,8 +16,13 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+  const authTranslations = t("auth");
+  const commonTranslations = t("common");
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +41,7 @@ export default function LoginPage() {
         router.push("/dashboard");
       }, 1000);
     } else {
-      setError("Invalid credentials. Use user@qrip.ge / user123");
+      setError(authTranslations.errors.invalidCredentials);
       setIsLoading(false);
     }
   };
@@ -65,15 +68,21 @@ export default function LoginPage() {
             </motion.div>
             <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to manage your memorials</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {authTranslations.login.welcomeBack}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {authTranslations.login.subtitle}
+          </p>
         </div>
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">Sign In</CardTitle>
+            <CardTitle className="text-xl text-center">
+              {authTranslations.login.title}
+            </CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              {authTranslations.login.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -87,11 +96,11 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{commonTranslations.email}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter Username"
+                  placeholder={authTranslations.login.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -100,12 +109,12 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{commonTranslations.password}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Password"
+                    placeholder={authTranslations.login.passwordPlaceholder}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -132,7 +141,7 @@ export default function LoginPage() {
                   href="/forgot-password"
                   className="text-sm text-[#243b31] hover:underline"
                 >
-                  Forgot password?
+                  {authTranslations.login.forgotPassword}
                 </Link>
               </div>
 
@@ -141,32 +150,23 @@ export default function LoginPage() {
                 className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading
+                  ? authTranslations.login.signingIn
+                  : authTranslations.login.signIn}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                {authTranslations.login.noAccount}{" "}
                 <Link
                   href="/signup"
                   className="text-[#243b31] hover:underline font-medium"
                 >
-                  Sign up
+                  {authTranslations.login.signUp}
                 </Link>
               </p>
             </div>
-
-            {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 text-center mb-2">
-                Demo Credentials:
-              </p>
-              <p className="text-xs text-gray-800 text-center">
-                Email: user@qrip.ge
-                <br />
-                Password: user123
-              </p>
-            </div> */}
           </CardContent>
         </Card>
       </motion.div>

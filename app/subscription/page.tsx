@@ -131,21 +131,21 @@ export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#243b31] ">
+      <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between  flex-wrap gap-3">
+            <div className="flex items-center ">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:underline"
+                className="flex items-center text-white hover:underline gap-2 text-base"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
+                <ArrowLeft className="h-5 w-5 " />
                 Back to Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <Crown className="h-6 w-6 text-white" />
-              <span className="text-xl font-bold text-white">
+              <Crown className="md:h-6 md:w-6 w-4 h-4 text-white" />
+              <span className="md:text-xl text-base font-bold text-white">
                 Subscription Plans
               </span>
             </div>
@@ -160,16 +160,16 @@ export default function SubscriptionPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="md:text-4xl text-2xl font-bold text-gray-900 md:mb-4 mb-3">
               Choose Your Memorial Plan
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            <p className="md:text-xl text-base text-gray-600 max-w-3xl mx-auto mb-8">
               Select the perfect plan to honor your loved ones with dignity and
               preserve their memories forever
             </p>
 
             {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-8">
+            <div className="flex items-center justify-center space-x-4 mb-8 flex-wrap">
               <span
                 className={`text-sm font-medium ${
                   !isYearly ? "text-gray-900" : "text-gray-500"
@@ -197,9 +197,9 @@ export default function SubscriptionPage() {
           {/* Current Plan Status */}
           <motion.div variants={fadeInUp} className="mb-8">
             <Card className="border-gray-200 bg-gray-50">
-              <CardContent className="p-6">
+              <CardContent className="md:p-6 p-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center  flex-wrap gap-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                       <Star className="h-6 w-6 text-gray-600" />
                     </div>
@@ -224,7 +224,7 @@ export default function SubscriptionPage() {
           </motion.div>
 
           {/* Plans Grid */}
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid lg:grid-cols-3 md:gap-8 gap-5 mb-12">
             {plans.map((plan, index) => (
               <motion.div
                 key={plan.name}
@@ -250,9 +250,11 @@ export default function SubscriptionPage() {
 
                   <CardHeader className="text-center pb-4">
                     <div
-                      className={`w-16 h-16 ${plan.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
+                      className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
                     >
-                      <plan.icon className={`h-8 w-8 ${plan.color}`} />
+                      <plan.icon
+                        className={`md:h-8 md:w-8 w-5 h-5 ${plan.color}`}
+                      />
                     </div>
                     <CardTitle className="text-2xl font-bold">
                       {plan.name}

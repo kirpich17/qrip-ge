@@ -18,8 +18,13 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function SignupPage() {
+  const { t } = useTranslation();
+  const authTranslations = t("auth");
+  const commonTranslations = t("common");
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -68,25 +73,33 @@ export default function SignupPage() {
             </motion.div>
             <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Start honoring memories today</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {authTranslations.signup.createAccount}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {authTranslations.signup.startHonoringMemories}
+          </p>
         </div>
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">Sign Up</CardTitle>
+            <CardTitle className="text-xl text-center">
+              {authTranslations.signup.signUp}
+            </CardTitle>
             <CardDescription className="text-center">
-              Create your QRIP.ge account to get started
+              {authTranslations.signup.createAccountDescription}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">
+                    {authTranslations.signup.firstName}
+                  </Label>
                   <Input
                     id="firstName"
-                    placeholder="John"
+                    placeholder={authTranslations.signup.firstNamePlaceholder}
                     value={formData.firstName}
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
@@ -96,10 +109,12 @@ export default function SignupPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">
+                    {authTranslations.signup.lastName}
+                  </Label>
                   <Input
                     id="lastName"
-                    placeholder="Doe"
+                    placeholder={authTranslations.signup.lastNamePlaceholder}
                     value={formData.lastName}
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
@@ -111,11 +126,11 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{authTranslations.signup.email}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder={authTranslations.signup.emailPlaceholder}
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   required
@@ -124,12 +139,14 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">
+                  {authTranslations.signup.password}
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
+                    placeholder={authTranslations.signup.passwordPlaceholder}
                     value={formData.password}
                     onChange={(e) =>
                       handleInputChange("password", e.target.value)
@@ -154,11 +171,15 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">
+                  {authTranslations.signup.confirmPassword}
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm your password"
+                  placeholder={
+                    authTranslations.signup.confirmPasswordPlaceholder
+                  }
                   value={formData.confirmPassword}
                   onChange={(e) =>
                     handleInputChange("confirmPassword", e.target.value)
@@ -177,19 +198,19 @@ export default function SignupPage() {
                   }
                 />
                 <Label htmlFor="terms" className="text-sm text-gray-600">
-                  I agree to the{" "}
+                  {authTranslations.signup.agreeToTerms}{" "}
                   <Link
                     href="/terms"
                     className="text-[#243b31]  hover:underline"
                   >
-                    Terms of Service
+                    {authTranslations.signup.termsOfService}
                   </Link>{" "}
-                  and{" "}
+                  {authTranslations.signup.and}{" "}
                   <Link
                     href="/privacy"
                     className="text-[#243b31]  hover:underline"
                   >
-                    Privacy Policy
+                    {authTranslations.signup.privacyPolicy}
                   </Link>
                 </Label>
               </div>
@@ -205,12 +226,12 @@ export default function SignupPage() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account?{" "}
+                {authTranslations.signup.alreadyHaveAccount}{" "}
                 <Link
                   href="/login"
                   className="text-[#243b31] hover:underline font-medium"
                 >
-                  Sign in
+                  {authTranslations.signup.signIn}
                 </Link>
               </p>
             </div>
@@ -220,3 +241,26 @@ export default function SignupPage() {
     </div>
   );
 }
+
+//  "createAccount":
+//   "startHonoringMemories":
+//   "signUp"
+//   "createAccountDescription":
+//   "firstName":
+//   "firstNamePlaceholder":
+//   "lastName":
+//   "lastNamePlaceholder":
+//   "email":
+//   "emailPlaceholder": "
+//   "password":
+//   "passwordPlaceholder":
+//   "confirmPassword":
+//   "confirmPasswordPlaceholder":
+//   "agreeToTerms":
+//   "termsOfService":
+//   "privacyPolicy":
+//   "and":
+//   "creatingAccount":
+//   "createAccountButton":
+//   "alreadyHaveAccount":
+//   "signIn": "Sign in"

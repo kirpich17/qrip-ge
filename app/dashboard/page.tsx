@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserMenu } from "@/components/user-menu";
 import Link from "next/link";
-
+import { useTranslation } from "@/hooks/useTranslate";
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -51,6 +51,10 @@ const staggerContainer = {
 };
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+  const dashboardTranslations = t("dashboard");
+  const commonTranslations = t("common");
+  const dashboard = dashboardTranslations;
   const [searchQuery, setSearchQuery] = useState("");
 
   const memorials = [
@@ -91,15 +95,25 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      label: "Total Memorials",
+      label: dashboard.stats.totalMemorials,
       value: "3",
       icon: Heart,
       color: "text-red-600",
     },
-    { label: "Total Views", value: "490", icon: Eye, color: "text-blue-600" },
-    { label: "QR Scans", value: "127", icon: QrCode, color: "text-green-600" },
     {
-      label: "Family Members",
+      label: dashboard.stats.totalViews,
+      value: "490",
+      icon: Eye,
+      color: "text-blue-600",
+    },
+    {
+      label: dashboard.stats.qrScans,
+      value: "127",
+      icon: QrCode,
+      color: "text-green-600",
+    },
+    {
+      label: dashboard.stats.familyMembers,
       value: "12",
       icon: Users,
       color: "text-purple-600",
@@ -113,7 +127,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center justify-center space-x-3 my-4">
+              <div className="flex items-center justify-center md:space-x-3 space-x-2 my-4">
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
@@ -121,20 +135,22 @@ export default function DashboardPage() {
                 >
                   <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
                 </motion.div>
-                <span className="text-2xl font-bold text-white">QRIP.ge</span>
+                <span className="md:text-2xl text-xl font-bold text-white">
+                  QRIP.ge
+                </span>
               </div>
               <Badge
                 variant="secondary"
-                className="bg-indigo-100 text-indigo-800"
+                className="bg-indigo-100 text-indigo-800 md:block hidden"
               >
-                Dashboard
+                {dashboard.header.title}
               </Badge>
             </div>
             <div className="flex items-center space-x-2">
               <Link href="/settings">
                 <Button variant="outline" size="sm">
                   <Settings className="h-4 w-4" />
-                  Settings
+                  {dashboard.header.settings}
                 </Button>
               </Link>
               <UserMenu
@@ -155,14 +171,12 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="md:mb-8 mb-3"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, John
+          <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
+            {dashboard.header.welcome}
           </h1>
-          <p className="text-gray-600">
-            Manage your memorials and honor the memories of your loved ones
-          </p>
+          <p className="text-gray-600 text-base">{dashboard.header.subtitle}</p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -170,7 +184,7 @@ export default function DashboardPage() {
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:gap-6 gap-3 md:mb-8 mb-4"
         >
           {stats.map((stat, index) => (
             <motion.div key={index} variants={fadeInUp}>
@@ -181,7 +195,7 @@ export default function DashboardPage() {
                       <p className="text-sm font-medium text-gray-600">
                         {stat.label}
                       </p>
-                      <p className="text-3xl font-bold text-gray-900">
+                      <p className="md:text-3xl text-xl font-bold text-gray-900">
                         {stat.value}
                       </p>
                     </div>
@@ -198,29 +212,29 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 grid-cols-1 md:gap-8 gap-4">
           {/* Memorials List */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
                   <div>
-                    <CardTitle>Your Memorials</CardTitle>
+                    <CardTitle>{dashboard.memorials.title}</CardTitle>
                     <CardDescription>
-                      Manage and view your created memorials
+                      {dashboard.memorials.subtitle}
                     </CardDescription>
                   </div>
                   <Link href="/memorial/create">
                     <Button className="bg-[#547455] hover:bg-[#243b31] text-white">
                       <Plus className="h-4 w-4 mr-2" />
-                      New Memorial
+                      {dashboard.memorials.newMemorial}
                     </Button>
                   </Link>
                 </div>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search memorials..."
+                    placeholder={dashboard.memorials.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
@@ -236,8 +250,8 @@ export default function DashboardPage() {
                 >
                   {memorials.map((memorial) => (
                     <motion.div key={memorial.id} variants={fadeInUp}>
-                      <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                        <Avatar className="h-16 w-16">
+                      <div className="flex md:items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                        <Avatar className="md:h-16 md:w-16 h-10 w-10">
                           <AvatarImage
                             src={memorial.image || "/placeholder.svg"}
                           />
@@ -251,7 +265,7 @@ export default function DashboardPage() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                            <h3 className="md:text-lg text-base font-semibold text-gray-900 truncate">
                               {memorial.name}
                             </h3>
                             {memorial.plan === "premium" && (
@@ -272,8 +286,10 @@ export default function DashboardPage() {
                               {memorial.status}
                             </Badge>
                           </div>
-                          <p className="text-gray-600 mb-2">{memorial.dates}</p>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <p className="text-gray-600 mb-2 text-sm">
+                            {memorial.dates}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
                             <span className="flex items-center">
                               <Eye className="h-4 w-4 mr-1" />
                               {memorial.views} views
@@ -302,7 +318,7 @@ export default function DashboardPage() {
                                 className="flex items-center"
                               >
                                 <Eye className="h-4 w-4 mr-2" />
-                                View Memorial
+                                {dashboard.memorials.viewMemorial}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
@@ -311,7 +327,7 @@ export default function DashboardPage() {
                                 className="flex items-center"
                               >
                                 <Edit className="h-4 w-4 mr-2" />
-                                Edit
+                                {dashboard.memorials.edit}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
@@ -320,7 +336,7 @@ export default function DashboardPage() {
                                 className="flex items-center"
                               >
                                 <QrCode className="h-4 w-4 mr-2" />
-                                Download QR
+                                {dashboard.memorials.downloadQR}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -336,7 +352,7 @@ export default function DashboardPage() {
                               }}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
+                              {dashboard.memorials.delete}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -353,7 +369,7 @@ export default function DashboardPage() {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle>{dashboard.quickActions.title}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Link href="/memorial/create">
@@ -362,7 +378,7 @@ export default function DashboardPage() {
                     variant="outline"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Create Memorial
+                    {dashboard.quickActions.createMemorial}
                   </Button>
                 </Link>
                 <Link href="/qr-generator">
@@ -371,7 +387,7 @@ export default function DashboardPage() {
                     variant="outline"
                   >
                     <QrCode className="h-4 w-4 mr-2" />
-                    Generate QR Code
+                    {dashboard.quickActions.generateQR}
                   </Button>
                 </Link>
                 <Link href="/subscription">
@@ -380,7 +396,7 @@ export default function DashboardPage() {
                     variant="outline"
                   >
                     <Crown className="h-4 w-4 mr-2" />
-                    Manage Subscription
+                    {dashboard.quickActions.manageSubscription}
                   </Button>
                 </Link>
               </CardContent>
@@ -389,26 +405,35 @@ export default function DashboardPage() {
             {/* Recent Activity */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>{dashboard.recentActivity.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-gray-600">
-                      QR code scanned for John Smith
+                      {dashboard.recentActivity.qrScanned.replace(
+                        "{name}",
+                        "John Smith"
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <span className="text-gray-600">
-                      Memorial updated for Mary Johnson
+                      {dashboard.recentActivity.memorialUpdated.replace(
+                        "{name}",
+                        "Mary Johnson"
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                     <span className="text-gray-600">
-                      New photo added to Robert Wilson
+                      {dashboard.recentActivity.photoAdded.replace(
+                        "{name}",
+                        "Robert Wilson"
+                      )}
                     </span>
                   </div>
                 </div>
@@ -420,3 +445,42 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+// "dashboard": {
+//     "header": {
+//       "title": "Dashboard",
+//       "welcome": "Welcome back, {name}",
+//       "subtitle": "Manage your memorials and honor the memories of your loved ones"
+//     },
+//     "stats": {
+//       "totalMemorials": "Total Memorials",
+//       "totalViews": "Total Views",
+//       "qrScans": "QR Scans",
+//       "familyMembers": "Family Members"
+//     },
+//     "memorials": {
+//       "title": "Your Memorials",
+//       "subtitle": "Manage and view your created memorials",
+//       "searchPlaceholder": "Search memorials...",
+//       "newMemorial": "New Memorial",
+//       "viewMemorial": "View Memorial",
+//       "edit": "Edit",
+//       "downloadQR": "Download QR",
+//       "delete": "Delete",
+//       "deleteConfirm": "Are you sure you want to delete this memorial?",
+//       "active": "Active",
+//       "draft": "Draft"
+//     },
+//     "quickActions": {
+//       "title": "Quick Actions",
+//       "createMemorial": "Create Memorial",
+//       "generateQR": "Generate QR Code",
+//       "manageSubscription": "Manage Subscription"
+//     },
+//     "recentActivity": {
+//       "title": "Recent Activity",
+//       "qrScanned": "QR code scanned for {name}",
+//       "memorialUpdated": "Memorial updated for {name}",
+//       "photoAdded": "New photo added to {name}"
+//     }
+//   }

@@ -30,8 +30,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function CreateMemorialPage() {
+  const { t } = useTranslation();
+  const createMemorialTranslations = t("createMemorial");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -50,16 +53,16 @@ export default function CreateMemorialPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#243b31]">
+      <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between  flex-wrap gap-3">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:underline"
+                className="flex items-center text-white hover:underline gap-2 text-base"
               >
                 <ArrowLeft className="h-5 w-5 " />
-                Back to Dashboard
+                {createMemorialTranslations.header.back}
               </Link>
             </div>
             <div className="flex items-center space-x-3">
@@ -72,7 +75,7 @@ export default function CreateMemorialPage() {
                 }}
               >
                 <Eye className="h-4 w-4" />
-                Preview
+                {createMemorialTranslations.header.preview}
               </Button>
               <Button
                 className="bg-[#547455] hover:bg-white hover:text-[#547455]"
@@ -83,7 +86,7 @@ export default function CreateMemorialPage() {
                 }}
               >
                 <Save className="h-4 w-4 " />
-                Save Memorial
+                {createMemorialTranslations.header.save}
               </Button>
             </div>
           </div>
@@ -97,20 +100,28 @@ export default function CreateMemorialPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Create Memorial
+            <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
+              {createMemorialTranslations.title}
             </h1>
-            <p className="text-gray-600">
-              Honor your loved one with a beautiful digital memorial
+            <p className="text-gray-600 text-base">
+              {createMemorialTranslations.subtitle}
             </p>
           </div>
 
           <Tabs defaultValue="basic" className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="basic">Basic Info</TabsTrigger>
-              <TabsTrigger value="media">Media</TabsTrigger>
-              <TabsTrigger value="family">Family Tree</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="basic">
+                {createMemorialTranslations.tabs.basic}
+              </TabsTrigger>
+              <TabsTrigger value="media">
+                {createMemorialTranslations.tabs.media}
+              </TabsTrigger>
+              <TabsTrigger value="family">
+                {createMemorialTranslations.tabs.family}
+              </TabsTrigger>
+              <TabsTrigger value="settings">
+                {createMemorialTranslations.tabs.settings}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-6">
@@ -118,40 +129,47 @@ export default function CreateMemorialPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Heart className="h-5 w-5 mr-2 text-[#547455]" />
-                    Basic Information
+                    {createMemorialTranslations.basicInfo.title}
                   </CardTitle>
                   <CardDescription>
-                    Enter the essential details about your loved one
+                    {createMemorialTranslations.basicInfo.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Image */}
-                  <div className="flex items-center space-x-6">
-                    <Avatar className="h-24 w-24">
+                  <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
+                    <Avatar className="md:h-24 md:w-24 h-12 w-12">
                       <AvatarImage src="/placeholder.svg?height=96&width=96" />
                       <AvatarFallback className="text-2xl">
                         {formData.firstName[0]}
                         {formData.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <Button variant="outline" className="mb-2 bg-transparent">
+                    <div className="flex md:justify-start justify-center flex-col">
+                      <Button
+                        variant="outline"
+                        className="mb-2 bg-transparent "
+                      >
                         <Upload className="h-4 w-4 mr-2" />
-                        Upload Photo
+                        {createMemorialTranslations.basicInfo.uploadPhoto}
                       </Button>
-                      <p className="text-sm text-gray-500">
-                        Choose a beautiful photo to represent your loved one
+                      <p className="text-sm text-gray-500 md:text-left text-center">
+                        {createMemorialTranslations.basicInfo.photoDescription}
                       </p>
                     </div>
                   </div>
 
                   {/* Name Fields */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">
+                        {createMemorialTranslations.basicInfo.firstName}
+                      </Label>
                       <Input
                         id="firstName"
-                        placeholder="John"
+                        placeholder={
+                          createMemorialTranslations.basicInfo.firstName
+                        }
                         value={formData.firstName}
                         onChange={(e) =>
                           handleInputChange("firstName", e.target.value)
@@ -160,10 +178,14 @@ export default function CreateMemorialPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">
+                        {createMemorialTranslations.basicInfo.lastName}
+                      </Label>
                       <Input
                         id="lastName"
-                        placeholder="Smith"
+                        placeholder={
+                          createMemorialTranslations.basicInfo.lastName
+                        }
                         value={formData.lastName}
                         onChange={(e) =>
                           handleInputChange("lastName", e.target.value)
@@ -178,7 +200,7 @@ export default function CreateMemorialPage() {
                     <div className="space-y-2">
                       <Label htmlFor="birthDate" className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />
-                        Birth Date
+                        {createMemorialTranslations.basicInfo.birthDate}
                       </Label>
                       <Input
                         id="birthDate"
@@ -193,7 +215,7 @@ export default function CreateMemorialPage() {
                     <div className="space-y-2">
                       <Label htmlFor="deathDate" className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />
-                        Date of Passing
+                        {createMemorialTranslations.basicInfo.deathDate}
                       </Label>
                       <Input
                         id="deathDate"
@@ -211,7 +233,7 @@ export default function CreateMemorialPage() {
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
-                      Memorial Location
+                      {createMemorialTranslations.basicInfo.location}
                     </Label>
                     <Input
                       id="location"
@@ -226,10 +248,15 @@ export default function CreateMemorialPage() {
 
                   {/* Biography */}
                   <div className="space-y-2">
-                    <Label htmlFor="biography">Life Story</Label>
+                    <Label htmlFor="biography">
+                      {createMemorialTranslations.basicInfo.biography}
+                    </Label>
                     <Textarea
                       id="biography"
-                      placeholder="Share the beautiful story of your loved one's life..."
+                      placeholder={
+                        createMemorialTranslations.basicInfo
+                          .biographyPlaceholder
+                      }
                       value={formData.biography}
                       onChange={(e) =>
                         handleInputChange("biography", e.target.value)
@@ -246,10 +273,10 @@ export default function CreateMemorialPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
-                    Photos & Videos
+                    {createMemorialTranslations.media.title}
                   </CardTitle>
                   <CardDescription>
-                    Add meaningful photos and videos to celebrate their life
+                    {createMemorialTranslations.media.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -259,10 +286,10 @@ export default function CreateMemorialPage() {
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Add Photos
+                          {createMemorialTranslations.media.photos.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Upload cherished memories
+                          {createMemorialTranslations.media.photos.description}
                         </p>
                         <Button
                           variant="outline"
@@ -282,7 +309,7 @@ export default function CreateMemorialPage() {
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Choose Photos
+                          {createMemorialTranslations.media.photos.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -292,10 +319,10 @@ export default function CreateMemorialPage() {
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <Video className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Add Videos
+                          {createMemorialTranslations.media.videos.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Share video memories
+                          {createMemorialTranslations.media.videos.description}
                         </p>
                         <Button
                           variant="outline"
@@ -315,7 +342,7 @@ export default function CreateMemorialPage() {
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Choose Videos
+                          {createMemorialTranslations.media.videos.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -325,10 +352,13 @@ export default function CreateMemorialPage() {
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <FileText className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Documents
+                          {createMemorialTranslations.media.documents.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Add important documents
+                          {
+                            createMemorialTranslations.media.documents
+                              .description
+                          }
                         </p>
                         <Button
                           variant="outline"
@@ -348,7 +378,7 @@ export default function CreateMemorialPage() {
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Choose Files
+                          {createMemorialTranslations.media.documents.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -362,21 +392,23 @@ export default function CreateMemorialPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Users className="h-5 w-5 mr-2 text-green-500" />
-                    Family Tree
+                    {createMemorialTranslations.familyTree.title}
                   </CardTitle>
                   <CardDescription>
-                    Build a family tree to show relationships and connections
+                    {createMemorialTranslations.familyTree.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Family Tree Builder
+                      {createMemorialTranslations.familyTree.placeholder.title}
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      Create connections between family members and show
-                      relationships
+                      {
+                        createMemorialTranslations.familyTree.placeholder
+                          .description
+                      }
                     </p>
                     <Button
                       className="bg-[#547455] hover:bg-[#243b31] text-white"
@@ -387,7 +419,7 @@ export default function CreateMemorialPage() {
                       }}
                     >
                       <Users className="h-4 w-4" />
-                      Start Building Family Tree
+                      {createMemorialTranslations.familyTree.placeholder.button}
                     </Button>
                   </div>
                 </CardContent>
@@ -397,17 +429,27 @@ export default function CreateMemorialPage() {
             <TabsContent value="settings" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Privacy & Settings</CardTitle>
+                  <CardTitle>
+                    {createMemorialTranslations.settings.title}
+                  </CardTitle>
                   <CardDescription>
-                    Control who can view and interact with this memorial
+                    {createMemorialTranslations.settings.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Public Memorial</Label>
+                      <Label className="text-base">
+                        {
+                          createMemorialTranslations.settings.publicMemorial
+                            .label
+                        }
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Allow this memorial to appear in public directory
+                        {
+                          createMemorialTranslations.settings.publicMemorial
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch
@@ -420,9 +462,17 @@ export default function CreateMemorialPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Allow Comments</Label>
+                      <Label className="text-base">
+                        {
+                          createMemorialTranslations.settings.allowComments
+                            .label
+                        }
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Let visitors leave condolences and memories
+                        {
+                          createMemorialTranslations.settings.allowComments
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch defaultChecked />
@@ -430,9 +480,17 @@ export default function CreateMemorialPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Email Notifications</Label>
+                      <Label className="text-base">
+                        {
+                          createMemorialTranslations.settings.emailNotifications
+                            .label
+                        }
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Get notified when someone visits or comments
+                        {
+                          createMemorialTranslations.settings.emailNotifications
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch defaultChecked />
@@ -446,3 +504,76 @@ export default function CreateMemorialPage() {
     </div>
   );
 }
+
+// "createMemorial": {
+//   "header": {
+//     "back":
+//     "preview":
+//     "save":
+//   },
+//   "title":
+//   "subtitle":
+//   "tabs": {
+//     "basic":
+//     "media":
+//     "family":
+//     "settings":
+//   },
+//   "basicInfo": {
+//     "title":
+//     "description":
+//     "uploadPhoto":
+//     "photoDescription":
+//     "firstName":
+//     "lastName":
+//     "birthDate":
+//     "deathDate":
+//     "location":
+//     "biography":
+//     "biographyPlaceholder":
+//   },
+//   "media": {
+//     "title":
+//     "description":
+//     "photos": {
+//       "title":
+//       "description":
+//       "button":
+//     },
+//     "videos": {
+//       "title":
+//       "description":
+//       "button":
+//     },
+//     "documents": {
+//       "title":
+//       "description":
+//       "button":
+//     }
+//   },
+//   "familyTree": {
+//     "title":
+//     "description":
+//     "placeholder": {
+//       "title":
+//       "description":
+//       "button":
+//     }
+//   },
+//   "settings": {
+//     "title":
+//     "description":
+//     "publicMemorial": {
+//       "label":
+//       "description":
+//     },
+//     "allowComments": {
+//       "label":
+//       "description":
+//     },
+//     "emailNotifications": {
+//       "label":
+//       "description":
+//     }
+//   }
+// }

@@ -1,0 +1,390 @@
+{
+  "header": {
+    "admin": "Admin",
+    "getStarted": "Get Started"
+  },
+
+  "home": {
+    "heroTitle": "Honor Memories Forever",
+    "heroDescription": "Join thousands of families who trust QRIP.ge to preserve and share their most precious memories. Create your first memorial in minutes.",
+    "featuresTitle": "Features",
+    "featuresDescription": "Three simple steps to create a lasting digital memorial that honors your loved one's memory",
+    "plansTitle": "Plans",
+    "plansDescription": "Choose the perfect plan to honor your loved ones with dignity and preserve their memories forever",
+    "testimonialsTitle": "Testimonials",
+    "testimonialsDescription": "See what others have to say about QRIP.ge",
+    "memoriesTitle": "Memories",
+    "memoriesDescription": "View and share your created memorials",
+    "faqTitle": "FAQ",
+    "faqDescription": "Frequently asked questions about QRIP.ge",
+    "contactTitle": "Contact Us",
+    "contactDescription": "Get in touch with us to learn more about QRIP.ge"
+  },
+
+  "hero": {
+    "tagline": "Preserving Memories Forever",
+    "title1": "Honor Their",
+    "title2": "Beautiful Legacy",
+    "description": "Create touching digital memorials that celebrate life, preserve precious memories, and connect families across generations through the simple scan of a QR code.",
+    "createButton": "Create Memorial",
+    "demoButton": "View Demo",
+    "stats": {
+      "memorials": "Memorials Created",
+      "families": "Families Connected",
+      "memories": "Memories Preserved"
+    },
+    "memorialExample": {
+      "name": "Eleanor Grace",
+      "years": "1935 - 2023",
+      "quote": "Beloved Mother & Grandmother",
+      "photos": "Photos",
+      "videos": "Videos",
+      "family": "Family",
+      "scanCta": "Scan to Visit Memorial"
+    }
+  },
+
+  "features": {
+    "title": "Everything You Need to Remember",
+    "subtitle": "Comprehensive tools to create meaningful, lasting tributes that celebrate life and preserve memories",
+    "items": [
+      {
+        "title": "Photo & Video Galleries",
+        "description": "Upload unlimited photos and videos to create beautiful visual stories of their life"
+      },
+      {
+        "title": "Interactive Family Tree",
+        "description": "Build comprehensive family trees showing relationships and connections across generations"
+      },
+      {
+        "title": "GPS Memorial Locations",
+        "description": "Mark exact memorial locations with GPS coordinates and interactive maps"
+      },
+      {
+        "title": "Custom QR Codes",
+        "description": "Generate beautiful, customizable QR codes that link directly to the memorial page"
+      },
+      {
+        "title": "Global Accessibility",
+        "description": "Memorials are accessible worldwide, allowing distant family to stay connected"
+      },
+      {
+        "title": "Privacy Controls",
+        "description": "Complete control over who can view and contribute to each memorial"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How QRIP.ge Works",
+    "subtitle": "Three simple steps to create a lasting digital memorial that honors your loved one's memory",
+    "steps": [
+      {
+        "step": "01",
+        "title": "Create Memorial",
+        "description": "Share their story, upload photos and videos, build their family tree, and add meaningful details about their life."
+      },
+      {
+        "step": "02",
+        "title": "Generate QR Code",
+        "description": "Get a unique QR code that links to the memorial. Print it on durable material for the gravesite or memorial location."
+      },
+      {
+        "step": "03",
+        "title": "Share & Remember",
+        "description": "Family and friends can scan the QR code with any smartphone to visit the memorial and share their own memories."
+      }
+    ]
+  },
+  "plans": {
+    "title": "Honor Their Memory Your Way",
+    "subtitle": "From free basic memorials to comprehensive legacy preservation - find the perfect plan for your needs",
+    "choosePlan": "Choose Your Memorial Plan",
+    "mostPopular": "Most Popular",
+    "lifetimeAccess": "✨ Lifetime Access - Pay Once, Own Forever",
+    "startFree": "Start Free",
+    "choose": "Choose",
+    "viewComparison": "View Detailed Comparison",
+
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "forever",
+      "features": ["Biography & photo", "QR code", "Basic memorial"]
+    },
+    "premium": {
+      "name": "Basic Premium",
+      "price": "$9",
+      "period": "/month",
+      "features": [
+        "Everything Free in Basic Premium",
+        "Video upload",
+        "Family tree",
+        "GPS location"
+      ]
+    },
+    "legacy": {
+      "name": "Legacy+",
+      "price": "$199",
+      "period": "one-time",
+      "features": [
+        "Everything in Premium",
+        "Multiple admins",
+        "Lifetime access",
+        "White-glove setup"
+      ]
+    }
+  },
+  "testimonials": {
+    "title": "Families Trust QRIP.ge",
+    "subtitle": "See how families around the world are preserving and sharing precious memories",
+    "items": [
+      {
+        "name": "Sarah Johnson",
+        "location": "Tbilisi, Georgia",
+        "text": "QRIP.ge helped us create a beautiful memorial for my grandmother. Now our whole family can visit her memorial page and share memories, no matter where they are in the world.",
+        "avatar": "SJ"
+      },
+      {
+        "name": "Michael Chen",
+        "location": "Batumi, Georgia",
+        "text": "The QR code on my father's headstone has been scanned over 200 times. It's amazing how many people have been able to learn about his life and leave their own memories.",
+        "avatar": "MC"
+      },
+      {
+        "name": "Elena Kvirikashvili",
+        "location": "Kutaisi, Georgia",
+        "text": "The family tree feature is incredible. We've connected with distant relatives we never knew existed, all through my uncle's memorial page. It's brought our family closer together.",
+        "avatar": "EK"
+      }
+    ]
+  },
+  "memories": {
+    "title": "Start Honoring Memories Today",
+    "subtitle": "Join thousands of families who trust QRIP.ge to preserve and share their most precious memories. Create your first memorial in minutes.",
+    "primaryButton": "Create Your First Memorial",
+    "secondaryButton": "View Demo Memorial",
+    "benefits": ["Free to start", "No credit card required", "Setup in minutes"]
+  },
+  "footer": {
+    "copyright": "© 2025 QRIP.ge. All rights reserved."
+  },
+  "auth": {
+    "login": {
+      "welcomeBack": "Welcome Back",
+      "subtitle": "Sign in to manage your memorials",
+      "title": "Sign In",
+      "description": "Enter your credentials to access your account",
+      "emailPlaceholder": "Enter Username",
+      "passwordPlaceholder": "Password",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+
+    "signup": {
+      "createAccount": "Create Account",
+      "startHonoringMemories": "Start honoring memories today",
+      "signUp": "Sign Up",
+      "createAccountDescription": "Create your QRIP.ge account to get started",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create a strong password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "agreeToTerms": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "creatingAccount": "Creating Account...",
+      "createAccountButton": "Create Account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid credentials. Use user@qrip.ge / user123"
+    }
+  },
+  "common": {
+    "email": "Email",
+    "password": "Password"
+  },
+
+  "dashboard": {
+    "header": {
+      "title": "Dashboard",
+      "settings": "Settings",
+      "welcome": "Welcome back, {name}",
+      "subtitle": "Manage your memorials and honor the memories of your loved ones"
+    },
+    "stats": {
+      "totalMemorials": "Total Memorials",
+      "totalViews": "Total Views",
+      "qrScans": "QR Scans",
+      "familyMembers": "Family Members"
+    },
+    "memorials": {
+      "title": "Your Memorials",
+      "subtitle": "Manage and view your created memorials",
+      "searchPlaceholder": "Search memorials...",
+      "newMemorial": "New Memorial",
+      "viewMemorial": "View Memorial",
+      "edit": "Edit",
+      "downloadQR": "Download QR",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this memorial?",
+      "active": "Active",
+      "draft": "Draft"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "createMemorial": "Create Memorial",
+      "generateQR": "Generate QR Code",
+      "manageSubscription": "Manage Subscription"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "qrScanned": "QR code scanned for {name}",
+      "memorialUpdated": "Memorial updated for {name}",
+      "photoAdded": "New photo added to {name}"
+    }
+  },
+
+  "createMemorial": {
+    "header": {
+      "back": "Back to Dashboard",
+      "preview": "Preview",
+      "save": "Save Memorial"
+    },
+    "title": "Create Memorial",
+    "subtitle": "Honor your loved one with a beautiful digital memorial",
+    "tabs": {
+      "basic": "Basic Info",
+      "media": "Media",
+      "family": "Family Tree",
+      "settings": "Settings"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "description": "Enter the essential details about your loved one",
+      "uploadPhoto": "Upload Photo",
+      "photoDescription": "Choose a beautiful photo to represent your loved one",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "birthDate": "Birth Date",
+      "deathDate": "Date of Passing",
+      "location": "Memorial Location",
+      "biography": "Life Story",
+      "biographyPlaceholder": "Share the beautiful story of your loved one's life..."
+    },
+    "media": {
+      "title": "Photos & Videos",
+      "description": "Add meaningful photos and videos to celebrate their life",
+      "photos": {
+        "title": "Add Photos",
+        "description": "Upload cherished memories",
+        "button": "Choose Photos"
+      },
+      "videos": {
+        "title": "Add Videos",
+        "description": "Share video memories",
+        "button": "Choose Videos"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "Add important documents",
+        "button": "Choose Files"
+      }
+    },
+    "familyTree": {
+      "title": "Family Tree",
+      "description": "Build a family tree to show relationships and connections",
+      "placeholder": {
+        "title": "Family Tree Builder",
+        "description": "Create connections between family members and show relationships",
+        "button": "Start Building Family Tree"
+      }
+    },
+    "settings": {
+      "title": "Privacy & Settings",
+      "description": "Control who can view and interact with this memorial",
+      "publicMemorial": {
+        "label": "Public Memorial",
+        "description": "Allow this memorial to appear in public directory"
+      },
+      "allowComments": {
+        "label": "Allow Comments",
+        "description": "Let visitors leave condolences and memories"
+      },
+      "emailNotifications": {
+        "label": "Email Notifications",
+        "description": "Get notified when someone visits or comments"
+      }
+    }
+  },
+
+  "qrGenerator": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "QR Generator"
+    },
+    "title": "QR Code Generator",
+    "subtitle": "Generate and manage QR codes for your memorials",
+    "selectMemorial": {
+      "title": "Select Memorial",
+      "description": "Choose which memorial to generate a QR code for",
+      "placeholder": "Select a memorial"
+    },
+    "customization": {
+      "title": "Customization",
+      "description": "Customize your QR code appearance",
+      "size": "Size",
+      "style": "Style",
+      "sizes": {
+        "small": "Small (200x200px)",
+        "medium": "Medium (400x400px)",
+        "large": "Large (600x600px)",
+        "xlarge": "Extra Large (800x800px)"
+      },
+      "styles": {
+        "standard": "Standard",
+        "rounded": "Rounded Corners",
+        "dots": "Dots Style",
+        "branded": "Branded (with logo)"
+      }
+    },
+    "memorialUrl": {
+      "title": "Memorial URL",
+      "description": "This is the URL that the QR code will link to",
+      "preview": "Preview Memorial",
+      "share": "Share Link"
+    },
+    "preview": {
+      "title": "QR Code Preview",
+      "description": "Preview and download your QR code",
+      "downloadPng": "Download PNG",
+      "downloadSvg": "Download SVG",
+      "print": "Print QR Code"
+    },
+    "instructions": {
+      "title": "Usage Instructions",
+      "steps": [
+        "Download and print the QR code on durable material",
+        "Place it on the memorial site (gravestone, plaque, etc.)",
+        "Visitors can scan with any smartphone camera to view the memorial",
+        "No app download required - works with built-in camera apps"
+      ]
+    },
+    "stats": {
+      "title": "QR Code Statistics",
+      "totalScans": "Total Scans",
+      "thisMonth": "This Month"
+    }
+  }
+}
