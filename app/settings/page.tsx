@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
+  const settingsTranslations = t("setting");
   const [settings, setSettings] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -54,12 +57,15 @@ export default function SettingsPage() {
                 className="flex items-center text-white hover:underline"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Dashboard
+                {settingsTranslations.header.backButton}
               </Link>
             </div>
             <div className="flex items-center space-x-2">
               <Settings className="h-6 w-6 text-white" />
-              <span className="text-xl font-bold text-white">Settings</span>
+              <span className="text-xl font-bold text-white">
+                {" "}
+                {settingsTranslations.header.title}
+              </span>
             </div>
           </div>
         </div>
@@ -72,9 +78,11 @@ export default function SettingsPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {settingsTranslations.page.title}
+            </h1>
             <p className="text-gray-600">
-              Manage your account preferences and privacy settings
+              {settingsTranslations.page.description}
             </p>
           </div>
 
@@ -84,18 +92,20 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Bell className="h-5 w-5 mr-2 text-blue-500" />
-                  Notifications
+                  {settingsTranslations.notifications.title}
                 </CardTitle>
                 <CardDescription>
-                  Choose how you want to be notified about memorial activity
+                  {settingsTranslations.notifications.description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Email Notifications</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.notifications.email}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Receive notifications via email
+                      {settingsTranslations.notifications.emailDescription}
                     </p>
                   </div>
                   <Switch
@@ -108,9 +118,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Push Notifications</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.notifications.push}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Receive push notifications on your device
+                      {settingsTranslations.notifications.pushDescription}
                     </p>
                   </div>
                   <Switch
@@ -125,9 +137,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Memorial Visits</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.notifications.visits}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Get notified when someone visits your memorials
+                      {settingsTranslations.notifications.visitsDescription}
                     </p>
                   </div>
                   <Switch
@@ -140,9 +154,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">New Comments</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.notifications.comments}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Get notified about new comments on your memorials
+                      {settingsTranslations.notifications.commentsDescription}
                     </p>
                   </div>
                   <Switch
@@ -155,9 +171,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Weekly Digest</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.notifications.digest}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Receive a weekly summary of memorial activity
+                      {settingsTranslations.notifications.digestDescription}
                     </p>
                   </div>
                   <Switch
@@ -175,18 +193,20 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Shield className="h-5 w-5 mr-2 text-green-500" />
-                  Privacy
+                  {settingsTranslations.privacy.title}
                 </CardTitle>
                 <CardDescription>
-                  Control your privacy and what others can see
+                  {settingsTranslations.privacy.description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Public Profile</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.privacy.publicProfile}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Allow others to find your profile in search
+                      {settingsTranslations.privacy.publicProfileDescription}
                     </p>
                   </div>
                   <Switch
@@ -199,9 +219,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Show Email Address</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.privacy.showEmail}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Display your email on your public profile
+                      {settingsTranslations.privacy.showEmailDescription}
                     </p>
                   </div>
                   <Switch
@@ -214,9 +236,11 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Allow Comments</Label>
+                    <Label className="text-base">
+                      {settingsTranslations.privacy.allowComments}
+                    </Label>
                     <p className="text-sm text-gray-500">
-                      Let visitors leave comments on your memorials
+                      {settingsTranslations.privacy.allowCommentsDescription}
                     </p>
                   </div>
                   <Switch
@@ -241,7 +265,7 @@ export default function SettingsPage() {
                 }}
               >
                 <Save className="h-4 w-4 mr-2" />
-                Save Settings
+                {settingsTranslations.saveButton}
               </Button>
             </div>
           </div>

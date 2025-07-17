@@ -1,21 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Search, Filter, Heart, MapPin, Calendar, Eye, QrCode } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Filter,
+  Heart,
+  MapPin,
+  Calendar,
+  Eye,
+  QrCode,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Link from "next/link";
+import Header from "@/components/header/page";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
-}
+};
 
 const staggerContainer = {
   animate: {
@@ -23,13 +39,14 @@ const staggerContainer = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 export default function DirectoryPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [locationFilter, setLocationFilter] = useState("all")
-  const [yearFilter, setYearFilter] = useState("all")
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const { t } = useTranslation();
+  const directoryTranslations = t("directory");
   const memorials = [
     {
       id: "qr001",
@@ -38,7 +55,8 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Tbilisi, Georgia",
       views: 245,
-      description: "Beloved father, grandfather, and community leader who dedicated his life to education.",
+      description:
+        "Beloved father, grandfather, and community leader who dedicated his life to education.",
       tags: ["Teacher", "Community Leader"],
     },
     {
@@ -48,7 +66,8 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Batumi, Georgia",
       views: 189,
-      description: "Loving mother and talented artist who brought beauty to the world through her paintings.",
+      description:
+        "Loving mother and talented artist who brought beauty to the world through her paintings.",
       tags: ["Artist", "Mother"],
     },
     {
@@ -58,7 +77,8 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Kutaisi, Georgia",
       views: 156,
-      description: "War veteran and devoted husband who served his country with honor and dignity.",
+      description:
+        "War veteran and devoted husband who served his country with honor and dignity.",
       tags: ["Veteran", "Husband"],
     },
     {
@@ -68,7 +88,8 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Tbilisi, Georgia",
       views: 203,
-      description: "Renowned doctor who saved countless lives and mentored young medical professionals.",
+      description:
+        "Renowned doctor who saved countless lives and mentored young medical professionals.",
       tags: ["Doctor", "Mentor"],
     },
     {
@@ -78,7 +99,8 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Rustavi, Georgia",
       views: 134,
-      description: "Passionate musician and composer who enriched Georgian cultural heritage.",
+      description:
+        "Passionate musician and composer who enriched Georgian cultural heritage.",
       tags: ["Musician", "Composer"],
     },
     {
@@ -88,36 +110,16 @@ export default function DirectoryPage() {
       image: "/placeholder.svg?height=100&width=100",
       location: "Gori, Georgia",
       views: 178,
-      description: "Dedicated teacher and children's book author who inspired generations of young minds.",
+      description:
+        "Dedicated teacher and children's book author who inspired generations of young minds.",
       tags: ["Teacher", "Author"],
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center space-x-2">
-              <QrCode className="h-8 w-8 text-indigo-600" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                QRIP.ge
-              </span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/login">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
-                  Create Memorial
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
@@ -127,9 +129,11 @@ export default function DirectoryPage() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Memorial Directory</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {directoryTranslations.header.title}
+          </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Browse and honor the memories of loved ones. Each memorial tells a unique story of a life well-lived.
+            {directoryTranslations.header.description}
           </p>
         </motion.div>
 
@@ -146,24 +150,57 @@ export default function DirectoryPage() {
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <Input
-                    placeholder="Search by name, location, or description..."
+                    placeholder={directoryTranslations.search.placeholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 h-12"
                   />
                 </div>
                 <div className="flex gap-3">
-                  <Select value={locationFilter} onValueChange={setLocationFilter}>
+                  <Select
+                    value={locationFilter}
+                    onValueChange={setLocationFilter}
+                  >
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="Filter by location" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Locations</SelectItem>
-                      <SelectItem value="tbilisi">Tbilisi</SelectItem>
-                      <SelectItem value="batumi">Batumi</SelectItem>
-                      <SelectItem value="kutaisi">Kutaisi</SelectItem>
-                      <SelectItem value="rustavi">Rustavi</SelectItem>
-                      <SelectItem value="gori">Gori</SelectItem>
+                      <SelectItem value="all">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .all
+                        }
+                      </SelectItem>
+                      <SelectItem value="tbilisi">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .tbilisi
+                        }
+                      </SelectItem>
+                      <SelectItem value="batumi">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .batumi
+                        }
+                      </SelectItem>
+                      <SelectItem value="kutaisi">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .kutaisi
+                        }
+                      </SelectItem>
+                      <SelectItem value="rustavi">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .rustavi
+                        }
+                      </SelectItem>
+                      <SelectItem value="gori">
+                        {
+                          directoryTranslations.search.locationFilter.options
+                            .gori
+                        }
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={yearFilter} onValueChange={setYearFilter}>
@@ -171,7 +208,9 @@ export default function DirectoryPage() {
                       <SelectValue placeholder="Year" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Years</SelectItem>
+                      <SelectItem value="all">
+                        {directoryTranslations.search.yearFilter.options.all}
+                      </SelectItem>
                       <SelectItem value="2024">2024</SelectItem>
                       <SelectItem value="2023">2023</SelectItem>
                       <SelectItem value="2022">2022</SelectItem>
@@ -193,7 +232,12 @@ export default function DirectoryPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-6"
         >
-          <p className="text-gray-600">Showing {memorials.length} memorials</p>
+          <p className="text-gray-600">
+            {directoryTranslations.results.count.replace(
+              "{count}",
+              memorials.length
+            )}
+          </p>
         </motion.div>
 
         {/* Memorial Grid */}
@@ -218,7 +262,7 @@ export default function DirectoryPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-gray-900">
                         {memorial.name}
                       </h3>
                       <p className="text-gray-600 flex items-center mt-1">
@@ -232,11 +276,17 @@ export default function DirectoryPage() {
                     </div>
                   </div>
 
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{memorial.description}</p>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {memorial.description}
+                  </p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {memorial.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
                         {tag}
                       </Badge>
                     ))}
@@ -245,15 +295,13 @@ export default function DirectoryPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div className="flex items-center text-sm text-gray-500">
                       <Eye className="h-4 w-4 mr-1" />
-                      {memorial.views} views
+                      {memorial.views}{" "}
+                      {directoryTranslations.memorialCard.views}
                     </div>
                     <Link href={`/memorial/${memorial.id}`}>
-                      <Button
-                        size="sm"
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                      >
+                      <Button size="sm" className="">
                         <Heart className="h-4 w-4 mr-1" />
-                        Visit Memorial
+                        {directoryTranslations.memorialCard.visitButton}
                       </Button>
                     </Link>
                   </div>
@@ -271,10 +319,48 @@ export default function DirectoryPage() {
           className="text-center mt-12"
         >
           <Button variant="outline" size="lg">
-            Load More Memorials
+            {directoryTranslations.loadMore}
           </Button>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
+
+// "directory": {
+//     "header": {
+//       "title":
+//       "description":
+//     },
+//     "search": {
+//       "placeholder":
+//       "locationFilter": {
+//         "label":
+//         "options": {
+//           "all":
+//           "tbilisi":
+//           "batumi":
+//           "kutaisi":
+//           "rustavi":
+//           "gori":
+//         }
+//       },
+//       "yearFilter": {
+//         "label":
+//         "options": {
+//           "all":
+//           "2024":
+//           "2023":
+//           "2022":
+//         }
+//       }
+//     },
+//     "results": {
+//       "count":
+//     },
+//     "memorialCard": {
+//       "visitButton":
+//       "views":
+//     },
+//     "loadMore":
+//   }

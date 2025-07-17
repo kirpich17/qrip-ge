@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
+import { sub } from "date-fns";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -23,36 +25,38 @@ const fadeInUp = {
 };
 
 export default function SubscriptionPage() {
+  const { t } = useTranslation();
+  const subscriptionTranslations = t("subscription");
   const [isYearly, setIsYearly] = useState(false);
 
   const plans = [
     {
-      name: "Free",
-      description: "Basic memorial features",
-      monthlyPrice: 0,
+      name: subscriptionTranslations.plans.free.name,
+      description: subscriptionTranslations.plans.free.description,
+      monthlyPrice: subscriptionTranslations.plans.free.price,
       yearlyPrice: 0,
       icon: Star,
       color: "text-black",
       bgColor: "bg-green-50",
       borderColor: "border-gray-200",
       features: [
-        "Biography & photo",
-        "QR code generation",
-        "Basic memorial page",
-        "Public directory listing",
+        subscriptionTranslations.plans.free.features[0],
+        subscriptionTranslations.plans.free.features[1],
+        subscriptionTranslations.plans.free.features[2],
+        subscriptionTranslations.plans.free.features[3],
       ],
       limitations: [
-        "No video upload",
-        "No family tree/genealogy",
-        "No GPS location & map pin",
-        "No multiple admins/collaborators",
-        "No lifetime access",
+        subscriptionTranslations.plans.free.limitations[0],
+        subscriptionTranslations.plans.free.limitations[1],
+        subscriptionTranslations.plans.free.limitations[2],
+        subscriptionTranslations.plans.free.limitations[3],
+        subscriptionTranslations.plans.free.limitations[4],
       ],
     },
     {
-      name: "Basic Premium",
-      description: "Enhanced memorial experience",
-      monthlyPrice: 9,
+      name: subscriptionTranslations.plans.basic.name,
+      description: subscriptionTranslations.plans.basic.description,
+      monthlyPrice: subscriptionTranslations.plans.basic.price,
       yearlyPrice: 90,
       icon: Crown,
       color: "text-black",
@@ -60,20 +64,23 @@ export default function SubscriptionPage() {
       borderColor: "border-gray-200",
       popular: true,
       features: [
-        "Biography & photo",
-        "QR code generation",
-        "Video upload",
-        "Family tree / genealogy",
-        "GPS location & map pin",
-        "Advanced customization",
-        "Priority support",
+        subscriptionTranslations.plans.basic.features[0],
+        subscriptionTranslations.plans.basic.features[1],
+        subscriptionTranslations.plans.basic.features[2],
+        subscriptionTranslations.plans.basic.features[3],
+        subscriptionTranslations.plans.basic.features[4],
+        subscriptionTranslations.plans.basic.features[5],
+        subscriptionTranslations.plans.basic.features[6],
       ],
-      limitations: ["No multiple admins/collaborators", "No lifetime access"],
+      limitations: [
+        subscriptionTranslations.plans.basic.limitations[0],
+        subscriptionTranslations.plans.basic.limitations[1],
+      ],
     },
     {
-      name: "Legacy+",
-      description: "Complete memorial solution",
-      monthlyPrice: 199,
+      name: subscriptionTranslations.plans.legacy.name,
+      description: subscriptionTranslations.plans.legacy.description,
+      monthlyPrice: subscriptionTranslations.plans.legacy.price,
       yearlyPrice: 199,
       isOneTime: true,
       icon: Zap,
@@ -81,16 +88,16 @@ export default function SubscriptionPage() {
       bgColor: "bg-green-50",
       borderColor: "border-gray-200",
       features: [
-        "Biography & photo",
-        "QR code generation",
-        "Video upload",
-        "Family tree / genealogy",
-        "GPS location & map pin",
-        "Multiple admins/collaborators",
-        "Lifetime access (one-time pay)",
-        "Premium customization",
-        "White-glove setup service",
-        "Dedicated support",
+        subscriptionTranslations.plans.legacy.features[0],
+        subscriptionTranslations.plans.legacy.features[1],
+        subscriptionTranslations.plans.legacy.features[2],
+        subscriptionTranslations.plans.legacy.features[3],
+        subscriptionTranslations.plans.legacy.features[4],
+        subscriptionTranslations.plans.legacy.features[5],
+        subscriptionTranslations.plans.legacy.features[6],
+        subscriptionTranslations.plans.legacy.features[7],
+        subscriptionTranslations.plans.legacy.features[8],
+        subscriptionTranslations.plans.legacy.features[9],
       ],
       limitations: [],
     },
@@ -99,29 +106,37 @@ export default function SubscriptionPage() {
   const currentPlan = "free"; // This would come from user data
 
   const featureComparison = [
-    { feature: "Biography & photo", free: true, basic: true, legacy: true },
-    { feature: "QR code", free: true, basic: true, legacy: true },
-    { feature: "Video upload", free: false, basic: true, legacy: true },
     {
-      feature: "Family tree / genealogy",
+      feature: subscriptionTranslations.comparison.features[0].name,
+      free: true,
+      basic: true,
+      legacy: true,
+    },
+    {
+      feature: subscriptionTranslations.comparison.features[1].name,
+      free: true,
+    },
+    { feature: subscriptionTranslations.comparison.features[2].name },
+    {
+      feature: subscriptionTranslations.comparison.features[3].name,
       free: false,
       basic: true,
       legacy: true,
     },
     {
-      feature: "GPS location & map pin",
+      feature: subscriptionTranslations.comparison.features[4].name,
       free: false,
       basic: true,
       legacy: true,
     },
     {
-      feature: "Multiple admins/collaborators",
+      feature: subscriptionTranslations.comparison.features[5].name,
       free: false,
       basic: false,
       legacy: true,
     },
     {
-      feature: "Lifetime access (one-time pay)",
+      feature: subscriptionTranslations.comparison.features[6].name,
       free: false,
       basic: false,
       legacy: true,
@@ -140,13 +155,13 @@ export default function SubscriptionPage() {
                 className="flex items-center text-white hover:underline gap-2 text-base"
               >
                 <ArrowLeft className="h-5 w-5 " />
-                Back to Dashboard
+                {subscriptionTranslations.header.back}
               </Link>
             </div>
             <div className="flex items-center space-x-2">
               <Crown className="md:h-6 md:w-6 w-4 h-4 text-white" />
               <span className="md:text-xl text-base font-bold text-white">
-                Subscription Plans
+                {subscriptionTranslations.header.title}
               </span>
             </div>
           </div>
@@ -161,11 +176,10 @@ export default function SubscriptionPage() {
         >
           <div className="text-center mb-12">
             <h1 className="md:text-4xl text-2xl font-bold text-gray-900 md:mb-4 mb-3">
-              Choose Your Memorial Plan
+              {subscriptionTranslations.title}
             </h1>
             <p className="md:text-xl text-base text-gray-600 max-w-3xl mx-auto mb-8">
-              Select the perfect plan to honor your loved ones with dignity and
-              preserve their memories forever
+              {subscriptionTranslations.description}
             </p>
 
             {/* Billing Toggle */}
@@ -175,7 +189,7 @@ export default function SubscriptionPage() {
                   !isYearly ? "text-gray-900" : "text-gray-500"
                 }`}
               >
-                Monthly
+                {subscriptionTranslations.billing.monthly}
               </span>
               <Switch checked={isYearly} onCheckedChange={setIsYearly} />
               <span
@@ -183,12 +197,12 @@ export default function SubscriptionPage() {
                   isYearly ? "text-gray-900" : "text-gray-500"
                 }`}
               >
-                Yearly
+                {subscriptionTranslations.billing.yearly}
                 <Badge
                   variant="secondary"
                   className="ml-2 bg-green-100 text-[#243b31]"
                 >
-                  Save 20%
+                  {subscriptionTranslations.billing.save}
                 </Badge>
               </span>
             </div>
@@ -205,10 +219,10 @@ export default function SubscriptionPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        Current Plan: Free
+                        {subscriptionTranslations.currentPlan.title}
                       </h3>
                       <p className="text-gray-600">
-                        Upgrade to unlock premium features
+                        {subscriptionTranslations.currentPlan.description}
                       </p>
                     </div>
                   </div>
@@ -216,7 +230,7 @@ export default function SubscriptionPage() {
                     variant="outline"
                     className="border-gray-200 text-gray-800"
                   >
-                    Active
+                    {subscriptionTranslations.currentPlan.status}
                   </Badge>
                 </div>
               </CardContent>
@@ -243,7 +257,7 @@ export default function SubscriptionPage() {
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                       <Badge className="bg-[#547455]  text-white px-4 py-1">
-                        Most Popular
+                        {subscriptionTranslations.plans.basic.popular}
                       </Badge>
                     </div>
                   )}
@@ -265,7 +279,6 @@ export default function SubscriptionPage() {
                     <div className="mt-4">
                       <div className="flex items-baseline justify-center">
                         <span className="text-4xl font-bold text-gray-900">
-                          $
                           {plan.isOneTime
                             ? plan.monthlyPrice
                             : isYearly
@@ -274,8 +287,12 @@ export default function SubscriptionPage() {
                         </span>
                         <span className="text-gray-600 ml-2">
                           {plan.isOneTime
-                            ? "one-time"
-                            : `/${isYearly ? "year" : "month"}`}
+                            ? subscriptionTranslations.plans.legacy.period
+                            : `${
+                                isYearly
+                                  ? subscriptionTranslations.plans.free.period
+                                  : subscriptionTranslations.plans.basic.period
+                              }`}
                         </span>
                       </div>
                       {isYearly && !plan.isOneTime && plan.monthlyPrice > 0 && (
@@ -286,7 +303,7 @@ export default function SubscriptionPage() {
                       )}
                       {plan.isOneTime && (
                         <p className="text-sm text-[#547455] mt-1 font-medium">
-                          Lifetime Access - Pay Once, Own Forever
+                          {subscriptionTranslations.plans.legacy.lifetime}
                         </p>
                       )}
                     </div>
@@ -297,7 +314,7 @@ export default function SubscriptionPage() {
                       {/* Features */}
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-3">
-                          ✅ Included Features
+                          ✅ {subscriptionTranslations.comparison.title}
                         </h4>
                         <ul className="space-y-2">
                           {plan.features.map((feature, featureIndex) => (
@@ -318,7 +335,7 @@ export default function SubscriptionPage() {
                       {plan.limitations.length > 0 && (
                         <div>
                           <h4 className="font-semibold text-gray-900 mb-3">
-                            ❌ Not Included
+                            ❌ {subscriptionTranslations.comparison.notincluded}
                           </h4>
                           <ul className="space-y-2">
                             {plan.limitations.map(
@@ -349,7 +366,7 @@ export default function SubscriptionPage() {
                             className="w-full bg-transparent"
                             disabled
                           >
-                            Current Plan
+                            {subscriptionTranslations.plans.free.button}
                           </Button>
                         ) : plan.name === "Basic Premium" ? (
                           <Button
@@ -363,7 +380,7 @@ export default function SubscriptionPage() {
                             }}
                           >
                             <Crown className="h-4 w-4 mr-2" />
-                            Upgrade to Basic Premium
+                            {subscriptionTranslations.plans.basic.button}
                           </Button>
                         ) : plan.name === "Legacy+" ? (
                           <Button
@@ -377,7 +394,7 @@ export default function SubscriptionPage() {
                             }}
                           >
                             <Zap className="h-4 w-4 mr-2" />
-                            Get Legacy+ (Lifetime)
+                            {subscriptionTranslations.plans.legacy.button}
                           </Button>
                         ) : (
                           <Button
@@ -401,9 +418,11 @@ export default function SubscriptionPage() {
           <motion.div variants={fadeInUp}>
             <Card>
               <CardHeader>
-                <CardTitle>Feature Comparison</CardTitle>
+                <CardTitle>
+                  {subscriptionTranslations.comparison.title}
+                </CardTitle>
                 <CardDescription>
-                  Compare what's included with each plan
+                  {subscriptionTranslations.comparison.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -412,16 +431,16 @@ export default function SubscriptionPage() {
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-3 px-4 font-semibold text-gray-900">
-                          Feature
+                          {subscriptionTranslations.comparison.features[0].name}
                         </th>
                         <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          Free
+                          {subscriptionTranslations.comparison.features[1].name}
                         </th>
                         <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          Basic Premium
+                          {subscriptionTranslations.comparison.features[2].name}
                         </th>
                         <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          Legacy+
+                          {subscriptionTranslations.comparison.features[3].name}
                         </th>
                       </tr>
                     </thead>
@@ -465,46 +484,39 @@ export default function SubscriptionPage() {
           <motion.div variants={fadeInUp} className="mt-12">
             <Card>
               <CardHeader>
-                <CardTitle>Frequently Asked Questions</CardTitle>
+                <CardTitle>{subscriptionTranslations.faq.title}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    What's the difference between plans?
+                    {subscriptionTranslations.faq.questions[0].question}
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Free includes basic features, Basic Premium adds video and
-                    family tree, Legacy+ includes everything plus lifetime
-                    access and multiple collaborators.
+                    {subscriptionTranslations.faq.questions[0].answer}
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Is Legacy+ really lifetime access?
+                    {subscriptionTranslations.faq.questions[1].question}
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Yes! Legacy+ is a one-time payment of $199 that gives you
-                    lifetime access to all features with no recurring fees.
+                    {subscriptionTranslations.faq.questions[1].answer}
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Can I upgrade or downgrade anytime?
+                    {subscriptionTranslations.faq.questions[2].question}
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Yes, you can change your plan at any time. Upgrades take
-                    effect immediately, and we'll prorate any billing
-                    differences.
+                    {subscriptionTranslations.faq.questions[2].answer}
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    What happens if I don't pay my subscription?
+                    {subscriptionTranslations.faq.questions[3].question}
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Your memorial will show as "unavailable" to visitors. You'll
-                    have 30 days to update payment before premium features are
-                    disabled.
+                    {subscriptionTranslations.faq.questions[3].answer}
                   </p>
                 </div>
               </CardContent>
@@ -515,3 +527,93 @@ export default function SubscriptionPage() {
     </div>
   );
 }
+
+// "subscription": {
+//     "header": {
+//       "back":
+//       "title":
+//     },
+//     "title":
+//     "description":
+//     "billing": {
+//       "monthly":
+//       "yearly":
+//       "save":
+//     },
+//     "currentPlan": {
+//       "title":
+//       "description":
+//       "status":
+//     },
+//     "plans": {
+//       "free": {
+//         "name":
+//         "description":
+//         "price":
+//         "period":
+//         "features": [
+
+//         ],
+//         "limitations": [
+
+//         ],
+//         "button": "Current Plan"
+//       },
+//       "basic": {
+//         "name":
+//         "description":
+//         "price":
+//         "period":
+//         "features": [
+
+//         ],
+//         "limitations": [
+
+//         ],
+//         "button":
+//         "popular":
+//         "yearlySave":
+//       },
+//       "legacy": {
+//         "name":
+//         "description":
+//         "price":
+//         "period":
+//         "features": [
+
+//         ],
+//         "limitations": [],
+//         "button":
+//         "lifetime":
+//       }
+//     },
+//     "comparison": {
+//       "title":
+//       "description":
+//       "features": [
+//         { "name":  },
+//         { "name":  },
+//         { "name": },
+//         { "name":  },
+//         { "name":  },
+//         { "name": },
+//         { "name":  }
+//       ]
+//     },
+//     "faq": {
+//       "title":
+//       "questions": [
+//         {
+
+//         },
+//         {
+
+//         },
+//         {
+
+//         },
+//         {
+//         }
+//       ]
+//     }
+//   }

@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -46,6 +47,8 @@ const staggerContainer = {
 };
 
 export default function DemoMemorialPage() {
+  const { t } = useTranslation();
+  const demomemorialTranslations = t("demomemorial");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
@@ -141,7 +144,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                 DEMO
               </Badge>
               <span className="text-sm font-medium">
-                This is how your memorial will look to visitors
+                {demomemorialTranslations.demoBanner.title}
               </span>
             </div>
             <Link href="/">
@@ -151,7 +154,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                 className="border-white text-white hover:bg-white hover:[#547455] bg-transparent"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
+                {demomemorialTranslations.demoBanner.backButton}
               </Button>
             </Link>
           </div>
@@ -177,11 +180,12 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                 variant="secondary"
                 className="bg-indigo-100 text-indigo-800"
               >
-                {memorial.views.toLocaleString()} views
+                {memorial.views.toLocaleString()}{" "}
+                {demomemorialTranslations.header.views}
               </Badge>
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 " />
-                Share
+                {demomemorialTranslations.header.share}
               </Button>
             </div>
           </div>
@@ -224,7 +228,10 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                           {memorial.location}
                         </p>
                         <p className="text-white/80 mt-2">
-                          Age {memorial.age} years
+                          {demomemorialTranslations.hero.age.replace(
+                            "{age}",
+                            memorial.age
+                          )}
                         </p>
                       </div>
                     </div>
@@ -244,7 +251,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Heart className="h-5 w-5 mr-2 text-red-500" />
-                      Life Story
+                      {demomemorialTranslations.biography.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -268,16 +275,22 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Memories</CardTitle>
+                    <CardTitle>
+                      {demomemorialTranslations.mediaGallery.title}
+                    </CardTitle>
                     <CardDescription>
-                      Photos and videos celebrating a life well-lived
+                      {demomemorialTranslations.mediaGallery.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="photos" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="photos">Photos</TabsTrigger>
-                        <TabsTrigger value="video">Video</TabsTrigger>
+                        <TabsTrigger value="photos">
+                          {demomemorialTranslations.mediaGallery.photosTab}
+                        </TabsTrigger>
+                        <TabsTrigger value="video">
+                          {demomemorialTranslations.mediaGallery.videoTab}
+                        </TabsTrigger>
                       </TabsList>
 
                       <TabsContent value="photos" className="mt-6">
@@ -380,7 +393,10 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                               {memorial.video.title}
                             </h3>
                             <p className="text-sm text-gray-600">
-                              A heartfelt message recorded for the family
+                              {
+                                demomemorialTranslations.mediaGallery
+                                  .videoDescription
+                              }
                             </p>
                           </div>
                         </div>
@@ -399,7 +415,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Users className="h-5 w-5 mr-2 text-green-500" />
-                      Family
+                      {demomemorialTranslations.family.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -441,7 +457,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <MapPin className="h-5 w-5 mr-2 text-blue-500" />
-                      Memorial Location
+                      {demomemorialTranslations.location.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -462,7 +478,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                         size="sm"
                         className="w-full bg-transparent"
                       >
-                        Get Directions
+                        {demomemorialTranslations.location.getDirections}
                       </Button>
                     </div>
                   </CardContent>
@@ -473,7 +489,9 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Achievements & Legacy</CardTitle>
+                    <CardTitle>
+                      {demomemorialTranslations.achievements.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -492,19 +510,27 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Memorial Information</CardTitle>
+                    <CardTitle>
+                      {demomemorialTranslations.memorialInfo.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">QR Code:</span>
+                      <span className="text-gray-600">
+                        {demomemorialTranslations.memorialInfo.qrCode}
+                      </span>
                       <Badge variant="outline">{memorial.qrCode}</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Plan:</span>
+                      <span className="text-gray-600">
+                        {demomemorialTranslations.memorialInfo.plan}
+                      </span>
                       <Badge className="bg-yellow-600">Premium</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Last Updated:</span>
+                      <span className="text-gray-600">
+                        {demomemorialTranslations.memorialInfo.lastUpdated}
+                      </span>
                       <span className="text-gray-900">
                         {memorial.lastUpdated}
                       </span>
@@ -513,11 +539,11 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                     <div className="text-center space-y-2">
                       <Link href="/signup">
                         <Button className="w-full bg-[#547455] hover:bg-[#243b31]">
-                          Create Your Own Memorial
+                          {demomemorialTranslations.memorialInfo.createButton}
                         </Button>
                       </Link>
                       <p className="text-xs text-gray-500">
-                        This is a demo memorial showing premium features
+                        {demomemorialTranslations.memorialInfo.demoNote}
                       </p>
                     </div>
                   </CardContent>

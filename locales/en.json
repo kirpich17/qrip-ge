@@ -386,5 +386,535 @@
       "totalScans": "Total Scans",
       "thisMonth": "This Month"
     }
+  },
+  "subscription": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "Subscription Plans"
+    },
+    "title": "Choose Your Memorial Plan",
+    "description": "Select the perfect plan to honor your loved ones with dignity and preserve their memories forever",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%"
+    },
+    "currentPlan": {
+      "title": "Current Plan: Free",
+      "description": "Upgrade to unlock premium features",
+      "status": "Active"
+    },
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Basic memorial features",
+        "price": "$0",
+        "period": "forever",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Basic memorial page",
+          "Public directory listing"
+        ],
+        "limitations": [
+          "No video upload",
+          "No family tree/genealogy",
+          "No GPS location & map pin",
+          "No multiple admins/collaborators",
+          "No lifetime access"
+        ],
+        "button": "Current Plan"
+      },
+      "basic": {
+        "name": "Basic Premium",
+        "description": "Enhanced memorial experience",
+        "price": "$9",
+        "period": "/month",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Video upload",
+          "Family tree / genealogy",
+          "GPS location & map pin",
+          "Advanced customization",
+          "Priority support"
+        ],
+        "limitations": [
+          "No multiple admins/collaborators",
+          "No lifetime access"
+        ],
+        "button": "Upgrade to Basic Premium",
+        "popular": "Most Popular",
+        "yearlySave": "Save $18 per year"
+      },
+      "legacy": {
+        "name": "Legacy+",
+        "description": "Complete memorial solution",
+        "price": "$199",
+        "period": "one-time",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Video upload",
+          "Family tree / genealogy",
+          "GPS location & map pin",
+          "Multiple admins/collaborators",
+          "Lifetime access (one-time pay)",
+          "Premium customization",
+          "White-glove setup service",
+          "Dedicated support"
+        ],
+        "limitations": [],
+        "button": "Get Legacy+ (Lifetime)",
+        "lifetime": "Lifetime Access - Pay Once, Own Forever"
+      }
+    },
+    "comparison": {
+      "title": "Feature Comparison",
+      "description": "Compare what's included with each plan",
+      "notincluded": "Not Included",
+      "features": [
+        { "name": "Biography & photo" },
+        { "name": "QR code" },
+        { "name": "Video upload" },
+        { "name": "Family tree / genealogy" },
+        { "name": "GPS location & map pin" },
+        { "name": "Multiple admins/collaborators" },
+        { "name": "Lifetime access (one-time pay)" }
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": [
+        {
+          "question": "What's the difference between plans?",
+          "answer": "Free includes basic features, Basic Premium adds video and family tree, Legacy+ includes everything plus lifetime access and multiple collaborators."
+        },
+        {
+          "question": "Is Legacy+ really lifetime access?",
+          "answer": "Yes! Legacy+ is a one-time payment of $199 that gives you lifetime access to all features with no recurring fees."
+        },
+        {
+          "question": "Can I upgrade or downgrade anytime?",
+          "answer": "Yes, you can change your plan at any time. Upgrades take effect immediately, and we'll prorate any billing differences."
+        },
+        {
+          "question": "What happens if I don't pay my subscription?",
+          "answer": "Your memorial will show as \"unavailable\" to visitors. You'll have 30 days to update payment before premium features are disabled."
+        }
+      ]
+    }
+  },
+  "editMemorial": {
+    "header": {
+      "back": "Back to Dashboard",
+      "preview": "Preview",
+      "save": "Save Changes",
+      "delete": "Delete"
+    },
+    "title": "Edit Memorial",
+    "description": "Update the memorial information for {name}",
+    "tabs": {
+      "basic": "Basic Info",
+      "media": "Media",
+      "family": "Family Tree",
+      "settings": "Settings"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "description": "Update the essential details about your loved one",
+      "profileImage": {
+        "change": "Change Photo",
+        "description": "Choose a beautiful photo to represent your loved one"
+      },
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "birthDate": "Birth Date",
+      "deathDate": "Date of Passing",
+      "location": "Memorial Location",
+      "biography": "Life Story",
+      "biographyPlaceholder": "Share the beautiful story of your loved one's life..."
+    },
+    "media": {
+      "title": "Photos & Videos",
+      "description": "Manage photos and videos for this memorial",
+      "photos": {
+        "title": "Manage Photos",
+        "description": "Add or remove photos",
+        "button": "Manage Photos"
+      },
+      "videos": {
+        "title": "Manage Videos",
+        "description": "Add or remove videos",
+        "button": "Manage Videos"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "Manage documents",
+        "button": "Manage Files"
+      }
+    },
+    "familyTree": {
+      "title": "Family Tree",
+      "description": "Edit family relationships and connections",
+      "placeholder": {
+        "title": "Family Tree Editor",
+        "description": "Edit connections between family members and relationships",
+        "button": "Edit Family Tree"
+      }
+    },
+    "settings": {
+      "title": "Privacy & Settings",
+      "description": "Update privacy and visibility settings",
+      "publicMemorial": {
+        "label": "Public Memorial",
+        "description": "Allow this memorial to appear in public directory"
+      },
+      "allowComments": {
+        "label": "Allow Comments",
+        "description": "Let visitors leave condolences and memories"
+      },
+      "emailNotifications": {
+        "label": "Email Notifications",
+        "description": "Get notified when someone visits or comments"
+      }
+    },
+    "deleteConfirm": "Are you sure you want to delete this memorial? This action cannot be undone."
+  },
+  "directory": {
+    "header": {
+      "title": "Memorial Directory",
+      "description": "Browse and honor the memories of loved ones. Each memorial tells a unique story of a life well-lived."
+    },
+    "search": {
+      "placeholder": "Search by name, location, or description...",
+      "locationFilter": {
+        "label": "Filter by location",
+        "options": {
+          "all": "All Locations",
+          "tbilisi": "Tbilisi",
+          "batumi": "Batumi",
+          "kutaisi": "Kutaisi",
+          "rustavi": "Rustavi",
+          "gori": "Gori"
+        }
+      },
+      "yearFilter": {
+        "label": "Year",
+        "options": {
+          "all": "All Years",
+          "2024": "2024",
+          "2023": "2023",
+          "2022": "2022"
+        }
+      }
+    },
+    "results": {
+      "count": "Showing {count} memorials"
+    },
+    "memorialCard": {
+      "visitButton": "Visit Memorial",
+      "views": "views"
+    },
+    "memorials": {
+      "johnSmith": {
+        "name": "John Smith",
+        "dates": "1945 - 2023",
+        "location": "Tbilisi, Georgia",
+        "description": "Beloved father, grandfather, and community leader who dedicated his life to education.",
+        "tags": ["Teacher", "Community Leader"]
+      },
+      "maryJohnson": {
+        "name": "Mary Johnson",
+        "dates": "1952 - 2024",
+        "location": "Batumi, Georgia",
+        "description": "Loving mother and talented artist who brought beauty to the world through her paintings.",
+        "tags": ["Artist", "Mother"]
+      },
+      "robertWilson": {
+        "name": "Robert Wilson",
+        "dates": "1938 - 2023",
+        "location": "Kutaisi, Georgia",
+        "description": "War veteran and devoted husband who served his country with honor and dignity.",
+        "tags": ["Veteran", "Husband"]
+      },
+      "annaGeorgadze": {
+        "name": "Anna Georgadze",
+        "dates": "1960 - 2024",
+        "location": "Tbilisi, Georgia",
+        "description": "Renowned doctor who saved countless lives and mentored young medical professionals.",
+        "tags": ["Doctor", "Mentor"]
+      },
+      "davidKvirikashvili": {
+        "name": "David Kvirikashvili",
+        "dates": "1955 - 2023",
+        "location": "Rustavi, Georgia",
+        "description": "Passionate musician and composer who enriched Georgian cultural heritage.",
+        "tags": ["Musician", "Composer"]
+      },
+      "elenaChavchavadze": {
+        "name": "Elena Chavchavadze",
+        "dates": "1948 - 2024",
+        "location": "Gori, Georgia",
+        "description": "Dedicated teacher and children's book author who inspired generations of young minds.",
+        "tags": ["Teacher", "Author"]
+      }
+    },
+    "loadMore": "Load More Memorials"
+  },
+  "memorial": {
+    "header": {
+      "views": " views",
+      "share": "Share"
+    },
+    "inactive": {
+      "title": "Memorial Unavailable",
+      "message": "This memorial profile is currently inactive. Please contact support or the family for more information.",
+      "contact": "Contact Support",
+      "return": "Return Home"
+    },
+    "profile": {
+      "age": "Age {age} years"
+    },
+    "tabs": {
+      "lifeStory": "Life Story",
+      "memories": "Memories",
+      "photos": "Photos",
+      "video": "Video",
+      "locked": "Premium Feature",
+      "description": "Photos and videos celebrating a life well-lived"
+    },
+    "sections": {
+      "family": {
+        "title": "Family",
+        "locked": "Family tree available with premium"
+      },
+      "location": {
+        "title": "Memorial Location",
+        "mapPlaceholder": "Interactive Map",
+        "getDirections": "Get Directions",
+        "locked": "GPS location available with premium"
+      },
+      "achievements": {
+        "title": "Achievements & Legacy"
+      },
+      "info": {
+        "title": "Memorial Information",
+        "qrCode": "QR Code:",
+        "plan": "Plan:",
+        "lastUpdated": "Last Updated:",
+        "createMemorial": "Create Your Own Memorial"
+      }
+    },
+    "video": {
+      "description": "A personal message and memories shared",
+      "play": "Play",
+      "pause": "Pause",
+      "mute": "Mute",
+      "unmute": "Unmute"
+    }
+  },
+  "demomemorial": {
+    "demoBanner": {
+      "title": "This is how your memorial will look to visitors",
+      "backButton": "Back to Home"
+    },
+    "header": {
+      "views": "views",
+      "share": "Share"
+    },
+    "hero": {
+      "age": "Age {age} years"
+    },
+    "biography": {
+      "title": "Life Story"
+    },
+    "mediaGallery": {
+      "title": "Memories",
+      "description": "Photos and videos celebrating a life well-lived",
+      "photosTab": "Photos",
+      "videoTab": "Video",
+      "videoDescription": "A heartfelt message recorded for the family"
+    },
+    "family": {
+      "title": "Family"
+    },
+    "location": {
+      "title": "Memorial Location",
+      "getDirections": "Get Directions"
+    },
+    "achievements": {
+      "title": "Achievements & Legacy"
+    },
+    "memorialInfo": {
+      "title": "Memorial Information",
+      "qrCode": "QR Code:",
+      "plan": "Plan:",
+      "lastUpdated": "Last Updated:",
+      "createButton": "Create Your Own Memorial",
+      "demoNote": "This is a demo memorial showing premium features"
+    }
+  },
+  "profile": {
+    "header": {
+      "backButton": "Back to Dashboard",
+      "title": "Profile Settings"
+    },
+    "page": {
+      "title": "Profile Settings",
+      "description": "Manage your account information and preferences"
+    },
+    "profileOverview": {
+      "title": "Profile Overview",
+      "changeAvatar": "Change Avatar"
+    },
+    "accountStats": {
+      "title": "Account Stats",
+      "memberSince": "Member since",
+      "memorialsCreated": "Memorials created",
+      "totalViews": "Total views",
+      "manageSubscription": "Manage Subscription"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "description": "Update your personal details and contact information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "location": "Location",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us a bit about yourself...",
+      "saveChanges": "Save Changes"
+    }
+  },
+  "setting": {
+    "header": {
+      "backButton": "Back to Dashboard",
+      "title": "Settings"
+    },
+    "page": {
+      "title": "Settings",
+      "description": "Manage your account preferences and privacy settings"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Choose how you want to be notified about memorial activity",
+      "email": "Email Notifications",
+      "emailDescription": "Receive notifications via email",
+      "push": "Push Notifications",
+      "pushDescription": "Receive push notifications on your device",
+      "visits": "Memorial Visits",
+      "visitsDescription": "Get notified when someone visits your memorials",
+      "comments": "New Comments",
+      "commentsDescription": "Get notified about new comments on your memorials",
+      "digest": "Weekly Digest",
+      "digestDescription": "Receive a weekly summary of memorial activity"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "description": "Control your privacy and what others can see",
+      "publicProfile": "Public Profile",
+      "publicProfileDescription": "Allow others to find your profile in search",
+      "showEmail": "Show Email Address",
+      "showEmailDescription": "Display your email on your public profile",
+      "allowComments": "Allow Comments",
+      "allowCommentsDescription": "Let visitors leave comments on your memorials"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Set your language and display preferences",
+      "language": "Language",
+      "timezone": "Timezone",
+      "theme": "Theme",
+      "themeOptions": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "saveButton": "Save Settings"
+  },
+  "admindash": {
+    "header": {
+      "title": "Admin Dashboard",
+      "notifications": "Notifications"
+    },
+    "welcome": {
+      "title": "Welcome back, Admin",
+      "description": "Monitor and manage the QRIP.ge memorial platform"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeMemorials": "Active Memorials",
+      "monthlyRevenue": "Monthly Revenue",
+      "qrScans": "QR Scans",
+      "changeFromLastMonth": "from last month"
+    },
+    "tabs": {
+      "users": "Users",
+      "memorials": "Memorials",
+      "qrCodes": "QR Codes",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage user accounts and subscriptions",
+      "searchPlaceholder": "Search users...",
+      "tableHeaders": {
+        "user": "User",
+        "plan": "Plan",
+        "memorials": "Memorials",
+        "status": "Status",
+        "joined": "Joined",
+        "actions": "Actions"
+      },
+      "actionsMenu": {
+        "viewProfile": "View Profile",
+        "suspend": "Suspend",
+        "delete": "Delete"
+      }
+    },
+    "recentMemorials": {
+      "title": "Recent Memorials",
+      "description": "Review and moderate memorial submissions",
+      "tableHeaders": {
+        "memorial": "Memorial",
+        "creator": "Creator",
+        "status": "Status",
+        "views": "Views",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "qrManagement": {
+      "title": "QR Code Management",
+      "description": "Monitor QR code usage and generate new codes",
+      "totalQrCodes": "Total QR Codes",
+      "totalScans": "Total Scans",
+      "thisMonth": "This Month",
+      "analyticsText": "QR Code analytics and management tools"
+    },
+    "analytics": {
+      "platformGrowth": "Platform Growth",
+      "revenueTrends": "Revenue Trends"
+    },
+    "platformSettings": {
+      "title": "Platform Settings",
+      "description": "Configure platform-wide settings and preferences",
+      "generalSettings": "General Settings",
+      "publicDirectory": {
+        "label": "Allow Public Directory",
+        "description": "Enable public browsing of memorials"
+      },
+      "emailNotifications": {
+        "label": "Email Notifications",
+        "description": "System-wide notification settings"
+      },
+      "configure": "Configure"
+    }
   }
 }

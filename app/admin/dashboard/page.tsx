@@ -45,6 +45,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -61,32 +62,34 @@ const staggerContainer = {
 };
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation();
+  const admindashTranslations = t("admindash");
   const [searchQuery, setSearchQuery] = useState("");
 
   const stats = [
     {
-      label: "Total Users",
+      label: admindashTranslations.stats.totalUsers,
       value: "1,247",
       change: "+12%",
       icon: Users,
       color: "text-blue-600",
     },
     {
-      label: "Active Memorials",
+      label: admindashTranslations.stats.activeMemorials,
       value: "3,891",
       change: "+8%",
       icon: Heart,
       color: "text-red-600",
     },
     {
-      label: "Monthly Revenue",
+      label: admindashTranslations.stats.monthlyRevenue,
       value: "$12,450",
       change: "+15%",
       icon: DollarSign,
       color: "text-green-600",
     },
     {
-      label: "QR Scans",
+      label: admindashTranslations.stats.qrScans,
       value: "28,392",
       change: "+23%",
       icon: TrendingUp,
@@ -169,7 +172,7 @@ export default function AdminDashboardPage() {
                 <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
               </motion.div>
               <span className="text-2xl font-bold text-white">
-                Admin Dashboard
+                {admindashTranslations.header.title}
               </span>
             </div>
             <div className="flex items-center space-x-4">
@@ -183,7 +186,7 @@ export default function AdminDashboardPage() {
                 }}
               >
                 <Bell className="h-4 w-4 " />
-                Notifications
+                {admindashTranslations.header.notifications}
               </Button>
 
               <Avatar>
@@ -203,8 +206,10 @@ export default function AdminDashboardPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold mb-2">Welcome back, Admin</h1>
-          <p className="">Monitor and manage the QRIP.ge memorial platform</p>
+          <h1 className="text-3xl font-bold mb-2">
+            {admindashTranslations.welcome.title}
+          </h1>
+          <p className="">{admindashTranslations.welcome.description}</p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -223,7 +228,8 @@ export default function AdminDashboardPage() {
                       <p className="text-sm font-medium ">{stat.label}</p>
                       <p className="text-3xl font-bold ">{stat.value}</p>
                       <p className="text-sm text-[#547455]">
-                        {stat.change} from last month
+                        {stat.change}{" "}
+                        {admindashTranslations.stats.changeFromLastMonth}
                       </p>
                     </div>
                     <div
@@ -245,31 +251,31 @@ export default function AdminDashboardPage() {
               value="users"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              Users
+              {admindashTranslations.tabs.users}
             </TabsTrigger>
             <TabsTrigger
               value="memorials"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              Memorials
+              {admindashTranslations.tabs.memorials}
             </TabsTrigger>
             <TabsTrigger
               value="qr-codes"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              QR Codes
+              {admindashTranslations.tabs.qrCodes}
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              Analytics
+              {admindashTranslations.tabs.analytics}
             </TabsTrigger>
             <TabsTrigger
               value="settings"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              Settings
+              {admindashTranslations.tabs.settings}
             </TabsTrigger>
           </TabsList>
 
@@ -278,9 +284,11 @@ export default function AdminDashboardPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className=" mb-2">User Management</CardTitle>
+                    <CardTitle className=" mb-2">
+                      {admindashTranslations.userManagement.title}
+                    </CardTitle>
                     <CardDescription className="">
-                      Manage user accounts and subscriptions
+                      {admindashTranslations.userManagement.description}
                     </CardDescription>
                   </div>
                   <div className="relative">
@@ -301,12 +309,36 @@ export default function AdminDashboardPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="">
-                      <TableHead className="">User</TableHead>
-                      <TableHead className="">Plan</TableHead>
-                      <TableHead className="">Memorials</TableHead>
-                      <TableHead className="">Status</TableHead>
-                      <TableHead className="">Joined</TableHead>
-                      <TableHead className="">Actions</TableHead>
+                      <TableHead className="">
+                        {admindashTranslations.userManagement.tableHeaders.user}
+                      </TableHead>
+                      <TableHead className="">
+                        {admindashTranslations.userManagement.tableHeaders.plan}
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.userManagement.tableHeaders
+                            .memorials
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.userManagement.tableHeaders
+                            .status
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.userManagement.tableHeaders
+                            .joined
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.userManagement.tableHeaders
+                            .actions
+                        }
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -383,7 +415,10 @@ export default function AdminDashboardPage() {
                                 }}
                               >
                                 <Eye className="h-4 w-4 mr-2" />
-                                View Profile
+                                {
+                                  admindashTranslations.userManagement
+                                    .actionsMenu.viewProfile
+                                }
                               </DropdownMenuItem>
 
                               <DropdownMenuItem
@@ -400,7 +435,10 @@ export default function AdminDashboardPage() {
                                 }}
                               >
                                 <Ban className="h-4 w-4 mr-2" />
-                                Suspend
+                                {
+                                  admindashTranslations.userManagement
+                                    .actionsMenu.suspend
+                                }
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-red-400 hover:text-red-300 cursor-pointer"
@@ -416,7 +454,10 @@ export default function AdminDashboardPage() {
                                 }}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
+                                {
+                                  admindashTranslations.userManagement
+                                    .actionsMenu.delete
+                                }
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -432,21 +473,53 @@ export default function AdminDashboardPage() {
           <TabsContent value="memorials" className="space-y-6">
             <Card className=" ">
               <CardHeader>
-                <CardTitle className="">Recent Memorials</CardTitle>
+                <CardTitle className="">
+                  {admindashTranslations.recentMemorials.title}
+                </CardTitle>
                 <CardDescription className="">
-                  Review and moderate memorial submissions
+                  {admindashTranslations.recentMemorials.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow className="">
-                      <TableHead className="">Memorial</TableHead>
-                      <TableHead className="">Creator</TableHead>
-                      <TableHead className="">Status</TableHead>
-                      <TableHead className="">Views</TableHead>
-                      <TableHead className="">Created</TableHead>
-                      <TableHead className="">Actions</TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .memorial
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .creator
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .status
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .views
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .created
+                        }
+                      </TableHead>
+                      <TableHead className="">
+                        {
+                          admindashTranslations.recentMemorials.tableHeaders
+                            .actions
+                        }
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -517,12 +590,14 @@ export default function AdminDashboardPage() {
           <TabsContent value="qr-codes" className="space-y-6">
             <Card className=" ">
               <CardHeader>
-                <CardTitle className="">QR Code Management</CardTitle>
+                <CardTitle className="">
+                  {admindashTranslations.qrManagement.title}
+                </CardTitle>
                 <CardDescription
                   className="
                 "
                 >
-                  Monitor QR code usage and generate new codes
+                  {admindashTranslations.qrManagement.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -533,7 +608,7 @@ export default function AdminDashboardPage() {
                       className="text-sm 
                     "
                     >
-                      Total QR Codes
+                      {admindashTranslations.qrManagement.totalQrCodes}
                     </p>
                   </div>
                   <div className="text-center p-4  rounded-lg">
@@ -542,7 +617,7 @@ export default function AdminDashboardPage() {
                       className="text-sm 
                     "
                     >
-                      Total Scans
+                      {admindashTranslations.qrManagement.totalScans}
                     </p>
                   </div>
                   <div className="text-center p-4  rounded-lg">
@@ -551,7 +626,7 @@ export default function AdminDashboardPage() {
                       className="text-sm 
                     "
                     >
-                      This Month
+                      {admindashTranslations.qrManagement.thisMonth}
                     </p>
                   </div>
                 </div>
@@ -564,7 +639,7 @@ export default function AdminDashboardPage() {
                     className="
                   "
                   >
-                    QR Code analytics and management tools
+                    {admindashTranslations.qrManagement.analyticsText}
                   </p>
                 </div>
               </CardContent>
@@ -575,27 +650,31 @@ export default function AdminDashboardPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="0 ">
                 <CardHeader>
-                  <CardTitle className="">Platform Growth</CardTitle>
+                  <CardTitle className="">
+                    {admindashTranslations.analytics.platformGrowth}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div
                     className="h-64 flex items-center justify-center 
                   "
                   >
-                    Analytics Chart Placeholder
+                    {admindashTranslations.analytics.platformGrowth}
                   </div>
                 </CardContent>
               </Card>
               <Card className=" ">
                 <CardHeader>
-                  <CardTitle className="">Revenue Trends</CardTitle>
+                  <CardTitle className="">
+                    {admindashTranslations.analytics.revenueTrends}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div
                     className="h-64 flex items-center justify-center 
                   "
                   >
-                    Revenue Chart Placeholder
+                    {admindashTranslations.analytics.revenueTrends}
                   </div>
                 </CardContent>
               </Card>
@@ -605,29 +684,39 @@ export default function AdminDashboardPage() {
           <TabsContent value="settings" className="space-y-6">
             <Card className=" ">
               <CardHeader>
-                <CardTitle className="">Platform Settings</CardTitle>
+                <CardTitle className="">
+                  {admindashTranslations.platformSettings.title}
+                </CardTitle>
                 <CardDescription
                   className="
                 "
                 >
-                  Configure platform-wide settings and preferences
+                  {admindashTranslations.platformSettings.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold  mb-4">
-                      General Settings
+                      {admindashTranslations.platformSettings.generalSettings}
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="">Allow Public Directory</p>
+                          <p className="">
+                            {
+                              admindashTranslations.platformSettings
+                                .publicDirectory.label
+                            }
+                          </p>
                           <p
                             className="text-sm 
                           "
                           >
-                            Enable public browsing of memorials
+                            {
+                              admindashTranslations.platformSettings
+                                .publicDirectory.description
+                            }
                           </p>
                         </div>
                         <Button
@@ -638,17 +727,25 @@ export default function AdminDashboardPage() {
                             // Handle configuration logic
                           }}
                         >
-                          Configure
+                          {admindashTranslations.platformSettings.configure}
                         </Button>
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="">Email Notifications</p>
+                          <p className="">
+                            {
+                              admindashTranslations.platformSettings
+                                .emailNotifications.label
+                            }
+                          </p>
                           <p
                             className="text-sm 
                           "
                           >
-                            System-wide notification settings
+                            {
+                              admindashTranslations.platformSettings
+                                .emailNotifications.description
+                            }
                           </p>
                         </div>
                         <Button
@@ -661,7 +758,7 @@ export default function AdminDashboardPage() {
                             // Handle configuration logic
                           }}
                         >
-                          Configure
+                          {admindashTranslations.platformSettings.configure}
                         </Button>
                       </div>
                     </div>

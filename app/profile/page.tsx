@@ -27,8 +27,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
+  const profileTranslations = t("profile");
   const [profileData, setProfileData] = useState({
     firstName: "John",
     lastName: "Doe",
@@ -57,13 +60,13 @@ export default function ProfilePage() {
                 className="flex items-center text-white hover:underline"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Dashboard
+                {profileTranslations.header.backButton}
               </Link>
             </div>
             <div className="flex items-center space-x-2">
               <User className="h-6 w-6 text-white" />
               <span className="text-xl font-bold text-white">
-                Profile Settings
+                {profileTranslations.header.title}
               </span>
             </div>
           </div>
@@ -78,10 +81,10 @@ export default function ProfilePage() {
         >
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Profile Settings
+              {profileTranslations.page.title}
             </h1>
             <p className="text-gray-600">
-              Manage your account information and preferences
+              {profileTranslations.page.description}
             </p>
           </div>
 
@@ -90,7 +93,9 @@ export default function ProfilePage() {
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader>
-                  <CardTitle>Profile Overview</CardTitle>
+                  <CardTitle>
+                    {profileTranslations.profileOverview.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
@@ -133,28 +138,36 @@ export default function ProfilePage() {
                     }}
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Change Avatar
+                    {profileTranslations.profileOverview.changeAvatar}
                   </Button>
                 </CardContent>
               </Card>
 
               <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>Account Stats</CardTitle>
+                  <CardTitle>
+                    {profileTranslations.accountStats.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Member since</span>
+                    <span className="text-gray-600">
+                      {profileTranslations.accountStats.memberSince}
+                    </span>
                     <span className="font-medium">
                       {new Date(profileData.joinDate).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Memorials created</span>
+                    <span className="text-gray-600">
+                      {profileTranslations.accountStats.memorialsCreated}
+                    </span>
                     <span className="font-medium">3</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total views</span>
+                    <span className="text-gray-600">
+                      {profileTranslations.accountStats.totalViews}
+                    </span>
                     <span className="font-medium">1,247</span>
                   </div>
                   <Separator />
@@ -165,7 +178,7 @@ export default function ProfilePage() {
                       className="w-full bg-transparent"
                     >
                       <Crown className="h-4 w-4 mr-2" />
-                      Manage Subscription
+                      {profileTranslations.accountStats.manageSubscription}
                     </Button>
                   </Link>
                 </CardContent>
@@ -176,16 +189,20 @@ export default function ProfilePage() {
             <div className="lg:col-span-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
+                  <CardTitle>
+                    {profileTranslations.personalInfo.title}
+                  </CardTitle>
                   <CardDescription>
-                    Update your personal details and contact information
+                    {profileTranslations.personalInfo.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Name Fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">
+                        {profileTranslations.personalInfo.firstName}
+                      </Label>
                       <Input
                         id="firstName"
                         value={profileData.firstName}
@@ -196,7 +213,9 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">
+                        {profileTranslations.personalInfo.lastName}
+                      </Label>
                       <Input
                         id="lastName"
                         value={profileData.lastName}
@@ -212,7 +231,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="email" className="flex items-center">
                       <Mail className="h-4 w-4 mr-2" />
-                      Email Address
+                      {profileTranslations.personalInfo.email}
                     </Label>
                     <Input
                       id="email"
@@ -228,7 +247,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center">
                       <Phone className="h-4 w-4 mr-2" />
-                      Phone Number
+                      {profileTranslations.personalInfo.phone}
                     </Label>
                     <Input
                       id="phone"
@@ -244,7 +263,7 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
-                      Location
+                      {profileTranslations.personalInfo.location}
                     </Label>
                     <Input
                       id="location"
@@ -258,7 +277,9 @@ export default function ProfilePage() {
 
                   {/* Bio */}
                   <div className="space-y-2">
-                    <Label htmlFor="bio">Bio</Label>
+                    <Label htmlFor="bio">
+                      {profileTranslations.personalInfo.bio}
+                    </Label>
                     <Textarea
                       id="bio"
                       placeholder="Tell us a bit about yourself..."
@@ -280,7 +301,7 @@ export default function ProfilePage() {
                       }}
                     >
                       <Save className="h-4 w-4 mr-2" />
-                      Save Changes
+                      {profileTranslations.personalInfo.saveChanges}
                     </Button>
                   </div>
                 </CardContent>
@@ -292,3 +313,37 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+//  "profilepage": {
+//     "header": {
+//       "backButton":
+//       "title":
+//     },
+//     "page": {
+//       "title":
+//       "description":
+//     },
+//     "profileOverview": {
+//       "title":
+//       "changeAvatar":
+//     },
+//     "accountStats": {
+//       "title":
+//       "memberSince":
+//       "memorialsCreated":
+//       "totalViews":
+//       "manageSubscription":
+//     },
+//     "personalInfo": {
+//       "title":
+//       "description":
+//       "firstName":
+//       "lastName":
+//       "email":
+//       "phone":
+//       "location":
+//       "bio":
+//       "bioPlaceholder":
+//       "saveChanges":
+//     }
+//   }

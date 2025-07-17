@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function EditMemorialPage({
   params,
@@ -68,7 +69,8 @@ export default function EditMemorialPage({
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
+  const { t } = useTranslation();
+  const editMemorialTranslations = t("editMemorial");
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -81,7 +83,7 @@ export default function EditMemorialPage({
                 className="flex items-center text-white hover:underline"
               >
                 <ArrowLeft className="h-5 w-5" />
-                Back to Dashboard
+                {editMemorialTranslations.header.back}
               </Link>
             </div>
             <div className="flex items-center space-x-3">
@@ -93,7 +95,7 @@ export default function EditMemorialPage({
                 }}
               >
                 <Eye className="h-4 w-4" />
-                Preview
+                {editMemorialTranslations.header.preview}
               </Button>
               <Button
                 className="bg-white text-black border border-white hover hover:bg-transparent hover:text-white"
@@ -103,7 +105,7 @@ export default function EditMemorialPage({
                 }}
               >
                 <Save className="h-4 w-4" />
-                Save Changes
+                {editMemorialTranslations.header.save}
               </Button>
               <Button
                 variant="destructive"
@@ -119,7 +121,7 @@ export default function EditMemorialPage({
                 }}
               >
                 <Trash2 className="h-4 w-4 " />
-                Delete
+                {editMemorialTranslations.header.delete}
               </Button>
             </div>
           </div>
@@ -134,20 +136,27 @@ export default function EditMemorialPage({
         >
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Edit Memorial
+              {editMemorialTranslations.title}
             </h1>
             <p className="text-gray-600">
-              Update the memorial information for {formData.firstName}{" "}
-              {formData.lastName}
+              {editMemorialTranslations.description}
             </p>
           </div>
 
           <Tabs defaultValue="basic" className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="basic">Basic Info</TabsTrigger>
-              <TabsTrigger value="media">Media</TabsTrigger>
-              <TabsTrigger value="family">Family Tree</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="basic">
+                {editMemorialTranslations.tabs.basic}
+              </TabsTrigger>
+              <TabsTrigger value="media">
+                {editMemorialTranslations.tabs.media}
+              </TabsTrigger>
+              <TabsTrigger value="family">
+                {editMemorialTranslations.tabs.family}
+              </TabsTrigger>
+              <TabsTrigger value="settings">
+                {editMemorialTranslations.tabs.settings}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-6">
@@ -155,10 +164,10 @@ export default function EditMemorialPage({
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Heart className="h-5 w-5 mr-2 text-red-500" />
-                    Basic Information
+                    {editMemorialTranslations.basicInfo.title}
                   </CardTitle>
                   <CardDescription>
-                    Update the essential details about your loved one
+                    {editMemorialTranslations.basicInfo.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -174,10 +183,13 @@ export default function EditMemorialPage({
                     <div>
                       <Button variant="outline" className="mb-2 bg-transparent">
                         <Upload className="h-4 w-4 mr-2" />
-                        Change Photo
+                        {editMemorialTranslations.basicInfo.profileImage.change}
                       </Button>
                       <p className="text-sm text-gray-500">
-                        Choose a beautiful photo to represent your loved one
+                        {
+                          editMemorialTranslations.basicInfo.profileImage
+                            .description
+                        }
                       </p>
                     </div>
                   </div>
@@ -185,7 +197,9 @@ export default function EditMemorialPage({
                   {/* Name Fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">
+                        {editMemorialTranslations.basicInfo.firstName}
+                      </Label>
                       <Input
                         id="firstName"
                         placeholder="John"
@@ -197,7 +211,9 @@ export default function EditMemorialPage({
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">
+                        {editMemorialTranslations.basicInfo.lastName}
+                      </Label>
                       <Input
                         id="lastName"
                         placeholder="Smith"
@@ -215,7 +231,7 @@ export default function EditMemorialPage({
                     <div className="space-y-2">
                       <Label htmlFor="birthDate" className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />
-                        Birth Date
+                        {editMemorialTranslations.basicInfo.birthDate}
                       </Label>
                       <Input
                         id="birthDate"
@@ -230,7 +246,7 @@ export default function EditMemorialPage({
                     <div className="space-y-2">
                       <Label htmlFor="deathDate" className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />
-                        Date of Passing
+                        {editMemorialTranslations.basicInfo.deathDate}
                       </Label>
                       <Input
                         id="deathDate"
@@ -248,7 +264,7 @@ export default function EditMemorialPage({
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
-                      Memorial Location
+                      {editMemorialTranslations.basicInfo.location}
                     </Label>
                     <Input
                       id="location"
@@ -263,7 +279,9 @@ export default function EditMemorialPage({
 
                   {/* Biography */}
                   <div className="space-y-2">
-                    <Label htmlFor="biography">Life Story</Label>
+                    <Label htmlFor="biography">
+                      {editMemorialTranslations.basicInfo.biography}
+                    </Label>
                     <Textarea
                       id="biography"
                       placeholder="Share the beautiful story of your loved one's life..."
@@ -283,10 +301,10 @@ export default function EditMemorialPage({
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
-                    Photos & Videos
+                    {editMemorialTranslations.media.title}
                   </CardTitle>
                   <CardDescription>
-                    Manage photos and videos for this memorial
+                    {editMemorialTranslations.media.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -296,10 +314,10 @@ export default function EditMemorialPage({
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Manage Photos
+                          {editMemorialTranslations.media.photos.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Add or remove photos
+                          {editMemorialTranslations.media.photos.description}
                         </p>
                         <Button
                           variant="outline"
@@ -309,7 +327,7 @@ export default function EditMemorialPage({
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Manage Photos
+                          {editMemorialTranslations.media.photos.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -319,10 +337,10 @@ export default function EditMemorialPage({
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <Video className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Manage Videos
+                          {editMemorialTranslations.media.videos.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Add or remove videos
+                          {editMemorialTranslations.media.videos.description}
                         </p>
                         <Button
                           variant="outline"
@@ -332,7 +350,7 @@ export default function EditMemorialPage({
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Manage Videos
+                          {editMemorialTranslations.media.videos.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -342,10 +360,10 @@ export default function EditMemorialPage({
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <FileText className="h-12 w-12 text-gray-400 mb-4" />
                         <h3 className="font-semibold text-gray-900 mb-2">
-                          Documents
+                          {editMemorialTranslations.media.documents.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          Manage documents
+                          {editMemorialTranslations.media.documents.description}
                         </p>
                         <Button
                           variant="outline"
@@ -357,7 +375,7 @@ export default function EditMemorialPage({
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
-                          Manage Files
+                          {editMemorialTranslations.media.documents.button}
                         </Button>
                       </CardContent>
                     </Card>
@@ -371,20 +389,23 @@ export default function EditMemorialPage({
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Users className="h-5 w-5 mr-2 text-green-500" />
-                    Family Tree
+                    {editMemorialTranslations.familyTree.title}
                   </CardTitle>
                   <CardDescription>
-                    Edit family relationships and connections
+                    {editMemorialTranslations.familyTree.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Family Tree Editor
+                      {editMemorialTranslations.familyTree.placeholder.title}
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      Edit connections between family members and relationships
+                      {
+                        editMemorialTranslations.familyTree.placeholder
+                          .description
+                      }
                     </p>
                     <Button
                       className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
@@ -394,7 +415,7 @@ export default function EditMemorialPage({
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
-                      Edit Family Tree
+                      {editMemorialTranslations.familyTree.placeholder.button}
                     </Button>
                   </div>
                 </CardContent>
@@ -404,17 +425,24 @@ export default function EditMemorialPage({
             <TabsContent value="settings" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Privacy & Settings</CardTitle>
+                  <CardTitle>
+                    {editMemorialTranslations.settings.title}
+                  </CardTitle>
                   <CardDescription>
-                    Update privacy and visibility settings
+                    {editMemorialTranslations.settings.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Public Memorial</Label>
+                      <Label className="text-base">
+                        {editMemorialTranslations.settings.publicMemorial.label}
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Allow this memorial to appear in public directory
+                        {
+                          editMemorialTranslations.settings.publicMemorial
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch
@@ -427,9 +455,14 @@ export default function EditMemorialPage({
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Allow Comments</Label>
+                      <Label className="text-base">
+                        {editMemorialTranslations.settings.allowComments.label}
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Let visitors leave condolences and memories
+                        {
+                          editMemorialTranslations.settings.allowComments
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch defaultChecked />
@@ -437,9 +470,17 @@ export default function EditMemorialPage({
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Email Notifications</Label>
+                      <Label className="text-base">
+                        {
+                          editMemorialTranslations.settings.emailNotifications
+                            .label
+                        }
+                      </Label>
                       <p className="text-sm text-gray-500">
-                        Get notified when someone visits or comments
+                        {
+                          editMemorialTranslations.settings.emailNotifications
+                            .description
+                        }
                       </p>
                     </div>
                     <Switch defaultChecked />

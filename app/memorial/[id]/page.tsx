@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -123,7 +124,8 @@ John's legacy lives on through the countless lives he touched, the students he i
       (prev) => (prev - 1 + memorial.images.length) % memorial.images.length
     );
   };
-
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   // Check if memorial is inactive
   if (memorial.status === "inactive") {
     return (
@@ -177,11 +179,12 @@ John's legacy lives on through the countless lives he touched, the students he i
                 variant="secondary"
                 className="bg-indigo-100 text-indigo-800"
               >
-                {memorial.views.toLocaleString()} views
+                {memorial.views.toLocaleString()}{" "}
+                {memorialTranslations.header.views}
               </Badge>
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 " />
-                Share
+                {memorialTranslations.header.share}
               </Button>
             </div>
           </div>
@@ -231,7 +234,10 @@ John's legacy lives on through the countless lives he touched, the students he i
                           {memorial.location}
                         </p>
                         <p className="text-white/80 mt-2">
-                          Age {memorial.age} years
+                          {memorialTranslations.profile.age.replace(
+                            "{age}",
+                            memorial.age
+                          )}
                         </p>
                       </div>
                     </div>
@@ -251,7 +257,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
-                      Life Story
+                      {memorialTranslations.tabs.lifeStory}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -275,20 +281,22 @@ John's legacy lives on through the countless lives he touched, the students he i
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Memories</CardTitle>
+                    <CardTitle>{memorialTranslations.tabs.memories}</CardTitle>
                     <CardDescription>
-                      Photos and videos celebrating a life well-lived
+                      {memorialTranslations.tabs.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="photos" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="photos">Photos</TabsTrigger>
+                        <TabsTrigger value="photos">
+                          {memorialTranslations.tabs.photos}
+                        </TabsTrigger>
                         <TabsTrigger
                           value="video"
                           disabled={memorial.plan === "basic"}
                         >
-                          Video{" "}
+                          {memorialTranslations.tabs.video}{" "}
                           {memorial.plan === "basic" && (
                             <Lock className="h-3 w-3 ml-1" />
                           )}
@@ -396,7 +404,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                                 {memorial.video.title}
                               </h3>
                               <p className="text-sm text-gray-600">
-                                A personal message and memories shared
+                                {memorialTranslations.video.description}
                               </p>
                             </div>
                           </div>
@@ -427,7 +435,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Users className="h-5 w-5 mr-2 text-green-500" />
-                      Family
+                      {memorialTranslations.sections.family.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -478,7 +486,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <MapPin className="h-5 w-5 mr-2 text-blue-500" />
-                      Memorial Location
+                      {memorialTranslations.sections.location.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -501,7 +509,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                           size="sm"
                           className="w-full bg-transparent"
                         >
-                          Get Directions
+                          {memorialTranslations.sections.location.getDirections}
                         </Button>
                       </div>
                     ) : (
@@ -520,7 +528,9 @@ John's legacy lives on through the countless lives he touched, the students he i
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Achievements & Legacy</CardTitle>
+                    <CardTitle>
+                      {memorialTranslations.sections.achievements.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -539,15 +549,21 @@ John's legacy lives on through the countless lives he touched, the students he i
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Memorial Information</CardTitle>
+                    <CardTitle>
+                      {memorialTranslations.sections.info.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">QR Code:</span>
+                      <span className="text-gray-600">
+                        {memorialTranslations.sections.info.qrCode}
+                      </span>
                       <Badge variant="outline">{memorial.qrCode}</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Plan:</span>
+                      <span className="text-gray-600">
+                        {memorialTranslations.sections.info.plan}
+                      </span>
                       <Badge
                         variant={
                           memorial.plan === "premium" ? "default" : "secondary"
@@ -557,7 +573,9 @@ John's legacy lives on through the countless lives he touched, the students he i
                       </Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Last Updated:</span>
+                      <span className="text-gray-600">
+                        {memorialTranslations.sections.info.lastUpdated}
+                      </span>
                       <span className="text-gray-900">
                         {memorial.lastUpdated}
                       </span>
@@ -570,7 +588,7 @@ John's legacy lives on through the countless lives he touched, the students he i
                           size="sm"
                           className="w-full bg-transparent"
                         >
-                          Create Your Own Memorial
+                          {memorialTranslations.sections.info.createMemorial}
                         </Button>
                       </Link>
                     </div>
