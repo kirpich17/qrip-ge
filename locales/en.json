@@ -916,5 +916,163 @@
       },
       "configure": "Configure"
     }
+  },
+  "adminlogin": {
+    "login": {
+      "welcomeBack": "Administrator Access",
+      "subtitle": "Secure login for system administrators",
+      "title": "Admin Sign In",
+      "description": "Enter your administrator credentials",
+      "email": "Admin Email",
+      "emailPlaceholder": "Enter Username",
+      "password": "Password",
+      "passwordPlceholder": "Password",
+      "logButton": "Access Admin Panel"
+    }
+  },
+  "adsubscription": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "Subscription Management"
+    },
+    "title": "Manage Subscription Plans",
+    "description": "Configure and customize all subscription plans for your platform",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 30%"
+    },
+    "currentPlan": {
+      "title": "Current Plan: {plan}",
+      "description": "Upgrade to unlock premium features",
+      "status": "Active"
+    },
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Basic memorial features",
+        "price": "$0",
+        "period": "/month",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Basic memorial page",
+          "Public directory listing"
+        ],
+        "limitations": [
+          "No video upload",
+          "No family tree/genealogy",
+          "No QR location & map pin",
+          "No multiple administrators",
+          "No lifetime access"
+        ],
+        "button": "Current Plan"
+      },
+      "basic": {
+        "name": "Basic Premium",
+        "description": "Enhanced memorial experience",
+        "price": "$9",
+        "period": "/month",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Video upload",
+          "Family tree / genealogy",
+          "GPS location & map pin",
+          "Advanced customization",
+          "Priority support"
+        ],
+        "limitations": ["No multiple administrators", "No lifetime access"],
+        "button": "Upgrade to Basic Premium",
+        "popular": "Most Popular",
+        "yearlySave": "Save $18 per year"
+      },
+      "legacy": {
+        "name": "Legacy+",
+        "description": "Complete memorial solution",
+        "price": "$199",
+        "period": "one-time",
+        "features": [
+          "Biography & photo",
+          "QR code generation",
+          "Video upload",
+          "Family tree / genealogy",
+          "GPS location & map pin",
+          "Multiple administrators",
+          "Lifetime access (one-time pay)",
+          "Premium customization",
+          "White-glove setup service",
+          "Dedicated support"
+        ],
+        "limitations": [],
+        "button": "Purchase Legacy+ (Forever)",
+        "lifetime": "Lifetime Access - Pay Once, Own Forever"
+      }
+    },
+    "comparison": {
+      "title": "Feature Comparison",
+      "description": "Compare what's included with each plan",
+      "notincluded": "Not Included",
+      "features": [
+        { "name": "Biography & photo" },
+        { "name": "QR code generation" },
+        { "name": "Video upload" },
+        { "name": "Family tree / genealogy" },
+        { "name": "GPS location & map pin" },
+        { "name": "Multiple administrators" },
+        { "name": "Lifetime access (one-time pay)" }
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": [
+        {
+          "question": "What's the difference between plans?",
+          "answer": "Free includes basic features, Basic Premium adds video and family tree, Legacy+ includes everything plus lifetime access and multiple collaborators."
+        },
+        {
+          "question": "Is Legacy+ really lifetime access?",
+          "answer": "Yes! Legacy+ is a one-time payment of $199 that gives you lifetime access to all features with no recurring fees."
+        },
+        {
+          "question": "Can I upgrade or downgrade anytime?",
+          "answer": "Yes, you can change your plan at any time. Upgrades take effect immediately."
+        },
+        {
+          "question": "What happens if I don't pay my subscription?",
+          "answer": "Your memorial will show as \"unavailable\" to visitors. You'll have 30 days to update payment before premium features are disabled."
+        }
+      ]
+    },
+    "admin": {
+      "addPlan": "Add New Plan",
+      "editPlan": "Edit Plan",
+      "savePlan": "Save Plan",
+      "deletePlan": "Delete Plan",
+      "activatePlan": "Activate Plan",
+      "deactivatePlan": "Deactivate Plan",
+      "planName": "Plan Name",
+      "planDescription": "Description",
+      "monthlyPrice": "Monthly Price ($)",
+      "yearlyPrice": "Yearly Price ($)",
+      "oneTimePayment": "One-time Payment Plan",
+      "markPopular": "Mark as Popular",
+      "planActive": "Plan Active",
+      "features": "Features",
+      "addFeature": "Add Feature",
+      "limitations": "Limitations",
+      "addLimitation": "Add Limitation",
+      "subscribers": {
+        "title": "Subscribers",
+        "description": "View and manage all active subscriptions",
+        "user": "User",
+        "plan": "Plan",
+        "status": "Status",
+        "billing": "Billing",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "actions": "Actions"
+      }
+    }
   }
 }
