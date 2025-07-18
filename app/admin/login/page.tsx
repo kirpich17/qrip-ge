@@ -18,8 +18,11 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function AdminLoginPage() {
+  const { t } = useTranslation();
+  const adminloginTranslations = t("adminlogin");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,18 +69,20 @@ export default function AdminLoginPage() {
             <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
-            Administrator Access
+            {adminloginTranslations.login.welcomeBack}
           </h1>
           <p className="text-gray-600  mt-2">
-            Secure login for system administrators
+            {adminloginTranslations.login.subtitle}
           </p>
         </div>
 
         <Card className="shadow-xl ">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">Admin Sign In</CardTitle>
+            <CardTitle className="text-xl text-center">
+              {adminloginTranslations.login.title}
+            </CardTitle>
             <CardDescription className="text-center  ">
-              Enter your administrator credentials
+              {adminloginTranslations.login.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -92,12 +97,12 @@ export default function AdminLoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="">
-                  Admin Email
+                  {adminloginTranslations.login.email}
                 </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter Username"
+                  placeholder={adminloginTranslations.login.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -107,13 +112,15 @@ export default function AdminLoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="">
-                  Password
+                  {adminloginTranslations.login.password}
                 </Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Password"
+                    placeholder={
+                      adminloginTranslations.login.passwordPlceholder
+                    }
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -140,20 +147,11 @@ export default function AdminLoginPage() {
                 className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Authenticating..." : "Access Admin Panel"}
+                {isLoading
+                  ? adminloginTranslations.login.logButton
+                  : adminloginTranslations.login.logButton}
               </Button>
             </form>
-
-            {/* <div className="mt-6 p-4 bg-gray-700 rounded-lg">
-              <p className="text-xs text-gray-400 text-center mb-2">
-                Demo Admin Credentials:
-              </p>
-              <p className="text-xs text-gray-300 text-center">
-                Email: admin@qrip.ge
-                <br />
-                Password: admin123
-              </p>
-            </div> */}
           </CardContent>
         </Card>
       </motion.div>
