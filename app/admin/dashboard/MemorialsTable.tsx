@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Trash2 } from "lucide-react";
+import { CheckCircle, Eye, Trash2 } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslate";
+import { useRouter } from "next/navigation";
 
 export function MemorialsTable({
   memorials,
@@ -20,16 +22,34 @@ export function MemorialsTable({
   memorials: any[];
   translations: any;
 }) {
+  const router = useRouter();
+  const { t } = useTranslation();
+  const admindashTranslations = t("admindash");
+  const handleProfileClick = () => {
+    router.push("/memorial/demo"); // Change route as needed
+  };
   return (
     <Table>
       <TableHeader>
         <TableRow className="">
-          <TableHead className="">{translations.memorial}</TableHead>
-          <TableHead className="">{translations.creator}</TableHead>
-          <TableHead className="">{translations.status}</TableHead>
-          <TableHead className="">{translations.views}</TableHead>
-          <TableHead className="">{translations.created}</TableHead>
-          <TableHead className="">{translations.actions}</TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.memorial}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.creator}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.status}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.views}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.created}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.recentMemorials.tableHeaders.actions}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -55,6 +75,14 @@ export function MemorialsTable({
             <TableCell className="">{memorial.created}</TableCell>
             <TableCell>
               <div className="flex items-center space-x-2">
+                <Button
+                  onClick={handleProfileClick}
+                  size="sm"
+                  variant="outline"
+                  className="border-[#354f44] text-black "
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"

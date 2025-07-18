@@ -1058,5 +1058,64 @@
         "actions": "მოქმედებები"
       }
     }
+  },
+  "adminprofile": {
+    "header": {
+      "back": "დაბრუნება დაფაზე",
+      "title": "ადმინისტრატორის პროფილი"
+    },
+    "profileOverview": {
+      "title": "პროფილის მიმოხილვა",
+      "accountStats": "ანგარიშის სტატისტიკა",
+      "memberSince": "წევრია დან",
+      "lastActive": "ბოლო აქტივობა"
+    },
+    "personalInfo": {
+      "title": "პირადი ინფორმაცია",
+      "fullName": "სრული სახელი",
+      "email": "ელ. ფოსტა",
+      "phone": "ტელეფონი",
+      "location": "მდებარეობა",
+      "bio": "ბიოგრაფია",
+      "saveChanges": "ცვლილებების შენახვა",
+      "editProfile": "პროფილის რედაქტირება"
+    },
+    "security": {
+      "title": "უსაფრთხოება",
+      "changePassword": "პაროლის შეცვლა",
+      "currentPassword": "მიმდინარე პაროლი",
+      "newPassword": "ახალი პაროლი",
+      "confirmPassword": "ახალი პაროლის დადასტურება",
+      "savePassword": "პაროლის შენახვა",
+      "cancel": "გაუქმება",
+      "twoFactorAuth": "ორფაქტორიანი ავთენტიფიკაცია",
+      "twoFactorDesc": "დაამატეთ დამატებითი უსაფრთხოების შრე თქვენს ანგარიშზე",
+      "verificationCode": "ვერიფიკაციის კოდი",
+      "verify": "დადასტურება",
+      "done": "დასრულება",
+      "loginActivity": "შესვლის აქტივობა",
+      "recentLoginActivity": "შესვლის ბოლო აქტივობები"
+    },
+    "notifications": {
+      "title": "შეტყობინებების პარამეტრები",
+      "emailNotifications": "ელ. ფოსტის შეტყობინებები",
+      "emailDesc": "მიიღეთ მნიშვნელოვანი განახლებები ელ. ფოსტით",
+      "pushNotifications": "Push შეტყობინებები",
+      "pushDesc": "მიიღეთ შეტყობინებები თქვენს მოწყობილობაზე",
+      "systemAlerts": "სისტემური შეტყობინებები",
+      "systemDesc": "კრიტიკული სისტემური შეტყობინებები",
+      "userActivity": "მომხმარებლის აქტივობა",
+      "userActivityDesc": "შეტყობინებები მომხმარებლის მოქმედებებზე"
+    },
+    "common": {
+      "administrator": "ადმინისტრატორი",
+      "device": "მოწყობილობა",
+      "ip": "IP მისამართი"
+    }
+  },
+  "Profiledropdown": {
+    "subscription": "გამოწერის პაკეტი",
+    "profile": "პროფილი",
+    "logout": "გამოსვლა"
   }
 }

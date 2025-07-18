@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Eye, Ban, Trash2 } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export function UserManagementTable({
   users,
@@ -29,17 +30,30 @@ export function UserManagementTable({
   translations: any;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-
+  const { t } = useTranslation();
+  const admindashTranslations = t("admindash");
   return (
     <Table>
       <TableHeader>
         <TableRow className="">
-          <TableHead className="">{translations.user}</TableHead>
-          <TableHead className="">{translations.plan}</TableHead>
-          <TableHead className="">{translations.memorials}</TableHead>
-          <TableHead className="">{translations.status}</TableHead>
-          <TableHead className="">{translations.joined}</TableHead>
-          <TableHead className="">{translations.actions}</TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.user}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.plan}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.memorials}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.status}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.joined}
+          </TableHead>
+          <TableHead className="">
+            {admindashTranslations.userManagement.tableHeaders.actions}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
