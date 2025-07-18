@@ -19,10 +19,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
+import axiosInstance, { BASE_URL } from "@/services/axiosInstance";
+import { CREATE_AUTH_REGISTER } from "@/services/apiEndPoint";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const { t } = useTranslation();
-  const authTranslations = t("auth");
+  const authTranslations: any = t("auth" as any);
   const commonTranslations = t("common");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -39,12 +42,41 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("passwords don't match")
+      return
+    }
+    setIsLoading(true)
+    let body = {
+      firstname: formData?.firstName,
+      lastname: formData?.lastName,
+      email: formData?.email,
+      password: formData?.password
+    }
+    try {
+      const response = await axiosInstance.post(
+        `${CREATE_AUTH_REGISTER}`,
+        body
+      );
+      const responseMessage = response?.data?.metadata?.message
+      if (response.status === 201) {
+        toast.success(responseMessage);
+        return response;
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 400) {
+        toast.error(error?.response?.data?.message);
+      } else if (error?.response?.status === 500) {
+        toast.error(error?.response?.data?.message);
+      }
+    }
+    setIsLoading(false)
+    // setIsLoading(true);
 
-    // Simulate signup process
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 2000);
+    // // Simulate signup process
+    // setTimeout(() => {
+    //   router.push("/dashboard");
+    // }, 2000);
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -242,25 +274,4 @@ export default function SignupPage() {
   );
 }
 
-//  "createAccount":
-//   "startHonoringMemories":
-//   "signUp"
-//   "createAccountDescription":
-//   "firstName":
-//   "firstNamePlaceholder":
-//   "lastName":
-//   "lastNamePlaceholder":
-//   "email":
-//   "emailPlaceholder": "
-//   "password":
-//   "passwordPlaceholder":
-//   "confirmPassword":
-//   "confirmPasswordPlaceholder":
-//   "agreeToTerms":
-//   "termsOfService":
-//   "privacyPolicy":
-//   "and":
-//   "creatingAccount":
-//   "createAccountButton":
-//   "alreadyHaveAccount":
-//   "signIn": "Sign in"
+

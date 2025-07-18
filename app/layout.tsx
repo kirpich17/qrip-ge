@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import ClientLayout from "./ClientLayout";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="English">
       <body className={inter.className}>
         <LanguageProvider>
+        <ToastContainer position="top-right" autoClose={5000} />
           <ClientLayout>{children}</ClientLayout>
         </LanguageProvider>
       </body>

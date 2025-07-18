@@ -35,7 +35,7 @@ import { ProfileDropdown } from "./ProfileDropdown";
 
 export default function AdminDashboardPage() {
   const { t } = useTranslation();
-  const admindashTranslations = t("admindash");
+  const admindashTranslations: any = t("admindash" as any);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
