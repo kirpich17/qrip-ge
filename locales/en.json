@@ -1074,5 +1074,64 @@
         "actions": "Actions"
       }
     }
+  },
+  "adminprofile": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "Admin Profile"
+    },
+    "profileOverview": {
+      "title": "Profile Overview",
+      "accountStats": "Account Stats",
+      "memberSince": "Member Since",
+      "lastActive": "Last Active"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
+      "bio": "Bio",
+      "saveChanges": "Save Changes",
+      "editProfile": "Edit Profile"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "savePassword": "Save Password",
+      "cancel": "Cancel",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "twoFactorDesc": "Add an extra layer of security to your account",
+      "verificationCode": "Verification Code",
+      "verify": "Verify",
+      "done": "Done",
+      "loginActivity": "Login Activity",
+      "recentLoginActivity": "Recent Login Activity"
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "emailNotifications": "Email Notifications",
+      "emailDesc": "Receive important updates via email",
+      "pushNotifications": "Push Notifications",
+      "pushDesc": "Get alerts on your device",
+      "systemAlerts": "System Alerts",
+      "systemDesc": "Critical system notifications",
+      "userActivity": "User Activity",
+      "userActivityDesc": "Notifications about user actions"
+    },
+    "common": {
+      "administrator": "Administrator",
+      "device": "Device",
+      "ip": "IP"
+    }
+  },
+  "Profiledropdown": {
+    "subscription": "Subscription",
+    "profile": "Profile",
+    "logout": "Logout"
   }
 }

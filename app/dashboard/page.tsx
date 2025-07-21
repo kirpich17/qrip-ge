@@ -250,8 +250,8 @@ export default function DashboardPage() {
                 >
                   {memorials.map((memorial) => (
                     <motion.div key={memorial.id} variants={fadeInUp}>
-                      <div className="flex md:items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                        <Avatar className="md:h-16 md:w-16 h-10 w-10">
+                      <div className="flex md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
+                        <Avatar className="md:h-16 md:w-16 h-8 w-8">
                           <AvatarImage
                             src={memorial.image || "/placeholder.svg"}
                           />
@@ -263,9 +263,9 @@ export default function DashboardPage() {
                           </AvatarFallback>
                         </Avatar>
 
-                        <div className="flex-1 min-w-0">
+                        <div className="sm:flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="md:text-lg text-base font-semibold text-gray-900 truncate">
+                            <h3 className="md:text-lg sm:text-base text-sm font-semibold text-gray-900 truncate">
                               {memorial.name}
                             </h3>
                             {memorial.plan === "premium" && (
@@ -307,7 +307,7 @@ export default function DashboardPage() {
 
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" className="p-0">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>

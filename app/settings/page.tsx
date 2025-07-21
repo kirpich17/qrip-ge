@@ -61,8 +61,8 @@ export default function SettingsPage() {
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <Settings className="h-6 w-6 text-white" />
-              <span className="text-xl font-bold text-white">
+              <Settings className="md:h-6 md:w-6 w-4 h-4 text-white" />
+              <span className="md:text-xl text-base font-bold text-white">
                 {" "}
                 {settingsTranslations.header.title}
               </span>
@@ -78,7 +78,7 @@ export default function SettingsPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="md:text-3xl text-xl font-bold text-gray-900 mb-2">
               {settingsTranslations.page.title}
             </h1>
             <p className="text-gray-600">

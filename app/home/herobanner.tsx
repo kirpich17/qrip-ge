@@ -98,7 +98,7 @@ const Herobanner = () => {
                   <span>{heroTranslations.tagline}</span>
                 </div>
 
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900">
+                <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-gray-900">
                   {heroTranslations.title1}
                   <span className="block text-[#243b31]">
                     {heroTranslations.title2}
@@ -164,7 +164,7 @@ const Herobanner = () => {
             {/* Right Side - Tudor-style Memorial Stone */}
             <motion.div
               variants={fadeInRight}
-              className="relative flex justify-end items-end h-full"
+              className="relative flex lg:justify-end  justify-center items-end h-full"
             >
               <div className="relative w-full max-w-md">
                 {/* Main Memorial Stone */}

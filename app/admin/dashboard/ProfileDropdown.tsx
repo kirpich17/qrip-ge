@@ -8,12 +8,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export function ProfileDropdown() {
+  const { t } = useTranslation();
+  const profiledropdownTranslations = t("Profiledropdown");
   const router = useRouter();
 
   const handleSubscriptionClick = () => {
     router.push("/admin/adminsubscription"); // Change route as needed
+  };
+  const handleProfileClick = () => {
+    router.push("/admin/adminprofile"); // Change route as needed
   };
 
   const handleLogoutClick = () => {
@@ -33,13 +39,19 @@ export function ProfileDropdown() {
           onClick={handleSubscriptionClick}
           className="cursor-pointer"
         >
-          Subscription
+          {profiledropdownTranslations.subscription}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={handleProfileClick}
+          className="cursor-pointer"
+        >
+          {profiledropdownTranslations.profile}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleLogoutClick}
           className="cursor-pointer"
         >
-          Logout
+          {profiledropdownTranslations.logout}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
