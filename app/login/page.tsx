@@ -17,11 +17,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
+import axios from "axios";
+import { LOGIN } from "@/services/apiEndPoint";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const { t } = useTranslation();
-  const authTranslations = t("auth");
-  const commonTranslations = t("common");
+  const authTranslations:any = t("auth" as any);
+  const commonTranslations:any = t("common" );
 
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,18 +35,55 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoading(true)
+    const body = {
+      email: email,
+      password: password
+    }
+    try {
+      const response: any = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
+        body
+      );
+      if (response.status) {
+        const { responseData } = response?.data || {}
+        const logigRole = responseData?.user?.role
+        // localStorage.setItem("loginData", JSON.stringify(responseData));
+        toast.success(response?.data?.metadata?.message
+          || "Login successful!");
+        // if (logigRole === "manager" || logigRole === "admin") {
+        //   localStorage.setItem("userRole", logigRole);
+        //   localStorage.setItem("isAuthenticated", "true");
+        //   router.push("/admin")
+        // } else if (logigRole === "underwriter") {
+        //   localStorage.setItem("userRole", logigRole);
+        //   localStorage.setItem("isAuthenticated", "true");
+        //   router.push("/dashboard")
+        // }
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        toast.error(error?.response?.data?.metadata?.message
+          || "Login failed");
+
+      }else if (error?.response?.status === 404) {
+        toast.error("Something went wrong. Please try again.");
+
+      }
+    }
+    setIsLoading(false)
+    // setIsLoading(true);
     setError("");
 
-    // Dummy authentication
-    if (email === "user@qrip.ge" && password === "user123") {
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1000);
-    } else {
-      setError(authTranslations.errors.invalidCredentials);
-      setIsLoading(false);
-    }
+    // // Dummy authentication
+    // if (email === "user@qrip.ge" && password === "user123") {
+    //   setTimeout(() => {
+    //     router.push("/dashboard");
+    //   }, 1000);
+    // } else {
+    //   setError(authTranslations.errors.invalidCredentials);
+    //   setIsLoading(false);
+    // }
   };
 
   return (

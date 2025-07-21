@@ -52,9 +52,9 @@ const staggerContainer = {
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const dashboardTranslations = t("dashboard");
+  const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
-  const dashboard = dashboardTranslations;
+  const dashboard:any = dashboardTranslations;
   const [searchQuery, setSearchQuery] = useState("");
 
   const memorials = [
