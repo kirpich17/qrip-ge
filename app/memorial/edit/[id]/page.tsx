@@ -74,9 +74,9 @@ export default function EditMemorialPage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#243b31] ">
+      <header className="bg-[#243b31] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between py-3 flex-wrap gap-2">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
@@ -86,7 +86,7 @@ export default function EditMemorialPage({
                 {editMemorialTranslations.header.back}
               </Link>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center  flex-wrap gap-2">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -135,7 +135,7 @@ export default function EditMemorialPage({
           transition={{ duration: 0.6 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="md:text-3xl text-xl font-bold text-gray-900 mb-2">
               {editMemorialTranslations.title}
             </h1>
             <p className="text-gray-600">
@@ -144,7 +144,7 @@ export default function EditMemorialPage({
           </div>
 
           <Tabs defaultValue="basic" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4 overflow-x-auto md:w-auto">
               <TabsTrigger value="basic">
                 {editMemorialTranslations.tabs.basic}
               </TabsTrigger>
@@ -172,7 +172,7 @@ export default function EditMemorialPage({
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Image */}
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center  flex-wrap gap-2 md:justify-normal justify-center">
                     <Avatar className="h-24 w-24">
                       <AvatarImage src="/placeholder.svg?height=96&width=96" />
                       <AvatarFallback className="text-2xl">
@@ -180,12 +180,12 @@ export default function EditMemorialPage({
                         {formData.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="md:w-auto w-full text-center md:text-left">
                       <Button variant="outline" className="mb-2 bg-transparent">
                         <Upload className="h-4 w-4 mr-2" />
                         {editMemorialTranslations.basicInfo.profileImage.change}
                       </Button>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 text-center md:text-left">
                         {
                           editMemorialTranslations.basicInfo.profileImage
                             .description
@@ -195,7 +195,7 @@ export default function EditMemorialPage({
                   </div>
 
                   {/* Name Fields */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">
                         {editMemorialTranslations.basicInfo.firstName}
@@ -227,7 +227,7 @@ export default function EditMemorialPage({
                   </div>
 
                   {/* Date Fields */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="birthDate" className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />

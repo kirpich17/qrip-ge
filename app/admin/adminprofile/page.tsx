@@ -156,9 +156,9 @@ export default function AdminProfile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 md:gap-8 gap-4">
             {/* Left Column - Profile Overview */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 md:space-y-6 space-y-4">
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
@@ -202,7 +202,7 @@ export default function AdminProfile() {
                               ?.accountStats
                           }
                         </h4>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="grid sm:grid-cols-2 grid-cols-1 gap-2 text-sm">
                           <div className="bg-gray-100 p-2 rounded">
                             <div className="font-medium">
                               {
@@ -475,11 +475,11 @@ export default function AdminProfile() {
             </div>
 
             {/* Right Column - Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 md:space-y-6 space-y-4">
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center flex-wrap">
                       <CardTitle className="flex items-center gap-2">
                         <User className="h-5 w-5" />
                         {adminprofileTranslations?.personalInfo?.title ||
