@@ -55,7 +55,7 @@ const Memories = () => {
             <Link href="/signup">
               <Button
                 size="lg"
-                className="bg-white text-[#243b31] hover:bg-gray-50 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 whitespace-break-spaces"
+                className="bg-white text-[#243b31] hover:bg-gray-50 sm:text-lg text-sm px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 whitespace-break-spaces"
               >
                 <FaHeart className="mr-2 h-5 w-5" />
                 {memoriesTranslations.primaryButton}
@@ -66,7 +66,7 @@ const Memories = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#243b31] bg-transparent backdrop-blur-sm"
+                className="sm:text-lg text-sm px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#243b31] bg-transparent backdrop-blur-sm"
               >
                 <Eye className="mr-2 h-5 w-5" />
                 {memoriesTranslations.secondaryButton}

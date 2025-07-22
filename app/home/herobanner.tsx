@@ -201,13 +201,13 @@ const Herobanner = () => {
                     </div>
 
                     <div className="text-white">
-                      <h3 className="text-3xl font-bold tracking-wider">
+                      <h3 className="xl:text-3xl text-xl font-bold tracking-wider">
                         {heroTranslations.memorialExample.name}
                       </h3>
-                      <p className="text-xl mt-2">
+                      <p className="xl:text-xl text-lg mt-2">
                         {heroTranslations.memorialExample.years}
                       </p>
-                      <p className="text-lg italic mt-4">
+                      <p className="xl:text-lg text-base italic mt-4">
                         "{heroTranslations.memorialExample.quote}"
                       </p>
                     </div>

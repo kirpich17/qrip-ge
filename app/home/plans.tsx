@@ -114,15 +114,15 @@ const Plans = () => {
                   >
                     <plan.icon className={`h-8 w-8 ${plan.color}`} />
                   </div>
-                  <CardTitle className="md:text-2xl text-xl font-bold">
+                  <CardTitle className="lg:text-2xl md:text-xl text-lg font-bold">
                     {plan.name}
                   </CardTitle>
                   <div className="mt-4">
                     <div className="flex items-baseline justify-center">
-                      <span className="md:text-5xl text-3xl font-bold text-gray-900">
+                      <span className="lg:text-5xl md:text-3xl text-xl font-bold text-gray-900">
                         {plan.price}
                       </span>
-                      <span className="text-gray-600 ml-2 md:text-lg text-base">
+                      <span className="text-gray-600 ml-2 md:text-lg text-sm">
                         {plan.period}
                       </span>
                     </div>
@@ -153,7 +153,7 @@ const Plans = () => {
 
                   <Link href="/subscription">
                     <Button
-                      className={`w-full text-lg py-3 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                      className={`w-full xl:text-lg text-sm py-3 px-2 !gap-2 shadow-lg hover:shadow-xl transition-all duration-300 flex-wrap h-auto whitespace-normal   ${
                         plan.popular
                           ? "bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                           : plan.name === plansTranslations.legacy.name
@@ -164,12 +164,12 @@ const Plans = () => {
                     >
                       {plan.name === plansTranslations.free.name ? (
                         <>
-                          <FaHeart className="mr-2 h-4 w-4" />
+                          <FaHeart className=" h-4 w-4" />
                           {plansTranslations.startFree}
                         </>
                       ) : (
                         <>
-                          <Crown className="mr-2 h-4 w-4" />
+                          <Crown className=" h-4 w-4" />
                           {plansTranslations.choose} {plan.name}
                         </>
                       )}
