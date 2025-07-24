@@ -33,58 +33,50 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true)
-    const body = {
-      email: email,
-      password: password
-    }
-    try {
-      const response: any = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
-        body
-      );
-      if (response.status) {
-        const { responseData } = response?.data || {}
-        const logigRole = responseData?.user?.role
-        // localStorage.setItem("loginData", JSON.stringify(responseData));
-        toast.success(response?.data?.metadata?.message
-          || "Login successful!");
-        // if (logigRole === "manager" || logigRole === "admin") {
-        //   localStorage.setItem("userRole", logigRole);
-        //   localStorage.setItem("isAuthenticated", "true");
-        //   router.push("/admin")
-        // } else if (logigRole === "underwriter") {
-        //   localStorage.setItem("userRole", logigRole);
-        //   localStorage.setItem("isAuthenticated", "true");
-        //   router.push("/dashboard")
-        // }
-      }
-    } catch (error: any) {
-      if (error?.response?.status === 401) {
-        toast.error(error?.response?.data?.metadata?.message
-          || "Login failed");
-
-      }else if (error?.response?.status === 404) {
-        toast.error("Something went wrong. Please try again.");
-
-      }
-    }
-    setIsLoading(false)
-    // setIsLoading(true);
-    setError("");
-
-    // // Dummy authentication
-    // if (email === "user@qrip.ge" && password === "user123") {
-    //   setTimeout(() => {
-    //     router.push("/dashboard");
-    //   }, 1000);
-    // } else {
-    //   setError(authTranslations.errors.invalidCredentials);
-    //   setIsLoading(false);
-    // }
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  const body = {
+    email,
+    password,
   };
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
+      body
+    );
+
+    const { status, message, token, user } = response?.data || {};
+
+    if (status) {
+      localStorage.setItem("loginData", JSON.stringify(user));
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userRole", user?.userType || "");
+      localStorage.setItem("isAuthenticated", "true");
+      toast.success(message || "Login successful!");
+      if (user?.userType === "admin" || user?.userType === "manager") {
+        router.push("/admin");
+      } else if (user?.userType === "underwriter") {
+        router.push("/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      toast.error(error?.response?.data?.message || "Invalid credentials");
+    } else if (error?.response?.status === 404) {
+      toast.error("Something went wrong. Please try again.");
+    } else {
+      toast.error("Login failed. Please try again.");
+    }
+  } finally {
+    setIsLoading(false);
+    setError("");
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-[#ecefdc] flex items-center justify-center p-4">
