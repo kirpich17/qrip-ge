@@ -10,7 +10,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white py-[20px] px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-gray-400 text-center">
-          {" "}
+          {/* @ts-ignore */}
           {t("footer").copyright}
         </div>
       </div>

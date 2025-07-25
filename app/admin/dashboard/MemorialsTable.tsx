@@ -55,8 +55,14 @@ export function MemorialsTable({
       <TableBody>
         {memorials.map((memorial) => (
           <TableRow key={memorial.id} className="">
-            <TableCell className="font-medium">{memorial.name}</TableCell>
-            <TableCell className="">{memorial.creator}</TableCell>
+            <TableCell className="font-medium">
+              {memorial.firstName + " " + memorial.lastName}
+            </TableCell>
+            <TableCell className="">
+              {memorial?.createdBy?.firstname +
+                " " +
+                memorial?.createdBy?.lastname}
+            </TableCell>
             <TableCell>
               <Badge
                 variant={
@@ -72,7 +78,14 @@ export function MemorialsTable({
               </Badge>
             </TableCell>
             <TableCell className="">{memorial.views}</TableCell>
-            <TableCell className="">{memorial.created}</TableCell>
+            <TableCell className="">
+              {" "}
+              {new Date(memorial.createdAt).toLocaleString("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: "UTC", // or your local timezone
+              })}
+            </TableCell>
             <TableCell>
               <div className="flex items-center space-x-2">
                 <Button

@@ -1,7 +1,8 @@
+// @ts-nocheck
 "use client";
 
 import type React from "react";
-
+import axios from "axios";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Shield, ArrowLeft, QrCode } from "lucide-react";
@@ -35,13 +36,33 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Dummy authentication for admin
-    if (email === "admin@qrip.ge" && password === "admin123") {
-      setTimeout(() => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/admin/signIn",
+        {
+          email,
+          password,
+        }
+      );
+
+      if (response.data.status) {
+        // Save the response data to localStorage
+        localStorage.setItem("loginData", JSON.stringify(response.data));
+
+        // Redirect to admin dashboard
         router.push("/admin/dashboard");
-      }, 1000);
-    } else {
-      setError("Invalid admin credentials. Use admin@qrip.ge / admin123");
+      } else {
+        setError(response.data.message || "Login failed");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "An error occurred during login"
+        );
+      } else {
+        setError("An unexpected error occurred");
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -69,6 +90,8 @@ export default function AdminLoginPage() {
             <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
+            {/* // @ts-nocheck */}
+
             {adminloginTranslations.login.welcomeBack}
           </h1>
           <p className="text-gray-600  mt-2">

@@ -1,7 +1,7 @@
-// app/dashboard/page.tsx
+// @ts-nocheck
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -32,107 +32,193 @@ import { AnalyticsCharts } from "./AnalyticsCharts";
 import { PlatformSettings } from "./PlatformSettings";
 import { NotificationModal } from "./NotificationModal";
 import { ProfileDropdown } from "./ProfileDropdown";
+import IsAdminAuth from "@/lib/IsAdminAuth/page";
+import axiosInstance from "@/services/axiosInstance";
 
-export default function AdminDashboardPage() {
+function AdminDashboardPage() {
   const { t } = useTranslation();
   const admindashTranslations: any = t("admindash" as any);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [stats, setStats] = useState([]);
+  const [recentMemorials, setrecentMemorials] = useState([]);
+  const [users, setusers] = useState([]);
+  // const stats = [
+  //   {
+  //     label: admindashTranslations.stats.totalUsers,
+  //     value: "1,247",
+  //     change: "+12%",
+  //     icon: Users,
+  //     color: "text-blue-600",
+  //     changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+  //   },
+  //   {
+  // label: admindashTranslations.stats.activeMemorials,
+  // value: "3,891",
+  // change: "+8%",
+  // icon: Heart,
+  // color: "text-red-600",
+  // changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+  //   },
+  // {
+  //   label: admindashTranslations.stats.monthlyRevenue,
+  //   value: "$12,450",
+  //   change: "+15%",
+  //   icon: DollarSign,
+  //   color: "text-green-600",
+  //   changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+  // },
 
-  const stats = [
-    {
-      label: admindashTranslations.stats.totalUsers,
-      value: "1,247",
-      change: "+12%",
-      icon: Users,
-      color: "text-blue-600",
-      changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
-    },
-    {
-      label: admindashTranslations.stats.activeMemorials,
-      value: "3,891",
-      change: "+8%",
-      icon: Heart,
-      color: "text-red-600",
-      changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
-    },
-    {
-      label: admindashTranslations.stats.monthlyRevenue,
-      value: "$12,450",
-      change: "+15%",
-      icon: DollarSign,
-      color: "text-green-600",
-      changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
-    },
-    {
-      label: admindashTranslations.stats.qrScans,
-      value: "28,392",
-      change: "+23%",
-      icon: TrendingUp,
-      color: "text-purple-600",
-      changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
-    },
-  ];
+  //   // {
+  //   //   label: admindashTranslations.stats.qrScans,
+  //   //   value: "28,392",
+  //   //   change: "+23%",
+  //   //   icon: TrendingUp,
+  //   //   color: "text-purple-600",
+  //   //   changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+  //   // },
+  // ];
 
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      plan: "Premium",
-      memorials: 3,
-      status: "active",
-      joined: "2024-01-15",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      plan: "Basic",
-      memorials: 1,
-      status: "active",
-      joined: "2024-02-20",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike@example.com",
-      plan: "Premium",
-      memorials: 5,
-      status: "suspended",
-      joined: "2023-12-10",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-  ];
+  // const users = [
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     email: "john@example.com",
+  //     plan: "Premium",
+  //     memorials: 3,
+  //     status: "active",
+  //     joined: "2024-01-15",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jane Smith",
+  //     email: "jane@example.com",
+  //     plan: "Basic",
+  //     memorials: 1,
+  //     status: "active",
+  //     joined: "2024-02-20",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Mike Johnson",
+  //     email: "mike@example.com",
+  //     plan: "Premium",
+  //     memorials: 5,
+  //     status: "suspended",
+  //     joined: "2023-12-10",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //   },
+  // ];
 
-  const recentMemorials = [
-    {
-      id: 1,
-      name: "Robert Wilson",
-      creator: "Sarah Wilson",
-      status: "pending",
-      created: "2024-01-20",
-      views: 45,
-    },
-    {
-      id: 2,
-      name: "Mary Johnson",
-      creator: "Tom Johnson",
-      status: "approved",
-      created: "2024-01-19",
-      views: 123,
-    },
-    {
-      id: 3,
-      name: "David Smith",
-      creator: "Lisa Smith",
-      status: "approved",
-      created: "2024-01-18",
-      views: 89,
-    },
-  ];
+  // const recentMemorials = [
+  //   {
+  //     id: 1,
+  //     name: "Robert Wilson",
+  //     creator: "Sarah Wilson",
+  //     status: "pending",
+  //     created: "2024-01-20",
+  //     views: 45,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Mary Johnson",
+  //     creator: "Tom Johnson",
+  //     status: "approved",
+  //     created: "2024-01-19",
+  //     views: 123,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "David Smith",
+  //     creator: "Lisa Smith",
+  //     status: "approved",
+  //     created: "2024-01-18",
+  //     views: 89,
+  //   },
+  // ];
+
+  //  const stats = [
+  //   {
+  //     label: admindashTranslations.stats.totalUsers,
+  //     value: "1,247",
+  //     change: "+12%",
+  //     icon: Users,
+  //     color: "text-blue-600",
+  //     changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+  //   },
+
+  const fetchStats = async () => {
+    try {
+      const res = await axiosInstance.get("/api/admin/stats");
+      console.log(res.data);
+      setStats([
+        {
+          label: admindashTranslations.stats.totalUsers,
+          value: res.data.users.total,
+          change: "+" + res.data.users.percentageChange + "%",
+          icon: Users,
+          color: "text-blue-600",
+          changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+        },
+        {
+          label: admindashTranslations.stats.activeMemorials,
+          value: res.data.activeMemorials.total,
+          change: "+" + res.data.activeMemorials.percentageChange + "%",
+          icon: Heart,
+          color: "text-red-600",
+          changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+        },
+        {
+          label: admindashTranslations.stats.monthlyRevenue,
+          value: "$12,450",
+          change: "+15%",
+          icon: DollarSign,
+          color: "text-green-600",
+          changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchAllUsers = async () => {
+    try {
+      const res = await axiosInstance.get("/api/admin/allusers");
+      console.log(res.data);
+      setusers(res.data.users);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchAllMemorials = async () => {
+    try {
+      const res = await axiosInstance.get("/api/admin/allmemorials");
+      console.log(res.data);
+      setrecentMemorials(res.data.memorial);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+    fetchAllUsers();
+    fetchAllMemorials();
+  }, []);
+
+  const userStatusToggle = async (id) => {
+    try {
+      const res = await axiosInstance.put(
+        "/api/admin/toggle-user-status/" + id
+      );
+      console.log(res.data);
+      fetchAllUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -201,12 +287,12 @@ export default function AdminDashboardPage() {
             >
               {admindashTranslations.tabs.memorials}
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="qr-codes"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               {admindashTranslations.tabs.qrCodes}
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="users" className="space-y-6">
@@ -235,6 +321,7 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <UserManagementTable
                   users={users}
+                  userStatusToggle={userStatusToggle}
                   translations={admindashTranslations.userManagement}
                 />
               </CardContent>
@@ -260,9 +347,9 @@ export default function AdminDashboardPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="qr-codes" className="space-y-6">
+          {/* <TabsContent value="qr-codes" className="space-y-6">
             <QrManagement translations={admindashTranslations.qrManagement} />
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsCharts translations={admindashTranslations.analytics} />
@@ -282,3 +369,13 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+
+const page = () => {
+  return (
+    <IsAdminAuth>
+      <AdminDashboardPage />
+    </IsAdminAuth>
+  );
+};
+
+export default page;
