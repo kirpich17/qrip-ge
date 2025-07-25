@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Plus,
@@ -36,6 +36,8 @@ import {
 import { UserMenu } from "@/components/user-menu";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
+import { getDeleteMemorial, getMemorials } from "@/services/memorialService";
+import { toast } from "react-toastify";
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -54,44 +56,43 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
-  const dashboard:any = dashboardTranslations;
+  const dashboard: any = dashboardTranslations;
   const [searchQuery, setSearchQuery] = useState("");
 
-  const memorials = [
-    {
-      id: 1,
-      name: "John Smith",
-      dates: "1945 - 2023",
-      image: "/placeholder.svg?height=100&width=100",
-      qrCode: "QR001",
-      views: 245,
-      status: "active",
-      plan: "premium",
-      location: "Tbilisi, Georgia",
-    },
-    {
-      id: 2,
-      name: "Mary Johnson",
-      dates: "1952 - 2024",
-      image: "/placeholder.svg?height=100&width=100",
-      qrCode: "QR002",
-      views: 89,
-      status: "active",
-      plan: "basic",
-      location: "Batumi, Georgia",
-    },
-    {
-      id: 3,
-      name: "Robert Wilson",
-      dates: "1938 - 2023",
-      image: "/placeholder.svg?height=100&width=100",
-      qrCode: "QR003",
-      views: 156,
-      status: "draft",
-      plan: "premium",
-      location: "Kutaisi, Georgia",
-    },
-  ];
+
+  const [memorials, setMemorials] = useState<Memorial[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMemorials = async () => {
+      try {
+        const data = await getMemorials();
+        setMemorials(data.data);
+      } catch (err) {
+        setError("Failed to load memorials");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMemorials();
+  }, []);
+
+
+  const handleDeleteMemorial = async (memorialId: string) => {
+    if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
+      try {
+        await getDeleteMemorial(memorialId);
+        toast.success("Memorial deleted successfully");
+        setMemorials(memorials.filter(m => m._id !== memorialId));
+      } catch (error) {
+        console.error("Failed to delete memorial:", error);
+        toast.error("Failed to delete memorial");
+      }
+    }
+  };
+
 
   const stats = [
     {
@@ -147,12 +148,12 @@ export default function DashboardPage() {
               </Badge>
             </div>
             <div className="flex items-center space-x-2">
-              <Link href="/settings">
+              {/* <Link href="/settings">
                 <Button variant="outline" size="sm">
                   <Settings className="h-4 w-4" />
                   {dashboard.header.settings}
                 </Button>
-              </Link>
+              </Link> */}
               <UserMenu
                 user={{
                   name: "John Doe",
@@ -248,15 +249,16 @@ export default function DashboardPage() {
                   animate="animate"
                   className="space-y-4"
                 >
+
                   {memorials.map((memorial) => (
-                    <motion.div key={memorial.id} variants={fadeInUp}>
+                    <motion.div key={memorial._id} variants={fadeInUp}>
                       <div className="flex md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
                         <Avatar className="md:h-16 md:w-16 h-8 w-8">
                           <AvatarImage
-                            src={memorial.image || "/placeholder.svg"}
+                            src={memorial.profileImage || "/placeholder.svg"}
                           />
                           <AvatarFallback>
-                            {memorial.name
+                            {memorial.firstName
                               .split(" ")
                               .map((n) => n[0])
                               .join("")}
@@ -266,7 +268,7 @@ export default function DashboardPage() {
                         <div className="sm:flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
                             <h3 className="md:text-lg sm:text-base text-sm font-semibold text-gray-900 truncate">
-                              {memorial.name}
+                              {memorial.firstName}
                             </h3>
                             {memorial.plan === "premium" && (
                               <Crown className="h-4 w-4 text-yellow-500" />
@@ -296,7 +298,7 @@ export default function DashboardPage() {
                             </span>
                             <span className="flex items-center">
                               <QrCode className="h-4 w-4 mr-1" />
-                              {memorial.qrCode}
+                              {/* {memorial.qrCode} */}
                             </span>
                             <span className="flex items-center">
                               <MapPin className="h-4 w-4 mr-1" />
@@ -314,7 +316,7 @@ export default function DashboardPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
                               <Link
-                                href={`/memorial/${memorial.qrCode.toLowerCase()}`}
+                                href={`/memorial/${memorial._id}`}
                                 className="flex items-center"
                               >
                                 <Eye className="h-4 w-4 mr-2" />
@@ -323,7 +325,7 @@ export default function DashboardPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link
-                                href={`/memorial/edit/${memorial.id}`}
+                                href={`/memorial/edit/${memorial._id}`}
                                 className="flex items-center"
                               >
                                 <Edit className="h-4 w-4 mr-2" />
@@ -341,15 +343,7 @@ export default function DashboardPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-red-600 cursor-pointer"
-                              onClick={() => {
-                                if (
-                                  confirm(
-                                    "Are you sure you want to delete this memorial?"
-                                  )
-                                ) {
-                                  console.log("Delete memorial:", memorial.id);
-                                }
-                              }}
+                              onClick={() => handleDeleteMemorial(memorial._id)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               {dashboard.memorials.delete}
@@ -359,6 +353,7 @@ export default function DashboardPage() {
                       </div>
                     </motion.div>
                   ))}
+
                 </motion.div>
               </CardContent>
             </Card>

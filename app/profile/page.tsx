@@ -32,6 +32,7 @@ import { useTranslation } from "@/hooks/useTranslate";
 export default function ProfilePage() {
   const { t } = useTranslation();
   const profileTranslations = t("profile");
+  
   const [profileData, setProfileData] = useState({
     firstName: "John",
     lastName: "Doe",

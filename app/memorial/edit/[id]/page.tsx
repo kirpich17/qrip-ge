@@ -14,7 +14,11 @@ import {
   ImageIcon,
   Video,
   FileText,
+  X,
   Trash2,
+  Lock,
+  Loader2,
+  Pencil
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,45 +36,339 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
+import { getSingleMemorial } from "@/services/memorialService";
+import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
+import axiosInstance from "@/services/axiosInstance";
+import { ADD_MEMORIAL } from "@/services/apiEndPoint";
 
-export default function EditMemorialPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    birthDate: "",
-    deathDate: "",
-    biography: "",
-    location: "",
-    isPublic: true,
-    profileImage: null,
+interface Memorial {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  deathDate: string;
+  biography: string;
+  location: string;
+  isPublic: boolean;
+  allowComments: boolean;
+  enableEmailNotifications: boolean;
+  photoGallery: string[];
+  videoGallery: string[];
+  documents: string[];
+  familyTree: any[];
+  status: string;
+  plan: string;
+  views: number;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface VideoItem {
+  title: string;
+  file: File;
+}
+
+interface DocumentItem {
+  fileName: string;
+  file: File;
+}
+
+
+interface FamilyMember {
+  name: string;
+  relationship: string;
+}
+
+export default function EditMemorialPage() {
+  const params = useParams();
+  const [formData, setFormData] = useState<Memorial | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [newFamilyMember, setNewFamilyMember] = useState<FamilyMember>({
+    name: "",
+    relationship: "",
+  });
+  const { t } = useTranslation();
+  const editMemorialTranslations = t("editMemorial");
+
+  const [mediaFiles, setMediaFiles] = useState({
+    photos: [] as File[],
+    videos: [] as VideoItem[],
+    documents: [] as DocumentItem[],
+    familyTree: [] as FamilyMember[],
   });
 
-  // Load existing memorial data
+
+  const [selectedProfileImage, setSelectedProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const [isEditingFamilyMember, setIsEditingFamilyMember] = useState<string | null>(null);
+
   useEffect(() => {
-    // Mock data loading - in real app, fetch from API
-    const mockData = {
-      firstName: "John",
-      lastName: "Smith",
-      birthDate: "1945-03-15",
-      deathDate: "2023-12-03",
-      biography:
-        "Beloved father, grandfather, and community leader who dedicated his life to education.",
-      location: "Tbilisi, Georgia",
-      isPublic: true,
-      profileImage: null,
+    if (!params?.id) return;
+
+    const fetchMemorial = async () => {
+      try {
+        setLoading(true);
+        const response = await getSingleMemorial(params.id as string);
+        if (response?.status && response.data) {
+          setFormData(response.data);
+          // Set the first photo as profile image preview if available
+          setProfileImagePreview(response.data.profileImage);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+      } catch (err) {
+        console.error("Failed to fetch memorial:", err);
+        setError("Failed to load memorial data");
+      } finally {
+        setLoading(false);
+      }
     };
-    setFormData(mockData);
+
+    fetchMemorial();
   }, [params.id]);
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (!formData) return;
+    setFormData((prev) => ({ ...prev!, [field]: value }));
   };
-  const { t } = useTranslation();
-  const editMemorialTranslations = t("editMemorial");
+
+  const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedProfileImage(file);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImagePreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+  const getYesterdayDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() - 1); // subtract 1 day
+    return today.toISOString().split('T')[0];
+  };
+
+  const removeProfileImage = () => {
+    setSelectedProfileImage(null);
+    setProfileImagePreview(formData?.photoGallery?.[0] || null);
+  };
+
+  const handlePhotosUpload = (files: FileList | null) => {
+    if (!files) return;
+    const newPhotos = Array.from(files);
+    setMediaFiles(prev => ({
+      ...prev,
+      photos: [...prev.photos, ...newPhotos]
+    }));
+  };
+
+  const removePhoto = (index: number) => {
+    setMediaFiles(prev => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleVideosUpload = (files: FileList | null) => {
+    if (!files) return;
+    const newVideos = Array.from(files).map(file => ({
+      title: file.name.split('.')[0],
+      file
+    }));
+    setMediaFiles(prev => ({
+      ...prev,
+      videos: [...prev.videos, ...newVideos]
+    }));
+  };
+
+  const removeVideo = (index: number) => {
+    setMediaFiles(prev => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleDocumentsUpload = (files: FileList | null) => {
+    if (!files) return;
+    const newDocuments = Array.from(files).map(file => ({
+      fileName: file.name,
+      file
+    }));
+    setMediaFiles(prev => ({
+      ...prev,
+      documents: [...prev.documents, ...newDocuments]
+    }));
+  };
+
+  const removeDocument = (index: number) => {
+    setMediaFiles(prev => ({
+      ...prev,
+      documents: prev.documents.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Add these to your component
+  const handleRemoveExistingPhoto = (index: number) => {
+    setFormData(prev => ({
+      ...prev!,
+      photoGallery: prev!.photoGallery.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleRemoveExistingVideo = (index: number) => {
+    setFormData(prev => ({
+      ...prev!,
+      videoGallery: prev!.videoGallery.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleRemoveExistingDocument = (index: number) => {
+    setFormData(prev => ({
+      ...prev!,
+      documents: prev!.documents.filter((_, i) => i !== index)
+    }));
+  };
+
+
+  const handleAddFamilyMember = () => {
+    if (newFamilyMember.name && newFamilyMember.relationship) {
+      setMediaFiles(prev => ({
+        ...prev,
+        familyTree: [...prev.familyTree, newFamilyMember]
+      }));
+      setNewFamilyMember({ name: "", relationship: "" });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData) return;
+
+    try {
+      setUpdating(true);
+      const formDataToSend = new FormData();
+      formDataToSend.append('_id', formData._id);
+      formDataToSend.append('firstName', formData.firstName);
+      formDataToSend.append('lastName', formData.lastName);
+      formDataToSend.append('birthDate', formData.birthDate);
+      formDataToSend.append('deathDate', formData.deathDate);
+      formDataToSend.append('biography', formData.biography);
+      formDataToSend.append('location', formData.location);
+      formDataToSend.append('isPublic', String(formData.isPublic));
+
+      if (selectedProfileImage) {
+        formDataToSend.append('profileImage', selectedProfileImage);
+      }
+
+      mediaFiles.photos.forEach((photo, index) => {
+        formDataToSend.append(`photoGallery[${index}]`, photo);
+      });
+
+      mediaFiles.videos.forEach((video, index) => {
+        formDataToSend.append(`videoGallery[${index}]`, video.file);
+      });
+
+      mediaFiles.documents.forEach((doc, index) => {
+        formDataToSend.append(`documents[${index}]`, doc.file);
+      });
+
+      formData.familyTree.forEach((member, index) => {
+        formDataToSend.append(`familyTree[${index}][name]`, member.name);
+        formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
+      });
+
+
+      const response = await axiosInstance.post(
+        `${ADD_MEMORIAL}`,
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      if (response?.status) {
+        toast("Memorial updated successfully")
+        const updatedResponse = await getSingleMemorial(params.id as string);
+        if (updatedResponse?.status && updatedResponse.data) {
+          setFormData(updatedResponse.data);
+          setSelectedProfileImage(null);
+          setMediaFiles({
+            photos: [],
+            videos: [],
+            documents: [],
+            familyTree: []
+          });
+        }
+      } else {
+        throw new Error(response?.message || "Failed to update memorial");
+      }
+    } catch (err) {
+      console.error("Failed to update memorial:", err);
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to update memorial",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div>Loading memorial data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="h-8 w-8 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Error Loading Memorial
+            </h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <div className="space-y-3">
+              <Button variant="outline" className="w-full bg-transparent">
+                Contact Support
+              </Button>
+              <Link href="/dashboard">
+                <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
+                  Return to Dashboard
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!formData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div>No memorial data found</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -86,26 +384,23 @@ export default function EditMemorialPage({
                 {editMemorialTranslations.header.back}
               </Link>
             </div>
-            <div className="flex items-center  flex-wrap gap-2">
+            <div className="flex items-center flex-wrap gap-2">
               <Button
-                variant="outline"
-                onClick={() => {
-                  console.log("Preview memorial with current data:", formData);
-                  alert("Preview functionality - would show memorial preview");
-                }}
+                className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white"
+                onClick={handleSubmit}
+                disabled={updating}
               >
-                <Eye className="h-4 w-4" />
-                {editMemorialTranslations.header.preview}
-              </Button>
-              <Button
-                className="bg-white text-black border border-white hover hover:bg-transparent hover:text-white"
-                onClick={() => {
-                  console.log("Save memorial changes:", formData);
-                  alert("Memorial updated successfully!");
-                }}
-              >
-                <Save className="h-4 w-4" />
-                {editMemorialTranslations.header.save}
+                {updating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {editMemorialTranslations.header.save}
+                  </>
+                )}
               </Button>
               <Button
                 variant="destructive"
@@ -120,7 +415,7 @@ export default function EditMemorialPage({
                   }
                 }}
               >
-                <Trash2 className="h-4 w-4 " />
+                <Trash2 className="h-4 w-4" />
                 {editMemorialTranslations.header.delete}
               </Button>
             </div>
@@ -144,7 +439,7 @@ export default function EditMemorialPage({
           </div>
 
           <Tabs defaultValue="basic" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 overflow-x-auto md:w-auto">
+            <TabsList className="grid w-full grid-cols-3 overflow-x-auto md:w-auto">
               <TabsTrigger value="basic">
                 {editMemorialTranslations.tabs.basic}
               </TabsTrigger>
@@ -153,9 +448,6 @@ export default function EditMemorialPage({
               </TabsTrigger>
               <TabsTrigger value="family">
                 {editMemorialTranslations.tabs.family}
-              </TabsTrigger>
-              <TabsTrigger value="settings">
-                {editMemorialTranslations.tabs.settings}
               </TabsTrigger>
             </TabsList>
 
@@ -172,19 +464,50 @@ export default function EditMemorialPage({
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Image */}
-                  <div className="flex items-center  flex-wrap gap-2 md:justify-normal justify-center">
+                  <div className="flex items-center flex-wrap gap-2 md:justify-normal justify-center">
                     <Avatar className="h-24 w-24">
-                      <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                      <AvatarImage
+                        src={profileImagePreview || "/placeholder.svg"}
+                        alt={`${formData.firstName} ${formData.lastName}`}
+                      />
                       <AvatarFallback className="text-2xl">
                         {formData.firstName[0]}
                         {formData.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
+
                     <div className="md:w-auto w-full text-center md:text-left">
-                      <Button variant="outline" className="mb-2 bg-transparent">
-                        <Upload className="h-4 w-4 mr-2" />
-                        {editMemorialTranslations.basicInfo.profileImage.change}
-                      </Button>
+                      <div className="flex flex-col space-y-2">
+                        <label htmlFor="profileImageUpload">
+                          <Button
+                            variant="outline"
+                            className="mb-2 bg-transparent w-full"
+                            asChild
+                          >
+                            <div>
+                              <Upload className="h-4 w-4 mr-2" />
+                              {editMemorialTranslations.basicInfo.profileImage.change}
+                            </div>
+                          </Button>
+                        </label>
+                        <input
+                          id="profileImageUpload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleProfileImageUpload}
+                          className="hidden"
+                        />
+                        {/* {profileImagePreview && (
+                          <Button
+                            variant="outline"
+                            className="bg-transparent"
+                            onClick={removeProfileImage}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Remove Image
+                          </Button>
+                        )} */}
+                      </div>
                       <p className="text-sm text-gray-500 text-center md:text-left">
                         {
                           editMemorialTranslations.basicInfo.profileImage
@@ -236,7 +559,7 @@ export default function EditMemorialPage({
                       <Input
                         id="birthDate"
                         type="date"
-                        value={formData.birthDate}
+                        value={formData.birthDate.split('T')[0]}
                         onChange={(e) =>
                           handleInputChange("birthDate", e.target.value)
                         }
@@ -250,8 +573,9 @@ export default function EditMemorialPage({
                       </Label>
                       <Input
                         id="deathDate"
+                        max={getYesterdayDate()}
                         type="date"
-                        value={formData.deathDate}
+                        value={formData.deathDate.split('T')[0]}
                         onChange={(e) =>
                           handleInputChange("deathDate", e.target.value)
                         }
@@ -322,13 +646,77 @@ export default function EditMemorialPage({
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage photos");
-                            alert("Photo management interface would open here");
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = "image/*";
+                            input.onchange = (e) => {
+                              handlePhotosUpload((e.target as HTMLInputElement).files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           {editMemorialTranslations.media.photos.button}
                         </Button>
+
+                        {/* Show existing and new photos */}
+                        {(formData.photoGallery?.length > 0 || mediaFiles.photos.length > 0) && (
+                          <div className="mt-4 w-full">
+                            {/* Existing photos */}
+                            {formData.photoGallery?.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">Existing Photos</p>
+                                <div className="space-y-1 mb-4">
+                                  {formData.photoGallery.map((photoUrl, index) => (
+                                    <div key={`existing-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <div className="flex items-center gap-2">
+                                        <img
+                                          src={photoUrl}
+                                          alt={`Photo ${index}`}
+                                          className="h-8 w-8 object-cover rounded"
+                                        />
+                                        <span className="text-xs truncate flex-1">
+                                          {photoUrl.split('/').pop()?.slice(0, 20)}...
+                                        </span>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => handleRemoveExistingPhoto(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {/* New photos */}
+                            {mediaFiles.photos.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">New Photos</p>
+                                <div className="space-y-1">
+                                  {mediaFiles.photos.map((photo, index) => (
+                                    <div key={`new-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <span className="text-xs truncate flex-1">{photo.name}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => removePhoto(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
 
@@ -345,17 +733,77 @@ export default function EditMemorialPage({
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage videos");
-                            alert("Video management interface would open here");
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = "video/*";
+                            input.onchange = (e) => {
+                              handleVideosUpload((e.target as HTMLInputElement).files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           {editMemorialTranslations.media.videos.button}
                         </Button>
+
+                        {/* Show existing and new videos */}
+                        {(formData.videoGallery?.length > 0 || mediaFiles.videos.length > 0) && (
+                          <div className="mt-4 w-full">
+                            {/* Existing videos */}
+                            {formData.videoGallery?.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">Existing Videos</p>
+                                <div className="space-y-1 mb-4">
+                                  {formData.videoGallery.map((videoUrl, index) => (
+                                    <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <div className="flex items-center gap-2">
+                                        <Video className="h-4 w-4 text-gray-500" />
+                                        <span className="text-xs truncate flex-1">
+                                          {videoUrl.split('/').pop()?.slice(0, 20)}...
+                                        </span>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => handleRemoveExistingVideo(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {/* New videos */}
+                            {mediaFiles.videos.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">New Videos</p>
+                                <div className="space-y-1">
+                                  {mediaFiles.videos.map((video, index) => (
+                                    <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <span className="text-xs truncate flex-1">{video.title}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => removeVideo(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
 
-                    {/* Documents */}
+                    {/* Documents Upload */}
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                       <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                         <FileText className="h-12 w-12 text-gray-400 mb-4" />
@@ -368,15 +816,73 @@ export default function EditMemorialPage({
                         <Button
                           variant="outline"
                           onClick={() => {
-                            console.log("Manage documents");
-                            alert(
-                              "Document management interface would open here"
-                            );
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.multiple = true;
+                            input.accept = ".pdf,.doc,.docx,.txt";
+                            input.onchange = (e) => {
+                              handleDocumentsUpload((e.target as HTMLInputElement).files);
+                            };
+                            input.click();
                           }}
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           {editMemorialTranslations.media.documents.button}
                         </Button>
+
+                        {/* Show existing and new documents */}
+                        {(formData.documents?.length > 0 || mediaFiles.documents.length > 0) && (
+                          <div className="mt-4 w-full">
+                            {/* Existing documents */}
+                            {formData.documents?.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">Existing Documents</p>
+                                <div className="space-y-1 mb-4">
+                                  {formData.documents.map((docUrl, index) => (
+                                    <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <div className="flex items-center gap-2">
+                                        <FileText className="h-4 w-4 text-gray-500" />
+                                        <span className="text-xs truncate flex-1">
+                                          {docUrl.split('/').pop()?.slice(0, 20)}...
+                                        </span>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => handleRemoveExistingDocument(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {/* New documents */}
+                            {mediaFiles.documents.length > 0 && (
+                              <>
+                                <p className="text-xs font-medium mb-2">New Documents</p>
+                                <div className="space-y-1">
+                                  {mediaFiles.documents.map((doc, index) => (
+                                    <div key={`new-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                      <span className="text-xs truncate flex-1">{doc.fileName}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4"
+                                        onClick={() => removeDocument(index)}
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   </div>
@@ -396,94 +902,134 @@ export default function EditMemorialPage({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12">
-                    <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {editMemorialTranslations.familyTree.placeholder.title}
-                    </h3>
-                    <p className="text-gray-500 mb-6">
-                      {
-                        editMemorialTranslations.familyTree.placeholder
-                          .description
-                      }
-                    </p>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="familyMemberName">
+                          {editMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                        </Label>
+                        <Input
+                          id="familyMemberName"
+                          placeholder="John Doe"
+                          value={newFamilyMember.name}
+                          onChange={(e) =>
+                            setNewFamilyMember({
+                              ...newFamilyMember,
+                              name: e.target.value,
+                            })
+                          }
+                          className="h-12"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="familyMemberRelationship">
+                          {editMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                        </Label>
+                        <Input
+                          id="familyMemberRelationship"
+                          placeholder="Father"
+                          value={newFamilyMember.relationship}
+                          onChange={(e) =>
+                            setNewFamilyMember({
+                              ...newFamilyMember,
+                              relationship: e.target.value,
+                            })
+                          }
+                          className="h-12"
+                        />
+                      </div>
+                    </div>
+
                     <Button
-                      className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
+                      className="bg-[#547455] hover:bg-[#243b31] text-white"
                       onClick={() => {
-                        console.log("Edit family tree");
-                        alert("Family Tree Editor - Coming Soon!");
+                        if (isEditingFamilyMember) {
+                          // Update existing member
+                          setFormData(prev => ({
+                            ...prev!,
+                            familyTree: prev!.familyTree.map(member =>
+                              member._id === isEditingFamilyMember ? newFamilyMember : member
+                            )
+                          }));
+                          setIsEditingFamilyMember(null);
+                        } else {
+                          // Add new member
+                          setFormData(prev => ({
+                            ...prev!,
+                            familyTree: [...prev!.familyTree, {
+                              ...newFamilyMember,
+                              _id: `temp-${Date.now()}`
+                            }]
+                          }));
+                        }
+                        setNewFamilyMember({ name: "", relationship: "" });
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
-                      {editMemorialTranslations.familyTree.placeholder.button}
+                      {isEditingFamilyMember
+                        ? "Update Family Member"
+                        : editMemorialTranslations.familyTree.placeholder.button}
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
-            <TabsContent value="settings" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    {editMemorialTranslations.settings.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {editMemorialTranslations.settings.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-base">
-                        {editMemorialTranslations.settings.publicMemorial.label}
-                      </Label>
-                      <p className="text-sm text-gray-500">
-                        {
-                          editMemorialTranslations.settings.publicMemorial
-                            .description
-                        }
-                      </p>
-                    </div>
-                    <Switch
-                      checked={formData.isPublic}
-                      onCheckedChange={(checked) =>
-                        handleInputChange("isPublic", checked)
-                      }
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-base">
-                        {editMemorialTranslations.settings.allowComments.label}
-                      </Label>
-                      <p className="text-sm text-gray-500">
-                        {
-                          editMemorialTranslations.settings.allowComments
-                            .description
-                        }
-                      </p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-base">
-                        {
-                          editMemorialTranslations.settings.emailNotifications
-                            .label
-                        }
-                      </Label>
-                      <p className="text-sm text-gray-500">
-                        {
-                          editMemorialTranslations.settings.emailNotifications
-                            .description
-                        }
-                      </p>
-                    </div>
-                    <Switch defaultChecked />
+                    {formData.familyTree?.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="font-semibold text-gray-900 mb-4">
+                          {editMemorialTranslations.familyTree.placeholder.title}
+                        </h3>
+                        <div className="space-y-2">
+                          {formData.familyTree.map((member, index) => (
+                            <div
+                              key={member._id || index}
+                              className="flex items-center justify-between bg-gray-100 p-3 rounded"
+                            >
+                              <div className="flex items-center space-x-4">
+                                <Avatar>
+                                  <AvatarImage src={member.image} />
+                                  <AvatarFallback>
+                                    {member.name?.split(' ').map(n => n[0]).join('')}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-medium">{member.name}</p>
+                                  <p className="text-sm text-gray-500">
+                                    {member.relationship}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => {
+                                    setNewFamilyMember({
+                                      name: member.name,
+                                      relationship: member.relationship
+                                    });
+                                    setIsEditingFamilyMember(member._id!);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => {
+                                    setFormData(prev => ({
+                                      ...prev!,
+                                      familyTree: prev!.familyTree.filter((_, i) => i !== index)
+                                    }));
+                                  }}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
