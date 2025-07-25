@@ -25,6 +25,7 @@ import { useTranslation } from "@/hooks/useTranslate";
 export function UserManagementTable({
   users,
   translations,
+  userStatusToggle,
 }: {
   users: any[];
   translations: any;
@@ -57,17 +58,14 @@ export function UserManagementTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
+        {users?.map((user) => (
           <TableRow key={user.id} className="">
             <TableCell>
               <div className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar || "/placeholder.svg"} />
+                  {/* <AvatarImage src={user.avatar || "/placeholder.svg"} /> */}
                   <AvatarFallback>
-                    {user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {user.firstname[0] + user.lastname[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -78,22 +76,36 @@ export function UserManagementTable({
             </TableCell>
             <TableCell>
               <Badge
-                variant={user.plan === "Premium" ? "default" : "secondary"}
-                className={user.plan === "Premium" ? "bg-yellow-600 " : ""}
+                variant={
+                  user.subscriptionPlan === "Premium" ? "default" : "secondary"
+                }
+                className={
+                  user.subscriptionPlan === "Premium" ? "bg-yellow-600 " : ""
+                }
               >
-                {user.plan}
+                {user.subscriptionPlan}
               </Badge>
             </TableCell>
-            <TableCell className="">{user.memorials}</TableCell>
+            <TableCell className="">{user.memorialCount}</TableCell>
             <TableCell>
               <Badge
-                variant={user.status === "active" ? "default" : "destructive"}
-                className={user.status === "active" ? "bg-green-600" : ""}
+                variant={
+                  user.accountStatus === "active" ? "default" : "destructive"
+                }
+                className={
+                  user.accountStatus === "active" ? "bg-green-600" : ""
+                }
               >
-                {user.status}
+                {user.accountStatus}
               </Badge>
             </TableCell>
-            <TableCell className="">{user.joined}</TableCell>
+            <TableCell className="">
+              {new Date(user.createdAt).toLocaleString("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: "UTC", // or your local timezone
+              })}
+            </TableCell>
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -102,7 +114,7 @@ export function UserManagementTable({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="">
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     className="hover:text-white cursor-pointer"
                     onClick={() => {
                       console.log("View profile for user:", user.id);
@@ -110,7 +122,8 @@ export function UserManagementTable({
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     {translations.actionsMenu.viewProfile}
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
+
                   <DropdownMenuItem
                     className="hover:text-white cursor-pointer"
                     onClick={() => {
@@ -119,13 +132,17 @@ export function UserManagementTable({
                           `Are you sure you want to suspend ${user.name}?`
                         )
                       ) {
-                        console.log("Suspend user:", user.id);
+                        console.log("Suspend user:", user._id);
+                        userStatusToggle(user._id);
                       }
                     }}
                   >
                     <Ban className="h-4 w-4 mr-2" />
-                    {translations.actionsMenu.suspend}
+                    {user.accountStatus === "active"
+                      ? translations.actionsMenu.suspend
+                      : "active"}
                   </DropdownMenuItem>
+
                   <DropdownMenuItem
                     className="text-red-400 hover:text-red-300 cursor-pointer"
                     onClick={() => {
