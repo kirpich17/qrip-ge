@@ -31,6 +31,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
+import QRCode from "react-qr-code";
+
 export default function QRGeneratorPage() {
   const { t } = useTranslation();
   const qrGeneratorTranslations = t("qrGenerator");
@@ -63,6 +65,47 @@ export default function QRGeneratorPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  // Function to download QR as PNG
+  const downloadQRAsPNG = () => {
+    const svg = document.getElementById("qr-code") as SVGSVGElement;
+    if (!svg) return;
+    
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `${selectedMemorialData?.qrCode || 'qr'}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    
+    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+  };
+
+  // Function to download QR as SVG
+  const downloadQRAsSVG = () => {
+    const svg = document.getElementById("qr-code") as SVGSVGElement;
+    if (!svg) return;
+    
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {type: "image/svg+xml"});
+    const svgUrl = URL.createObjectURL(svgBlob);
+    const downloadLink = document.createElement("a");
+    
+    downloadLink.href = svgUrl;
+    downloadLink.download = `${selectedMemorialData?.qrCode || 'qr'}.svg`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
   return (
@@ -311,30 +354,36 @@ export default function QRGeneratorPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
-                    {/* QR Code Placeholder */}
+                    {/* QR Code Display */}
                     <div className="inline-block p-8 bg-white border-2 border-gray-200 rounded-lg shadow-sm w-full">
-                      <div
-                        className={`
-    bg-gray-900
-    ${
-      qrSize === "small"
-        ? "w-48"
-        : qrSize === "medium"
-        ? "w-64"
-        : qrSize === "large"
-        ? "w-80"
-        : "w-96"
-    }
-    aspect-square                      
-    max-w-full                         
-    flex items-center justify-center
-    text-white text-sm
-    overflow-hidden mx-auto                      
-  `}
-                      >
-                        {qrGeneratorTranslations.memorialUrl.preview}
-                        <br />
-                        {selectedMemorialData?.qrCode}
+                      <div className="flex items-center justify-center">
+                        <QRCode
+                          id="qr-code"
+                          value={selectedMemorialData?.url || ""}
+                          size={
+                            qrSize === "small" 
+                              ? 128 
+                              : qrSize === "medium" 
+                                ? 192 
+                                : qrSize === "large" 
+                                  ? 256 
+                                  : 320
+                          }
+                          bgColor="#ffffff"
+                          fgColor="#000000"
+                          level="Q" // Error correction level
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            maxWidth: "100%",
+                            borderRadius: 
+                              qrStyle === "rounded" 
+                                ? "8px" 
+                                : qrStyle === "dots" 
+                                  ? "50%" 
+                                  : "0"
+                          }}
+                        />
                       </div>
                     </div>
 
@@ -342,13 +391,7 @@ export default function QRGeneratorPage() {
                       <div className="flex justify-center gap-4 flex-wrap">
                         <Button
                           className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455] sm:w-auto w-full"
-                          onClick={() => {
-                            console.log(
-                              "Download PNG for:",
-                              selectedMemorialData?.qrCode
-                            );
-                            // Handle PNG download logic
-                          }}
+                          onClick={downloadQRAsPNG}
                         >
                           <Download className="h-4 w-4 mr-2" />
                           {qrGeneratorTranslations.preview.downloadPng}
@@ -356,13 +399,7 @@ export default function QRGeneratorPage() {
                         <Button
                           className="sm:w-auto w-full"
                           variant="outline"
-                          onClick={() => {
-                            console.log(
-                              "Download SVG for:",
-                              selectedMemorialData?.qrCode
-                            );
-                            // Handle SVG download logic
-                          }}
+                          onClick={downloadQRAsSVG}
                         >
                           <Download className="h-4 w-4 mr-2" />
                           {qrGeneratorTranslations.preview.downloadSvg}

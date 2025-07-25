@@ -1,13 +1,15 @@
 export const localStorageAuthUserData = () => {
-    const userData = localStorage.getItem("loginData");
-  
-    if (userData) {
-      try {
-        const parsedData = JSON.parse(userData);
-        return parsedData;
-      } catch (error) {
-        return {};
-      }
-    }
-    return {};
-  };
+  try {
+    const user = JSON.parse(localStorage.getItem("loginData") || "{}");
+    const token = localStorage.getItem("authToken");
+    return {
+      user,
+      token,
+    };
+  } catch (error) {
+    return {
+      user: null,
+      token: null,
+    };
+  }
+};
