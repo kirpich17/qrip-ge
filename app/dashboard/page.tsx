@@ -38,6 +38,7 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { getDeleteMemorial, getMemorials } from "@/services/memorialService";
 import { toast } from "react-toastify";
+import IsUserAuth from "@/lib/IsUserAuth/page";
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -52,7 +53,7 @@ const staggerContainer = {
   },
 };
 
-export default function DashboardPage() {
+function Dashboard() {
   const { t } = useTranslation();
   const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
@@ -440,6 +441,15 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+const DashboardPage = () => {
+  return (
+    <IsUserAuth>
+      <Dashboard />
+    </IsUserAuth>
+  )
+}
+export default DashboardPage;
 
 // "dashboard": {
 //     "header": {
