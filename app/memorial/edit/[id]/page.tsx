@@ -41,6 +41,7 @@ import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import axiosInstance from "@/services/axiosInstance";
 import { ADD_MEMORIAL } from "@/services/apiEndPoint";
+import { getUserDetails } from "@/services/userService";
 
 interface Memorial {
   _id: string;
@@ -81,6 +82,13 @@ interface FamilyMember {
   relationship: string;
 }
 
+interface UserDetails {
+  id: string;
+  firstname: string;
+  email: string;
+  subscriptionPlan: "Free" | "Plus" | "Premium";
+}
+
 export default function EditMemorialPage() {
   const params = useParams();
   const [formData, setFormData] = useState<Memorial | null>(null);
@@ -105,6 +113,31 @@ export default function EditMemorialPage() {
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [isEditingFamilyMember, setIsEditingFamilyMember] = useState<string | null>(null);
+
+  const [loadingSubscription, setLoadingSubscription] = useState(true);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserDetails();
+        setUserDetails(userData.user);
+        setUserSubscription(userData.user.subscriptionPlan);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch user subscription details",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingSubscription(false);
+      }
+    };
+
+    fetchUserData();
+  }, [toast]);
 
   useEffect(() => {
     if (!params?.id) return;
@@ -369,6 +402,41 @@ export default function EditMemorialPage() {
     );
   }
 
+
+
+  const SubscriptionRestricted = ({ requiredPlan = "Plus" }: { requiredPlan?: "Plus" | "Premium" }) => (
+    <div className="bg-gray-50 rounded-lg p-6 text-center">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+        <Lock className="h-6 w-6 text-gray-500" />
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">
+        {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
+      </h3>
+      <p className="text-gray-500 mb-4">
+        {requiredPlan === "Premium"
+          ? "This feature is only available with a Premium subscription."
+          : "Upgrade to Plus or Premium to access this feature."}
+      </p>
+      <Link href="/subscription">
+        <Button className="bg-[#547455] hover:bg-[#243b31]">
+          Upgrade to {requiredPlan}
+        </Button>
+      </Link>
+    </div>
+  );
+
+  if (loadingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your subscription details...</p>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -402,22 +470,7 @@ export default function EditMemorialPage() {
                   </>
                 )}
               </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  if (
-                    confirm(
-                      "Are you sure you want to delete this memorial? This action cannot be undone."
-                    )
-                  ) {
-                    console.log("Delete memorial:", params.id);
-                    alert("Memorial deleted successfully!");
-                  }
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-                {editMemorialTranslations.header.delete}
-              </Button>
+
             </div>
           </div>
         </div>
@@ -621,418 +674,429 @@ export default function EditMemorialPage() {
             </TabsContent>
 
             <TabsContent value="media" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
-                    {editMemorialTranslations.media.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {editMemorialTranslations.media.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Photo Upload */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {editMemorialTranslations.media.photos.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {editMemorialTranslations.media.photos.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = "image/*";
-                            input.onchange = (e) => {
-                              handlePhotosUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {editMemorialTranslations.media.photos.button}
-                        </Button>
+              {userSubscription === "Free" ? (
+                <SubscriptionRestricted />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
+                      {editMemorialTranslations.media.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {editMemorialTranslations.media.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* Photo Upload */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {editMemorialTranslations.media.photos.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {editMemorialTranslations.media.photos.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = "image/*";
+                              input.onchange = (e) => {
+                                handlePhotosUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {editMemorialTranslations.media.photos.button}
+                          </Button>
 
-                        {/* Show existing and new photos */}
-                        {(formData.photoGallery?.length > 0 || mediaFiles.photos.length > 0) && (
-                          <div className="mt-4 w-full">
-                            {/* Existing photos */}
-                            {formData.photoGallery?.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">Existing Photos</p>
-                                <div className="space-y-1 mb-4">
-                                  {formData.photoGallery.map((photoUrl, index) => (
-                                    <div key={`existing-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <div className="flex items-center gap-2">
-                                        <img
-                                          src={photoUrl}
-                                          alt={`Photo ${index}`}
-                                          className="h-8 w-8 object-cover rounded"
-                                        />
-                                        <span className="text-xs truncate flex-1">
-                                          {photoUrl.split('/').pop()?.slice(0, 20)}...
-                                        </span>
+                          {/* Show existing and new photos */}
+                          {(formData.photoGallery?.length > 0 || mediaFiles.photos.length > 0) && (
+                            <div className="mt-4 w-full">
+                              {/* Existing photos */}
+                              {formData.photoGallery?.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">Existing Photos</p>
+                                  <div className="space-y-1 mb-4">
+                                    {formData.photoGallery.map((photoUrl, index) => (
+                                      <div key={`existing-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <div className="flex items-center gap-2">
+                                          <img
+                                            src={photoUrl}
+                                            alt={`Photo ${index}`}
+                                            className="h-8 w-8 object-cover rounded"
+                                          />
+                                          <span className="text-xs truncate flex-1">
+                                            {photoUrl.split('/').pop()?.slice(0, 20)}...
+                                          </span>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => handleRemoveExistingPhoto(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
                                       </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => handleRemoveExistingPhoto(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
+                                    ))}
+                                  </div>
+                                </>
+                              )}
 
-                            {/* New photos */}
-                            {mediaFiles.photos.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">New Photos</p>
-                                <div className="space-y-1">
-                                  {mediaFiles.photos.map((photo, index) => (
-                                    <div key={`new-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <span className="text-xs truncate flex-1">{photo.name}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => removePhoto(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-
-                    {/* Video Upload */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <Video className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {editMemorialTranslations.media.videos.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {editMemorialTranslations.media.videos.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = "video/*";
-                            input.onchange = (e) => {
-                              handleVideosUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {editMemorialTranslations.media.videos.button}
-                        </Button>
-
-                        {/* Show existing and new videos */}
-                        {(formData.videoGallery?.length > 0 || mediaFiles.videos.length > 0) && (
-                          <div className="mt-4 w-full">
-                            {/* Existing videos */}
-                            {formData.videoGallery?.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">Existing Videos</p>
-                                <div className="space-y-1 mb-4">
-                                  {formData.videoGallery.map((videoUrl, index) => (
-                                    <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <div className="flex items-center gap-2">
-                                        <Video className="h-4 w-4 text-gray-500" />
-                                        <span className="text-xs truncate flex-1">
-                                          {videoUrl.split('/').pop()?.slice(0, 20)}...
-                                        </span>
+                              {/* New photos */}
+                              {mediaFiles.photos.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">New Photos</p>
+                                  <div className="space-y-1">
+                                    {mediaFiles.photos.map((photo, index) => (
+                                      <div key={`new-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <span className="text-xs truncate flex-1">{photo.name}</span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => removePhoto(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
                                       </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => handleRemoveExistingVideo(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
 
-                            {/* New videos */}
-                            {mediaFiles.videos.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">New Videos</p>
-                                <div className="space-y-1">
-                                  {mediaFiles.videos.map((video, index) => (
-                                    <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <span className="text-xs truncate flex-1">{video.title}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => removeVideo(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                      {/* Video Upload */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <Video className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {editMemorialTranslations.media.videos.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {editMemorialTranslations.media.videos.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = "video/*";
+                              input.onchange = (e) => {
+                                handleVideosUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {editMemorialTranslations.media.videos.button}
+                          </Button>
 
-                    {/* Documents Upload */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {editMemorialTranslations.media.documents.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {editMemorialTranslations.media.documents.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = ".pdf,.doc,.docx,.txt";
-                            input.onchange = (e) => {
-                              handleDocumentsUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {editMemorialTranslations.media.documents.button}
-                        </Button>
-
-                        {/* Show existing and new documents */}
-                        {(formData.documents?.length > 0 || mediaFiles.documents.length > 0) && (
-                          <div className="mt-4 w-full">
-                            {/* Existing documents */}
-                            {formData.documents?.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">Existing Documents</p>
-                                <div className="space-y-1 mb-4">
-                                  {formData.documents.map((docUrl, index) => (
-                                    <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <div className="flex items-center gap-2">
-                                        <FileText className="h-4 w-4 text-gray-500" />
-                                        <span className="text-xs truncate flex-1">
-                                          {docUrl.split('/').pop()?.slice(0, 20)}...
-                                        </span>
+                          {/* Show existing and new videos */}
+                          {(formData.videoGallery?.length > 0 || mediaFiles.videos.length > 0) && (
+                            <div className="mt-4 w-full">
+                              {/* Existing videos */}
+                              {formData.videoGallery?.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">Existing Videos</p>
+                                  <div className="space-y-1 mb-4">
+                                    {formData.videoGallery.map((videoUrl, index) => (
+                                      <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <div className="flex items-center gap-2">
+                                          <Video className="h-4 w-4 text-gray-500" />
+                                          <span className="text-xs truncate flex-1">
+                                            {videoUrl.split('/').pop()?.slice(0, 20)}...
+                                          </span>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => handleRemoveExistingVideo(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
                                       </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => handleRemoveExistingDocument(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
+                                    ))}
+                                  </div>
+                                </>
+                              )}
 
-                            {/* New documents */}
-                            {mediaFiles.documents.length > 0 && (
-                              <>
-                                <p className="text-xs font-medium mb-2">New Documents</p>
-                                <div className="space-y-1">
-                                  {mediaFiles.documents.map((doc, index) => (
-                                    <div key={`new-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                      <span className="text-xs truncate flex-1">{doc.fileName}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4"
-                                        onClick={() => removeDocument(index)}
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
+                              {/* New videos */}
+                              {mediaFiles.videos.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">New Videos</p>
+                                  <div className="space-y-1">
+                                    {mediaFiles.videos.map((video, index) => (
+                                      <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <span className="text-xs truncate flex-1">{video.title}</span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => removeVideo(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      {/* Documents Upload */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <FileText className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {editMemorialTranslations.media.documents.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {editMemorialTranslations.media.documents.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = ".pdf,.doc,.docx,.txt";
+                              input.onchange = (e) => {
+                                handleDocumentsUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {editMemorialTranslations.media.documents.button}
+                          </Button>
+
+                          {/* Show existing and new documents */}
+                          {(formData.documents?.length > 0 || mediaFiles.documents.length > 0) && (
+                            <div className="mt-4 w-full">
+                              {/* Existing documents */}
+                              {formData.documents?.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">Existing Documents</p>
+                                  <div className="space-y-1 mb-4">
+                                    {formData.documents.map((docUrl, index) => (
+                                      <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <div className="flex items-center gap-2">
+                                          <FileText className="h-4 w-4 text-gray-500" />
+                                          <span className="text-xs truncate flex-1">
+                                            {docUrl.split('/').pop()?.slice(0, 20)}...
+                                          </span>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => handleRemoveExistingDocument(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+
+                              {/* New documents */}
+                              {mediaFiles.documents.length > 0 && (
+                                <>
+                                  <p className="text-xs font-medium mb-2">New Documents</p>
+                                  <div className="space-y-1">
+                                    {mediaFiles.documents.map((doc, index) => (
+                                      <div key={`new-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                        <span className="text-xs truncate flex-1">{doc.fileName}</span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-4 w-4"
+                                          onClick={() => removeDocument(index)}
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             <TabsContent value="family" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Users className="h-5 w-5 mr-2 text-green-500" />
-                    {editMemorialTranslations.familyTree.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {editMemorialTranslations.familyTree.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="familyMemberName">
-                          {editMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
-                        </Label>
-                        <Input
-                          id="familyMemberName"
-                          placeholder="John Doe"
-                          value={newFamilyMember.name}
-                          onChange={(e) =>
-                            setNewFamilyMember({
-                              ...newFamilyMember,
-                              name: e.target.value,
-                            })
-                          }
-                          className="h-12"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="familyMemberRelationship">
-                          {editMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
-                        </Label>
-                        <Input
-                          id="familyMemberRelationship"
-                          placeholder="Father"
-                          value={newFamilyMember.relationship}
-                          onChange={(e) =>
-                            setNewFamilyMember({
-                              ...newFamilyMember,
-                              relationship: e.target.value,
-                            })
-                          }
-                          className="h-12"
-                        />
-                      </div>
-                    </div>
+              {userSubscription === "Free" ? (
+                <SubscriptionRestricted />
+              ) : (
 
-                    <Button
-                      className="bg-[#547455] hover:bg-[#243b31] text-white"
-                      onClick={() => {
-                        if (isEditingFamilyMember) {
-                          // Update existing member
-                          setFormData(prev => ({
-                            ...prev!,
-                            familyTree: prev!.familyTree.map(member =>
-                              member._id === isEditingFamilyMember ? newFamilyMember : member
-                            )
-                          }));
-                          setIsEditingFamilyMember(null);
-                        } else {
-                          // Add new member
-                          setFormData(prev => ({
-                            ...prev!,
-                            familyTree: [...prev!.familyTree, {
-                              ...newFamilyMember,
-                              _id: `temp-${Date.now()}`
-                            }]
-                          }));
-                        }
-                        setNewFamilyMember({ name: "", relationship: "" });
-                      }}
-                    >
-                      <Users className="h-4 w-4 mr-2" />
-                      {isEditingFamilyMember
-                        ? "Update Family Member"
-                        : editMemorialTranslations.familyTree.placeholder.button}
-                    </Button>
-
-                    {formData.familyTree?.length > 0 && (
-                      <div className="mt-6">
-                        <h3 className="font-semibold text-gray-900 mb-4">
-                          {editMemorialTranslations.familyTree.placeholder.title}
-                        </h3>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Users className="h-5 w-5 mr-2 text-green-500" />
+                      {editMemorialTranslations.familyTree.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {editMemorialTranslations.familyTree.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          {formData.familyTree.map((member, index) => (
-                            <div
-                              key={member._id || index}
-                              className="flex items-center justify-between bg-gray-100 p-3 rounded"
-                            >
-                              <div className="flex items-center space-x-4">
-                                <Avatar>
-                                  <AvatarImage src={member.image} />
-                                  <AvatarFallback>
-                                    {member.name?.split(' ').map(n => n[0]).join('')}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <p className="font-medium">{member.name}</p>
-                                  <p className="text-sm text-gray-500">
-                                    {member.relationship}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => {
-                                    setNewFamilyMember({
-                                      name: member.name,
-                                      relationship: member.relationship
-                                    });
-                                    setIsEditingFamilyMember(member._id!);
-                                  }}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => {
-                                    setFormData(prev => ({
-                                      ...prev!,
-                                      familyTree: prev!.familyTree.filter((_, i) => i !== index)
-                                    }));
-                                  }}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
+                          <Label htmlFor="familyMemberName">
+                            {editMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                          </Label>
+                          <Input
+                            id="familyMemberName"
+                            placeholder="John Doe"
+                            value={newFamilyMember.name}
+                            onChange={(e) =>
+                              setNewFamilyMember({
+                                ...newFamilyMember,
+                                name: e.target.value,
+                              })
+                            }
+                            className="h-12"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="familyMemberRelationship">
+                            {editMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                          </Label>
+                          <Input
+                            id="familyMemberRelationship"
+                            placeholder="Father"
+                            value={newFamilyMember.relationship}
+                            onChange={(e) =>
+                              setNewFamilyMember({
+                                ...newFamilyMember,
+                                relationship: e.target.value,
+                              })
+                            }
+                            className="h-12"
+                          />
                         </div>
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+
+                      <Button
+                        className="bg-[#547455] hover:bg-[#243b31] text-white"
+                        onClick={() => {
+                          if (isEditingFamilyMember) {
+                            // Update existing member
+                            setFormData(prev => ({
+                              ...prev!,
+                              familyTree: prev!.familyTree.map(member =>
+                                member._id === isEditingFamilyMember ? newFamilyMember : member
+                              )
+                            }));
+                            setIsEditingFamilyMember(null);
+                          } else {
+                            // Add new member
+                            setFormData(prev => ({
+                              ...prev!,
+                              familyTree: [...prev!.familyTree, {
+                                ...newFamilyMember,
+                                _id: `temp-${Date.now()}`
+                              }]
+                            }));
+                          }
+                          setNewFamilyMember({ name: "", relationship: "" });
+                        }}
+                      >
+                        <Users className="h-4 w-4 mr-2" />
+                        {isEditingFamilyMember
+                          ? "Update Family Member"
+                          : editMemorialTranslations.familyTree.placeholder.button}
+                      </Button>
+
+                      {formData.familyTree?.length > 0 && (
+                        <div className="mt-6">
+                          <h3 className="font-semibold text-gray-900 mb-4">
+                            {editMemorialTranslations.familyTree.placeholder.title}
+                          </h3>
+                          <div className="space-y-2">
+                            {formData.familyTree.map((member, index) => (
+                              <div
+                                key={member._id || index}
+                                className="flex items-center justify-between bg-gray-100 p-3 rounded"
+                              >
+                                <div className="flex items-center space-x-4">
+                                  <Avatar>
+                                    <AvatarImage src={member.image} />
+                                    <AvatarFallback>
+                                      {member.name?.split(' ').map(n => n[0]).join('')}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <p className="font-medium">{member.name}</p>
+                                    <p className="text-sm text-gray-500">
+                                      {member.relationship}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => {
+                                      setNewFamilyMember({
+                                        name: member.name,
+                                        relationship: member.relationship
+                                      });
+                                      setIsEditingFamilyMember(member._id!);
+                                    }}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => {
+                                      setFormData(prev => ({
+                                        ...prev!,
+                                        familyTree: prev!.familyTree.filter((_, i) => i !== index)
+                                      }));
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+
             </TabsContent>
           </Tabs>
         </motion.div>

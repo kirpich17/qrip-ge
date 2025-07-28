@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "@/services/AuthUserData";
 
 interface UserMenuProps {
   user?: {
@@ -30,7 +31,7 @@ export function UserMenu({
   const handleLogout = () => {
     if (confirm("Are you sure you want to sign out?")) {
       console.log("Logging out user");
-      // Clear user session/tokens here
+      logoutUser();
       router.push("/");
     }
   };

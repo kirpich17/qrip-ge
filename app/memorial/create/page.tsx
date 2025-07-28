@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -15,6 +15,8 @@ import {
   Video,
   FileText,
   X,
+  AlertCircle,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +36,9 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import { ADD_MEMORIAL } from "@/services/apiEndPoint";
+import { getUserDetails } from "@/services/userService";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 interface CreateMemorialTranslations {
   header: {
@@ -128,9 +133,17 @@ interface FamilyMember {
   relationship: string;
 }
 
+interface UserDetails {
+  id: string;
+  firstname: string;
+  email: string;
+  subscriptionPlan: "Free" | "Plus" | "Premium";
+}
 
 export default function CreateMemorialPage() {
+  const router = useRouter();
   const { t } = useTranslation();
+  const { toast } = useToast();
   const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
 
   const [formData, setFormData] = useState({
@@ -158,13 +171,60 @@ export default function CreateMemorialPage() {
     relationship: "",
   });
 
+  const [loadingSubscription, setLoadingSubscription] = useState(true);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
+
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserDetails();
+        setUserDetails(userData.user);
+        setUserSubscription(userData.user.subscriptionPlan);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch user subscription details",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingSubscription(false);
+      }
+    };
+
+    fetchUserData();
+  }, [toast]);
+
+  // Subscription check functions
+  const canUploadMedia = () => userSubscription !== "Free";
+  const canUploadDocuments = () => userSubscription === "Premium";
+  const canAddFamilyMembers = () => userSubscription !== "Free";
+
+  const showUpgradeToast = (requiredPlan: "Plus" | "Premium" = "Plus") => {
+    toast({
+      title: "Upgrade Required",
+      description: `This feature requires a ${requiredPlan} subscription.`,
+      variant: "destructive",
+      action: (
+        <Link href="/pricing">
+          <Button variant="outline" size="sm">
+            Upgrade Now
+          </Button>
+        </Link>
+      ),
+    });
+  };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const getYesterdayDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() - 1); // subtract 1 day
+    today.setDate(today.getDate() - 1);
     return today.toISOString().split('T')[0];
   };
 
@@ -176,6 +236,12 @@ export default function CreateMemorialPage() {
 
   const handlePhotosUpload = (files: FileList | null) => {
     if (!files) return;
+
+    if (!canUploadMedia()) {
+      showUpgradeToast();
+      return;
+    }
+
     const newPhotos = Array.from(files);
     setMediaFiles(prev => ({
       ...prev,
@@ -185,6 +251,12 @@ export default function CreateMemorialPage() {
 
   const handleVideosUpload = (files: FileList | null) => {
     if (!files) return;
+
+    if (!canUploadMedia()) {
+      showUpgradeToast();
+      return;
+    }
+
     const newVideos = Array.from(files).map(file => ({
       title: file.name.split('.')[0],
       file
@@ -197,6 +269,12 @@ export default function CreateMemorialPage() {
 
   const handleDocumentsUpload = (files: FileList | null) => {
     if (!files) return;
+
+    if (!canUploadDocuments()) {
+      showUpgradeToast("Premium");
+      return;
+    }
+
     const newDocuments = Array.from(files).map(file => ({
       fileName: file.name,
       file
@@ -208,6 +286,11 @@ export default function CreateMemorialPage() {
   };
 
   const handleAddFamilyMember = () => {
+    if (!canAddFamilyMembers()) {
+      showUpgradeToast();
+      return;
+    }
+
     if (newFamilyMember.name && newFamilyMember.relationship) {
       setMediaFiles(prev => ({
         ...prev,
@@ -217,7 +300,6 @@ export default function CreateMemorialPage() {
     }
   };
 
-  
   const removeFamilyMember = (index: number) => {
     setMediaFiles(prev => ({
       ...prev,
@@ -248,7 +330,6 @@ export default function CreateMemorialPage() {
 
   const prepareFormData = () => {
     const formDataToSend = new FormData();
-    // Append basic info
     formDataToSend.append("firstName", formData.firstName);
     formDataToSend.append("lastName", formData.lastName);
     formDataToSend.append("birthDate", formData.birthDate);
@@ -257,19 +338,19 @@ export default function CreateMemorialPage() {
     formDataToSend.append("epitaph", formData.epitaph);
     formDataToSend.append("isPublic", String(formData.isPublic));
     formDataToSend.append("status", formData.status);
-    // Append profile image if exists
+    formDataToSend.append("location", formData.location)
+
     if (formData.profileImage) {
       formDataToSend.append("profileImage", formData.profileImage);
     }
-    // Append photos
     mediaFiles.photos.forEach((photo) => {
       formDataToSend.append("photoGallery", photo);
     });
-    // Append videos
+
     mediaFiles.videos.forEach((video) => {
       formDataToSend.append("videoGallery", video.file);
     });
-    // Append documents
+
     mediaFiles.documents.forEach((doc) => {
       formDataToSend.append("documents", doc.file);
     });
@@ -277,7 +358,6 @@ export default function CreateMemorialPage() {
     mediaFiles.familyTree.forEach((member, index) => {
       formDataToSend.append(`familyTree[${index}][name]`, member.name);
       formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
-  
     });
 
     return formDataToSend;
@@ -287,23 +367,59 @@ export default function CreateMemorialPage() {
     e?.preventDefault();
     try {
       const formDataToSend = prepareFormData();
-      // Log the form data for debugging
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
       const response = await axiosInstance.post(ADD_MEMORIAL, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
-
       console.log("Memorial created:", response.data);
-      alert("Memorial created successfully!");
+      toast({
+        title: "Success",
+        description: "Memorial created successfully!",
+        variant: "default",
+      });
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error creating memorial:", error);
-      alert("Failed to create memorial. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to create memorial. Please try again.",
+        variant: "destructive",
+      });
     }
   };
+
+  const SubscriptionRestricted = ({ requiredPlan = "Plus" }: { requiredPlan?: "Plus" | "Premium" }) => (
+    <div className="bg-gray-50 rounded-lg p-6 text-center">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+        <Lock className="h-6 w-6 text-gray-500" />
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">
+        {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
+      </h3>
+      <p className="text-gray-500 mb-4">
+        {requiredPlan === "Premium"
+          ? "This feature is only available with a Premium subscription."
+          : "Upgrade to Plus or Premium to access this feature."}
+      </p>
+      <Link href="/subscription">
+        <Button className="bg-[#547455] hover:bg-[#243b31]">
+          Upgrade to {requiredPlan}
+        </Button>
+      </Link>
+    </div>
+  );
+
+  if (loadingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your subscription details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -315,26 +431,16 @@ export default function CreateMemorialPage() {
                 href="/dashboard"
                 className="flex items-center text-white hover:underline gap-2 text-base"
               >
-                <ArrowLeft className="h-5 w-5 " />
+                <ArrowLeft className="h-5 w-5" />
                 {createMemorialTranslations.header.back}
               </Link>
             </div>
             <div className="flex items-center space-x-3">
               <Button
-                variant="outline"
-                onClick={() => {
-                  console.log("Preview memorial with current data:", formData);
-                  alert("Preview functionality - would show memorial preview");
-                }}
-              >
-                <Eye className="h-4 w-4" />
-                {createMemorialTranslations.header.preview}
-              </Button>
-              <Button
                 className="bg-[#547455] hover:bg-white hover:text-[#547455]"
                 onClick={handleSaveMemorial}
               >
-                <Save className="h-4 w-4 " />
+                <Save className="h-4 w-4" />
                 {createMemorialTranslations.header.save}
               </Button>
             </div>
@@ -362,11 +468,23 @@ export default function CreateMemorialPage() {
               <TabsTrigger value="basic">
                 {createMemorialTranslations.tabs.basic}
               </TabsTrigger>
-              <TabsTrigger value="media">
+              <TabsTrigger
+                value="media"
+                disabled={userSubscription === "Free"}
+              >
                 {createMemorialTranslations.tabs.media}
+                {userSubscription === "Free" && (
+                  <span className="ml-1 text-xs text-yellow-600">(Upgrade)</span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="family">
+              <TabsTrigger
+                value="family"
+                disabled={userSubscription === "Free"}
+              >
                 {createMemorialTranslations.tabs.family}
+                {userSubscription === "Free" && (
+                  <span className="ml-1 text-xs text-yellow-600">(Upgrade)</span>
+                )}
               </TabsTrigger>
             </TabsList>
 
@@ -424,13 +542,9 @@ export default function CreateMemorialPage() {
                       </Label>
                       <Input
                         id="firstName"
-                        placeholder={
-                          createMemorialTranslations.basicInfo.firstName
-                        }
+                        placeholder={createMemorialTranslations.basicInfo.firstName}
                         value={formData.firstName}
-                        onChange={(e) =>
-                          handleInputChange("firstName", e.target.value)
-                        }
+                        onChange={(e) => handleInputChange("firstName", e.target.value)}
                         className="h-12"
                       />
                     </div>
@@ -440,13 +554,9 @@ export default function CreateMemorialPage() {
                       </Label>
                       <Input
                         id="lastName"
-                        placeholder={
-                          createMemorialTranslations.basicInfo.lastName
-                        }
+                        placeholder={createMemorialTranslations.basicInfo.lastName}
                         value={formData.lastName}
-                        onChange={(e) =>
-                          handleInputChange("lastName", e.target.value)
-                        }
+                        onChange={(e) => handleInputChange("lastName", e.target.value)}
                         className="h-12"
                       />
                     </div>
@@ -462,9 +572,7 @@ export default function CreateMemorialPage() {
                         id="birthDate"
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) =>
-                          handleInputChange("birthDate", e.target.value)
-                        }
+                        onChange={(e) => handleInputChange("birthDate", e.target.value)}
                         className="h-12"
                       />
                     </div>
@@ -478,9 +586,7 @@ export default function CreateMemorialPage() {
                         max={getYesterdayDate()}
                         type="date"
                         value={formData.deathDate}
-                        onChange={(e) =>
-                          handleInputChange("deathDate", e.target.value)
-                        }
+                        onChange={(e) => handleInputChange("deathDate", e.target.value)}
                         className="h-12"
                       />
                     </div>
@@ -494,9 +600,7 @@ export default function CreateMemorialPage() {
                       id="epitaph"
                       placeholder="Short memorial phrase"
                       value={formData.epitaph}
-                      onChange={(e) =>
-                        handleInputChange("epitaph", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("epitaph", e.target.value)}
                       className="h-12"
                     />
                   </div>
@@ -510,9 +614,7 @@ export default function CreateMemorialPage() {
                       id="location"
                       placeholder="Tbilisi, Georgia"
                       value={formData.location}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("location", e.target.value)}
                       className="h-12"
                     />
                   </div>
@@ -523,14 +625,9 @@ export default function CreateMemorialPage() {
                     </Label>
                     <Textarea
                       id="biography"
-                      placeholder={
-                        createMemorialTranslations.basicInfo
-                          .biographyPlaceholder
-                      }
+                      placeholder={createMemorialTranslations.basicInfo.biographyPlaceholder}
                       value={formData.biography}
-                      onChange={(e) =>
-                        handleInputChange("biography", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("biography", e.target.value)}
                       className="min-h-[120px]"
                     />
                   </div>
@@ -550,269 +647,277 @@ export default function CreateMemorialPage() {
             </TabsContent>
 
             <TabsContent value="media" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
-                    {createMemorialTranslations.media.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {createMemorialTranslations.media.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Photo Upload */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {createMemorialTranslations.media.photos.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {createMemorialTranslations.media.photos.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = "image/*";
-                            input.onchange = (e) => {
-                              handlePhotosUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {createMemorialTranslations.media.photos.button}
-                        </Button>
-                        {mediaFiles.photos.length > 0 && (
-                          <div className="mt-4 w-full">
-                            <p className="text-xs font-medium mb-2">
-                              Selected Photos:
-                            </p>
-                            <div className="space-y-1">
-                              {mediaFiles.photos.map((photo, index) => (
-                                <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                  <span className="text-xs truncate">{photo.name}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-4 w-4"
-                                    onClick={() => removePhoto(index)}
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              ))}
+              {userSubscription === "Free" ? (
+                <SubscriptionRestricted />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <ImageIcon className="h-5 w-5 mr-2 text-blue-500" />
+                      {createMemorialTranslations.media.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {createMemorialTranslations.media.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* Photo Upload */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {createMemorialTranslations.media.photos.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {createMemorialTranslations.media.photos.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = "image/*";
+                              input.onchange = (e) => {
+                                handlePhotosUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {createMemorialTranslations.media.photos.button}
+                          </Button>
+                          {mediaFiles.photos.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">
+                                Selected Photos:
+                              </p>
+                              <div className="space-y-1">
+                                {mediaFiles.photos.map((photo, index) => (
+                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <span className="text-xs truncate">{photo.name}</span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => removePhoto(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                          )}
+                        </CardContent>
+                      </Card>
 
-                    {/* Video Upload */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <Video className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {createMemorialTranslations.media.videos.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {createMemorialTranslations.media.videos.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = "video/*";
-                            input.onchange = (e) => {
-                              handleVideosUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {createMemorialTranslations.media.videos.button}
-                        </Button>
-                        {mediaFiles.videos.length > 0 && (
-                          <div className="mt-4 w-full">
-                            <p className="text-xs font-medium mb-2">
-                              Selected Videos:
-                            </p>
-                            <div className="space-y-1">
-                              {mediaFiles.videos.map((video, index) => (
-                                <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                  <span className="text-xs truncate">{video.title}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-4 w-4"
-                                    onClick={() => removeVideo(index)}
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              ))}
+                      {/* Video Upload */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <Video className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {createMemorialTranslations.media.videos.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {createMemorialTranslations.media.videos.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = "video/*";
+                              input.onchange = (e) => {
+                                handleVideosUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {createMemorialTranslations.media.videos.button}
+                          </Button>
+                          {mediaFiles.videos.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">
+                                Selected Videos:
+                              </p>
+                              <div className="space-y-1">
+                                {mediaFiles.videos.map((video, index) => (
+                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <span className="text-xs truncate">{video.title}</span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => removeVideo(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                          )}
+                        </CardContent>
+                      </Card>
 
-                    {/* Documents */}
-                    <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                        <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {createMemorialTranslations.media.documents.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">
-                          {createMemorialTranslations.media.documents.description}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const input = document.createElement("input");
-                            input.type = "file";
-                            input.multiple = true;
-                            input.accept = ".pdf,.doc,.docx,.txt";
-                            input.onchange = (e) => {
-                              handleDocumentsUpload((e.target as HTMLInputElement).files);
-                            };
-                            input.click();
-                          }}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {createMemorialTranslations.media.documents.button}
-                        </Button>
-                        {mediaFiles.documents.length > 0 && (
-                          <div className="mt-4 w-full">
-                            <p className="text-xs font-medium mb-2">
-                              Selected Documents:
-                            </p>
-                            <div className="space-y-1">
-                              {mediaFiles.documents.map((doc, index) => (
-                                <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                  <span className="text-xs truncate">{doc.fileName}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-4 w-4"
-                                    onClick={() => removeDocument(index)}
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              ))}
+                      {/* Documents - Premium only */}
+
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <FileText className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            {createMemorialTranslations.media.documents.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-4">
+                            {createMemorialTranslations.media.documents.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = ".pdf,.doc,.docx,.txt";
+                              input.onchange = (e) => {
+                                handleDocumentsUpload((e.target as HTMLInputElement).files);
+                              };
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {createMemorialTranslations.media.documents.button}
+                          </Button>
+                          {mediaFiles.documents.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">
+                                Selected Documents:
+                              </p>
+                              <div className="space-y-1">
+                                {mediaFiles.documents.map((doc, index) => (
+                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <span className="text-xs truncate">{doc.fileName}</span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => removeDocument(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             <TabsContent value="family" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Users className="h-5 w-5 mr-2 text-green-500" />
-                    {createMemorialTranslations.familyTree.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {createMemorialTranslations.familyTree.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="familyMemberName">
-                          {createMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
-                        </Label>
-                        <Input
-                          id="familyMemberName"
-                          placeholder="John Doe"
-                          value={newFamilyMember.name}
-                          onChange={(e) =>
-                            setNewFamilyMember({
-                              ...newFamilyMember,
-                              name: e.target.value,
-                            })
-                          }
-                          className="h-12"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="familyMemberRelationship">
-                          {createMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
-                        </Label>
-                        <Input
-                          id="familyMemberRelationship"
-                          placeholder="Father"
-                          value={newFamilyMember.relationship}
-                          onChange={(e) =>
-                            setNewFamilyMember({
-                              ...newFamilyMember,
-                              relationship: e.target.value,
-                            })
-                          }
-                          className="h-12"
-                        />
-                      </div>
-                    </div>
-                    
-                    <Button
-                      className="bg-[#547455] hover:bg-[#243b31] text-white"
-                      onClick={handleAddFamilyMember}
-                    >
-                      <Users className="h-4 w-4 mr-2" />
-                      {createMemorialTranslations.familyTree.placeholder.button}
-                    </Button>
-
-                    {mediaFiles.familyTree.length > 0 && (
-                      <div className="mt-6">
-                        <h3 className="font-semibold text-gray-900 mb-4">
-                          {createMemorialTranslations.familyTree.placeholder.title}
-                        </h3>
+              {userSubscription === "Free" ? (
+                <SubscriptionRestricted />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Users className="h-5 w-5 mr-2 text-green-500" />
+                      {createMemorialTranslations.familyTree.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {createMemorialTranslations.familyTree.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          {mediaFiles.familyTree.map((member, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between bg-gray-100 p-3 rounded"
-                            >
-                              <div>
-                                <p className="font-medium">{member.name}</p>
-                                <p className="text-sm text-gray-500">
-                                  {member.relationship}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => removeFamilyMember(index)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
+                          <Label htmlFor="familyMemberName">
+                            {createMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                          </Label>
+                          <Input
+                            id="familyMemberName"
+                            placeholder="John Doe"
+                            value={newFamilyMember.name}
+                            onChange={(e) =>
+                              setNewFamilyMember({
+                                ...newFamilyMember,
+                                name: e.target.value,
+                              })
+                            }
+                            className="h-12"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="familyMemberRelationship">
+                            {createMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                          </Label>
+                          <Input
+                            id="familyMemberRelationship"
+                            placeholder="Father"
+                            value={newFamilyMember.relationship}
+                            onChange={(e) =>
+                              setNewFamilyMember({
+                                ...newFamilyMember,
+                                relationship: e.target.value,
+                              })
+                            }
+                            className="h-12"
+                          />
                         </div>
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+
+                      <Button
+                        className="bg-[#547455] hover:bg-[#243b31] text-white"
+                        onClick={handleAddFamilyMember}
+                      >
+                        <Users className="h-4 w-4 mr-2" />
+                        {createMemorialTranslations.familyTree.placeholder.button}
+                      </Button>
+
+                      {mediaFiles.familyTree.length > 0 && (
+                        <div className="mt-6">
+                          <h3 className="font-semibold text-gray-900 mb-4">
+                            {createMemorialTranslations.familyTree.placeholder.title}
+                          </h3>
+                          <div className="space-y-2">
+                            {mediaFiles.familyTree.map((member, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between bg-gray-100 p-3 rounded"
+                              >
+                                <div>
+                                  <p className="font-medium">{member.name}</p>
+                                  <p className="text-sm text-gray-500">
+                                    {member.relationship}
+                                  </p>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => removeFamilyMember(index)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
-
-
           </Tabs>
         </motion.div>
       </div>
