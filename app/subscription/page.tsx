@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -50,7 +51,6 @@ export default function SubscriptionPage() {
         subscriptionTranslations.plans.free.limitations[1],
         subscriptionTranslations.plans.free.limitations[2],
         subscriptionTranslations.plans.free.limitations[3],
-        subscriptionTranslations.plans.free.limitations[4],
       ],
     },
     {
@@ -74,7 +74,6 @@ export default function SubscriptionPage() {
       ],
       limitations: [
         subscriptionTranslations.plans.basic.limitations[0],
-        subscriptionTranslations.plans.basic.limitations[1],
       ],
     },
     {
@@ -97,7 +96,6 @@ export default function SubscriptionPage() {
         subscriptionTranslations.plans.legacy.features[6],
         subscriptionTranslations.plans.legacy.features[7],
         subscriptionTranslations.plans.legacy.features[8],
-        subscriptionTranslations.plans.legacy.features[9],
       ],
       limitations: [],
     },
@@ -135,12 +133,7 @@ export default function SubscriptionPage() {
       basic: false,
       legacy: true,
     },
-    {
-      feature: subscriptionTranslations.comparison.features[6].name,
-      free: false,
-      basic: false,
-      legacy: true,
-    },
+   
   ];
 
   return (

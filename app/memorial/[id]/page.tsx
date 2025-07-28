@@ -567,11 +567,9 @@ export default function MemorialPage() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {"Tbilisi, Georgia"}
+                            {apiMemorial.location}
                           </p>
-                          <p className="text-sm text-gray-600">
-                            {41.7151}, {44.8271}
-                          </p>
+                         
                         </div>
                         <Button
                           variant="outline"

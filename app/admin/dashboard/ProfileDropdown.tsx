@@ -9,6 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
+import { logoutUser } from "@/services/AuthUserData";
 
 export function ProfileDropdown() {
   const { t } = useTranslation();
@@ -23,8 +24,10 @@ export function ProfileDropdown() {
   };
 
   const handleLogoutClick = () => {
-    // Replace with actual logout logic
-    console.log("Logging out...");
+    if (confirm("Are you sure you want to sign out?")) {
+      logoutUser();
+      router.push("/");
+    }
   };
 
   return (

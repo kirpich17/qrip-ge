@@ -64,12 +64,17 @@ function Dashboard() {
   const [memorials, setMemorials] = useState<Memorial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
 
   useEffect(() => {
     const fetchMemorials = async () => {
+      setLoading(true);
       try {
-        const data = await getMemorials();
+        const data = await getMemorials(currentPage, limit);
         setMemorials(data.data);
+        setTotalPages(data.pagination.totalPages);
       } catch (err) {
         setError("Failed to load memorials");
       } finally {
@@ -78,8 +83,7 @@ function Dashboard() {
     };
 
     fetchMemorials();
-  }, []);
-
+  }, [currentPage]);
 
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
@@ -354,7 +358,27 @@ function Dashboard() {
                       </div>
                     </motion.div>
                   ))}
+                  <div className="flex justify-center items-center gap-4 mt-4">
+                    <Button
+                      variant="outline"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-sm text-gray-700">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((prev) => prev + 1)}
+                    >
+                      Next
+                    </Button>
+                  </div>
 
+                  
                 </motion.div>
               </CardContent>
             </Card>

@@ -13,3 +13,15 @@ export const localStorageAuthUserData = () => {
     };
   }
 };
+
+
+export const logoutUser = () => {
+  try {
+    localStorage.removeItem("loginData");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("isAuthenticated");
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
