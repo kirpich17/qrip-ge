@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, QrCode, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,8 @@ import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const { t } = useTranslation();
-  const authTranslations:any = t("auth" as any);
-  const commonTranslations:any = t("common" );
+  const authTranslations: any = t("auth" as any);
+  const commonTranslations: any = t("common");
 
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -33,48 +33,57 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  const body = {
-    email,
-    password,
-  };
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
-      body
-    );
 
-    const { status, message, token, user } = response?.data || {};
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    if (isAuthenticated === "true") {
+      router.replace("/dashboard");
+    }
+  }, []);
 
-    if (status) {
-      localStorage.setItem("loginData", JSON.stringify(user));
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("userRole", user?.userType || "");
-      localStorage.setItem("isAuthenticated", "true");
-      toast.success(message || "Login successful!");
-      if (user?.userType === "admin" || user?.userType === "manager") {
-        router.push("/admin");
-      } else if (user?.userType === "underwriter") {
-        router.push("/dashboard");
-      } else {
-        router.push("/dashboard");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const body = {
+      email,
+      password,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
+        body
+      );
+
+      const { status, message, token, user } = response?.data || {};
+
+      if (status) {
+        localStorage.setItem("loginData", JSON.stringify(user));
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", user?.userType || "");
+        localStorage.setItem("isAuthenticated", "true");
+        toast.success(message || "Login successful!");
+        if (user?.userType === "admin" || user?.userType === "manager") {
+          router.push("/admin");
+        } else if (user?.userType === "underwriter") {
+          router.push("/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
       }
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        toast.error(error?.response?.data?.message || "Invalid credentials");
+      } else if (error?.response?.status === 404) {
+        toast.error("Something went wrong. Please try again.");
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+      setError("");
     }
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      toast.error(error?.response?.data?.message || "Invalid credentials");
-    } else if (error?.response?.status === 404) {
-      toast.error("Something went wrong. Please try again.");
-    } else {
-      toast.error("Login failed. Please try again.");
-    }
-  } finally {
-    setIsLoading(false);
-    setError("");
-  }
-};
+  };
 
 
 
