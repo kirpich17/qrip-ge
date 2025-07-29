@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/table";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
-import IsAdminAuth from "@/lib/IsAdminAuth/page";
 
 const API_BASE_URL = "http://localhost:5000/api/admin/subscription";
 
@@ -65,7 +64,7 @@ type Plan = {
   borderColor?: string;
 };
 
-function AdminSubscription() {
+export default function AdminSubscription() {
   const { t } = useTranslation();
   const adsubscriptionTranslations = t("adsubscription");
   const [isYearly, setIsYearly] = useState(false);
@@ -611,10 +610,10 @@ function AdminSubscription() {
                       {plan.name === "Free" && (
                         <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
-                      {plan.name === "Monthly Premium" && (
+                      {plan.name === "Basic Premium" && (
                         <Crown className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
-                      {plan.name === "Life Time" && (
+                      {plan.name === "Legacy+" && (
                         <Zap className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
                     </div>
@@ -741,7 +740,7 @@ function AdminSubscription() {
           </div>
 
           {/* Feature Comparison Table */}
-          {/* <motion.div variants={fadeInUp}>
+          <motion.div variants={fadeInUp}>
             <Card>
               <CardHeader>
                 <CardTitle>
@@ -796,7 +795,7 @@ function AdminSubscription() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div> */}
+          </motion.div>
 
           {/* Subscribers Table */}
           <motion.div variants={fadeInUp} className="mt-12">
@@ -895,15 +894,3 @@ function AdminSubscription() {
     </div>
   );
 }
-
-const AdminSubscriptionPage = () => {
-  return (
-    <>
-      <IsAdminAuth>
-        <AdminSubscription />
-      </IsAdminAuth>
-    </>
-  );
-};
-
-export default AdminSubscriptionPage;

@@ -31,8 +31,18 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
-import { getSingleMemorial } from "@/services/memorialService";
+import { getSingleMemorial, recordMemorialView } from "@/services/memorialService";
 import { useParams } from "next/navigation";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -55,7 +65,7 @@ interface Memorial {
   birthDate: string;
   deathDate: string;
   biography: string;
-  profileImage:string;
+  profileImage: string;
   photoGallery: string[];
   videoGallery: string[];
   status: string;
@@ -84,18 +94,35 @@ export default function MemorialPage() {
   const memorialTranslations = t("memorial");
 
   useEffect(() => {
-    if (!params?.id) return;
     const fetchMemorial = async () => {
+      if (!params?.id) return;
       try {
         setLoading(true);
+        const urlParams = new URLSearchParams(window.location.search);
+        const isScan = urlParams.get("isScan") === "true";
+        // Clean the URL if it's a QR scan
+        if (isScan) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+
         const response = await getSingleMemorial(params.id as string);
         if (response?.status && response.data) {
           setApiMemorial(response.data);
+          try {
+            await recordMemorialView({
+              memorialId: params.id,
+              isScan
+            });
+          } catch (scanError) {
+            console.error("Failed to record scan view:", scanError);
+          }
+
         } else {
-          throw new Error("Invalid response structure");
+          throw new Error("Invalid response from server");
         }
       } catch (err) {
-        console.error("Failed to fetch memorial:", err);
+        console.error("Error fetching memorial:", err);
         setError("Failed to load memorial data");
       } finally {
         setLoading(false);
@@ -104,6 +131,9 @@ export default function MemorialPage() {
 
     fetchMemorial();
   }, [params?.id]);
+
+
+
 
   useEffect(() => {
     if (videoRef.current) {
@@ -398,11 +428,10 @@ export default function MemorialPage() {
                                 <button
                                   key={index}
                                   onClick={() => setCurrentImageIndex(index)}
-                                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                                    index === currentImageIndex
-                                      ? "border-[#547455]"
-                                      : "border-gray-200"
-                                  }`}
+                                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${index === currentImageIndex
+                                    ? "border-[#547455]"
+                                    : "border-gray-200"
+                                    }`}
                                 >
                                   <img
                                     src={image || "/placeholder.svg"}
@@ -514,18 +543,12 @@ export default function MemorialPage() {
                         <div className="space-y-3">
                           {apiMemorial.familyTree.map((member, index) => (
                             <div key={index} className="flex items-center space-x-3">
-                              <Avatar className="h-10 w-10">
-                                <AvatarImage src={member.image || "/placeholder.svg"} />
-                                <AvatarFallback>
-                                  {member.name?.split(" ").map(n => n[0]).join("")}
-                                </AvatarFallback>
-                              </Avatar>
                               <div>
                                 <p className="font-medium text-gray-900">
                                   {member.name || "Family Member"}
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                  {member.relation || "Relative"}
+                                  {member.relationship || "Relative"}
                                 </p>
                               </div>
                             </div>
@@ -560,25 +583,48 @@ export default function MemorialPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+
+
                     {isPremium ? (
-                      <div className="space-y-4">
-                        <div className="bg-gray-200 h-32 rounded-lg flex items-center justify-center">
-                          <p className="text-gray-600">Interactive Map</p>
+                      apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
+                        <div className="space-y-4 z-0">
+                          <div className="h-64 rounded-lg overflow-hidden">
+                            <MapContainer
+                              center={[apiMemorial.gps.lat, apiMemorial.gps.lng]}
+                              zoom={13}
+                              style={{ height: '100%', width: '100%' }}
+                            >
+                              <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                              />
+                              <Marker position={[apiMemorial.gps.lat, apiMemorial.gps.lng]}>
+                                <Popup>{apiMemorial.location || 'Memorial Location'}</Popup>
+                              </Marker>
+                            </MapContainer>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => {
+                              window.open(
+                                `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
+                                '_blank'
+                              );
+                            }}
+                          >
+                            Get Directions
+                          </Button>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {apiMemorial.location}
+                      ) : (
+                        <div className="text-center py-6">
+                          <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">
+                            No location data available for this memorial
                           </p>
-                         
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full bg-transparent"
-                        >
-                          {memorialTranslations.sections.location.getDirections}
-                        </Button>
-                      </div>
+                      )
                     ) : (
                       <div className="text-center py-6">
                         <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
@@ -587,6 +633,7 @@ export default function MemorialPage() {
                         </p>
                       </div>
                     )}
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -651,6 +698,8 @@ export default function MemorialPage() {
                         {formatDate(apiMemorial.updatedAt)}
                       </span>
                     </div>
+
+
                     <Separator />
                     <div className="text-center">
                       <Link href="/">

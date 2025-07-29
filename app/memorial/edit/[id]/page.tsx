@@ -117,6 +117,8 @@ export default function EditMemorialPage() {
   const [loadingSubscription, setLoadingSubscription] = useState(true);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [newAchievement, setNewAchievement] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -148,6 +150,9 @@ export default function EditMemorialPage() {
         const response = await getSingleMemorial(params.id as string);
         if (response?.status && response.data) {
           setFormData(response.data);
+          if (response.data.achievements) {
+            setAchievements(response.data.achievements);
+          }
           // Set the first photo as profile image preview if available
           setProfileImagePreview(response.data.profileImage);
         } else {
@@ -296,6 +301,10 @@ export default function EditMemorialPage() {
       formDataToSend.append('biography', formData.biography);
       formDataToSend.append('location', formData.location);
       formDataToSend.append('isPublic', String(formData.isPublic));
+
+      achievements.forEach((achievement, index) => {
+        formDataToSend.append(`achievements[${index}]`, achievement);
+      });
 
       if (selectedProfileImage) {
         formDataToSend.append('profileImage', selectedProfileImage);
@@ -669,6 +678,67 @@ export default function EditMemorialPage() {
                       className="min-h-[120px]"
                     />
                   </div>
+
+
+                  <div className="space-y-4">
+                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <p className="text-sm text-gray-500">
+                      Add notable achievements or awards
+                    </p>
+
+                    {/* Add new achievement */}
+                    <div className="flex gap-2">
+                      <Input
+                        value={newAchievement}
+                        onChange={(e) => setNewAchievement(e.target.value)}
+                        placeholder="e.g. Nobel Prize in Physics"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (newAchievement.trim()) {
+                            setAchievements([...achievements, newAchievement.trim()]);
+                            setNewAchievement("");
+                          }
+                        }}
+                        disabled={!newAchievement.trim()}
+                      >
+                        Add
+                      </Button>
+                    </div>
+
+                    {/* List of achievements */}
+                    {achievements.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {achievements.map((achievement, index) => (
+                          <div key={index} className="flex items-center gap-2 p-2 border rounded">
+                            <Input
+                              value={achievement}
+                              onChange={(e) => {
+                                const updated = [...achievements];
+                                updated[index] = e.target.value;
+                                setAchievements(updated);
+                              }}
+                              className="flex-1 border-none focus-visible:ring-0"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const updated = achievements.filter((_, i) => i !== index);
+                                setAchievements(updated);
+                              }}
+                              className="text-red-500 hover:text-red-700 h-8 w-8 p-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                 </CardContent>
               </Card>
             </TabsContent>

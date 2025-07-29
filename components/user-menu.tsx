@@ -16,15 +16,15 @@ import { logoutUser } from "@/services/AuthUserData";
 
 interface UserMenuProps {
   user?: {
-    name: string;
+    firstname: string;
     email: string;
     avatar?: string;
-    plan?: string;
+    subscriptionPlan?: string;
   };
 }
 
 export function UserMenu({
-  user = { name: "John Doe", email: "john@example.com", plan: "Basic" },
+  user,
 }: UserMenuProps) {
   const router = useRouter();
 
@@ -35,6 +35,7 @@ export function UserMenu({
       router.push("/");
     }
   };
+  console.log(user)
 
   return (
     <DropdownMenu>
@@ -43,13 +44,13 @@ export function UserMenu({
           <Avatar className="h-8 w-8">
             <AvatarImage
               src={user.avatar || "/placeholder.svg?height=32&width=32"}
-              alt={user.name}
+              alt={user.firstname}
             />
             <AvatarFallback>
-              {user.name
+              {user.firstname ? user.firstname
                 .split(" ")
                 .map((n) => n[0])
-                .join("")}
+                .join("") : ""}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -57,15 +58,15 @@ export function UserMenu({
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-sm font-medium leading-none">{user.firstname}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
-            {user.plan && (
+            {user.subscriptionPlan && (
               <div className="flex items-center space-x-1 mt-1">
                 <Crown className="h-3 w-3 text-yellow-600" />
                 <span className="text-xs text-yellow-600 font-medium">
-                  {user.plan} Plan
+                  {user.subscriptionPlan} Plan
                 </span>
               </div>
             )}
@@ -100,5 +101,6 @@ export function UserMenu({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
   );
 }

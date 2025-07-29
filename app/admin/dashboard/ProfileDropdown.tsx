@@ -25,6 +25,7 @@ export function ProfileDropdown() {
 
   const handleLogoutClick = () => {
     if (confirm("Are you sure you want to sign out?")) {
+      localStorage.clear();
       logoutUser();
       router.push("/");
     }
@@ -44,12 +45,12 @@ export function ProfileDropdown() {
         >
           {profiledropdownTranslations.subscription}
         </DropdownMenuItem>
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           onClick={handleProfileClick}
           className="cursor-pointer"
         >
           {profiledropdownTranslations.profile}
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem
           onClick={handleLogoutClick}
           className="cursor-pointer"

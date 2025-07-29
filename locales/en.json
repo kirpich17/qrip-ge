@@ -220,7 +220,7 @@
     "header": {
       "title": "Dashboard",
       "settings": "Settings",
-      "welcome": "Welcome back, {name}",
+      "welcome": "Welcome back,",
       "subtitle": "Manage your memorials and honor the memories of your loved ones"
     },
     "stats": {

@@ -39,6 +39,7 @@ import { useTranslation } from "@/hooks/useTranslate";
 import { getDeleteMemorial, getMemorials } from "@/services/memorialService";
 import { toast } from "react-toastify";
 import IsUserAuth from "@/lib/IsUserAuth/page";
+import { getUserDetails } from "@/services/userService";
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -59,20 +60,62 @@ function Dashboard() {
   const commonTranslations = t("common");
   const dashboard: any = dashboardTranslations;
   const [searchQuery, setSearchQuery] = useState("");
-
-
   const [memorials, setMemorials] = useState<Memorial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
+  const [profileData, setProfileData] = useState({});
+  const [stats, setStats] = useState([
+    {
+      label: "Total Memorials",
+      value: "0",
+      icon: Heart,
+      color: "text-red-600",
+    },
+    {
+      label: "Total Views",
+      value: "0",
+      icon: Eye,
+      color: "text-blue-600",
+    },
+    {
+      label: "QR Scans",
+      value: "0",
+      icon: QrCode,
+      color: "text-green-600",
+    },
+    {
+      label: "Family Members",
+      value: "0",
+      icon: Users,
+      color: "text-purple-600",
+    },
+  ]);
+
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserDetails();
+        setProfileData(userData.user)
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
 
   useEffect(() => {
     const fetchMemorials = async () => {
       setLoading(true);
       try {
-        const data = await getMemorials(currentPage, limit);
+        const data = await getMemorials(currentPage, limit, searchQuery);
         setMemorials(data.data);
         setTotalPages(data.pagination.totalPages);
       } catch (err) {
@@ -83,7 +126,8 @@ function Dashboard() {
     };
 
     fetchMemorials();
-  }, [currentPage]);
+  }, [currentPage,searchQuery]);
+
 
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
@@ -98,33 +142,60 @@ function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const loginData = localStorage.getItem("loginData");
+        if (!loginData) {
+          console.error("No login data found in localStorage.");
+          return;
+        }
 
-  const stats = [
-    {
-      label: dashboard.stats.totalMemorials,
-      value: "3",
-      icon: Heart,
-      color: "text-red-600",
-    },
-    {
-      label: dashboard.stats.totalViews,
-      value: "490",
-      icon: Eye,
-      color: "text-blue-600",
-    },
-    {
-      label: dashboard.stats.qrScans,
-      value: "127",
-      icon: QrCode,
-      color: "text-green-600",
-    },
-    {
-      label: dashboard.stats.familyMembers,
-      value: "12",
-      icon: Users,
-      color: "text-purple-600",
-    },
-  ];
+        const user = JSON.parse(loginData);
+        const userId = user._id;
+
+        const response = await fetch(`https://qrip-ge-backend.vercel.app/api/auth/stats/${userId}`);
+        const result = await response.json();
+
+        if (result.status && result.data) {
+          const apiData = result.data;
+          setStats([
+            {
+              label: "Total Memorials",
+              value: String(apiData.totalMemorials),
+              icon: Heart,
+              color: "text-red-600",
+            },
+            {
+              label: "Total Views",
+              value: String(apiData.totalViews),
+              icon: Eye,
+              color: "text-blue-600",
+            },
+            {
+              label: "QR Scans",
+              value: String(apiData.totalScans),
+              icon: QrCode,
+              color: "text-green-600",
+            },
+            {
+              label: "Family Members",
+              value: String(apiData.totalFamilyTreeCount),
+              icon: Users,
+              color: "text-purple-600",
+            },
+          ]);
+        } else {
+          console.error("Failed to fetch dashboard stats");
+        }
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -160,11 +231,12 @@ function Dashboard() {
                 </Button>
               </Link> */}
               <UserMenu
-                user={{
-                  name: "John Doe",
-                  email: "john@example.com",
-                  plan: "Basic Premium",
-                }}
+                user={profileData}
+              // user={{
+              //   name: "John Doe",
+              //   email: "john@example.com",
+              //   plan: "Basic Premium",
+              // }}
               />
             </div>
           </div>
@@ -180,7 +252,7 @@ function Dashboard() {
           className="md:mb-8 mb-3"
         >
           <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
-            {dashboard.header.welcome}
+            {dashboard.header.welcome}{profileData.firstname} {profileData.lastname}
           </h1>
           <p className="text-gray-600 text-base">{dashboard.header.subtitle}</p>
         </motion.div>
@@ -378,7 +450,7 @@ function Dashboard() {
                     </Button>
                   </div>
 
-                  
+
                 </motion.div>
               </CardContent>
             </Card>

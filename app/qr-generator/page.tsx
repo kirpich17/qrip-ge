@@ -98,7 +98,7 @@ export default function QRGeneratorPage() {
   }, []);
 
   const selectedMemorialData = memorials.find((m) => m._id === selectedMemorialId);
-  const publicMemorialUrl = selectedMemorialData ? `${window.location.origin}/memorial/${selectedMemorialData._id}` : "";
+  const publicMemorialUrl = selectedMemorialData ? `${window.location.origin}/memorial/${selectedMemorialData._id}?isScan=true` : "";
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success("URL copied!"));
@@ -278,7 +278,7 @@ export default function QRGeneratorPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="style">{qrGeneratorTranslations.customization.style}</Label>
                     <Select value={qrStyle} onValueChange={(value) => setQrStyle(value as any)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
@@ -289,7 +289,7 @@ export default function QRGeneratorPage() {
                         <SelectItem value="branded">{qrGeneratorTranslations.customization.styles.branded}</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
 
