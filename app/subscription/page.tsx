@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Check, Crown, Star, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { sub } from "date-fns";
+import axiosInstance from "@/services/axiosInstance";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -25,116 +26,47 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
+type Plan = {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  isOneTime: boolean;
+  features: string[];
+  limitations: string[];
+  isActive: boolean;
+  isPopular?: boolean;
+  color?: string;
+  bgColor?: string;
+  borderColor?: string;
+};
+
+
 export default function SubscriptionPage() {
   const { t } = useTranslation();
   const subscriptionTranslations = t("subscription");
   const [isYearly, setIsYearly] = useState(false);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const plans = [
-    {
-      name: subscriptionTranslations.plans.free.name,
-      description: subscriptionTranslations.plans.free.description,
-      monthlyPrice: subscriptionTranslations.plans.free.price,
-      yearlyPrice: 0,
-      icon: Star,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      borderColor: "border-gray-200",
-      features: [
-        subscriptionTranslations.plans.free.features[0],
-        subscriptionTranslations.plans.free.features[1],
-        subscriptionTranslations.plans.free.features[2],
-        subscriptionTranslations.plans.free.features[3],
-      ],
-      limitations: [
-        subscriptionTranslations.plans.free.limitations[0],
-        subscriptionTranslations.plans.free.limitations[1],
-        subscriptionTranslations.plans.free.limitations[2],
-        subscriptionTranslations.plans.free.limitations[3],
-      ],
-    },
-    {
-      name: subscriptionTranslations.plans.basic.name,
-      description: subscriptionTranslations.plans.basic.description,
-      monthlyPrice: subscriptionTranslations.plans.basic.price,
-      yearlyPrice: 90,
-      icon: Crown,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      borderColor: "border-gray-200",
-      popular: true,
-      features: [
-        subscriptionTranslations.plans.basic.features[0],
-        subscriptionTranslations.plans.basic.features[1],
-        subscriptionTranslations.plans.basic.features[2],
-        subscriptionTranslations.plans.basic.features[3],
-        subscriptionTranslations.plans.basic.features[4],
-        subscriptionTranslations.plans.basic.features[5],
-        subscriptionTranslations.plans.basic.features[6],
-      ],
-      limitations: [
-        subscriptionTranslations.plans.basic.limitations[0],
-      ],
-    },
-    {
-      name: subscriptionTranslations.plans.legacy.name,
-      description: subscriptionTranslations.plans.legacy.description,
-      monthlyPrice: subscriptionTranslations.plans.legacy.price,
-      yearlyPrice: 199,
-      isOneTime: true,
-      icon: Zap,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      borderColor: "border-gray-200",
-      features: [
-        subscriptionTranslations.plans.legacy.features[0],
-        subscriptionTranslations.plans.legacy.features[1],
-        subscriptionTranslations.plans.legacy.features[2],
-        subscriptionTranslations.plans.legacy.features[3],
-        subscriptionTranslations.plans.legacy.features[4],
-        subscriptionTranslations.plans.legacy.features[5],
-        subscriptionTranslations.plans.legacy.features[6],
-        subscriptionTranslations.plans.legacy.features[7],
-        subscriptionTranslations.plans.legacy.features[8],
-      ],
-      limitations: [],
-    },
-  ];
+  const fetchPlans = async () => {
+    try {
+      const response = await axiosInstance.get("/api/admin/subscription");
+      setPlans(response.data);
+    } catch (err) {
+      setError("Failed to fetch plans");
+      console.error("Error fetching plans:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchPlans();
+  }, []);
 
-  const currentPlan = "free"; // This would come from user data
-
-  const featureComparison = [
-    {
-      feature: subscriptionTranslations.comparison.features[0].name,
-      free: true,
-      basic: true,
-      legacy: true,
-    },
-    {
-      feature: subscriptionTranslations.comparison.features[1].name,
-      free: true,
-    },
-    { feature: subscriptionTranslations.comparison.features[2].name },
-    {
-      feature: subscriptionTranslations.comparison.features[3].name,
-      free: false,
-      basic: true,
-      legacy: true,
-    },
-    {
-      feature: subscriptionTranslations.comparison.features[4].name,
-      free: false,
-      basic: true,
-      legacy: true,
-    },
-    {
-      feature: subscriptionTranslations.comparison.features[5].name,
-      free: false,
-      basic: false,
-      legacy: true,
-    },
-   
-  ];
+  const currentPlan = "Basic";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -256,12 +188,18 @@ export default function SubscriptionPage() {
                   )}
 
                   <CardHeader className="text-center pb-4">
-                    <div
+                      <div
                       className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
                     >
-                      <plan.icon
-                        className={`md:h-8 md:w-8 w-5 h-5 ${plan.color}`}
-                      />
+                      {plan.name === "Free" && (
+                        <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                      )}
+                      {plan.name === "Monthly Premium" && (
+                        <Crown className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                      )}
+                      {plan.name === "Life Time" && (
+                        <Zap className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                      )}
                     </div>
                     <CardTitle className="text-2xl font-bold">
                       {plan.name}
@@ -408,7 +346,7 @@ export default function SubscriptionPage() {
           </div>
 
           {/* Feature Comparison Table */}
-          <motion.div variants={fadeInUp}>
+          {/* <motion.div variants={fadeInUp}>
             <Card>
               <CardHeader>
                 <CardTitle>
@@ -471,7 +409,7 @@ export default function SubscriptionPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </motion.div> */}
 
           {/* FAQ Section */}
           <motion.div variants={fadeInUp} className="mt-12">

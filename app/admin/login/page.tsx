@@ -55,7 +55,6 @@ export default function AdminLoginPage() {
       if (response.data.status) {
         // Save the response data to localStorage
         localStorage.setItem("loginData", JSON.stringify(response.data));
-
         // Redirect to admin dashboard
         router.push("/admin/dashboard");
       } else {
