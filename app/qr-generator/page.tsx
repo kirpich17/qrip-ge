@@ -98,7 +98,7 @@ export default function QRGeneratorPage() {
   }, []);
 
   const selectedMemorialData = memorials.find((m) => m._id === selectedMemorialId);
-  const publicMemorialUrl = selectedMemorialData ? `${window.location.origin}/memorial/${selectedMemorialData._id}?isScan=true` : "";
+  const publicMemorialUrl = selectedMemorialData ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}/memorial/${selectedMemorialData._id}?isScan=true` : "";
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success("URL copied!"));
