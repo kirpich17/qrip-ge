@@ -1,9 +1,9 @@
 import axiosInstance from "./axiosInstance";
 
-export const getMemorials = async (page = 1, limit = 5) => {
+export const getMemorials = async (page = 1, limit = 5, search = "") => {
   try {
     const response = await axiosInstance.get(`/api/memorials/my-memorials`, {
-      params: { page, limit },
+      params: { page, limit, search },
     });
     return response.data;
   } catch (error) {
@@ -30,6 +30,24 @@ export const getDeleteMemorial = async (id: string) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching memorial with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+interface RecordViewPayload {
+  memorialId: string;
+  isScan: boolean;
+}
+
+export const recordMemorialView = async ({ memorialId, isScan }: RecordViewPayload) => {
+  try {
+    const response = await axiosInstance.post(`/api/memorials/view`, {
+      memorialId,
+      isScan,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error recording memorial view:", error);
     throw error;
   }
 };

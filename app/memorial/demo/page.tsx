@@ -66,11 +66,8 @@ export default function DemoMemorialPage() {
     status: "active",
     profileImage: "/placeholder.svg?height=200&width=200",
     biography: `Eleanor Grace Thompson was a remarkable woman whose life was defined by love, service, and an unwavering commitment to her community. Born in 1935 in a small village outside Tbilisi, she grew up during challenging times but always maintained an optimistic spirit and a generous heart.
-
 As a young woman, Eleanor became a nurse, dedicating over 45 years of her life to caring for others at Tbilisi Central Hospital. Her colleagues remember her as someone who could bring comfort to any patient with just her presence and gentle words. She had a special gift for making people feel heard and valued, whether they were patients, family members, or fellow healthcare workers.
-
 Eleanor was also a devoted wife to her husband George for 58 years, and a loving mother to four children. She taught them the importance of kindness, hard work, and giving back to the community. Her home was always open to friends, neighbors, and anyone in need of a warm meal or a listening ear.
-
 In her later years, Eleanor became passionate about preserving Georgian cultural traditions. She organized community events, taught traditional cooking classes, and mentored young women in her neighborhood. Her legacy lives on through the countless lives she touched and the traditions she helped preserve for future generations.`,
     images: [
       "/placeholder.svg?height=400&width=600",

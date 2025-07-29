@@ -140,6 +140,9 @@ interface UserDetails {
   subscriptionPlan: "Free" | "Plus" | "Premium";
 }
 
+
+
+
 export default function CreateMemorialPage() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -157,6 +160,10 @@ export default function CreateMemorialPage() {
     isPublic: true,
     status: "active",
     profileImage: null as File | null,
+    gps: {
+      lat: null as number | null,
+      lng: null as number | null
+    }
   });
 
   const [mediaFiles, setMediaFiles] = useState({
@@ -174,7 +181,26 @@ export default function CreateMemorialPage() {
   const [loadingSubscription, setLoadingSubscription] = useState(true);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [newAchievement, setNewAchievement] = useState<string>("");
 
+
+  const addAchievement = () => {
+    if (newAchievement.trim()) {
+      setAchievements(prev => [...prev, newAchievement.trim()]);
+      setNewAchievement("");
+    }
+  };
+
+  const removeAchievement = (index: number) => {
+    setAchievements(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateAchievement = (index: number, value: string) => {
+    setAchievements(prev => prev.map((item, i) =>
+      i === index ? value : item
+    ));
+  };
 
 
   useEffect(() => {
@@ -339,6 +365,15 @@ export default function CreateMemorialPage() {
     formDataToSend.append("isPublic", String(formData.isPublic));
     formDataToSend.append("status", formData.status);
     formDataToSend.append("location", formData.location)
+
+    if (formData.gps?.lat && formData.gps?.lng) {
+      formDataToSend.append('gps[lat]', formData.gps.lat.toString());
+      formDataToSend.append('gps[lng]', formData.gps.lng.toString());
+    }
+
+    achievements.forEach((achievement, index) => {
+      formDataToSend.append(`achievements[${index}]`, achievement);
+    });
 
     if (formData.profileImage) {
       formDataToSend.append("profileImage", formData.profileImage);
@@ -631,6 +666,115 @@ export default function CreateMemorialPage() {
                       className="min-h-[120px]"
                     />
                   </div>
+                  <div className="space-y-4">
+                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <p className="text-sm text-gray-500">
+                      Add notable achievements or awards (e.g., "Nobel Prize", "Olympic Gold Medal")
+                    </p>
+
+                    {/* Add new achievement input */}
+                    <div className="flex gap-2">
+                      <Input
+                        value={newAchievement}
+                        onChange={(e) => setNewAchievement(e.target.value)}
+                        placeholder="e.g. Nobel Prize in Physics"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        onClick={addAchievement}
+                        disabled={!newAchievement.trim()}
+                      >
+                        Add
+                      </Button>
+                    </div>
+
+                    {/* List of achievements */}
+                    {achievements.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {achievements.map((achievement, index) => (
+                          <div key={index} className="flex items-center gap-2 p-2 border rounded">
+                            <Input
+                              value={achievement}
+                              onChange={(e) => updateAchievement(index, e.target.value)}
+                              className="flex-1 border-none focus-visible:ring-0"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeAchievement(index)}
+                              className="text-red-500 hover:text-red-700 h-8 w-8 p-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="latitude" className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        Latitude
+                      </Label>
+                      <Input
+                        id="latitude"
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 41.7151"
+                        value={formData.gps?.lat ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData(prev => ({
+                            ...prev,
+                            gps: {
+                              ...prev.gps,
+                              lat: value ? parseFloat(value) : null
+                            }
+                          }));
+                        }}
+                        className="h-12"
+                        min="-90"
+                        max="90"
+                      />
+                      {formData.gps?.lat && (formData.gps.lat < -90 || formData.gps.lat > 90) && (
+                        <p className="text-sm text-red-500">Latitude must be between -90 and 90</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="longitude" className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        Longitude
+                      </Label>
+                      <Input
+                        id="longitude"
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 44.8271"
+                        value={formData.gps?.lng ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData(prev => ({
+                            ...prev,
+                            gps: {
+                              ...prev.gps,
+                              lng: value ? parseFloat(value) : null
+                            }
+                          }));
+                        }}
+                        className="h-12"
+                        min="-180"
+                        max="180"
+                      />
+                      {formData.gps?.lng && (formData.gps.lng < -180 || formData.gps.lng > 180) && (
+                        <p className="text-sm text-red-500">Longitude must be between -180 and 180</p>
+                      )}
+                    </div>
+                  </div>
+
+
 
                   <div className="flex items-center space-x-2">
                     <Switch

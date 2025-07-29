@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -28,26 +28,75 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
+import { getUserDetails, updateUserDetails, uploadProfileImage } from "@/services/userService";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const profileTranslations = t("profile");
-  
-  const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    phone: "+995 555 123 456",
-    location: "Tbilisi, Georgia",
-    bio: "Memorial creator and family historian dedicated to preserving memories for future generations.",
-    joinDate: "2024-01-15",
-    plan: "Basic Premium",
-    avatar: null,
-  });
+  const [profileData, setProfileData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await getUserDetails();
+      setProfileData(userData.user)
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
   };
+
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!profileData._id) {
+      console.error("User ID is missing");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const updatedUser = await uploadProfileImage(profileData._id, file);
+      setProfileData(prev => ({
+        ...prev,
+        profileImage: updatedUser.data.profileImage 
+      }));
+      fetchUserData()
+      toast.success("Profile image updated successfully!");
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      toast.error("Failed to update profile image");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const handleSaveProfile = async () => {
+    if (!profileData._id) {
+      console.error("User ID is missing");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const updatedUser = await updateUserDetails(profileData._id, profileData);
+      setProfileData(updatedUser.user);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -100,14 +149,14 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
-                    <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                    <AvatarImage src={profileData.profileImage || "/placeholder.svg?height=96&width=96"} />
                     <AvatarFallback className="text-2xl">
-                      {profileData.firstName[0]}
-                      {profileData.lastName[0]}
+                      {profileData.firstname}
+                      {profileData.lastname}
                     </AvatarFallback>
                   </Avatar>
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    {profileData.firstName} {profileData.lastName}
+                    {profileData.firstname} {profileData.lastname}
                   </h3>
                   <p className="text-gray-600 mb-3">{profileData.email}</p>
                   <div className="flex items-center justify-center space-x-2 mb-4">
@@ -124,15 +173,13 @@ export default function ProfilePage() {
                     size="sm"
                     className="w-full bg-transparent"
                     onClick={() => {
-                      console.log("Upload avatar");
                       const input = document.createElement("input");
                       input.type = "file";
                       input.accept = "image/*";
                       input.onchange = (e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (file) {
-                          console.log("Selected avatar:", file);
-                          // Handle avatar upload
+                          handleAvatarUpload(file);
                         }
                       };
                       input.click();
@@ -144,7 +191,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="mt-6">
+              {/* <Card className="mt-6">
                 <CardHeader>
                   <CardTitle>
                     {profileTranslations.accountStats.title}
@@ -183,7 +230,7 @@ export default function ProfilePage() {
                     </Button>
                   </Link>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Profile Form */}
@@ -201,27 +248,27 @@ export default function ProfilePage() {
                   {/* Name Fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">
-                        {profileTranslations.personalInfo.firstName}
+                      <Label htmlFor="firstname">
+                        {profileTranslations.personalInfo.firstname}
                       </Label>
                       <Input
-                        id="firstName"
-                        value={profileData.firstName}
+                        id="firstname"
+                        value={profileData.firstname}
                         onChange={(e) =>
-                          handleInputChange("firstName", e.target.value)
+                          handleInputChange("firstname", e.target.value)
                         }
                         className="h-12"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">
-                        {profileTranslations.personalInfo.lastName}
+                      <Label htmlFor="lastname">
+                        {profileTranslations.personalInfo.lastname}
                       </Label>
                       <Input
-                        id="lastName"
-                        value={profileData.lastName}
+                        id="lastname"
+                        value={profileData.lastname}
                         onChange={(e) =>
-                          handleInputChange("lastName", e.target.value)
+                          handleInputChange("lastname", e.target.value)
                         }
                         className="h-12"
                       />
@@ -296,13 +343,11 @@ export default function ProfilePage() {
                   <div className="flex justify-end">
                     <Button
                       className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
-                      onClick={() => {
-                        console.log("Save profile:", profileData);
-                        alert("Profile updated successfully!");
-                      }}
+                      onClick={handleSaveProfile}
+                      disabled={isLoading}
                     >
                       <Save className="h-4 w-4 mr-2" />
-                      {profileTranslations.personalInfo.saveChanges}
+                      {isLoading ? profileTranslations.personalInfo.saving : profileTranslations.personalInfo.saveChanges}
                     </Button>
                   </div>
                 </CardContent>
@@ -338,8 +383,8 @@ export default function ProfilePage() {
 //     "personalInfo": {
 //       "title":
 //       "description":
-//       "firstName":
-//       "lastName":
+//       "firstname":
+//       "lastname":
 //       "email":
 //       "phone":
 //       "location":

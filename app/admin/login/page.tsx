@@ -3,7 +3,7 @@
 
 import type React from "react";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Shield, ArrowLeft, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,13 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      router.push("/admin/dashboard"); // typo? maybe /admin/dashboard?
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

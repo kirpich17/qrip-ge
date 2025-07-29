@@ -21,11 +21,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Eye, Ban, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslate";
+import axiosInstance from "@/services/axiosInstance";
 
 export function UserManagementTable({
   users,
   translations,
   userStatusToggle,
+  fetchAllUsers,
 }: {
   users: any[];
   translations: any;
@@ -59,7 +61,7 @@ export function UserManagementTable({
       </TableHeader>
       <TableBody>
         {users?.map((user) => (
-          <TableRow key={user.id} className="">
+          <TableRow key={user._id} className="">
             <TableCell>
               <div className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
@@ -151,7 +153,12 @@ export function UserManagementTable({
                           `Are you sure you want to delete ${user.name}? This action cannot be undone.`
                         )
                       ) {
-                        console.log("Delete user:", user.id);
+                        axiosInstance
+                          .delete("/api/admin/user/" + user._id)
+                          .then(() => {
+                            console.log("deletd");
+                            fetchAllUsers();
+                          });
                       }
                     }}
                   >

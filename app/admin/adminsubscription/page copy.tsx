@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import {
   ArrowLeft,
   Check,
@@ -38,10 +37,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useTranslation } from "@/hooks/useTranslate";
-import axiosInstance from "@/services/axiosInstance";
-import IsAdminAuth from "@/lib/IsAdminAuth/page";
-
-const API_BASE_URL = "http://localhost:5000/api/admin/subscription";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -65,7 +60,7 @@ type Plan = {
   borderColor?: string;
 };
 
-function AdminSubscription() {
+export default function AdminSubscription() {
   const { t } = useTranslation();
   const adsubscriptionTranslations = t("adsubscription");
   const [isYearly, setIsYearly] = useState(false);
@@ -73,157 +68,85 @@ function AdminSubscription() {
   const [isAddingPlan, setIsAddingPlan] = useState(false);
   const [newFeature, setNewFeature] = useState("");
   const [newLimitation, setNewLimitation] = useState("");
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch plans from API
-  const fetchPlans = async () => {
-    try {
-      const response = await axiosInstance.get("/api/admin/subscription");
-      setPlans(response.data);
-    } catch (err) {
-      setError("Failed to fetch plans");
-      console.error("Error fetching plans:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchPlans();
-  }, []);
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan({ ...plan });
-  };
-
-  const handleSavePlan = async () => {
-    if (!editingPlan) return;
-
-    try {
-      const response = await axiosInstance.put(
-        `/api/admin/subscription/${editingPlan._id}`,
-        editingPlan
-      );
-      // setPlans(
-      //   plans.map((p) => (p._id === editingPlan._id ? response.data : p))
-      // );
-      fetchPlans();
-      setEditingPlan(null);
-    } catch (err) {
-      setError("Failed to update plan");
-      console.error("Error updating plan:", err);
-    }
-  };
-
-  const handleAddPlan = () => {
-    const newPlan: Plan = {
-      id: `new-${Date.now()}`,
-      name: "New Plan",
-      description: "Plan description",
+  const [plans, setPlans] = useState<Plan[]>([
+    {
+      id: "1",
+      name: "Free",
+      description: "Basic memorial features",
       monthlyPrice: 0,
       yearlyPrice: 0,
       isOneTime: false,
       isActive: true,
-      features: [],
+      features: [
+        adsubscriptionTranslations.plans.free.features[0],
+        adsubscriptionTranslations.plans.free.features[1],
+        adsubscriptionTranslations.plans.free.features[2],
+      ],
+      limitations: [
+        adsubscriptionTranslations.plans.free.limitations[0],
+        adsubscriptionTranslations.plans.free.limitations[1],
+        adsubscriptionTranslations.plans.free.limitations[2],
+        adsubscriptionTranslations.plans.free.limitations[3],
+        adsubscriptionTranslations.plans.free.limitations[4],
+      ],
+      color: "text-black",
+      bgColor: "bg-green-50",
+      borderColor: "border-gray-200",
+    },
+    {
+      id: "2",
+      name: "Basic Premium",
+      description: "Enhanced memorial experience",
+      monthlyPrice: 9,
+      yearlyPrice: 90,
+      isOneTime: false,
+      isActive: true,
+      isPopular: true,
+      features: [
+        adsubscriptionTranslations.plans.basic.features[0],
+        adsubscriptionTranslations.plans.basic.features[1],
+        adsubscriptionTranslations.plans.basic.features[2],
+        adsubscriptionTranslations.plans.basic.features[3],
+        adsubscriptionTranslations.plans.basic.features[4],
+        adsubscriptionTranslations.plans.basic.features[5],
+        adsubscriptionTranslations.plans.basic.features[6],
+      ],
+      limitations: [
+        adsubscriptionTranslations.plans.basic.limitations[0],
+        adsubscriptionTranslations.plans.basic.limitations[1],
+      ],
+      color: "text-black",
+      bgColor: "bg-green-50",
+      borderColor: "border-gray-200",
+    },
+    {
+      id: "3",
+      name: "Legacy+",
+      description: "Complete memorial solution",
+      monthlyPrice: 199,
+      yearlyPrice: 199,
+      isOneTime: true,
+      isActive: true,
+      features: [
+        adsubscriptionTranslations.plans.legacy.features[0],
+        adsubscriptionTranslations.plans.legacy.features[1],
+        adsubscriptionTranslations.plans.legacy.features[2],
+        adsubscriptionTranslations.plans.legacy.features[3],
+        adsubscriptionTranslations.plans.legacy.features[4],
+        adsubscriptionTranslations.plans.legacy.features[5],
+        adsubscriptionTranslations.plans.legacy.features[6],
+        adsubscriptionTranslations.plans.legacy.features[7],
+        adsubscriptionTranslations.plans.legacy.features[8],
+        adsubscriptionTranslations.plans.legacy.features[9],
+      ],
       limitations: [],
       color: "text-black",
       bgColor: "bg-green-50",
       borderColor: "border-gray-200",
-    };
-    setEditingPlan(newPlan);
-    setIsAddingPlan(true);
-  };
+    },
+  ]);
 
-  const handleSaveNewPlan = async () => {
-    if (!editingPlan) return;
-
-    try {
-      const response = await axiosInstance.post(
-        "/api/admin/subscription",
-        editingPlan
-      );
-      fetchPlans();
-      setEditingPlan(null);
-      setIsAddingPlan(false);
-    } catch (err) {
-      setError("Failed to create new plan");
-      console.error("Error creating plan:", err);
-    }
-  };
-
-  const handleDeletePlan = async (id: string) => {
-    try {
-      await axiosInstance.delete(`/api/admin/subscription/${id}`);
-      // setPlans(plans.filter((p) => p.id !== id));
-      fetchPlans();
-    } catch (err) {
-      setError("Failed to delete plan");
-      console.error("Error deleting plan:", err);
-    }
-  };
-
-  const togglePlanStatus = async (id: string) => {
-    try {
-      const planToUpdate = plans.find((p) => p._id === id);
-      if (!planToUpdate) return;
-
-      const updatedPlan = { ...planToUpdate, isActive: !planToUpdate.isActive };
-      const response = await axiosInstance.patch(
-        `/api/admin/subscription-status/${id}`,
-        updatedPlan
-      );
-      fetchPlans();
-      // setPlans(plans.map((p) => (p._id === id ? response.data : p)));
-    } catch (err) {
-      setError("Failed to update plan status");
-      console.error("Error updating plan status:", err);
-    }
-  };
-
-  const addFeature = () => {
-    if (newFeature.trim() && editingPlan) {
-      setEditingPlan({
-        ...editingPlan,
-        features: [...editingPlan.features, newFeature.trim()],
-      });
-      setNewFeature("");
-    }
-  };
-
-  const removeFeature = (index: number) => {
-    if (editingPlan) {
-      const newFeatures = [...editingPlan.features];
-      newFeatures.splice(index, 1);
-      setEditingPlan({
-        ...editingPlan,
-        features: newFeatures,
-      });
-    }
-  };
-
-  const addLimitation = () => {
-    if (newLimitation.trim() && editingPlan) {
-      setEditingPlan({
-        ...editingPlan,
-        limitations: [...editingPlan.limitations, newLimitation.trim()],
-      });
-      setNewLimitation("");
-    }
-  };
-
-  const removeLimitation = (index: number) => {
-    if (editingPlan) {
-      const newLimitations = [...editingPlan.limitations];
-      newLimitations.splice(index, 1);
-      setEditingPlan({
-        ...editingPlan,
-        limitations: newLimitations,
-      });
-    }
-  };
-
-  // Feature comparison data (could also be fetched from API if needed)
   const featureComparison = [
     {
       feature: adsubscriptionTranslations.comparison.features[0].name,
@@ -269,28 +192,95 @@ function AdminSubscription() {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p>Loading plans...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleEditPlan = (plan: Plan) => {
+    setEditingPlan({ ...plan });
+  };
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center text-red-500">
-          <p>{error}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Retry
-          </Button>
-        </div>
-      </div>
+  const handleSavePlan = () => {
+    if (editingPlan) {
+      setPlans(plans.map((p) => (p.id === editingPlan.id ? editingPlan : p)));
+      setEditingPlan(null);
+    }
+  };
+
+  const handleAddPlan = () => {
+    const newPlan: Plan = {
+      id: `new-${Date.now()}`,
+      name: "New Plan",
+      description: "Plan description",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      isOneTime: false,
+      isActive: true,
+      features: [],
+      limitations: [],
+      color: "text-black",
+      bgColor: "bg-green-50",
+      borderColor: "border-gray-200",
+    };
+    setEditingPlan(newPlan);
+    setIsAddingPlan(true);
+  };
+
+  const handleSaveNewPlan = () => {
+    if (editingPlan) {
+      setPlans([...plans, editingPlan]);
+      setEditingPlan(null);
+      setIsAddingPlan(false);
+    }
+  };
+
+  const handleDeletePlan = (id: string) => {
+    setPlans(plans.filter((p) => p.id !== id));
+  };
+
+  const togglePlanStatus = (id: string) => {
+    setPlans(
+      plans.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p))
     );
-  }
+  };
+
+  const addFeature = () => {
+    if (newFeature.trim() && editingPlan) {
+      setEditingPlan({
+        ...editingPlan,
+        features: [...editingPlan.features, newFeature.trim()],
+      });
+      setNewFeature("");
+    }
+  };
+
+  const removeFeature = (index: number) => {
+    if (editingPlan) {
+      const newFeatures = [...editingPlan.features];
+      newFeatures.splice(index, 1);
+      setEditingPlan({
+        ...editingPlan,
+        features: newFeatures,
+      });
+    }
+  };
+
+  const addLimitation = () => {
+    if (newLimitation.trim() && editingPlan) {
+      setEditingPlan({
+        ...editingPlan,
+        limitations: [...editingPlan.limitations, newLimitation.trim()],
+      });
+      setNewLimitation("");
+    }
+  };
+
+  const removeLimitation = (index: number) => {
+    if (editingPlan) {
+      const newLimitations = [...editingPlan.limitations];
+      newLimitations.splice(index, 1);
+      setEditingPlan({
+        ...editingPlan,
+        limitations: newLimitations,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -505,9 +495,6 @@ function AdminSubscription() {
                       <Input
                         value={newFeature}
                         onChange={(e) => setNewFeature(e.target.value)}
-                        placeholder={
-                          adsubscriptionTranslations.admin.featurePlaceholder
-                        }
                       />
                       <Button onClick={addFeature}>
                         <Plus className="h-4 w-4 mr-1" />
@@ -540,9 +527,6 @@ function AdminSubscription() {
                       <Input
                         value={newLimitation}
                         onChange={(e) => setNewLimitation(e.target.value)}
-                        placeholder={
-                          adsubscriptionTranslations.admin.limitationPlaceholder
-                        }
                       />
                       <Button onClick={addLimitation}>
                         <Plus className="h-4 w-4 mr-1" />
@@ -611,10 +595,10 @@ function AdminSubscription() {
                       {plan.name === "Free" && (
                         <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
-                      {plan.name === "Monthly Premium" && (
+                      {plan.name === "Basic Premium" && (
                         <Crown className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
-                      {plan.name === "Life Time" && (
+                      {plan.name === "Legacy+" && (
                         <Zap className="md:h-8 md:w-8 w-5 h-5 text-black" />
                       )}
                     </div>
@@ -718,7 +702,7 @@ function AdminSubscription() {
                         <Button
                           variant="outline"
                           className="flex-1"
-                          onClick={() => togglePlanStatus(plan._id)}
+                          onClick={() => togglePlanStatus(plan.id)}
                         >
                           {plan.isActive
                             ? adsubscriptionTranslations.admin.deactivatePlan
@@ -727,7 +711,7 @@ function AdminSubscription() {
                         <Button
                           variant="destructive"
                           className="flex-1"
-                          onClick={() => handleDeletePlan(plan._id)}
+                          onClick={() => handleDeletePlan(plan.id)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           {adsubscriptionTranslations.admin.deletePlan}
@@ -741,7 +725,7 @@ function AdminSubscription() {
           </div>
 
           {/* Feature Comparison Table */}
-          {/* <motion.div variants={fadeInUp}>
+          <motion.div variants={fadeInUp}>
             <Card>
               <CardHeader>
                 <CardTitle>
@@ -796,7 +780,7 @@ function AdminSubscription() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div> */}
+          </motion.div>
 
           {/* Subscribers Table */}
           <motion.div variants={fadeInUp} className="mt-12">
@@ -895,15 +879,3 @@ function AdminSubscription() {
     </div>
   );
 }
-
-const AdminSubscriptionPage = () => {
-  return (
-    <>
-      <IsAdminAuth>
-        <AdminSubscription />
-      </IsAdminAuth>
-    </>
-  );
-};
-
-export default AdminSubscriptionPage;

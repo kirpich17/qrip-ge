@@ -11,22 +11,26 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Eye, Trash2 } from "lucide-react";
+import { CheckCircle, Cross, Eye, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslate";
 import { useRouter } from "next/navigation";
+import axiosInstance from "@/services/axiosInstance";
 
 export function MemorialsTable({
   memorials,
   translations,
+  fetchAllMemorials,
+  memorailStatusToggle,
 }: {
   memorials: any[];
   translations: any;
+  fetchAllMemorials: any;
 }) {
   const router = useRouter();
   const { t } = useTranslation();
   const admindashTranslations = t("admindash");
-  const handleProfileClick = () => {
-    router.push("/memorial/demo"); // Change route as needed
+  const handleProfileClick = (id) => {
+    router.push("/memorial/" + id); // Change route as needed
   };
   return (
     <Table>
@@ -54,7 +58,7 @@ export function MemorialsTable({
       </TableHeader>
       <TableBody>
         {memorials.map((memorial) => (
-          <TableRow key={memorial.id} className="">
+          <TableRow key={memorial._id} className="">
             <TableCell className="font-medium">
               {memorial.firstName + " " + memorial.lastName}
             </TableCell>
@@ -89,7 +93,7 @@ export function MemorialsTable({
             <TableCell>
               <div className="flex items-center space-x-2">
                 <Button
-                  onClick={handleProfileClick}
+                  onClick={() => handleProfileClick(memorial._id)}
                   size="sm"
                   variant="outline"
                   className="border-[#354f44] text-black "
@@ -99,13 +103,23 @@ export function MemorialsTable({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-green-600 text-green-400 hover:bg-green-600 bg-transparent"
+                  className={`${
+                    memorial.status === "active"
+                      ? "border-red-600 text-red-400 hover:bg-red-600"
+                      : "border-green-600 text-green-400 hover:bg-green-600"
+                  } bg-transparent`}
                   onClick={() => {
-                    console.log("Approve memorial:", memorial.id);
+                    memorailStatusToggle(memorial._id);
+                    console.log("Approve memorial:", memorial._id);
                   }}
                 >
-                  <CheckCircle className="h-4 w-4" />
+                  {memorial.status === "active" ? (
+                    <Cross className="h-4 w-4" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4" />
+                  )}
                 </Button>
+
                 <Button
                   size="sm"
                   variant="outline"
@@ -116,7 +130,12 @@ export function MemorialsTable({
                         `Are you sure you want to reject the memorial for ${memorial.name}?`
                       )
                     ) {
-                      console.log("Reject memorial:", memorial.id);
+                      axiosInstance
+                        .delete("/api/admin/memorial/" + memorial._id)
+                        .then(() => {
+                          console.log("deletd");
+                          fetchAllMemorials();
+                        });
                     }
                   }}
                 >
