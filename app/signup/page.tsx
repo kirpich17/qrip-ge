@@ -61,6 +61,7 @@ export default function SignupPage() {
       const responseMessage = response?.data?.metadata?.message
       if (response.status === 201) {
         toast.success(responseMessage);
+        router.push("/login");
         return response;
       }
     } catch (error: any) {
