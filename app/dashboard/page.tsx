@@ -216,12 +216,12 @@ function Dashboard() {
                   QRIP.ge
                 </span>
               </div>
-              <Badge
+              {/* <Badge
                 variant="secondary"
                 className="bg-indigo-100 text-indigo-800 md:block hidden"
               >
                 {dashboard.header.title}
-              </Badge>
+              </Badge> */}
             </div>
             <div className="flex items-center space-x-2">
               {/* <Link href="/settings">
@@ -304,7 +304,7 @@ function Dashboard() {
                   </div>
                   <Link href="/memorial/create">
                     <Button className="bg-[#547455] hover:bg-[#243b31] text-white">
-                      <Plus className="h-4 w-4 mr-2" />
+                      <Plus className="h-4 w-4" />
                       {dashboard.memorials.newMemorial}
                     </Button>
                   </Link>

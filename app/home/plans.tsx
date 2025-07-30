@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
+import { useEffect, useState } from "react";
+import axiosInstance from "@/services/axiosInstance";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -29,38 +31,59 @@ const Plans = () => {
   const plansTranslations = t("plans");
   const commonTranslations = t("common");
 
-  const plans = [
-    {
-      name: plansTranslations.free.name,
-      price: plansTranslations.free.price,
-      period: plansTranslations.free.period,
-      icon: Star,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      borderColor: "border-gray-200",
-      features: plansTranslations.free.features,
-    },
-    {
-      name: plansTranslations.premium.name,
-      price: plansTranslations.premium.price,
-      period: plansTranslations.premium.period,
-      icon: Crown,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      popular: true,
-      features: plansTranslations.premium.features,
-    },
-    {
-      name: plansTranslations.legacy.name,
-      price: plansTranslations.legacy.price,
-      period: plansTranslations.legacy.period,
-      icon: Zap,
-      color: "text-black",
-      bgColor: "bg-green-50",
-      borderColor: "border-gray-200",
-      features: plansTranslations.legacy.features,
-    },
-  ];
+
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch plans from API
+  const fetchPlans = async () => {
+    try {
+      const response = await axiosInstance.get("/api/admin/subscription");
+      setPlans(response.data);
+    } catch (err) {
+      setError("Failed to fetch plans");
+      console.error("Error fetching plans:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  // const plans = [
+  //   {
+  //     name: plansTranslations.free.name,
+  //     price: plansTranslations.free.price,
+  //     period: plansTranslations.free.period,
+  //     icon: Star,
+  //     color: "text-black",
+  //     bgColor: "bg-green-50",
+  //     borderColor: "border-gray-200",
+  //     features: plansTranslations.free.features,
+  //   },
+  //   {
+  //     name: plansTranslations.premium.name,
+  //     price: plansTranslations.premium.price,
+  //     period: plansTranslations.premium.period,
+  //     icon: Crown,
+  //     color: "text-black",
+  //     bgColor: "bg-green-50",
+  //     popular: true,
+  //     features: plansTranslations.premium.features,
+  //   },
+  //   {
+  //     name: plansTranslations.legacy.name,
+  //     price: plansTranslations.legacy.price,
+  //     period: plansTranslations.legacy.period,
+  //     icon: Zap,
+  //     color: "text-black",
+  //     bgColor: "bg-green-50",
+  //     borderColor: "border-gray-200",
+  //     features: plansTranslations.legacy.features,
+  //   },
+  // ];
 
   return (
     <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
@@ -94,11 +117,10 @@ const Plans = () => {
           {plans.map((plan, index) => (
             <motion.div key={index} variants={fadeInUp}>
               <Card
-                className={`relative h-full ${
-                  plan.popular
+                className={`relative h-full ${plan.popular
                     ? "border border-[#547455] md:scale-105"
                     : `${plan.borderColor} hover:shadow-xl border-2`
-                } transition-all duration-300 hover:-translate-y-1`}
+                  } transition-all duration-300 hover:-translate-y-1`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -110,9 +132,17 @@ const Plans = () => {
 
                 <CardHeader className="text-center pb-4 pt-8">
                   <div
-                    className={`w-16 h-16 ${plan.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                    className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
                   >
-                    <plan.icon className={`h-8 w-8 ${plan.color}`} />
+                    {plan.name === "Free" && (
+                      <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                    )}
+                    {plan.name === "Monthly Premium" && (
+                      <Crown className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                    )}
+                    {plan.name === "Life Time" && (
+                      <Zap className="md:h-8 md:w-8 w-5 h-5 text-black" />
+                    )}
                   </div>
                   <CardTitle className="md:text-2xl text-xl font-bold">
                     {plan.name}
@@ -153,13 +183,12 @@ const Plans = () => {
 
                   <Link href="/subscription">
                     <Button
-                      className={`w-full text-lg py-3 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                        plan.popular
+                      className={`w-full text-lg py-3 shadow-lg hover:shadow-xl transition-all duration-300 ${plan.popular
                           ? "bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
                           : plan.name === plansTranslations.legacy.name
-                          ? "bg-black hover:bg-white hover:text-black border border-black"
-                          : "bg-black hover:bg-white hover:text-black border border-black"
-                      }`}
+                            ? "bg-black hover:bg-white hover:text-black border border-black"
+                            : "bg-black hover:bg-white hover:text-black border border-black"
+                        }`}
                       size="lg"
                     >
                       {plan.name === plansTranslations.free.name ? (

@@ -548,22 +548,25 @@ export default function CreateMemorialPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex md:justify-start justify-center flex-col">
-                      <label htmlFor="profileImageUpload">
+                      <label htmlFor="profileImageUpload" className="w-fit">
                         <Button
                           variant="outline"
-                          className="mb-2 bg-transparent cursor-pointer"
+                          className="mb-2 bg-transparent cursor-pointer relative overflow-hidden"
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           {createMemorialTranslations.basicInfo.uploadPhoto}
-                        </Button>
-                      </label>
-                      <input
+                          <input
                         id="profileImageUpload"
                         type="file"
                         accept="image/*"
                         onChange={handleFileUpload}
-                        className="hidden"
+                        className="opacity-0 absolute top-0 left-0 right-0 bottom-0 w-full h-full cursor-pointer"
                       />
+                        </Button>
+                        
+                      </label>
+                       
+                     
                       <p className="text-sm text-gray-500 md:text-left text-center">
                         {createMemorialTranslations.basicInfo.photoDescription}
                       </p>

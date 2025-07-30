@@ -40,8 +40,8 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <Avatar className="h-10 w-10 ">
             <AvatarImage
               src={user.profileImage || "/placeholder.svg?height=32&width=32"}
               alt={user.firstname}

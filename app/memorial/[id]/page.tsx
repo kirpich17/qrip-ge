@@ -251,7 +251,7 @@ export default function MemorialPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#243b31] sticky top-0 z-40">
+      <header className="bg-[#243b31] sticky top-0 z-[9999]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-3">
@@ -269,10 +269,10 @@ export default function MemorialPage() {
                 {apiMemorial.views?.toLocaleString() || 0}{" "}
                 {memorialTranslations.header.views}
               </Badge>
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4" />
                 {memorialTranslations.header.share}
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -652,7 +652,7 @@ export default function MemorialPage() {
                         {apiMemorial.achievements.map((achievement, index) => (
                           <div key={index} className="flex items-start space-x-2">
                             <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0 bg-[#547455]"></div>
-                            <p className="text-sm text-gray-700">{achievement}</p>
+                            <p className="text-sm text-gray-700 break-all">{achievement}</p>
                           </div>
                         ))}
                       </div>

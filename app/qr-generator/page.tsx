@@ -57,6 +57,7 @@ export default function QRGeneratorPage() {
   const [qrSize, setQrSize] = useState<"small" | "medium" | "large" | "xlarge">("medium");
   const [qrStyle, setQrStyle] = useState<"standard" | "rounded" | "dots" | "branded">("standard");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingFormat, setDownloadingFormat] = useState<null | 'png' | 'svg'>(null);
 
   // Size mapping for both preview and download
   const sizeMap = {
@@ -85,7 +86,7 @@ export default function QRGeneratorPage() {
           setSelectedMemorialId(response.data.data[0]._id);
         } else {
           setMemorials([]);
-          toast.info("No memorials found");
+          toast.error("No memorials found");
         }
       } catch (error) {
         console.error("Failed to fetch memorials", error);
@@ -106,13 +107,14 @@ export default function QRGeneratorPage() {
 
   const handleDownload = async (format: 'png' | 'svg') => {
     if (!selectedMemorialData) return;
-    setIsDownloading(true);
+    setDownloadingFormat(format);
     const token = localStorage.getItem("authToken");
     if (!token) {
       toast.error("You are not logged in");
-      setIsDownloading(false);
+      setDownloadingFormat(null);
       return;
     }
+
     try {
       const response = await axios.post(
         'https://qrip-ge-backend.vercel.app/api/qrcode/generate',
@@ -132,9 +134,10 @@ export default function QRGeneratorPage() {
       console.error("Download failed:", error);
       toast.error("Failed to generate QR code");
     } finally {
-      setIsDownloading(false);
+      setDownloadingFormat(null);
     }
   };
+
 
   // Apply different styles to QR code
   const getQrCodeProps = () => {
@@ -348,33 +351,36 @@ export default function QRGeneratorPage() {
                         <Button
                           className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455] sm:w-auto w-full"
                           onClick={() => handleDownload('png')}
-                          disabled={isDownloading || !selectedMemorialData}
+                          disabled={downloadingFormat !== null || !selectedMemorialData}
                         >
-                          {isDownloading ? (
+                          {downloadingFormat === 'png' ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           ) : (
                             <Download className="mr-2 h-4 w-4" />
                           )}
-                          {isDownloading ? 'Downloading...' : qrGeneratorTranslations.preview.downloadPng}
+                          {downloadingFormat === 'png' ? 'Downloading...' : qrGeneratorTranslations.preview.downloadPng}
                         </Button>
+
                         <Button
                           className="sm:w-auto w-full"
                           variant="outline"
                           onClick={() => handleDownload('svg')}
-                          disabled={isDownloading || !selectedMemorialData}
+                          disabled={downloadingFormat !== null || !selectedMemorialData}
                         >
-                          {isDownloading ? (
+                          {downloadingFormat === 'svg' ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           ) : (
                             <Download className="mr-2 h-4 w-4" />
                           )}
-                          {isDownloading ? 'Downloading...' : qrGeneratorTranslations.preview.downloadSvg}
+                          {downloadingFormat === 'svg' ? 'Downloading...' : qrGeneratorTranslations.preview.downloadSvg}
                         </Button>
+
+
                       </div>
-                      <Button variant="outline" className="w-full bg-transparent" onClick={() => window.print()}>
+                      {/* <Button variant="outline" className="w-full bg-transparent" onClick={() => window.print()}>
                         <Printer className="h-4 w-4 mr-2" />
                         {qrGeneratorTranslations.preview.print}
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </CardContent>

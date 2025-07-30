@@ -50,6 +50,7 @@ export default function SubscriptionPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string>("");
 
   const fetchPlans = async () => {
     try {
@@ -66,7 +67,19 @@ export default function SubscriptionPage() {
     fetchPlans();
   }, []);
 
-  const currentPlan = "Basic";
+
+  useEffect(() => {
+    const loginDataString = localStorage.getItem("loginData");
+    if (loginDataString) {
+      try {
+        const loginData = JSON.parse(loginDataString);
+        setCurrentPlan(loginData.subscriptionPlan || "");
+      } catch (err) {
+        console.error("Error parsing loginData:", err);
+      }
+    }
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -108,19 +121,17 @@ export default function SubscriptionPage() {
             </p>
 
             {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-8 flex-wrap">
+            {/* <div className="flex items-center justify-center space-x-4 mb-8 flex-wrap">
               <span
-                className={`text-sm font-medium ${
-                  !isYearly ? "text-gray-900" : "text-gray-500"
-                }`}
+                className={`text-sm font-medium ${!isYearly ? "text-gray-900" : "text-gray-500"
+                  }`}
               >
                 {subscriptionTranslations.billing.monthly}
               </span>
               <Switch checked={isYearly} onCheckedChange={setIsYearly} />
               <span
-                className={`text-sm font-medium ${
-                  isYearly ? "text-gray-900" : "text-gray-500"
-                }`}
+                className={`text-sm font-medium ${isYearly ? "text-gray-900" : "text-gray-500"
+                  }`}
               >
                 {subscriptionTranslations.billing.yearly}
                 <Badge
@@ -130,7 +141,7 @@ export default function SubscriptionPage() {
                   {subscriptionTranslations.billing.save}
                 </Badge>
               </span>
-            </div>
+            </div> */}
           </div>
 
           {/* Current Plan Status */}
@@ -173,11 +184,10 @@ export default function SubscriptionPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card
-                  className={`relative h-full ${
-                    plan.popular
-                      ? "border-[#243b31] shadow-lg "
-                      : `${plan.borderColor} hover:shadow-md`
-                  } transition-all duration-300`}
+                  className={`relative h-full ${plan.popular
+                    ? "border-[#243b31] shadow-lg "
+                    : `${plan.borderColor} hover:shadow-md`
+                    } transition-all duration-300`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -188,7 +198,7 @@ export default function SubscriptionPage() {
                   )}
 
                   <CardHeader className="text-center pb-4">
-                      <div
+                    <div
                       className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
                     >
                       {plan.name === "Free" && (
@@ -213,17 +223,16 @@ export default function SubscriptionPage() {
                           {plan.isOneTime
                             ? plan.monthlyPrice
                             : isYearly
-                            ? plan.yearlyPrice
-                            : plan.monthlyPrice}
+                              ? plan.yearlyPrice
+                              : plan.monthlyPrice}
                         </span>
                         <span className="text-gray-600 ml-2">
                           {plan.isOneTime
                             ? subscriptionTranslations.plans.legacy.period
-                            : `${
-                                isYearly
-                                  ? subscriptionTranslations.plans.free.period
-                                  : subscriptionTranslations.plans.basic.period
-                              }`}
+                            : `${isYearly
+                              ? subscriptionTranslations.plans.free.period
+                              : subscriptionTranslations.plans.basic.period
+                            }`}
                         </span>
                       </div>
                       {isYearly && !plan.isOneTime && plan.monthlyPrice > 0 && (
@@ -290,54 +299,29 @@ export default function SubscriptionPage() {
 
                       {/* Action Button */}
                       <div className="pt-2">
-                        {currentPlan ===
-                        plan.name.toLowerCase().replace(/\s+/g, "") ? (
-                          <Button
-                            variant="outline"
-                            className="w-full bg-transparent"
-                            disabled
-                          >
-                            {subscriptionTranslations.plans.free.button}
-                          </Button>
-                        ) : plan.name === "Basic Premium" ? (
-                          <Button
-                            className="w-full bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
-                            size="lg"
-                            onClick={() => {
-                              console.log("Upgrading to Basic Premium plan");
-                              alert(
-                                "Redirecting to payment for Basic Premium..."
-                              );
-                            }}
-                          >
-                            <Crown className="h-4 w-4 mr-2" />
-                            {subscriptionTranslations.plans.basic.button}
-                          </Button>
-                        ) : plan.name === "Legacy+" ? (
-                          <Button
-                            className="w-full bg-black hover:bg-white hover:text-black border border-black"
-                            size="lg"
-                            onClick={() => {
-                              console.log("Upgrading to Legacy+ plan");
-                              alert(
-                                "Redirecting to payment for Legacy+ (One-time payment)..."
-                              );
-                            }}
-                          >
-                            <Zap className="h-4 w-4 mr-2" />
-                            {subscriptionTranslations.plans.legacy.button}
+                        {currentPlan.toLowerCase() === plan.name.toLowerCase().replace(/\s+/g, "") ? (
+                          <Button variant="outline" className="w-full" disabled>
+                            {subscriptionTranslations.plans.current}
                           </Button>
                         ) : (
                           <Button
-                            variant="outline"
-                            className="w-full bg-transparent"
+                            className={`w-full ${plan.isPopular
+                                ? "bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
+                                : "bg-black hover:bg-white hover:text-black border border-black"
+                              }`}
                             size="lg"
-                            disabled
+                            onClick={() => {
+                              console.log(`Upgrading to ${plan.name} plan`);
+                              alert(`Redirecting to payment for ${plan.name}...`);
+                            }}
                           >
-                            Current Plan
+                            {plan.isPopular && <Crown className="h-4 w-4 mr-2" />}
+                            {plan.isOneTime && <Zap className="h-4 w-4 mr-2" />}
+                            {subscriptionTranslations.plans.choose}
                           </Button>
                         )}
                       </div>
+
                     </div>
                   </CardContent>
                 </Card>
@@ -345,71 +329,6 @@ export default function SubscriptionPage() {
             ))}
           </div>
 
-          {/* Feature Comparison Table */}
-          {/* <motion.div variants={fadeInUp}>
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {subscriptionTranslations.comparison.title}
-                </CardTitle>
-                <CardDescription>
-                  {subscriptionTranslations.comparison.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-900">
-                          {subscriptionTranslations.comparison.features[0].name}
-                        </th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          {subscriptionTranslations.comparison.features[1].name}
-                        </th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          {subscriptionTranslations.comparison.features[2].name}
-                        </th>
-                        <th className="text-center py-3 px-4 font-semibold text-gray-900">
-                          {subscriptionTranslations.comparison.features[3].name}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {featureComparison.map((row, index) => (
-                        <tr key={index}>
-                          <td className="py-3 px-4 text-gray-900">
-                            {row.feature}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            {row.free ? (
-                              <Check className="h-5 w-5 text-green-500 mx-auto" />
-                            ) : (
-                              <X className="h-5 w-5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            {row.basic ? (
-                              <Check className="h-5 w-5 text-green-500 mx-auto" />
-                            ) : (
-                              <X className="h-5 w-5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            {row.legacy ? (
-                              <Check className="h-5 w-5 text-green-500 mx-auto" />
-                            ) : (
-                              <X className="h-5 w-5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div> */}
 
           {/* FAQ Section */}
           <motion.div variants={fadeInUp} className="mt-12">

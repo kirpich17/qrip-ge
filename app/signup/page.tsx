@@ -58,7 +58,7 @@ export default function SignupPage() {
         `${CREATE_AUTH_REGISTER}`,
         body
       );
-      const responseMessage = response?.data?.metadata?.message
+      const responseMessage = response?.data?.message
       if (response.status === 201) {
         toast.success(responseMessage);
         router.push("/login");
@@ -207,9 +207,10 @@ export default function SignupPage() {
                 <Label htmlFor="confirmPassword">
                   {authTranslations.signup.confirmPassword}
                 </Label>
+                  <div className="relative">
                 <Input
                   id="confirmPassword"
-                  type="password"
+                 type={showPassword ? "text" : "password"}
                   placeholder={
                     authTranslations.signup.confirmPasswordPlaceholder
                   }
@@ -220,6 +221,21 @@ export default function SignupPage() {
                   required
                   className="h-12"
                 />
+                 <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
+
+                  </div>
               </div>
 
               <div className="flex items-center space-x-2">
