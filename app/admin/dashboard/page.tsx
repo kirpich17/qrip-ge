@@ -152,7 +152,7 @@ function AdminDashboardPage() {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="text-white md:flex hidden gap-1"
@@ -160,7 +160,7 @@ function AdminDashboardPage() {
               >
                 <Bell className="h-4 w-4" />
                 {admindashTranslations.header.notifications}
-              </Button>
+              </Button> */}
 
               <ProfileDropdown />
             </div>

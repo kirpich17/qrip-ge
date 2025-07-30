@@ -72,8 +72,8 @@ export default function LoginPage() {
         }
       }
     } catch (error: any) {
-      if (error?.response?.status === 401) {
-        toast.error(error?.response?.data?.message || "Invalid credentials");
+      if (error?.response?.status === 400) {
+        toast.error(error?.response?.message || "Invalid credentials");
       } else if (error?.response?.status === 404) {
         toast.error("Something went wrong. Please try again.");
       } else {
