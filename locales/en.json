@@ -3,7 +3,6 @@
     "admin": "Admin",
     "getStarted": "Get Started"
   },
-
   "home": {
     "heroTitle": "Honor Memories Forever",
     "heroDescription": "Join thousands of families who trust QRIP.ge to preserve and share their most precious memories. Create your first memorial in minutes.",
@@ -20,7 +19,6 @@
     "contactTitle": "Contact Us",
     "contactDescription": "Get in touch with us to learn more about QRIP.ge"
   },
-
   "hero": {
     "tagline": "Preserving Memories Forever",
     "title1": "Honor Their",
@@ -43,7 +41,6 @@
       "scanCta": "Scan to Visit Memorial"
     }
   },
-
   "features": {
     "title": "Everything You Need to Remember",
     "subtitle": "Comprehensive tools to create meaningful, lasting tributes that celebrate life and preserve memories",
@@ -104,12 +101,15 @@
     "startFree": "Start Free",
     "choose": "Choose",
     "viewComparison": "View Detailed Comparison",
-
     "free": {
       "name": "Free",
       "price": "$0",
       "period": "forever",
-      "features": ["Biography & photo", "QR code", "Basic memorial"]
+      "features": [
+        "Biography & photo",
+        "QR code",
+        "Basic memorial"
+      ]
     },
     "premium": {
       "name": "Basic Premium",
@@ -163,7 +163,11 @@
     "subtitle": "Join thousands of families who trust QRIP.ge to preserve and share their most precious memories. Create your first memorial in minutes.",
     "primaryButton": "Create Your First Memorial",
     "secondaryButton": "View Demo Memorial",
-    "benefits": ["Free to start", "No credit card required", "Setup in minutes"]
+    "benefits": [
+      "Free to start",
+      "No credit card required",
+      "Setup in minutes"
+    ]
   },
   "footer": {
     "copyright": "© 2025 QRIP.ge. All rights reserved."
@@ -182,7 +186,34 @@
       "noAccount": "Don't have an account?",
       "signUp": "Sign up"
     },
-
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email to reset your password",
+      "cardTitle": "Reset Password",
+      "cardDescription": "We'll send you a link to reset your password",
+      "emailPlaceholder": "your@email.com",
+      "sendInstructions": "Send Reset Link",
+      "sending": "Sending...",
+      "successMessage": "Password reset link sent to your email",
+      "checkEmail": "Please check your inbox and follow the instructions",
+      "backToLogin": "Back to Login",
+      "errorMessage": "Failed to send reset link"
+    },
+    "setNewPassword": {
+      "title": "Set New Password",
+      "subtitle": "Create a new password for your account",
+      "cardTitle": "New Password",
+      "cardDescription": "Enter and confirm your new password",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "passwordPlaceholder": "Enter new password (min 8 characters)",
+      "confirmPasswordPlaceholder": "Re-enter new password",
+      "updateButton": "Update Password",
+      "updating": "Updating...",
+      "successMessage": "Password updated successfully!",
+      "backToLogin": "Back to Login",
+      "errorMessage": "Failed to update password"
+    },
     "signup": {
       "createAccount": "Create Account",
       "startHonoringMemories": "Start honoring memories today",
@@ -215,7 +246,6 @@
     "email": "Email",
     "password": "Password"
   },
-
   "dashboard": {
     "header": {
       "title": "Dashboard",
@@ -255,7 +285,6 @@
       "photoAdded": "New photo added to {name}"
     }
   },
-
   "createMemorial": {
     "header": {
       "back": "Back to Dashboard",
@@ -328,7 +357,6 @@
       }
     }
   },
-
   "qrGenerator": {
     "header": {
       "back": "Back to Dashboard",
@@ -405,6 +433,8 @@
       "status": "Active"
     },
     "plans": {
+      "current": "Current Plan",
+      "choose": "Choose Plan",
       "free": {
         "name": "Free",
         "description": "Basic memorial features",
@@ -471,12 +501,24 @@
       "description": "Compare what's included with each plan",
       "notincluded": "Not Included",
       "features": [
-        { "name": "Biography & photo" },
-        { "name": "QR code" },
-        { "name": "Video upload" },
-        { "name": "Family tree / genealogy" },
-        { "name": "GPS location & map pin" },
-        { "name": "Lifetime access (one-time pay)" }
+        {
+          "name": "Biography & photo"
+        },
+        {
+          "name": "QR code"
+        },
+        {
+          "name": "Video upload"
+        },
+        {
+          "name": "Family tree / genealogy"
+        },
+        {
+          "name": "GPS location & map pin"
+        },
+        {
+          "name": "Lifetime access (one-time pay)"
+        }
       ]
     },
     "faq": {
@@ -618,42 +660,60 @@
         "dates": "1945 - 2023",
         "location": "Tbilisi, Georgia",
         "description": "Beloved father, grandfather, and community leader who dedicated his life to education.",
-        "tags": ["Teacher", "Community Leader"]
+        "tags": [
+          "Teacher",
+          "Community Leader"
+        ]
       },
       "maryJohnson": {
         "name": "Mary Johnson",
         "dates": "1952 - 2024",
         "location": "Batumi, Georgia",
         "description": "Loving mother and talented artist who brought beauty to the world through her paintings.",
-        "tags": ["Artist", "Mother"]
+        "tags": [
+          "Artist",
+          "Mother"
+        ]
       },
       "robertWilson": {
         "name": "Robert Wilson",
         "dates": "1938 - 2023",
         "location": "Kutaisi, Georgia",
         "description": "War veteran and devoted husband who served his country with honor and dignity.",
-        "tags": ["Veteran", "Husband"]
+        "tags": [
+          "Veteran",
+          "Husband"
+        ]
       },
       "annaGeorgadze": {
         "name": "Anna Georgadze",
         "dates": "1960 - 2024",
         "location": "Tbilisi, Georgia",
         "description": "Renowned doctor who saved countless lives and mentored young medical professionals.",
-        "tags": ["Doctor", "Mentor"]
+        "tags": [
+          "Doctor",
+          "Mentor"
+        ]
       },
       "davidKvirikashvili": {
         "name": "David Kvirikashvili",
         "dates": "1955 - 2023",
         "location": "Rustavi, Georgia",
         "description": "Passionate musician and composer who enriched Georgian cultural heritage.",
-        "tags": ["Musician", "Composer"]
+        "tags": [
+          "Musician",
+          "Composer"
+        ]
       },
       "elenaChavchavadze": {
         "name": "Elena Chavchavadze",
         "dates": "1948 - 2024",
         "location": "Gori, Georgia",
         "description": "Dedicated teacher and children's book author who inspired generations of young minds.",
-        "tags": ["Teacher", "Author"]
+        "tags": [
+          "Teacher",
+          "Author"
+        ]
       }
     },
     "loadMore": "Load More Memorials"
@@ -978,7 +1038,10 @@
           "Advanced customization",
           "Priority support"
         ],
-        "limitations": ["No multiple administrators", "No lifetime access"],
+        "limitations": [
+          "No multiple administrators",
+          "No lifetime access"
+        ],
         "button": "Upgrade to Basic Premium",
         "popular": "Most Popular",
         "yearlySave": "Save $18 per year"
@@ -1010,13 +1073,27 @@
       "description": "Compare what's included with each plan",
       "notincluded": "Not Included",
       "features": [
-        { "name": "Biography & photo" },
-        { "name": "QR code generation" },
-        { "name": "Video upload" },
-        { "name": "Family tree / genealogy" },
-        { "name": "GPS location & map pin" },
-        { "name": "Multiple administrators" },
-        { "name": "Lifetime access (one-time pay)" }
+        {
+          "name": "Biography & photo"
+        },
+        {
+          "name": "QR code generation"
+        },
+        {
+          "name": "Video upload"
+        },
+        {
+          "name": "Family tree / genealogy"
+        },
+        {
+          "name": "GPS location & map pin"
+        },
+        {
+          "name": "Multiple administrators"
+        },
+        {
+          "name": "Lifetime access (one-time pay)"
+        }
       ]
     },
     "faq": {

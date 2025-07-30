@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Cross, Eye, Trash2 } from "lucide-react";
+import { CheckCircle, CircleMinus, Cross, Eye, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslate";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/services/axiosInstance";
@@ -70,12 +70,12 @@ export function MemorialsTable({
             <TableCell>
               <Badge
                 variant={
-                  memorial.status === "approved" ? "default" : "secondary"
+                  memorial.status === "active" ? "default" : "secondary"
                 }
                 className={
-                  memorial.status === "approved"
-                    ? "bg-green-600"
-                    : "bg-yellow-600"
+                  memorial.status === "active"
+                    ? "!bg-green-600 text-white"
+                    : "!bg-red-600 text-white"
                 }
               >
                 {memorial.status}
@@ -96,7 +96,7 @@ export function MemorialsTable({
                   onClick={() => handleProfileClick(memorial._id)}
                   size="sm"
                   variant="outline"
-                  className="border-[#354f44] text-black "
+                  className="border-[#354f44] text-black hover:bg-[#354f44] hover:text-white"
                 >
                   <Eye className="h-4 w-4" />
                 </Button>
@@ -105,8 +105,8 @@ export function MemorialsTable({
                   variant="outline"
                   className={`${
                     memorial.status === "active"
-                      ? "border-red-600 text-red-400 hover:bg-red-600"
-                      : "border-green-600 text-green-400 hover:bg-green-600"
+                      ? " border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
+                      : "border-blue-600 hover:bg-blue-600 text-blue-600 hover:text-white"
                   } bg-transparent`}
                   onClick={() => {
                     memorailStatusToggle(memorial._id);
@@ -114,16 +114,18 @@ export function MemorialsTable({
                   }}
                 >
                   {memorial.status === "active" ? (
-                    <Cross className="h-4 w-4" />
-                  ) : (
+                    // <Cross className="h-4 w-4" />
                     <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    
+                    <CircleMinus className="h-4 w-4" />
                   )}
                 </Button>
 
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-red-600 text-red-400 bg-transparent"
+                  className="border-red-600 text-red-400 bg-transparent hover:bg-red-600 hover:text-white"
                   onClick={() => {
                     if (
                       confirm(

@@ -167,6 +167,34 @@
       "noAccount": "არ გაქვთ ანგარიში?",
       "signUp": "რეგისტრაცია"
     },
+     "forgotPassword": {
+      "title": "დაგავიწყდათ პაროლი?",
+      "subtitle": "შეიყვანეთ თქვენი ელ.ფოსტა პაროლის აღსადგენად",
+      "cardTitle": "პაროლის აღდგენა",
+      "cardDescription": "ჩვენ გამოგიგზავნით ბმულს პაროლის აღსადგენად",
+      "emailPlaceholder": "თქვენი@მეილი.com",
+      "sendInstructions": "გაგზავნა",
+      "sending": "იგზავნება...",
+      "successMessage": "პაროლის აღდგენის ბმული გამოგზავნილია თქვენს ელ.ფოსტაზე",
+      "checkEmail": "გთხოვთ შეამოწმოთ თქვენი ელ.ფოსტა და მიჰყვეთ ინსტრუქციას",
+      "backToLogin": "ავტორიზაციაზე დაბრუნება",
+      "errorMessage": "ბმულის გაგზავნა ვერ მოხერხდა"
+    },
+     "setNewPassword": {
+      "title": "ახალი პაროლის დაყენება",
+      "subtitle": "შექმენით ახალი პაროლი თქვენი ანგარიშისთვის",
+      "cardTitle": "ახალი პაროლი",
+      "cardDescription": "შეიყვანეთ და დაადასტურეთ თქვენი ახალი პაროლი",
+      "newPasswordLabel": "ახალი პაროლი",
+      "confirmPasswordLabel": "დაადასტურეთ პაროლი",
+      "passwordPlaceholder": "შეიყვანეთ ახალი პაროლი (მინიმუმ 8 სიმბოლო)",
+      "confirmPasswordPlaceholder": "ხელახლა შეიყვანეთ ახალი პაროლი",
+      "updateButton": "პაროლის განახლება",
+      "updating": "განახლება...",
+      "successMessage": "პაროლი წარმატებით განახლდა!",
+      "backToLogin": "ავტორიზაციაზე დაბრუნება",
+      "errorMessage": "პაროლის განახლება ვერ მოხერხდა"
+    },
     "signup": {
       "createAccount": "ანგარიშის შექმნა",
       "startHonoringMemories": "დაიწყეთ ხსოვნების პატივისცემა დღესვე",

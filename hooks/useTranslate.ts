@@ -17,7 +17,7 @@ export const useTranslation = () => {
 
   const t = <K extends keyof Translations>(namespace: K): Translations[K] => {
     const translations =
-      language !== "English" ? enTranslations : kaTranslations;
+      language == "English" ? enTranslations : kaTranslations;
       // language === "English" ? enTranslations : kaTranslations;
     return translations[namespace];
     // return translations[namespace];

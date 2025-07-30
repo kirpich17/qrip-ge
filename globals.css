@@ -74,3 +74,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+body{
+  word-break: break-all;
+}

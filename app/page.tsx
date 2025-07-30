@@ -51,7 +51,6 @@ export default function HomePage() {
       <Features />
       <Plans />
       <Testimonials />
-
       <Memories />
     </div>
   );
