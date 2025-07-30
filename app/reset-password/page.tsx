@@ -35,7 +35,10 @@ function SetNewPasswordForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!token) {
+      setError("Invalid reset link");
+      return;
+    }
     if (!password || !confirmPassword) {
       setError("Both password fields are required");
       return;
@@ -46,16 +49,11 @@ function SetNewPasswordForm() {
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
+      const response = await fetch("https://qrip-ge-backend.vercel.app/api/auth/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +150,6 @@ function SetNewPasswordForm() {
                   setError("");
                 }}
                 required
-                minLength={8}
                 className="h-12"
               />
             </div>
@@ -175,7 +172,6 @@ function SetNewPasswordForm() {
                   setError("");
                 }}
                 required
-                minLength={8}
                 className="h-12"
               />
             </div>

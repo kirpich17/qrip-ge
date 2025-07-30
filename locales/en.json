@@ -206,7 +206,7 @@
       "cardDescription": "Enter and confirm your new password",
       "newPasswordLabel": "New Password",
       "confirmPasswordLabel": "Confirm Password",
-      "passwordPlaceholder": "Enter new password (min 8 characters)",
+      "passwordPlaceholder": "Enter new password",
       "confirmPasswordPlaceholder": "Re-enter new password",
       "updateButton": "Update Password",
       "updating": "Updating...",

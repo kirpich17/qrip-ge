@@ -42,22 +42,18 @@ export default function ForgotPasswordPage() {
       setError("Please enter a valid email address");
       return;
     }
-
     setIsLoading(true);
     setError("");
-
     try {
       // Replace with your actual API call
-      const response = await fetch("/api/auth/forgot-password", {
+      const response = await fetch("https://qrip-ge-backend.vercel.app/api/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setSuccess(true);
         toast.success(
