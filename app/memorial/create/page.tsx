@@ -158,7 +158,6 @@ export default function CreateMemorialPage() {
     epitaph: "",
     location: "",
     isPublic: true,
-    status: "active",
     profileImage: null as File | null,
     gps: {
       lat: null as number | null,
@@ -363,7 +362,6 @@ export default function CreateMemorialPage() {
     formDataToSend.append("biography", formData.biography);
     formDataToSend.append("epitaph", formData.epitaph);
     formDataToSend.append("isPublic", String(formData.isPublic));
-    formDataToSend.append("status", formData.status);
     formDataToSend.append("location", formData.location)
 
     if (formData.gps?.lat && formData.gps?.lng) {
