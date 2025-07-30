@@ -126,7 +126,7 @@ function Dashboard() {
     };
 
     fetchMemorials();
-  }, [currentPage,searchQuery]);
+  }, [currentPage, searchQuery]);
 
 
   const handleDeleteMemorial = async (memorialId: string) => {
@@ -358,8 +358,8 @@ function Dashboard() {
                               }
                               className={
                                 memorial.status === "active"
-                                  ? "bg-green-100 text-green-800"
-                                  : ""
+                                  ? "!bg-green-600 text-white"
+                                  : "!bg-red-600 text-white"
                               }
                             >
                               {memorial.status}
