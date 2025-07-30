@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Lock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
 import { toast } from "react-toastify";
 
-export default function SetNewPasswordPage() {
+function SetNewPasswordForm() {
   const { t } = useTranslation();
   const authTranslations = t("auth");
   const commonTranslations = t("common");
@@ -94,6 +94,114 @@ export default function SetNewPasswordPage() {
   };
 
   return (
+    <Card className="shadow-xl border-0">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-xl text-center">
+          {authTranslations?.setNewPassword?.cardTitle || "New Password"}
+        </CardTitle>
+        <CardDescription className="text-center">
+          {authTranslations?.setNewPassword?.cardDescription || 
+           "Enter and confirm your new password"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {success ? (
+          <div className="space-y-4">
+            <Alert className="border-green-200 bg-green-50">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
+                  {authTranslations?.setNewPassword?.successMessage || 
+                   "Password updated successfully!"}
+                </AlertDescription>
+              </div>
+            </Alert>
+            <Button
+              onClick={() => router.push("/login")}
+              className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full mt-4"
+            >
+              {authTranslations?.setNewPassword?.backToLogin || 
+               "Back to Login"}
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertDescription className="text-red-800">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="password">
+                {authTranslations?.setNewPassword?.newPasswordLabel || 
+                 "New Password"}
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder={
+                  authTranslations?.setNewPassword?.passwordPlaceholder || 
+                  "Enter new password"
+                }
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                required
+                minLength={8}
+                className="h-12"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">
+                {authTranslations?.setNewPassword?.confirmPasswordLabel || 
+                 "Confirm Password"}
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder={
+                  authTranslations?.setNewPassword?.confirmPasswordPlaceholder || 
+                  "Confirm new password"
+                }
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setError("");
+                }}
+                required
+                minLength={8}
+                className="h-12"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
+              disabled={isLoading}
+            >
+              {isLoading
+                ? authTranslations?.setNewPassword?.updating || "Updating..."
+                : authTranslations?.setNewPassword?.updateButton || 
+                   "Update Password"}
+            </Button>
+          </form>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function SetNewPasswordPage() {
+  const { t } = useTranslation();
+  const authTranslations = t("auth");
+
+  return (
     <div className="min-h-screen bg-[#ecefdc] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -124,106 +232,9 @@ export default function SetNewPasswordPage() {
           </p>
         </div>
 
-        <Card className="shadow-xl border-0">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">
-              {authTranslations?.setNewPassword?.cardTitle || "New Password"}
-            </CardTitle>
-            <CardDescription className="text-center">
-              {authTranslations?.setNewPassword?.cardDescription || 
-               "Enter and confirm your new password"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {success ? (
-              <div className="space-y-4">
-                <Alert className="border-green-200 bg-green-50">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      {authTranslations?.setNewPassword?.successMessage || 
-                       "Password updated successfully!"}
-                    </AlertDescription>
-                  </div>
-                </Alert>
-                <Button
-                  onClick={() => router.push("/login")}
-                  className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full mt-4"
-                >
-                  {authTranslations?.setNewPassword?.backToLogin || 
-                   "Back to Login"}
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-800">
-                      {error}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">
-                    {authTranslations?.setNewPassword?.newPasswordLabel || 
-                     "New Password"}
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={
-                      authTranslations?.setNewPassword?.passwordPlaceholder || 
-                      "Enter new password"
-                    }
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setError("");
-                    }}
-                    required
-                    minLength={8}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">
-                    {authTranslations?.setNewPassword?.confirmPasswordLabel || 
-                     "Confirm Password"}
-                  </Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder={
-                      authTranslations?.setNewPassword?.confirmPasswordPlaceholder || 
-                      "Confirm new password"
-                    }
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setError("");
-                    }}
-                    required
-                    minLength={8}
-                    className="h-12"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading
-                    ? authTranslations?.setNewPassword?.updating || "Updating..."
-                    : authTranslations?.setNewPassword?.updateButton || 
-                       "Update Password"}
-                </Button>
-              </form>
-            )}
-          </CardContent>
-        </Card>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SetNewPasswordForm />
+        </Suspense>
       </motion.div>
     </div>
   );
