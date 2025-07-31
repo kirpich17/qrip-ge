@@ -36,6 +36,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
 import axios from "axios";
+import html2canvas from "html2canvas";
 
 interface Memorial {
   _id: string;
@@ -57,7 +58,7 @@ export default function QRGeneratorPage() {
   const [qrSize, setQrSize] = useState<"small" | "medium" | "large" | "xlarge">("medium");
   const [qrStyle, setQrStyle] = useState<"standard" | "rounded" | "dots" | "branded">("standard");
   const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadingFormat, setDownloadingFormat] = useState<null | 'png' | 'svg'>(null);
+  const [downloadingFormat, setDownloadingFormat] = useState<null | 'png' | 'svg' | 'print'>(null);
 
   // Size mapping for both preview and download
   const sizeMap = {
@@ -138,6 +139,99 @@ export default function QRGeneratorPage() {
     }
   };
 
+  const handlePrint = async () => {
+    if (!selectedMemorialData) return;
+    setDownloadingFormat('print');
+
+    try {
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        throw new Error('Could not open print window');
+      }
+
+      // Get the QR code SVG element
+      const qrCodeElement = document.getElementById('qr-code-preview');
+      if (!qrCodeElement) {
+        throw new Error('QR code element not found');
+      }
+
+      // Create a clean HTML document for printing
+      printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code for ${selectedMemorialData.firstName} ${selectedMemorialData.lastName}</title>
+          <style>
+            @page { 
+              size: auto;  
+              margin: 5mm;
+            }
+            body { 
+              font-family: Arial, sans-serif; 
+              display: flex; 
+              flex-direction: column; 
+              align-items: center; 
+              justify-content: center; 
+              height: 100vh; 
+              margin: 0; 
+              padding: 0;
+              text-align: center;
+            }
+            .print-container {
+              max-width: 100%;
+              page-break-after: avoid;
+              page-break-inside: avoid;
+            }
+            .memorial-info {
+              margin-bottom: 10px;
+            }
+            .qr-container { 
+              margin: 10px auto; 
+              padding: 10px;
+              max-width: 100%;
+            }
+            .instructions {
+              margin-top: 10px;
+              font-size: 14px;
+              color: #666;
+              max-width: 80%;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            <div class="memorial-info">
+              <h1>${selectedMemorialData.firstName} ${selectedMemorialData.lastName}</h1>
+              <p>${new Date(selectedMemorialData.birthDate).getFullYear()} - ${new Date(selectedMemorialData.deathDate).getFullYear()}</p>
+            </div>
+            <div class="qr-container">
+              ${qrCodeElement.innerHTML}
+            </div>
+            <div class="instructions">
+              <p>Scan this QR code to visit the memorial page and share memories.</p>
+              <p>For best results, print at 100% scale on high-quality paper.</p>
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+                window.close();
+              }, 200);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+    } catch (error) {
+      console.error("Print failed:", error);
+      toast.error("Failed to prepare print");
+    } finally {
+      setDownloadingFormat(null);
+    }
+  };
 
   // Apply different styles to QR code
   const getQrCodeProps = () => {
@@ -339,7 +433,9 @@ export default function QRGeneratorPage() {
                   <div className="text-center">
                     <div className="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
                       {selectedMemorialData ? (
-                        <QRCodeSVG {...getQrCodeProps()} />
+                        <div id="qr-code-preview">
+                          <QRCodeSVG {...getQrCodeProps()} />
+                        </div>
                       ) : (
                         <div className="w-64 h-64 bg-gray-100 flex items-center justify-center text-gray-400">
                           {isLoadingMemorials ? <Loader2 className="animate-spin" /> : "Select a memorial to preview"}
@@ -374,13 +470,20 @@ export default function QRGeneratorPage() {
                           )}
                           {downloadingFormat === 'svg' ? 'Downloading...' : qrGeneratorTranslations.preview.downloadSvg}
                         </Button>
-
-
                       </div>
-                      {/* <Button variant="outline" className="w-full bg-transparent" onClick={() => window.print()}>
-                        <Printer className="h-4 w-4 mr-2" />
-                        {qrGeneratorTranslations.preview.print}
-                      </Button> */}
+                      <Button 
+                        variant="outline" 
+                        className="w-full bg-transparent" 
+                        onClick={handlePrint}
+                        disabled={downloadingFormat !== null || !selectedMemorialData}
+                      >
+                        {downloadingFormat === 'print' ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Printer className="h-4 w-4 mr-2" />
+                        )}
+                        {downloadingFormat === 'print' ? 'Preparing...' : qrGeneratorTranslations.preview.print}
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
