@@ -78,7 +78,7 @@ export default function QRGeneratorPage() {
         return;
       }
       try {
-        const response = await axios.get('http://51.20.241.117:5000/api/memorials/my-memorials', {
+        const response = await axios.get('https://qrip-ge-backend.vercel.app/api/memorials/my-memorials', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.data.status && response.data.data.length > 0) {
@@ -117,7 +117,7 @@ export default function QRGeneratorPage() {
 
     try {
       const response = await axios.post(
-        'http://51.20.241.117:5000/api/qrcode/generate',
+        'https://qrip-ge-backend.vercel.app/api/qrcode/generate',
         {
           memorialId: selectedMemorialData._id,
           format,
