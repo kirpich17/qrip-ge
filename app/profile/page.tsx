@@ -107,15 +107,15 @@ export default function ProfilePage() {
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:underline"
+                className="flex items-center text-white hover:underline text-xs sm:text-lg gap-1"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
+                <ArrowLeft className="h-5 w-5" />
                 {profileTranslations.header.backButton}
               </Link>
             </div>
-            <div className="flex items-center space-x-2">
-              <User className="h-6 w-6 text-white" />
-              <span className="text-xl font-bold text-white">
+            <div className="flex items-center gap-1">
+              <User className="h-5 w-5 text-white" />
+              <span className="text-xs sm:text-lg font-bold text-white">
                 {profileTranslations.header.title}
               </span>
             </div>

@@ -105,10 +105,8 @@ function Dashboard() {
         console.error("Error fetching user details:", error);
       }
     };
-
     fetchUserData();
   }, []);
-
 
 
   useEffect(() => {
@@ -150,11 +148,9 @@ function Dashboard() {
           console.error("No login data found in localStorage.");
           return;
         }
-
         const user = JSON.parse(loginData);
         const userId = user._id;
-
-        const response = await fetch(`https://qrip-ge-backend.vercel.app/api/auth/stats/${userId}`);
+        const response = await fetch(`http://51.20.241.117:5000/api/auth/stats/${userId}`);
         const result = await response.json();
 
         if (result.status && result.data) {
@@ -329,7 +325,8 @@ function Dashboard() {
 
                   {memorials.map((memorial) => (
                     <motion.div key={memorial._id} variants={fadeInUp}>
-                      <div className="flex md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
+                      <Link href={`/memorial/${memorial._id}`} target="_blank">
+                      <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
                         <Avatar className="md:h-16 md:w-16 h-8 w-8">
                           <AvatarImage
                             src={memorial.profileImage || "/placeholder.svg"}
@@ -371,11 +368,11 @@ function Dashboard() {
                           <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
                             <span className="flex items-center">
                               <Eye className="h-4 w-4 mr-1" />
-                              {memorial.views} views
+                              {memorial.viewsCount} views
                             </span>
                             <span className="flex items-center">
                               <QrCode className="h-4 w-4 mr-1" />
-                              {/* {memorial.qrCode} */}
+                              {memorial.scanCount}
                             </span>
                             <span className="flex items-center">
                               <MapPin className="h-4 w-4 mr-1" />
@@ -384,22 +381,24 @@ function Dashboard() {
                           </div>
                         </div>
 
-                        <DropdownMenu>
+                        <div className="flex justify-end items-center w-full">
+                          <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="p-0">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
+                            {/* <DropdownMenuItem asChild>
                               <Link
                                 href={`/memorial/${memorial._id}`}
+                                target="_blank"
                                 className="flex items-center"
                               >
                                 <Eye className="h-4 w-4 mr-2" />
                                 {dashboard.memorials.viewMemorial}
                               </Link>
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/memorial/edit/${memorial._id}`}
@@ -427,7 +426,9 @@ function Dashboard() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
+                        </div>
                       </div>
+                      </Link>
                     </motion.div>
                   ))}
                   <div className="flex justify-center items-center gap-4 mt-4">

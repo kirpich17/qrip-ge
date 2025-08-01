@@ -551,7 +551,7 @@
       "delete": "Delete"
     },
     "title": "Edit Memorial",
-    "description": "Update the memorial information for {name}",
+    "description": "Update the memorial information",
     "tabs": {
       "basic": "Basic Info",
       "media": "Media",

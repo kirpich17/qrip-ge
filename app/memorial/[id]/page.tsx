@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
   MapPin,
@@ -32,11 +32,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { getSingleMemorial, recordMemorialView } from "@/services/memorialService";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import Image from 'next/image';
 
+// Fix for Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -77,12 +79,236 @@ interface Memorial {
   enableEmailNotifications: boolean;
   achievements: string[];
   familyTree: any[];
+  gps?: { lat: number; lng: number };
+  location?: string;
   createdAt: string;
   updatedAt: string;
 }
 
+function QRPageTransition({
+  profilePhoto,
+  memorialId,
+  firstName,
+  lastName,
+  hasPremium,
+  birthDate,
+  deathDate,
+  photoGallery = []
+}: {
+  profilePhoto: string;
+  memorialId: string;
+  firstName: string;
+  lastName: string;
+  hasPremium: boolean;
+  birthDate: string;
+  deathDate: string;
+  photoGallery?: string[];
+}) {
+  const [isInitialView, setIsInitialView] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const router = useRouter();
+
+  const premiumSlides = useMemo(() => {
+    const slides = [
+      {
+        image: profilePhoto || '/placeholder.svg',
+        text: `Remembering ${firstName} ${lastName}`,
+        years: `${new Date(birthDate).getFullYear()} - ${new Date(deathDate).getFullYear()}`
+      }
+    ];
+
+    // Add up to 2 gallery images if they exist
+    if (photoGallery.length > 0) {
+      slides.push({
+        image: photoGallery[0],
+        text: "Celebrating a life well lived",
+        years: ""
+      });
+    }
+    if (photoGallery.length > 1) {
+      slides.push({
+        image: photoGallery[1],
+        text: "Honoring their legacy",
+        years: ""
+      });
+    }
+
+    return slides;
+  }, [profilePhoto, firstName, lastName, birthDate, deathDate, photoGallery]);
+
+  // Improved slideshow logic
+  useEffect(() => {
+    if (!hasPremium || !isInitialView || premiumSlides.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % premiumSlides.length);
+    },4000); // Increased duration to 4 seconds
+
+    return () => clearInterval(interval);
+  }, [hasPremium, isInitialView, premiumSlides.length]);
+
+  const handleClick = () => {
+    setIsInitialView(false);
+    setTimeout(() => {
+      router.push(`/memorial/${memorialId}`);
+    }, 500);
+  };
+
+  // Custom animation variants with TypeScript type
+  const slideVariants = {
+    enter: (direction: number) => ({
+      opacity: 0,
+      y: direction > 0 ? 50 : -50
+    }),
+    center: {
+      opacity: 1,
+      y: 0
+    },
+    exit: (direction: number) => ({
+      opacity: 0,
+      y: direction < 0 ? 50 : -50
+    })
+  };
+
+  return (
+    <div className="fixed inset-0 overflow-hidden bg-black">
+      <AnimatePresence mode="wait">
+        {isInitialView ? (
+          <motion.div
+            key="initial-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative w-full h-full cursor-pointer"
+            onClick={handleClick}
+          >
+            {/* Background blur */}
+            <div className="absolute inset-0 overflow-hidden">
+              <Image
+                src={hasPremium ? premiumSlides[currentSlide].image : profilePhoto || '/default-profile.jpg'}
+                alt={`${firstName} ${lastName} memorial`}
+                fill
+                className="object-cover blur-md"
+                quality={30}
+                priority
+              />
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
+              {hasPremium ? (
+                <div className="max-w-2xl mx-auto">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentSlide}
+                      custom={1}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30
+                      }}
+                      className="space-y-6"
+                    >
+                      <div className="relative h-64 w-64 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl">
+                        <Image
+                          src={premiumSlides[currentSlide].image}
+                          alt="Memorial slide"
+                          fill
+                          className="object-cover"
+                          priority
+                        />
+                      </div>
+                      <h2 className="text-3xl font-bold">
+                        {premiumSlides[currentSlide].text}
+                      </h2>
+                      {premiumSlides[currentSlide].years && (
+                        <p className="text-xl">
+                          {premiumSlides[currentSlide].years}
+                        </p>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {premiumSlides.length > 1 && (
+                    <>
+                      <div className="flex justify-center mt-4 space-x-2">
+                        {premiumSlides.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCurrentSlide(index);
+                            }}
+                            className={`w-3 h-3 rounded-full transition-colors ${currentSlide === index ? 'bg-white' : 'bg-white/50'
+                              }`}
+                            aria-label={`Go to slide ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                      <motion.p
+                        className="mt-4 text-lg"
+                        animate={{ opacity: [0.6, 1, 0.6] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        Tap to view full memorial
+                      </motion.p>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="relative h-64 w-64 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                    <Image
+                      src={profilePhoto || '/default-profile.jpg'}
+                      alt={`${firstName} ${lastName}`}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                  <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                  <h2 className="text-3xl font-semibold">
+                    {firstName} {lastName}
+                  </h2>
+                  <p className="text-xl mt-2">
+                    {new Date(birthDate).getFullYear()} - {new Date(deathDate).getFullYear()}
+                  </p>
+                  <motion.p
+                    className="mt-8 text-lg"
+                    animate={{ opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    Tap to view memorial
+                  </motion.p>
+                </>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="transition"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-white"
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
+
+
 export default function MemorialPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
@@ -92,20 +318,13 @@ export default function MemorialPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { t } = useTranslation();
   const memorialTranslations = t("memorial");
+  const isScan = searchParams.get("isScan") === "true";
 
   useEffect(() => {
     const fetchMemorial = async () => {
       if (!params?.id) return;
       try {
         setLoading(true);
-        const urlParams = new URLSearchParams(window.location.search);
-        const isScan = urlParams.get("isScan") === "true";
-        // Clean the URL if it's a QR scan
-        if (isScan) {
-          const cleanUrl = window.location.pathname;
-          window.history.replaceState({}, document.title, cleanUrl);
-        }
-
         const response = await getSingleMemorial(params.id as string);
         if (response?.status && response.data) {
           setApiMemorial(response.data);
@@ -117,7 +336,6 @@ export default function MemorialPage() {
           } catch (scanError) {
             console.error("Failed to record scan view:", scanError);
           }
-
         } else {
           throw new Error("Invalid response from server");
         }
@@ -130,10 +348,7 @@ export default function MemorialPage() {
     };
 
     fetchMemorial();
-  }, [params?.id]);
-
-
-
+  }, [params?.id, isScan]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -231,6 +446,21 @@ export default function MemorialPage() {
     );
   }
 
+  if (isScan) {
+    return (
+      <QRPageTransition
+        profilePhoto={apiMemorial.profileImage}
+        memorialId={params.id as string}
+        firstName={apiMemorial.firstName}
+        lastName={apiMemorial.lastName}
+        hasPremium={apiMemorial.plan === "Premium"}
+        birthDate={apiMemorial.birthDate}
+        deathDate={apiMemorial.deathDate}
+        photoGallery={apiMemorial.photoGallery}
+      />
+    );
+  }
+
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
@@ -266,7 +496,7 @@ export default function MemorialPage() {
             </Link>
             <div className="flex items-center space-x-3">
               <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
-                {apiMemorial.views?.toLocaleString() || 0}{" "}
+                {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
                 {memorialTranslations.header.views}
               </Badge>
               {/* <Button variant="outline" size="sm">
@@ -335,31 +565,6 @@ export default function MemorialPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Biography */}
-              <motion.div variants={fadeInUp}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
-                      {memorialTranslations.tabs.lifeStory}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="prose prose-gray max-w-none">
-                      {apiMemorial.biography
-                        .split("\n\n")
-                        .map((paragraph, index) => (
-                          <p
-                            key={index}
-                            className="text-gray-700 leading-relaxed mb-4"
-                          >
-                            {paragraph}
-                          </p>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
 
               {/* Media Gallery */}
               <motion.div variants={fadeInUp}>
@@ -524,6 +729,33 @@ export default function MemorialPage() {
                   </CardContent>
                 </Card>
               </motion.div>
+              {/* Biography */}
+              <motion.div variants={fadeInUp}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
+                      {memorialTranslations.tabs.lifeStory}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="prose prose-gray max-w-none">
+                      {apiMemorial.biography
+                        .split("\n\n")
+                        .map((paragraph, index) => (
+                          <p
+                            key={index}
+                            className="text-gray-700 leading-relaxed mb-4"
+                          >
+                            {paragraph}
+                          </p>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+
             </div>
 
             {/* Right Column - Sidebar */}

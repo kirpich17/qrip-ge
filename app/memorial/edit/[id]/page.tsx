@@ -120,6 +120,14 @@ export default function EditMemorialPage() {
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState("");
 
+  const [deletedFiles, setDeletedFiles] = useState({
+    photos: [] as string[],
+    videos: [] as string[],
+    documents: [] as string[]
+  });
+
+
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -255,24 +263,48 @@ export default function EditMemorialPage() {
   };
 
   // Add these to your component
+  // For existing photos
   const handleRemoveExistingPhoto = (index: number) => {
+    if (!formData) return;
+
+    const photoUrl = formData.photoGallery[index];
     setFormData(prev => ({
       ...prev!,
       photoGallery: prev!.photoGallery.filter((_, i) => i !== index)
     }));
+    setDeletedFiles(prev => ({
+      ...prev,
+      photos: [...prev.photos, photoUrl]
+    }));
   };
 
+  // For existing videos
   const handleRemoveExistingVideo = (index: number) => {
+    if (!formData) return;
+
+    const videoUrl = formData.videoGallery[index];
     setFormData(prev => ({
       ...prev!,
       videoGallery: prev!.videoGallery.filter((_, i) => i !== index)
     }));
+    setDeletedFiles(prev => ({
+      ...prev,
+      videos: [...prev.videos, videoUrl]
+    }));
   };
 
+  // For existing documents
   const handleRemoveExistingDocument = (index: number) => {
+    if (!formData) return;
+
+    const docUrl = formData.documents[index];
     setFormData(prev => ({
       ...prev!,
       documents: prev!.documents.filter((_, i) => i !== index)
+    }));
+    setDeletedFiles(prev => ({
+      ...prev,
+      documents: [...prev.documents, docUrl]
     }));
   };
 
@@ -293,6 +325,8 @@ export default function EditMemorialPage() {
     try {
       setUpdating(true);
       const formDataToSend = new FormData();
+
+      // Append basic fields
       formDataToSend.append('_id', formData._id);
       formDataToSend.append('firstName', formData.firstName);
       formDataToSend.append('lastName', formData.lastName);
@@ -302,31 +336,45 @@ export default function EditMemorialPage() {
       formDataToSend.append('location', formData.location);
       formDataToSend.append('isPublic', String(formData.isPublic));
 
-      achievements.forEach((achievement, index) => {
-        formDataToSend.append(`achievements[${index}]`, achievement);
+      // Append achievements
+      achievements.forEach((achievement) => {
+        formDataToSend.append('achievements', achievement);
       });
 
+      // Append profile image if selected
       if (selectedProfileImage) {
         formDataToSend.append('profileImage', selectedProfileImage);
       }
 
-      mediaFiles.photos.forEach((photo, index) => {
-        formDataToSend.append(`photoGallery[${index}]`, photo);
+      // Append new photos
+      mediaFiles.photos.forEach((photo) => {
+        formDataToSend.append('photoGallery', photo);
       });
 
-      mediaFiles.videos.forEach((video, index) => {
-        formDataToSend.append(`videoGallery[${index}]`, video.file);
+      // Append new videos
+      mediaFiles.videos.forEach((video) => {
+        formDataToSend.append('videoGallery', video.file);
       });
 
-      mediaFiles.documents.forEach((doc, index) => {
-        formDataToSend.append(`documents[${index}]`, doc.file);
+      // Append new documents
+      mediaFiles.documents.forEach((doc) => {
+        formDataToSend.append('documents', doc.file);
       });
 
-      formData.familyTree.forEach((member, index) => {
-        formDataToSend.append(`familyTree[${index}][name]`, member.name);
-        formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
+      // Append family tree members
+      formData.familyTree.forEach((member) => {
+        formDataToSend.append('familyTree', JSON.stringify(member));
       });
 
+      // Append deleted files information
+      formDataToSend.append('deletedPhotos', JSON.stringify(deletedFiles.photos));
+      formDataToSend.append('deletedVideos', JSON.stringify(deletedFiles.videos));
+      formDataToSend.append('deletedDocuments', JSON.stringify(deletedFiles.documents));
+
+      // Log FormData contents for debugging
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
 
       const response = await axiosInstance.post(
         `${ADD_MEMORIAL}`,
@@ -339,7 +387,7 @@ export default function EditMemorialPage() {
       );
 
       if (response?.status) {
-        toast("Memorial updated successfully")
+        toast.success("Memorial updated successfully");
         const updatedResponse = await getSingleMemorial(params.id as string);
         if (updatedResponse?.status && updatedResponse.data) {
           setFormData(updatedResponse.data);
@@ -350,13 +398,19 @@ export default function EditMemorialPage() {
             documents: [],
             familyTree: []
           });
+          // Reset deleted files tracking
+          setDeletedFiles({
+            photos: [],
+            videos: [],
+            documents: []
+          });
         }
       } else {
         throw new Error(response?.message || "Failed to update memorial");
       }
     } catch (err) {
       console.error("Failed to update memorial:", err);
-      toast({
+      toast.error({
         title: "Error",
         description: err instanceof Error ? err.message : "Failed to update memorial",
         variant: "destructive",
@@ -413,26 +467,43 @@ export default function EditMemorialPage() {
 
 
 
-  const SubscriptionRestricted = ({ requiredPlan = "Plus" }: { requiredPlan?: "Plus" | "Premium" }) => (
-    <div className="bg-gray-50 rounded-lg p-6 text-center">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
-        <Lock className="h-6 w-6 text-gray-500" />
+  const SubscriptionRestricted = ({
+    requiredPlan = "Plus",
+    currentPlan = "Free"
+  }: {
+    requiredPlan?: "Plus" | "Premium";
+    currentPlan?: "Free" | "Plus" | "Premium";
+  }) => {
+    // Don't show anything if user already has required plan or higher
+    if (
+      (currentPlan === "Plus" && requiredPlan === "Plus") ||
+      (currentPlan === "Premium") ||
+      (currentPlan === "Plus" && requiredPlan === "Premium") // This case is debatable - you might want to still show for Plus users when Premium is required
+    ) {
+      return null;
+    }
+
+    return (
+      <div className="bg-gray-50 rounded-lg p-6 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+          <Lock className="h-6 w-6 text-gray-500" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
+        </h3>
+        <p className="text-gray-500 mb-4">
+          {requiredPlan === "Premium"
+            ? "This feature is only available with a Premium subscription."
+            : "Upgrade to Plus or Premium to access this feature."}
+        </p>
+        <Link href="/subscription">
+          <Button className="bg-[#547455] hover:bg-[#243b31]">
+            Upgrade to {requiredPlan}
+          </Button>
+        </Link>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
-        {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
-      </h3>
-      <p className="text-gray-500 mb-4">
-        {requiredPlan === "Premium"
-          ? "This feature is only available with a Premium subscription."
-          : "Upgrade to Plus or Premium to access this feature."}
-      </p>
-      <Link href="/subscription">
-        <Button className="bg-[#547455] hover:bg-[#243b31]">
-          Upgrade to {requiredPlan}
-        </Button>
-      </Link>
-    </div>
-  );
+    );
+  };
 
   if (loadingSubscription) {
     return (
@@ -452,10 +523,10 @@ export default function EditMemorialPage() {
       <header className="bg-[#243b31] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-3 flex-wrap gap-2">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:underline"
+                className="flex items-center text-white hover:underline text-xs sm:text-lg gap-1 "
               >
                 <ArrowLeft className="h-5 w-5" />
                 {editMemorialTranslations.header.back}
@@ -463,7 +534,7 @@ export default function EditMemorialPage() {
             </div>
             <div className="flex items-center flex-wrap gap-2">
               <Button
-                className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white"
+                className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"
                 onClick={handleSubmit}
                 disabled={updating}
               >
@@ -474,7 +545,7 @@ export default function EditMemorialPage() {
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
+                    <Save className="h-4 w-4" />
                     {editMemorialTranslations.header.save}
                   </>
                 )}
@@ -745,7 +816,7 @@ export default function EditMemorialPage() {
 
             <TabsContent value="media" className="space-y-6">
               {userSubscription === "Free" ? (
-                <SubscriptionRestricted />
+                <SubscriptionRestricted requiredPlan="Plus" />
               ) : (
                 <Card>
                   <CardHeader>
@@ -790,64 +861,39 @@ export default function EditMemorialPage() {
                           {(formData.photoGallery?.length > 0 || mediaFiles.photos.length > 0) && (
                             <div className="mt-4 w-full">
                               {/* Existing photos */}
-                              {formData.photoGallery?.length > 0 && (
-                                <>
-                                  <p className="text-xs font-medium mb-2">Existing Photos</p>
-                                  <div className="space-y-1 mb-4">
-                                    {formData.photoGallery.map((photoUrl, index) => (
-                                      <div key={`existing-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                        <div className="flex items-center gap-2">
-                                          <img
-                                            src={photoUrl}
-                                            alt={`Photo ${index}`}
-                                            className="h-8 w-8 object-cover rounded"
-                                          />
-                                          <span className="text-xs truncate flex-1">
-                                            {photoUrl.split('/').pop()?.slice(0, 20)}...
-                                          </span>
-                                        </div>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-4 w-4"
-                                          onClick={() => handleRemoveExistingPhoto(index)}
-                                        >
-                                          <X className="h-3 w-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
+                              {formData.photoGallery?.map((photoUrl, index) => (
+                                <div key={`existing-${index}`} className="flex items-center gap-2">
+                                  <img src={photoUrl} alt={`Photo ${index}`} className="h-12 w-12 object-cover" />
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => handleRemoveExistingPhoto(index)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
 
                               {/* New photos */}
-                              {mediaFiles.photos.length > 0 && (
-                                <>
-                                  <p className="text-xs font-medium mb-2">New Photos</p>
-                                  <div className="space-y-1">
-                                    {mediaFiles.photos.map((photo, index) => (
-                                      <div key={`new-photo-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                        <span className="text-xs truncate flex-1">{photo.name}</span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-4 w-4"
-                                          onClick={() => removePhoto(index)}
-                                        >
-                                          <X className="h-3 w-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
+                              {mediaFiles.photos.map((photo, index) => (
+                                <div key={`new-${index}`} className="flex items-center gap-2">
+                                  <span>{photo.name}</span>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => removePhoto(index)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
                             </div>
                           )}
                         </CardContent>
                       </Card>
 
                       {/* Video Upload */}
-                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                      {/* <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <Video className="h-12 w-12 text-gray-400 mb-4" />
                           <h3 className="font-semibold text-gray-900 mb-2">
@@ -873,10 +919,10 @@ export default function EditMemorialPage() {
                             {editMemorialTranslations.media.videos.button}
                           </Button>
 
-                          {/* Show existing and new videos */}
+                        
                           {(formData.videoGallery?.length > 0 || mediaFiles.videos.length > 0) && (
                             <div className="mt-4 w-full">
-                              {/* Existing videos */}
+                            
                               {formData.videoGallery?.length > 0 && (
                                 <>
                                   <p className="text-xs font-medium mb-2">Existing Videos</p>
@@ -903,7 +949,7 @@ export default function EditMemorialPage() {
                                 </>
                               )}
 
-                              {/* New videos */}
+                         
                               {mediaFiles.videos.length > 0 && (
                                 <>
                                   <p className="text-xs font-medium mb-2">New Videos</p>
@@ -927,10 +973,86 @@ export default function EditMemorialPage() {
                             </div>
                           )}
                         </CardContent>
+                      </Card> */}
+
+                      {/* Video Upload Section */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <Video className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">Videos</h3>
+                          <p className="text-sm text-gray-500 mb-4">Upload video memories</p>
+
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = "video/*";
+                              input.onchange = (e) => handleVideosUpload((e.target as HTMLInputElement).files);
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload Videos
+                          </Button>
+
+                          {/* Existing Videos */}
+                          {formData.videoGallery?.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">Existing Videos</p>
+                              <div className="space-y-1 mb-4">
+                                {formData.videoGallery.map((videoUrl, index) => (
+                                  <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <div className="flex items-center gap-2">
+                                      <Video className="h-4 w-4 text-gray-500" />
+                                      <span className="text-xs truncate flex-1">
+                                        {videoUrl.split('/').pop()?.slice(0, 20)}...
+                                      </span>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => handleRemoveExistingVideo(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* New Videos */}
+                          {mediaFiles.videos.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">New Videos</p>
+                              <div className="space-y-1">
+                                {mediaFiles.videos.map((video, index) => (
+                                  <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <span className="text-xs truncate flex-1">{video.title}</span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => removeVideo(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
                       </Card>
 
+
+
+
                       {/* Documents Upload */}
-                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                      {/* <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <FileText className="h-12 w-12 text-gray-400 mb-4" />
                           <h3 className="font-semibold text-gray-900 mb-2">
@@ -956,10 +1078,11 @@ export default function EditMemorialPage() {
                             {editMemorialTranslations.media.documents.button}
                           </Button>
 
-                          {/* Show existing and new documents */}
+
                           {(formData.documents?.length > 0 || mediaFiles.documents.length > 0) && (
                             <div className="mt-4 w-full">
-                              {/* Existing documents */}
+                          
+                          
                               {formData.documents?.length > 0 && (
                                 <>
                                   <p className="text-xs font-medium mb-2">Existing Documents</p>
@@ -986,7 +1109,8 @@ export default function EditMemorialPage() {
                                 </>
                               )}
 
-                              {/* New documents */}
+                     
+                     
                               {mediaFiles.documents.length > 0 && (
                                 <>
                                   <p className="text-xs font-medium mb-2">New Documents</p>
@@ -1010,7 +1134,80 @@ export default function EditMemorialPage() {
                             </div>
                           )}
                         </CardContent>
+                      </Card> */}
+                      {/* Document Upload Section */}
+                      <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                          <FileText className="h-12 w-12 text-gray-400 mb-4" />
+                          <h3 className="font-semibold text-gray-900 mb-2">Documents</h3>
+                          <p className="text-sm text-gray-500 mb-4">Upload important documents</p>
+
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.multiple = true;
+                              input.accept = ".pdf,.doc,.docx,.txt";
+                              input.onchange = (e) => handleDocumentsUpload((e.target as HTMLInputElement).files);
+                              input.click();
+                            }}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload Documents
+                          </Button>
+
+                          {/* Existing Documents */}
+                          {formData.documents?.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">Existing Documents</p>
+                              <div className="space-y-1 mb-4">
+                                {formData.documents.map((docUrl, index) => (
+                                  <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <div className="flex items-center gap-2">
+                                      <FileText className="h-4 w-4 text-gray-500" />
+                                      <span className="text-xs truncate flex-1">
+                                        {docUrl.split('/').pop()?.slice(0, 20)}...
+                                      </span>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => handleRemoveExistingDocument(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* New Documents */}
+                          {mediaFiles.documents.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <p className="text-xs font-medium mb-2">New Documents</p>
+                              <div className="space-y-1">
+                                {mediaFiles.documents.map((doc, index) => (
+                                  <div key={`new-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                    <span className="text-xs truncate flex-1">{doc.fileName}</span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4"
+                                      onClick={() => removeDocument(index)}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
                       </Card>
+
                     </div>
                   </CardContent>
                 </Card>

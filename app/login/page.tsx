@@ -34,12 +34,12 @@ export default function LoginPage() {
   const router = useRouter();
 
 
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (isAuthenticated === "true") {
       router.replace("/dashboard");
     }
-  }, []);
+  }, [isAuthenticated]);
 
 
   const handleLogin = async (e: React.FormEvent) => {

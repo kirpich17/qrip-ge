@@ -36,6 +36,8 @@ export function UserManagementTable({
   const { t } = useTranslation();
   const admindashTranslations = t("admindash");
   return (
+    <div className="overflow-x-auto">
+      <div className="min-w-[800px]">
     <Table>
       <TableHeader>
         <TableRow className="">
@@ -172,5 +174,7 @@ export function UserManagementTable({
         ))}
       </TableBody>
     </Table>
+    </div>
+    </div>
   );
 }
