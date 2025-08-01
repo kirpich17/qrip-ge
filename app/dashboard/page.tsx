@@ -150,7 +150,7 @@ function Dashboard() {
         }
         const user = JSON.parse(loginData);
         const userId = user._id;
-        const response = await fetch(`http://51.20.241.117:5000/api/auth/stats/${userId}`);
+        const response = await fetch(`https://qrip-ge-backend.vercel.app/api/auth/stats/${userId}`);
         const result = await response.json();
 
         if (result.status && result.data) {

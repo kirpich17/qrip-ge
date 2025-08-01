@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
 
     try {
       const response = await axios.post(
-        "http://51.20.241.117:5000/api/admin/signIn",
+        "https://qrip-ge-backend.vercel.app/api/admin/signIn",
         {
           email,
           password,
