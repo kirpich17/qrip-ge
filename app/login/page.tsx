@@ -31,15 +31,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
-
-  const isAuthenticated = localStorage.getItem("isAuthenticated");
   useEffect(() => {
-    if (isAuthenticated === "true") {
+    const authStatus = localStorage.getItem("isAuthenticated");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
       router.replace("/dashboard");
     }
-  }, [isAuthenticated]);
+  }, []);
 
 
   const handleLogin = async (e: React.FormEvent) => {
