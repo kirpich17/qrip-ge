@@ -40,6 +40,35 @@ import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
+// Media limits configuration
+const MEDIA_LIMITS = {
+  PHOTO: {
+    MAX_SIZE_FREE: 5 * 1024 * 1024, // 5MB
+    MAX_SIZE_PAID: 10 * 1024 * 1024, // 10MB
+    ACCEPTED_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
+    MAX_COUNT_FREE: 10,
+    MAX_COUNT_PLUS: 50,
+    MAX_COUNT_PREMIUM: Infinity,
+  },
+  VIDEO: {
+    MAX_SIZE_FREE: 50 * 1024 * 1024, // 50MB
+    MAX_SIZE_PLUS: 200 * 1024 * 1024, // 200MB
+    MAX_SIZE_PREMIUM: 500 * 1024 * 1024, // 500MB
+    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo'],
+    MAX_DURATION_FREE: 30, // seconds
+    MAX_DURATION_PLUS: 120, // seconds
+    MAX_DURATION_PREMIUM: 300, // seconds
+    MAX_COUNT_FREE: 3,
+    MAX_COUNT_PLUS: 10,
+    MAX_COUNT_PREMIUM: Infinity,
+  },
+  DOCUMENT: {
+    MAX_SIZE_PREMIUM: 10 * 1024 * 1024, // 10MB
+    ACCEPTED_TYPES: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'],
+    MAX_COUNT_PREMIUM: 20,
+  }
+};
+
 interface CreateMemorialTranslations {
   header: {
     back: string;
@@ -121,6 +150,7 @@ interface CreateMemorialTranslations {
 interface VideoItem {
   title: string;
   file: File;
+  duration?: number;
 }
 
 interface DocumentItem {
@@ -139,9 +169,6 @@ interface UserDetails {
   email: string;
   subscriptionPlan: "Free" | "Plus" | "Premium";
 }
-
-
-
 
 export default function CreateMemorialPage() {
   const router = useRouter();
@@ -183,45 +210,74 @@ export default function CreateMemorialPage() {
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState<string>("");
 
+  // Helper function to get video duration
+  const getVideoDuration = (file: File): Promise<number> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        resolve(video.duration);
+      };
+      video.src = URL.createObjectURL(file);
+    });
+  };
 
-  const addAchievement = () => {
-    if (newAchievement.trim()) {
-      setAchievements(prev => [...prev, newAchievement.trim()]);
-      setNewAchievement("");
+  // File validation function
+  const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
+    const errors: string[] = [];
+    const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO : 
+                  type === 'video' ? MEDIA_LIMITS.VIDEO : 
+                  MEDIA_LIMITS.DOCUMENT;
+
+    // Check if user can upload this type
+    if (type === 'document' && userSubscription !== 'Premium') {
+      errors.push('Documents require Premium subscription');
+      return { valid: false, errors };
     }
-  };
 
-  const removeAchievement = (index: number) => {
-    setAchievements(prev => prev.filter((_, i) => i !== index));
-  };
+    // Check file count limits
+    const currentCount = type === 'photo' ? mediaFiles.photos.length : 
+                        type === 'video' ? mediaFiles.videos.length : 
+                        mediaFiles.documents.length;
+    const maxCount = type === 'photo' ? 
+      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
+       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+      type === 'video' ?
+      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
+       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+      limits.MAX_COUNT_PREMIUM;
 
-  const updateAchievement = (index: number, value: string) => {
-    setAchievements(prev => prev.map((item, i) =>
-      i === index ? value : item
-    ));
-  };
+    if (currentCount + files.length > maxCount) {
+      errors.push(`You can only upload ${maxCount} ${type}s with your current plan`);
+    }
 
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await getUserDetails();
-        setUserDetails(userData.user);
-        setUserSubscription(userData.user.subscriptionPlan);
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-        toast({
-          title: "Error",
-          description: "Could not fetch user subscription details",
-          variant: "destructive",
-        });
-      } finally {
-        setLoadingSubscription(false);
+    // Validate each file
+    Array.from(files).forEach(file => {
+      // Check file type
+      if (!limits.ACCEPTED_TYPES.includes(file.type)) {
+        errors.push(`Unsupported file type: ${file.name}`);
+        return;
       }
-    };
 
-    fetchUserData();
-  }, [toast]);
+      // Check file size
+      const maxSize = type === 'photo' ? 
+        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : limits.MAX_SIZE_PAID) :
+        type === 'video' ?
+        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : 
+         userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
+        limits.MAX_SIZE_PREMIUM;
+
+      if (file.size > maxSize) {
+        errors.push(`${file.name} exceeds maximum size of ${maxSize / (1024 * 1024)}MB`);
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      errors
+    };
+  };
 
   // Subscription check functions
   const canUploadMedia = () => userSubscription !== "Free";
@@ -255,12 +311,31 @@ export default function CreateMemorialPage() {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      handleInputChange("profileImage", e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.size > MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID) {
+        toast({
+          title: "File Too Large",
+          description: `Profile image must be less than ${MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID / (1024 * 1024)}MB`,
+          variant: "destructive",
+        });
+        return;
+      }
+      handleInputChange("profileImage", file);
     }
   };
 
   const handlePhotosUpload = (files: FileList | null) => {
     if (!files) return;
+
+    const validation = validateFiles(files, 'photo');
+    if (!validation.valid) {
+      toast({
+        title: "Upload Error",
+        description: validation.errors.join('\n'),
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!canUploadMedia()) {
       showUpgradeToast();
@@ -274,26 +349,64 @@ export default function CreateMemorialPage() {
     }));
   };
 
-  const handleVideosUpload = (files: FileList | null) => {
+  const handleVideosUpload = async (files: FileList | null) => {
     if (!files) return;
+
+    const validation = validateFiles(files, 'video');
+    if (!validation.valid) {
+      toast({
+        title: "Upload Error",
+        description: validation.errors.join('\n'),
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!canUploadMedia()) {
       showUpgradeToast();
       return;
     }
 
-    const newVideos = Array.from(files).map(file => ({
-      title: file.name.split('.')[0],
-      file
+    // Additional video duration validation
+    const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE : 
+                       userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS : 
+                       MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
+
+    const videoItems = await Promise.all(Array.from(files).map(async (file) => {
+      const duration = await getVideoDuration(file);
+      if (duration > maxDuration) {
+        toast({
+          title: "Video Too Long",
+          description: `${file.name} exceeds maximum duration of ${maxDuration} seconds`,
+          variant: "destructive",
+        });
+        return null;
+      }
+      return {
+        title: file.name.split('.')[0],
+        file,
+        duration
+      };
     }));
+
     setMediaFiles(prev => ({
       ...prev,
-      videos: [...prev.videos, ...newVideos]
+      videos: [...prev.videos, ...videoItems.filter(item => item !== null) as VideoItem[]]
     }));
   };
 
   const handleDocumentsUpload = (files: FileList | null) => {
     if (!files) return;
+
+    const validation = validateFiles(files, 'document');
+    if (!validation.valid) {
+      toast({
+        title: "Upload Error",
+        description: validation.errors.join('\n'),
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!canUploadDocuments()) {
       showUpgradeToast("Premium");
@@ -304,6 +417,7 @@ export default function CreateMemorialPage() {
       fileName: file.name,
       file
     }));
+
     setMediaFiles(prev => ({
       ...prev,
       documents: [...prev.documents, ...newDocuments]
@@ -352,6 +466,44 @@ export default function CreateMemorialPage() {
       documents: prev.documents.filter((_, i) => i !== index)
     }));
   };
+
+  const addAchievement = () => {
+    if (newAchievement.trim()) {
+      setAchievements(prev => [...prev, newAchievement.trim()]);
+      setNewAchievement("");
+    }
+  };
+
+  const removeAchievement = (index: number) => {
+    setAchievements(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateAchievement = (index: number, value: string) => {
+    setAchievements(prev => prev.map((item, i) =>
+      i === index ? value : item
+    ));
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserDetails();
+        setUserDetails(userData.user);
+        setUserSubscription(userData.user.subscriptionPlan);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch user subscription details",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingSubscription(false);
+      }
+    };
+
+    fetchUserData();
+  }, [toast]);
 
   const prepareFormData = () => {
     const formDataToSend = new FormData();
@@ -435,7 +587,7 @@ export default function CreateMemorialPage() {
           ? "This feature is only available with a Premium subscription."
           : "Upgrade to Plus or Premium to access this feature."}
       </p>
-      <Link href="/subscription">
+      <Link href="/pricing">
         <Button className="bg-[#547455] hover:bg-[#243b31]">
           Upgrade to {requiredPlan}
         </Button>
@@ -554,19 +706,18 @@ export default function CreateMemorialPage() {
                           <Upload className="h-4 w-4 mr-2" />
                           {createMemorialTranslations.basicInfo.uploadPhoto}
                           <input
-                        id="profileImageUpload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        className="opacity-0 absolute top-0 left-0 right-0 bottom-0 w-full h-full cursor-pointer"
-                      />
+                            id="profileImageUpload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="opacity-0 absolute top-0 left-0 right-0 bottom-0 w-full h-full cursor-pointer"
+                          />
                         </Button>
-                        
                       </label>
-                       
-                     
                       <p className="text-sm text-gray-500 md:text-left text-center">
                         {createMemorialTranslations.basicInfo.photoDescription}
+                        <br />
+                        Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
                       </p>
                     </div>
                   </div>
@@ -667,13 +818,13 @@ export default function CreateMemorialPage() {
                       className="min-h-[120px]"
                     />
                   </div>
+                  
                   <div className="space-y-4">
                     <Label className="text-lg font-semibold">Achievements</Label>
                     <p className="text-sm text-gray-500">
                       Add notable achievements or awards (e.g., "Nobel Prize", "Olympic Gold Medal")
                     </p>
 
-                    {/* Add new achievement input */}
                     <div className="flex gap-2">
                       <Input
                         value={newAchievement}
@@ -690,7 +841,6 @@ export default function CreateMemorialPage() {
                       </Button>
                     </div>
 
-                    {/* List of achievements */}
                     {achievements.length > 0 && (
                       <div className="mt-4 space-y-2">
                         {achievements.map((achievement, index) => (
@@ -775,8 +925,6 @@ export default function CreateMemorialPage() {
                     </div>
                   </div>
 
-
-
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="isPublic"
@@ -833,10 +981,13 @@ export default function CreateMemorialPage() {
                             <Upload className="h-4 w-4 mr-2" />
                             {createMemorialTranslations.media.photos.button}
                           </Button>
+                          <p className="text-xs text-gray-500 mt-2">
+                            Supported: JPEG, PNG, WebP • Max {userSubscription === 'Free' ? '5MB' : '10MB'} per photo
+                          </p>
                           {mediaFiles.photos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Photos:
+                                Selected Photos ({mediaFiles.photos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_PLUS : 'Unlimited'}):
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.photos.map((photo, index) => (
@@ -884,15 +1035,23 @@ export default function CreateMemorialPage() {
                             <Upload className="h-4 w-4 mr-2" />
                             {createMemorialTranslations.media.videos.button}
                           </Button>
+                          <p className="text-xs text-gray-500 mt-2">
+                            Supported: MP4, MOV, AVI • Max {userSubscription === 'Free' ? '30s, 50MB' : userSubscription === 'Plus' ? '2min, 200MB' : '5min, 500MB'}
+                          </p>
                           {mediaFiles.videos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Videos:
+                                Selected Videos ({mediaFiles.videos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_PLUS : 'Unlimited'}):
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.videos.map((video, index) => (
                                   <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                    <span className="text-xs truncate">{video.title}</span>
+                                    <div>
+                                      <span className="text-xs truncate">{video.title}</span>
+                                      {video.duration && (
+                                        <span className="text-xs text-gray-500 block">{Math.round(video.duration)}s</span>
+                                      )}
+                                    </div>
                                     <Button
                                       variant="ghost"
                                       size="icon"
@@ -910,7 +1069,6 @@ export default function CreateMemorialPage() {
                       </Card>
 
                       {/* Documents - Premium only */}
-
                       <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <FileText className="h-12 w-12 text-gray-400 mb-4" />
@@ -922,6 +1080,7 @@ export default function CreateMemorialPage() {
                           </p>
                           <Button
                             variant="outline"
+                            disabled={userSubscription !== 'Premium'}
                             onClick={() => {
                               const input = document.createElement("input");
                               input.type = "file";
@@ -936,10 +1095,13 @@ export default function CreateMemorialPage() {
                             <Upload className="h-4 w-4 mr-2" />
                             {createMemorialTranslations.media.documents.button}
                           </Button>
+                          <p className="text-xs text-gray-500 mt-2">
+                            Supported: PDF, DOC, DOCX, TXT • Max 10MB • Premium only
+                          </p>
                           {mediaFiles.documents.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Documents:
+                                Selected Documents ({mediaFiles.documents.length}/{MEDIA_LIMITS.DOCUMENT.MAX_COUNT_PREMIUM}):
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.documents.map((doc, index) => (
@@ -960,7 +1122,6 @@ export default function CreateMemorialPage() {
                           )}
                         </CardContent>
                       </Card>
-
                     </div>
                   </CardContent>
                 </Card>
@@ -1031,7 +1192,7 @@ export default function CreateMemorialPage() {
                       {mediaFiles.familyTree.length > 0 && (
                         <div className="mt-6">
                           <h3 className="font-semibold text-gray-900 mb-4">
-                            {createMemorialTranslations.familyTree.placeholder.title}
+                            {createMemorialTranslations.familyTree.members.title}
                           </h3>
                           <div className="space-y-2">
                             {mediaFiles.familyTree.map((member, index) => (
