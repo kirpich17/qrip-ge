@@ -90,15 +90,15 @@ export default function SubscriptionPage() {
             <div className="flex items-center ">
               <Link
                 href="/dashboard"
-                className="flex items-center text-white hover:underline gap-2 text-base"
+                className="flex items-center text-white hover:underline text-xs sm:text-lg gap-1"
               >
                 <ArrowLeft className="h-5 w-5 " />
                 {subscriptionTranslations.header.back}
               </Link>
             </div>
-            <div className="flex items-center space-x-2">
-              <Crown className="md:h-6 md:w-6 w-4 h-4 text-white" />
-              <span className="md:text-xl text-base font-bold text-white">
+            <div className="flex items-center gap-1">
+              <Crown className=" w-5 h-5 text-white" />
+              <span className="text-xs sm:text-lg font-bold text-white">
                 {subscriptionTranslations.header.title}
               </span>
             </div>
@@ -113,10 +113,10 @@ export default function SubscriptionPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-12">
-            <h1 className="md:text-4xl text-2xl font-bold text-gray-900 md:mb-4 mb-3">
+            <h1 className="md:text-4xl sm:text-2xl text-lg font-bold text-gray-900 md:mb-4 mb-3">
               {subscriptionTranslations.title}
             </h1>
-            <p className="md:text-xl text-base text-gray-600 max-w-3xl mx-auto mb-8">
+            <p className="md:text-xl sm:text-base text-sm text-gray-600 max-w-3xl mx-auto mb-8">
               {subscriptionTranslations.description}
             </p>
 
@@ -148,7 +148,7 @@ export default function SubscriptionPage() {
           <motion.div variants={fadeInUp} className="mb-8">
             <Card className="border-gray-200 bg-gray-50">
               <CardContent className="md:p-6 p-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center  flex-wrap gap-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                       <Star className="h-6 w-6 text-gray-600" />

@@ -36,7 +36,6 @@ import { QRCodeSVG } from 'qrcode.react';
 import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
 import axios from "axios";
-import html2canvas from "html2canvas";
 
 interface Memorial {
   _id: string;
@@ -79,7 +78,7 @@ export default function QRGeneratorPage() {
         return;
       }
       try {
-        const response = await axios.get('https://qrip-ge-backend.vercel.app/api/memorials/my-memorials', {
+        const response = await axios.get('http://51.20.241.117:5000/api/memorials/my-memorials', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.data.status && response.data.data.length > 0) {
@@ -118,7 +117,7 @@ export default function QRGeneratorPage() {
 
     try {
       const response = await axios.post(
-        'https://qrip-ge-backend.vercel.app/api/qrcode/generate',
+        'http://51.20.241.117:5000/api/qrcode/generate',
         {
           memorialId: selectedMemorialData._id,
           format,
@@ -196,6 +195,9 @@ export default function QRGeneratorPage() {
               color: #666;
               max-width: 80%;
             }
+              .p{
+              text-align:center;
+              }
           </style>
         </head>
         <body>
@@ -233,7 +235,6 @@ export default function QRGeneratorPage() {
     }
   };
 
-  // Apply different styles to QR code
   const getQrCodeProps = () => {
     const baseProps = {
       value: publicMemorialUrl,
@@ -471,9 +472,9 @@ export default function QRGeneratorPage() {
                           {downloadingFormat === 'svg' ? 'Downloading...' : qrGeneratorTranslations.preview.downloadSvg}
                         </Button>
                       </div>
-                      <Button 
-                        variant="outline" 
-                        className="w-full bg-transparent" 
+                      <Button
+                        variant="outline"
+                        className="w-full bg-transparent"
                         onClick={handlePrint}
                         disabled={downloadingFormat !== null || !selectedMemorialData}
                       >
