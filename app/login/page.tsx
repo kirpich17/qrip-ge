@@ -44,6 +44,7 @@ export default function LoginPage() {
 
 
   const handleLogin = async (e: React.FormEvent) => {
+    console.log(process.env.NEXT_PUBLIC_BASE_URL,"process.env.NEXT_PUBLIC_BASE_URL")
     e.preventDefault();
     setIsLoading(true);
     const body = {
@@ -55,6 +56,7 @@ export default function LoginPage() {
         `${process.env.NEXT_PUBLIC_BASE_URL}${LOGIN}`,
         body
       );
+      console.log("🚀 ~ handleLogin ~ response:", response)
 
       const { status, message, token, user } = response?.data || {};
 
@@ -73,6 +75,7 @@ export default function LoginPage() {
         }
       }
     } catch (error: any) {
+      console.log("🚀 ~ handleLogin ~ error:", error)
       if (error?.response?.status === 400) {
         toast.error(error?.response?.message || "Invalid credentials");
       } else if (error?.response?.status === 404) {

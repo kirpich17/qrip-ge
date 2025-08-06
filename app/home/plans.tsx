@@ -33,6 +33,7 @@ const Plans = () => {
 
 
   const [plans, setPlans] = useState<Plan[]>([]);
+  console.log("🚀 ~ Plans ~ plans:", plans)
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -175,7 +176,7 @@ const Plans = () => {
                           <Check className="h-3 w-3 text-[#243b31]" />
                         </div>
                         <span className="text-gray-700 text-sm leading-relaxed">
-                          {feature}
+                          {feature.text}
                         </span>
                       </li>
                     ))}

@@ -1065,8 +1065,7 @@
       "deactivatePlan": "პაკეტის დეაქტივაცია",
       "planName": "პაკეტის სახელი",
       "planDescription": "აღწერა",
-      "monthlyPrice": "ყოველთვიური ფასი (₾)",
-      "yearlyPrice": "წლიური ფასი (₾)",
+      "price": "ყოველთვიური ფასი (₾)",
       "oneTimePayment": "ერთჯერადი გადახდის პაკეტი",
       "markPopular": "მონიშვნა როგორც პოპულარული",
       "planActive": "პაკეტი აქტიურია",
@@ -1145,5 +1144,9 @@
     "subscription": "გამოწერის პაკეტი",
     "profile": "პროფილი",
     "logout": "გამოსვლა"
-  }
+  },
+  "subscription_management": {
+  "my_subscription_tab": "ჩემი გამოწერა",
+  "manage_plans_tab": "პაკეტების მართვა"
+}
 }
