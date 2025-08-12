@@ -167,7 +167,7 @@ const Plans = () => {
 
                 <CardContent className="pt-0 pb-8">
                   <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
+                   {plan?.features?.map((feature, featureIndex) => (
                       <li
                         key={featureIndex}
                         className="flex items-start space-x-3"
