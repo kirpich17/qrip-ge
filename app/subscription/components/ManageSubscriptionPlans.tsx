@@ -98,7 +98,7 @@ interface ApiResponse {
 export default function SubscriptionPage() {
   const { t } = useTranslation();
   const subscriptionTranslations = t("subscription");
-
+const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -125,6 +125,17 @@ export default function SubscriptionPage() {
       toast.error("Could not load your subscription details.");
     }
   };
+
+  useEffect(() => {
+  if (subscriptionData) {
+    const gracePeriodActive = 
+      (currentSubscription && isInGracePeriod(currentSubscription)) ||
+      (subscriptionData.otherPlanCurrentStatus?.monthly?.canResume) ||
+      (subscriptionData.otherPlanCurrentStatus?.one_time?.canResume);
+      
+    setHasActiveGracePeriod(!!gracePeriodActive);
+  }
+}, [subscriptionData]);
 
   useEffect(() => {
     setIsClient(true);
@@ -307,13 +318,36 @@ export default function SubscriptionPage() {
               
               return (
                 <motion.div key={plan._id} {...fadeInUp} transition={{ delay: index * 0.1 }}>
-                  <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-[#243b31] shadow-lg" : "border-gray-200 hover:shadow-md"} transition-all duration-300`}>
-                    {plan.isPopular && (
-                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1">
-                        {subscriptionTranslations.plans.basic.popular}
-                      </Badge>
-                    )}
+                 <Card className={`relative h-full flex flex-col 
+  ${isCurrentPlan && currentSubscription?.status === 'active' 
+    ? "border-[#243b31]  shadow-lg" 
+    : plan.isPopular 
+      ? " shadow-lg" 
+      : "border-gray-200 hover:shadow-md"
+  } transition-all duration-300`}
+>
 
+
+
+
+
+{isCurrentPlan && currentSubscription?.status === 'active' && (
+  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10 shadow-md">
+    <span className="flex items-center">
+      <Check className="h-4 w-4 mr-1" />
+      {subscriptionTranslations.plans.current || "Current Plan"}
+    </span>
+  </Badge>
+)}
+
+{plan.isPopular && !isCurrentPlan && (
+  <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 z-10 shadow-md transition-all">
+    <span className="flex items-center">
+      <Crown className="h-4 w-4 mr-1" />
+      {subscriptionTranslations.plans.basic.popular}
+    </span>
+  </Badge>
+)}
                     <CardHeader className="text-center pb-4">
                       <div className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor || 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                         {isFreePlan && <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />}
@@ -364,16 +398,24 @@ export default function SubscriptionPage() {
                       <div className="pt-2 space-y-2">
                         {isCurrentPlan ? (
                           <>
-                            {currentSubscription?.status === 'active' && !isFreePlan && (
-                              <Button
-                                variant="outline"
-                                className="w-full border-red-500 text-red-600 hover:bg-red-50"
-                                onClick={() => handleCancelSubscription(currentSubscription._id)}
-                                disabled={isCanceling}
-                              >
-                                {isCanceling ? "Canceling..." : "Cancel Subscription"}5555555
-                              </Button>
-                            )}
+                              {/* Only show cancel button for monthly subscriptions */}
+    {currentSubscription?.status === 'active' && plan.billingPeriod === 'monthly' && (
+      <Button
+        variant="outline"
+        className="w-full border-red-500 text-red-600 hover:bg-red-50"
+        onClick={() => handleCancelSubscription(currentSubscription._id)}
+        disabled={isCanceling}
+      >
+        {isCanceling ? "Canceling..." : "Cancel Subscription"}
+      </Button>
+    )}
+    
+    {/* For Lifetime plan, show a disabled button instead */}
+    {currentSubscription?.status === 'active' && plan.billingPeriod === 'one_time' && (
+      <Button variant="outline" className="w-full" disabled>
+        Lifetime Access (Active)
+      </Button>
+    )}
                             
                             {currentSubscription?.status === 'canceled' && isInGracePeriod(currentSubscription) && (
                               <Button
@@ -428,22 +470,25 @@ export default function SubscriptionPage() {
                               {isResuming ? "Resuming..." : "Resume Subscription2"}3333
                             </Button>
                           ) : (
-                            <Button
-                              className={`w-full ${plan.isPopular ? "bg-[#547455] hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
-                              size="lg"
-                              onClick={() => 
-                                plan.billingPeriod === 'monthly' 
-                                  ? handlePayment(plan._id, plan.name)
-                                  : handleLifeTimePayment(plan._id, plan.name)
-                              }
-                              disabled={isProcessing === plan._id || 
-                                       (currentSubscription?.status === 'active' && 
-                                        currentSubscription?.planId?.billingPeriod !== 'free')}
-                            >
-                              {isProcessing === plan._id 
-                                ? "Processing..." 
-                                : plan.ctaButtonText || subscriptionTranslations.plans.choose}444444444
-                            </Button>
+                         <Button
+  className={`w-full ${plan.isPopular ? "bg-[#547455] hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
+  size="lg"
+  onClick={() => 
+    plan.billingPeriod === 'monthly' 
+      ? handlePayment(plan._id, plan.name)
+      : handleLifeTimePayment(plan._id, plan.name)
+  }
+  disabled={
+    isProcessing === plan._id || 
+    (currentSubscription?.status === 'active' && 
+     currentSubscription?.planId?.billingPeriod !== 'free') ||
+    hasActiveGracePeriod  // Add this line to disable during grace period
+  }
+>
+  {isProcessing === plan._id 
+    ? "Processing..." 
+    : plan.ctaButtonText || subscriptionTranslations.plans.choose}
+</Button>
                           )
                         )}
                       </div>
