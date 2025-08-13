@@ -269,10 +269,10 @@ function AdminSubscription() {
             <p className="md:text-xl text-base text-gray-600 max-w-3xl mx-auto mb-8">
               {adsubscriptionTranslations.description}
             </p>
-            <Button onClick={handleAddPlan} className="bg-[#243b31] hover:bg-[#547455]">
+            {/* <Button onClick={handleAddPlan} className="bg-[#243b31] hover:bg-[#547455]">
               <Plus className="h-4 w-4 mr-2" />
               {adsubscriptionTranslations.admin.addPlan}
-            </Button>
+            </Button> */}
           </div>
 
           {/* --- REFACTORED ADD/EDIT PLAN MODAL --- */}
@@ -467,7 +467,7 @@ function AdminSubscription() {
                         {adsubscriptionTranslations.admin.editPlan}
                       </Button>
 
-                        <Button
+                        {/* <Button
                           variant="outline"
                           className="flex-1"
                           onClick={() => togglePlanStatus(plan._id)}
@@ -479,7 +479,7 @@ function AdminSubscription() {
                        <Button variant="destructive" onClick={() => handleDeletePlan(plan._id)}>
                           <Trash2 className="h-4 w-4 mr-2" />
                          {adsubscriptionTranslations.admin.deletePlan}
-                        </Button>
+                        </Button> */}
                     </div>
                   </CardContent>
                 </Card>

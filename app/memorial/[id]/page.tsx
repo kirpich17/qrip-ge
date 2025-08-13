@@ -313,6 +313,7 @@ export default function MemorialPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
+  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -464,7 +465,7 @@ export default function MemorialPage() {
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
-  const isPremium = apiMemorial.plan === "Premium";
+  const isPremium = apiMemorial.plan === "Life Time" || apiMemorial.plan === "Monthly Premium" ;
 
   const nextImage = () => {
     if (!apiMemorial.photoGallery?.length) return;
@@ -861,7 +862,7 @@ export default function MemorialPage() {
                       <div className="text-center py-6">
                         <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                         <p className="text-sm text-gray-600">
-                          GPS location available with premium
+                          GPS location available with premium 
                         </p>
                       </div>
                     )}
