@@ -98,7 +98,7 @@ export default function CurrentSubscriptionDetails({ setActiveTab }: Props) {
           <div><strong className="text-gray-600">Start Date:</strong> {formatDisplayDate(currentSubscription.startDate)}</div>
           <div><strong className="text-gray-600">Last Payment:</strong> {formatDisplayDate(currentSubscription.lastPaymentDate)}</div>
           <div><strong className="text-gray-600">Next Billing:</strong> {formatDisplayDate(currentSubscription.nextBillingDate)}</div>
-          <div><strong className="text-gray-600">Status:</strong> <span className="font-semibold text-green-600 capitalize">{currentSubscription.status}</span></div>
+          <div><strong className="text-gray-600">Status:</strong> <span className={`font-semibold ${currentSubscription.status == "payment_failed"? "text-red-600":"text-green-600"}  capitalize`}>{currentSubscription.status}</span></div>
         </div>
       </div>
 
@@ -120,7 +120,15 @@ export default function CurrentSubscriptionDetails({ setActiveTab }: Props) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formatDisplayDate(tx.date)}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{tx.amount} GEL</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <span className="font-semibold text-green-600 capitalize">{tx.status.replace(/_/g, ' ')}</span>
+                  <span
+  className={`font-semibold ${
+    tx.status.replace(/_/g, ' ').toLowerCase().trim() === "recurring payment failed"
+      ? "text-red-600"
+      : "text-green-600"
+  } capitalize`}
+>
+  {tx.status.replace(/_/g, ' ')}
+</span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.bogTransactionId}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.bogOrderId}</td>

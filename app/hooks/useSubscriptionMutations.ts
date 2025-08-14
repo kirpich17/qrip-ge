@@ -21,6 +21,14 @@
         return data;
     };
 
+    const retryPaymentAPI = async (subscriptionId: string) => {
+  const response = await axiosInstance.post('/api/payments/retry-subscription', { 
+    subscriptionId 
+  });
+  return response.data;
+};
+
+
     export const useSubscriptionMutations = () => {
         const queryClient = useQueryClient();
 
@@ -49,10 +57,31 @@
             },
         });
 
+
+          // Add retry payment mutation
+ const retryPaymentMutation = useMutation({
+    mutationFn: async (subscriptionId: string) => {
+      // Make the actual API call here
+      const response = await axiosInstance.post(
+        '/api/payments/retry-subscription', 
+        { subscriptionId }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Payment processed successfully!');
+      queryClient.invalidateQueries({ queryKey: ['userSubscriptionDetails'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to retry payment.');
+    },
+  });
         return {
             cancelSubscription,
             isCanceling,
             resumeSubscription,
             isResuming,
+      retryPayment: retryPaymentMutation.mutate,
+    isRetrying: retryPaymentMutation.isPending
         };
     };

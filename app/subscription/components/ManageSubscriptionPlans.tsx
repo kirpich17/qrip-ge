@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -19,6 +18,7 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import { useSubscriptionMutations } from "@/app/hooks/useSubscriptionMutations";
+import { useQuery } from "@tanstack/react-query";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -52,6 +52,7 @@ interface PlanDetails {
   price: number;
   billingPeriod: string;
   description: string;
+  _id: string; // Added for better type safety
 }
 
 interface Transaction {
@@ -98,81 +99,91 @@ interface ApiResponse {
 export default function SubscriptionPage() {
   const { t } = useTranslation();
   const subscriptionTranslations = t("subscription");
-const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  
+  // Track client-side status to prevent hydration errors
   const [isClient, setIsClient] = useState(false);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [subscriptionData, setSubscriptionData] = useState<ApiResponse | null>(null);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-  const { cancelSubscription, resumeSubscription } = useSubscriptionMutations();
+  const { cancelSubscription, resumeSubscription, retryPayment, isRetrying } = useSubscriptionMutations();
   const isCanceling = cancelSubscription?.isPending;
   const isResuming = resumeSubscription?.isPending;
 
   // Check if user is in grace period (can resume subscription)
   const isInGracePeriod = (subscription: UserSubscription | null) => {
-    if (!subscription?.gracePeriodEnd) return false;
+    if (!subscription?.gracePeriodEnd || !isClient) return false;
     return new Date(subscription.gracePeriodEnd) > new Date();
   };
 
-  const refetchSubscriptionData = async () => {
-    try {
+  // Fetch data using React Query
+  const { 
+    data: subscriptionData, 
+    isLoading: isSubscriptionLoading,
+    error: subscriptionError,
+    refetch: refetchSubscription  
+  } = useQuery<ApiResponse>({
+    queryKey: ['userSubscriptionDetails'],
+    queryFn: async () => {
       const response = await axiosInstance.get('/api/user/subscription-details');
-      setSubscriptionData(response.data);
-    } catch (error) {
-      console.error("Failed to refetch subscription details", error);
-      toast.error("Could not load your subscription details.");
-    }
-  };
+      return response.data;
+    },
+  });
 
-  useEffect(() => {
-  if (subscriptionData) {
-    const gracePeriodActive = 
-      (currentSubscription && isInGracePeriod(currentSubscription)) ||
-      (subscriptionData.otherPlanCurrentStatus?.monthly?.canResume) ||
-      (subscriptionData.otherPlanCurrentStatus?.one_time?.canResume);
-      
-    setHasActiveGracePeriod(!!gracePeriodActive);
-  }
-}, [subscriptionData]);
+  const { 
+    data: plans, 
+    isLoading: isPlansLoading,
+    error: plansError 
+  } = useQuery<Plan[]>({
+    queryKey: ['plans'],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/admin/subscription");
+      return response.data.filter((plan: Plan) => plan.isActive);
+    },
+  });
 
-  useEffect(() => {
-    setIsClient(true);
-    const fetchInitialData = async () => {
-      try {
-        const [detailsResponse, plansResponse] = await Promise.all([
-          axiosInstance.get('/api/user/subscription-details'),
-          axiosInstance.get("/api/admin/subscription")
-        ]);
-        
-        setSubscriptionData(detailsResponse.data);
-        setPlans(plansResponse.data.filter((plan: Plan) => plan.isActive));
-      } catch (err) {
-        setError("Failed to fetch data");
-        console.error("Error fetching data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchInitialData();
-  }, []);
+  // Compute grace period status
+  const hasActiveGracePeriod = isClient && subscriptionData ? (
+    (subscriptionData.currentSubscription?.status === 'canceled' && 
+     isInGracePeriod(subscriptionData.currentSubscription)) ||
+    (subscriptionData.otherPlanCurrentStatus?.monthly?.status === 'canceled' && 
+     subscriptionData.otherPlanCurrentStatus?.monthly?.canResume) ||
+    (subscriptionData.otherPlanCurrentStatus?.one_time?.status === 'canceled' && 
+     subscriptionData.otherPlanCurrentStatus?.one_time?.canResume)
+  ) : false;
 
   const handleCancelSubscription = (subscriptionId: string) => {
     if (window.confirm("Are you sure you want to cancel your subscription?")) {
-      cancelSubscription(subscriptionId, {
-        onSuccess: () => refetchSubscriptionData()
-      });
+      cancelSubscription(subscriptionId);
     }
   };
 
   const handleResumeSubscription = (subscriptionId: string) => {
-    console.log("🚀 ~ handleResumeSubscription ~ handleResumeSubscription:", subscriptionId)
-    resumeSubscription(subscriptionId, {
-      onSuccess: () => refetchSubscriptionData()
-    });
+    resumeSubscription(subscriptionId);
   };
+
+  const handleRetryPayment = (subscriptionId: string) => {
+    retryPayment(subscriptionId);
+  };
+  
+  if (isSubscriptionLoading || isPlansLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p>Loading Plans...</p>
+      </div>
+    );
+  }
+
+  if (subscriptionError || plansError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-red-500">
+          {subscriptionError?.message || plansError?.message || "Failed to load data"}
+        </p>
+      </div>
+    );
+  }
 
   const handlePayment = async (planId: string, planName: string) => {
     setIsProcessing(planId);
@@ -211,7 +222,7 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
     try {
       await axiosInstance.post('/api/payments/restart-free');
       toast.success("Free plan restarted successfully!");
-      await refetchSubscriptionData();
+      refetchSubscription();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to restart free plan.");
     } finally {
@@ -219,24 +230,10 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
     }
   };
 
-  if (!isClient || isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p>Loading Plans...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   const currentSubscription = subscriptionData?.currentSubscription;
   const currentPlanName = currentSubscription?.planId.name || "Free";
+  const isPaymentFailed = currentSubscription?.status === 'payment_failed';
+  
   const showFreePlanButton = !currentSubscription || 
                            (currentSubscription?.planId?.billingPeriod === 'free' && 
                             currentSubscription.status === 'active') ||
@@ -272,7 +269,14 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                       <p className="text-gray-600">
                         {subscriptionTranslations.currentPlan.description}
                       </p>
-                      {currentSubscription?.status === 'canceled' && currentSubscription?.endDate && (
+                      
+                      {isPaymentFailed && (
+                        <p className="text-sm text-red-600 mt-1">
+                          Your last payment attempt failed. Please retry payment to avoid service interruption.
+                        </p>
+                      )}
+                      
+                      {isClient && currentSubscription?.status === 'canceled' && currentSubscription?.endDate && (
                         <p className="text-sm text-orange-600 mt-1">
                           {isInGracePeriod(currentSubscription) ? (
                             `You can resume until ${new Date(currentSubscription.gracePeriodEnd).toLocaleDateString()}`
@@ -290,12 +294,16 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                         ? 'border-green-300 bg-green-50 text-green-800'
                         : currentSubscription?.status === 'canceled'
                           ? 'border-gray-300 bg-gray-100 text-gray-800'
+                        : isPaymentFailed
+                          ? 'border-red-300 bg-red-50 text-red-800'
                           : 'border-yellow-300 bg-yellow-50 text-yellow-800'
                     }`}
                   >
                     {currentSubscription?.status === 'active' 
                       ? subscriptionTranslations.currentPlan.status 
-                      : currentSubscription?.status?.charAt(0).toUpperCase() + currentSubscription?.status?.slice(1)}
+                      : isPaymentFailed
+                        ? "Payment Failed"
+                        : currentSubscription?.status?.charAt(0).toUpperCase() + currentSubscription?.status?.slice(1)}
                   </Badge>
                 </div>
               </CardContent>
@@ -311,43 +319,37 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                                   currentSubscription?.planId?.billingPeriod !== "free" && 
                                   currentSubscription?.status === "active";
               
-              // NEW: Check if this plan has a canceled status in otherPlanCurrentStatus
               const planStatus = subscriptionData?.otherPlanCurrentStatus?.[plan.billingPeriod as 'monthly' | 'one_time'];
-              console.log("🚀 ~ planStatus:", planStatus)
               const isCanceledAndCanResume = planStatus?.status === 'canceled' && planStatus?.canResume;
               
               return (
                 <motion.div key={plan._id} {...fadeInUp} transition={{ delay: index * 0.1 }}>
-                 <Card className={`relative h-full flex flex-col 
-  ${isCurrentPlan && currentSubscription?.status === 'active' 
-    ? "border-[#243b31]  shadow-lg" 
-    : plan.isPopular 
-      ? " shadow-lg" 
-      : "border-gray-200 hover:shadow-md"
-  } transition-all duration-300`}
->
+                  <Card className={`relative h-full flex flex-col 
+                    ${isCurrentPlan && currentSubscription?.status === 'active' 
+                      ? "border-[#243b31] shadow-lg" 
+                      : plan.isPopular 
+                        ? "shadow-lg" 
+                        : "border-gray-200 hover:shadow-md"
+                    } transition-all duration-300`}
+                  >
+                    {isCurrentPlan && currentSubscription?.status === 'active' && (
+                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10 shadow-md">
+                        <span className="flex items-center">
+                          <Check className="h-4 w-4 mr-1" />
+                          {subscriptionTranslations.plans.current || "Current Plan"}
+                        </span>
+                      </Badge>
+                    )}
 
-
-
-
-
-{isCurrentPlan && currentSubscription?.status === 'active' && (
-  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10 shadow-md">
-    <span className="flex items-center">
-      <Check className="h-4 w-4 mr-1" />
-      {subscriptionTranslations.plans.current || "Current Plan"}
-    </span>
-  </Badge>
-)}
-
-{plan.isPopular && !isCurrentPlan && (
-  <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 z-10 shadow-md transition-all">
-    <span className="flex items-center">
-      <Crown className="h-4 w-4 mr-1" />
-      {subscriptionTranslations.plans.basic.popular}
-    </span>
-  </Badge>
-)}
+                    {plan.isPopular && !isCurrentPlan && (
+                      <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 z-10 shadow-md transition-all">
+                        <span className="flex items-center">
+                          <Crown className="h-4 w-4 mr-1" />
+                          {subscriptionTranslations.plans.basic.popular}
+                        </span>
+                      </Badge>
+                    )}
+                    
                     <CardHeader className="text-center pb-4">
                       <div className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor || 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                         {isFreePlan && <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />}
@@ -398,24 +400,32 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                       <div className="pt-2 space-y-2">
                         {isCurrentPlan ? (
                           <>
-                              {/* Only show cancel button for monthly subscriptions */}
-    {currentSubscription?.status === 'active' && plan.billingPeriod === 'monthly' && (
-      <Button
-        variant="outline"
-        className="w-full border-red-500 text-red-600 hover:bg-red-50"
-        onClick={() => handleCancelSubscription(currentSubscription._id)}
-        disabled={isCanceling}
-      >
-        {isCanceling ? "Canceling..." : "Cancel Subscription"}
-      </Button>
-    )}
-    
-    {/* For Lifetime plan, show a disabled button instead */}
-    {currentSubscription?.status === 'active' && plan.billingPeriod === 'one_time' && (
-      <Button variant="outline" className="w-full" disabled>
-        Lifetime Access (Active)
-      </Button>
-    )}
+                            {currentSubscription?.status === 'active' && plan.billingPeriod === 'monthly' && (
+                              <Button
+                                variant="outline"
+                                className="w-full border-red-500 text-red-600 hover:bg-red-50"
+                                onClick={() => handleCancelSubscription(currentSubscription._id)}
+                                disabled={isCanceling}
+                              >
+                                {isCanceling ? "Canceling..." : "Cancel Subscription"}
+                              </Button>
+                            )}
+                            
+                            {currentSubscription?.status === 'active' && plan.billingPeriod === 'one_time' && (
+                              <Button variant="outline" className="w-full" disabled>
+                                Lifetime Access (Active)
+                              </Button>
+                            )}
+                            
+                            {isPaymentFailed && (
+                              <Button
+                                className="w-full bg-red-600 hover:bg-red-700 text-white"
+                               onClick={() => retryPayment(currentSubscription._id)}
+                                 disabled={isRetrying}
+                              >
+                                {isRetrying ? "Processing..." : "Retry Payment"}
+                              </Button>
+                            )}
                             
                             {currentSubscription?.status === 'canceled' && isInGracePeriod(currentSubscription) && (
                               <Button
@@ -423,15 +433,13 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                                 onClick={() => handleResumeSubscription(currentSubscription._id)}
                                 disabled={isResuming}
                               >
-                                {isResuming ? "Resuming..." : "Resume Subscription1"}666
+                                {isResuming ? "Resuming..." : "Resume Subscription"}
                               </Button>
                             )}
                             
                             {(currentSubscription?.status === 'active' && isFreePlan) && (
                               <Button variant="outline" className="w-full" disabled>
-                               
-  {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
-
+                                {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
                               </Button>
                             )}
                           </>
@@ -443,52 +451,51 @@ const [hasActiveGracePeriod, setHasActiveGracePeriod] = useState(false);
                               disabled
                               title="Cancel your paid plan first"
                             >
-                               {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
+                              {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
                             </Button>
                           ) :  (
-      <Button
-        className="w-full bg-black hover:bg-gray-800 text-white"
-        size="lg"
-        onClick={handleRestartFreePlan}
-        disabled={isProcessing === 'free' || !showFreePlanButton}
-      >
-        {isProcessing === 'free' 
-          ? "Processing..." 
-          : showFreePlanButton
-            ? subscriptionTranslations.plans.restartFree
-            : subscriptionTranslations.plans.current}22222222
-      </Button>
-    )
+                            <Button
+                              className="w-full bg-black hover:bg-gray-800 text-white"
+                              size="lg"
+                              onClick={handleRestartFreePlan}
+                              disabled={isProcessing === 'free' || !showFreePlanButton}
+                            >
+                              {isProcessing === 'free' 
+                                ? "Processing..." 
+                                : showFreePlanButton
+                                  ? subscriptionTranslations.plans.restartFree
+                                  : subscriptionTranslations.plans.current}
+                            </Button>
+                          )
                         ) : (
-                          // NEW: Handle resume for other plans
                           isCanceledAndCanResume ? (
                             <Button
                               className="w-full bg-green-600 hover:bg-green-700 text-white"
                               onClick={() => handleResumeSubscription(planStatus?.subscriptionId)}
                               disabled={isResuming}
                             >
-                              {isResuming ? "Resuming..." : "Resume Subscription2"}3333
+                              {isResuming ? "Resuming..." : "Resume Subscription"}
                             </Button>
                           ) : (
-                         <Button
-  className={`w-full ${plan.isPopular ? "bg-[#547455] hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
-  size="lg"
-  onClick={() => 
-    plan.billingPeriod === 'monthly' 
-      ? handlePayment(plan._id, plan.name)
-      : handleLifeTimePayment(plan._id, plan.name)
-  }
-  disabled={
-    isProcessing === plan._id || 
-    (currentSubscription?.status === 'active' && 
-     currentSubscription?.planId?.billingPeriod !== 'free') ||
-    hasActiveGracePeriod  // Add this line to disable during grace period
-  }
->
-  {isProcessing === plan._id 
-    ? "Processing..." 
-    : plan.ctaButtonText || subscriptionTranslations.plans.choose}
-</Button>
+                            <Button
+                              className={`w-full ${plan.isPopular ? "bg-[#547455] hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
+                              size="lg"
+                              onClick={() => 
+                                plan.billingPeriod === 'monthly' 
+                                  ? handlePayment(plan._id, plan.name)
+                                  : handleLifeTimePayment(plan._id, plan.name)
+                              }
+                              disabled={
+                                isProcessing === plan._id || 
+                                (currentSubscription?.status === 'active' && 
+                                  currentSubscription?.planId?.billingPeriod !== 'free') ||
+                                hasActiveGracePeriod
+                              }
+                            >
+                              {isProcessing === plan._id 
+                                ? "Processing..." 
+                                : plan.ctaButtonText || subscriptionTranslations.plans.choose}
+                            </Button>
                           )
                         )}
                       </div>
