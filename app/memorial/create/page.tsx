@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Swal from 'sweetalert2'
+;
 import {
   ArrowLeft,
   Upload,
@@ -564,13 +566,32 @@ export default function CreateMemorialPage() {
         variant: "default",
       });
       router.push("/dashboard");
-    } catch (error) {
-      console.error("Error creating memorial:", error);
+    } catch (error: any) {
+      
+    // Check if it's a subscription-related error
+    if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Upgrade Required',
+        text: error.response?.data?.message || "You need a premium subscription to use this feature",
+        showCancelButton: true,
+        confirmButtonText: 'View Plans',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#E53935',
+        cancelButtonColor: '#6e7881',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/subscription');
+        }
+      });
+    } else {
+      // Show generic error for other issues
       toast({
         title: "Error",
-        description: "Failed to create memorial. Please try again.",
+        description: error.response?.data?.message || "Failed to create memorial. Please try again.",
         variant: "destructive",
       });
+    }
     }
   };
 
@@ -1186,13 +1207,13 @@ export default function CreateMemorialPage() {
                         onClick={handleAddFamilyMember}
                       >
                         <Users className="h-4 w-4 mr-2" />
-                        {createMemorialTranslations.familyTree.placeholder.button}
+                        {createMemorialTranslations?.familyTree?.placeholder?.button}
                       </Button>
 
                       {mediaFiles.familyTree.length > 0 && (
                         <div className="mt-6">
                           <h3 className="font-semibold text-gray-900 mb-4">
-                            {createMemorialTranslations.familyTree.members.title}
+                            {createMemorialTranslations?.familyTree?.members?.title}
                           </h3>
                           <div className="space-y-2">
                             {mediaFiles.familyTree.map((member, index) => (

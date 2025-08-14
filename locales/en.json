@@ -1126,8 +1126,7 @@
       "deactivatePlan": "Deactivate Plan",
       "planName": "Plan Name",
       "planDescription": "Description",
-      "monthlyPrice": "Monthly Price ($)",
-      "yearlyPrice": "Yearly Price ($)",
+      "price": "Price ($)",
       "oneTimePayment": "One-time Payment Plan",
       "markPopular": "Mark as Popular",
       "planActive": "Plan Active",
@@ -1206,5 +1205,11 @@
     "subscription": "Subscription",
     "profile": "Profile",
     "logout": "Logout"
-  }
+  },
+
+
+  "subscription_management": {
+  "my_subscription_tab": "My Subscription",
+  "manage_plans_tab": "Manage Plans"
+}
 }

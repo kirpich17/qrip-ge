@@ -33,6 +33,7 @@ const Plans = () => {
 
 
   const [plans, setPlans] = useState<Plan[]>([]);
+  console.log("🚀 ~ Plans ~ plans:", plans)
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,7 +167,7 @@ const Plans = () => {
 
                 <CardContent className="pt-0 pb-8">
                   <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
+                   {plan?.features?.map((feature, featureIndex) => (
                       <li
                         key={featureIndex}
                         className="flex items-start space-x-3"
@@ -175,7 +176,7 @@ const Plans = () => {
                           <Check className="h-3 w-3 text-[#243b31]" />
                         </div>
                         <span className="text-gray-700 text-sm leading-relaxed">
-                          {feature}
+                          {feature.text}
                         </span>
                       </li>
                     ))}
