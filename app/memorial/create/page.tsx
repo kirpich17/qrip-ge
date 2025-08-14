@@ -621,7 +621,7 @@ export default function CreateMemorialPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your subscription details...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -707,17 +707,19 @@ export default function CreateMemorialPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
-                    <Avatar className="md:h-24 md:w-24 h-12 w-12">
-                      <AvatarImage
-                        src={formData.profileImage ?
-                          URL.createObjectURL(formData.profileImage) :
-                          "/placeholder.svg?height=96&width=96"}
-                      />
-                      <AvatarFallback className="text-2xl">
-                        {formData.firstName[0]}
-                        {formData.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
+           <div className="relative w-24 h-24 rounded-full overflow-hidden">
+  <img
+    src={
+      typeof formData.profileImage === "string"
+        ? formData.profileImage
+        : formData.profileImage
+        ? URL.createObjectURL(formData.profileImage) // File → string URL
+        : "/default-avatar.png"
+    }
+   
+    className="object-cover"
+  />
+</div>
                     <div className="flex md:justify-start justify-center flex-col">
                       <label htmlFor="profileImageUpload" className="w-fit">
                         <Button
