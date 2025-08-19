@@ -110,7 +110,7 @@ const Herobanner = () => {
                 </p>
               </motion.div>
 
-              <motion.div
+              {/* <motion.div
                 variants={fadeInLeft}
                 className="flex flex-col sm:flex-row gap-4"
               >
@@ -134,9 +134,9 @@ const Herobanner = () => {
                     {heroTranslations.demoButton}
                   </Button>
                 </Link>
-              </motion.div>
+              </motion.div> */}
 
-              <motion.div
+              {/* <motion.div
                 variants={fadeInLeft}
                 className="flex items-center space-x-8 pt-4"
               >
@@ -158,7 +158,7 @@ const Herobanner = () => {
                     {heroTranslations.stats.memories}
                   </div>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
 
             {/* Right Side - Tudor-style Memorial Stone */}

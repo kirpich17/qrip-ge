@@ -86,6 +86,25 @@ const Plans = () => {
   //   },
   // ];
 
+  if (isLoading) {
+    return (
+      <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <p>Loading plans...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <p>Error: {error}</p>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="md:py-20 py-8 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -211,7 +230,7 @@ const Plans = () => {
           ))}
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -228,7 +247,7 @@ const Plans = () => {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

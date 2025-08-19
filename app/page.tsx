@@ -47,11 +47,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
       <Herobanner />
+
+      <Plans />
       <Howitwork />
       <Features />
-      <Plans />
       <Testimonials />
-      <Memories />
+      {/* <Memories /> */}
     </div>
   );
 }
