@@ -17,7 +17,7 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleLanguage = () => setIsLanguageOpen((prev) => !prev);
 
-  const handleLanguageChange = (lang: "English" | "Georgian") => {
+  const handleLanguageChange = (lang: "English" | "Georgian" | "Russian") => {
     setLanguage(lang);
     setIsLanguageOpen(false);
   };
@@ -79,6 +79,13 @@ const Header = () => {
                           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Georgian
+                        </button>
+
+                         <button
+                          onClick={() => handleLanguageChange("Russian")}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Russian
                         </button>
                       </div>
                     </motion.div>

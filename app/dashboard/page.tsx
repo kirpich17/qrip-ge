@@ -40,6 +40,9 @@ import { getDeleteMemorial, getMemorials } from "@/services/memorialService";
 import { toast } from "react-toastify";
 import IsUserAuth from "@/lib/IsUserAuth/page";
 import { getUserDetails } from "@/services/userService";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/services/axiosInstance";
+
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -55,6 +58,7 @@ const staggerContainer = {
 };
 
 function Dashboard() {
+  const router = useRouter();
   const { t } = useTranslation();
   const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
@@ -65,6 +69,7 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const limit = 5;
   const [profileData, setProfileData] = useState({});
   const [stats, setStats] = useState([
@@ -94,8 +99,6 @@ function Dashboard() {
     },
   ]);
 
-
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -107,7 +110,6 @@ function Dashboard() {
     };
     fetchUserData();
   }, []);
-
 
   useEffect(() => {
     const fetchMemorials = async () => {
@@ -126,7 +128,6 @@ function Dashboard() {
     fetchMemorials();
   }, [currentPage, searchQuery]);
 
-
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
       try {
@@ -137,6 +138,23 @@ function Dashboard() {
         console.error("Failed to delete memorial:", error);
         toast.error("Failed to delete memorial");
       }
+    }
+  };
+
+  // NEW: Function to create draft memorial
+  const handleCreateDraftMemorial = async () => {
+    setIsCreatingDraft(true);
+    try {
+      const response = await axiosInstance.post('/api/memorials/create-draft');
+      const { memorialId } = response.data;
+      
+      // Redirect to plan selection page with the memorial ID
+      router.push(`/subscription?memorialId=${memorialId}`);
+    } catch (error: any) {
+      console.error("Failed to create draft memorial:", error);
+      toast.error(error.response?.data?.message || "Failed to create draft memorial");
+    } finally {
+      setIsCreatingDraft(false);
     }
   };
 
@@ -192,7 +210,6 @@ function Dashboard() {
     fetchStats();
   }, []);
 
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -212,27 +229,10 @@ function Dashboard() {
                   QRIP.ge
                 </span>
               </div>
-              {/* <Badge
-                variant="secondary"
-                className="bg-indigo-100 text-indigo-800 md:block hidden"
-              >
-                {dashboard.header.title}
-              </Badge> */}
             </div>
             <div className="flex items-center space-x-2">
-              {/* <Link href="/settings">
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4" />
-                  {dashboard.header.settings}
-                </Button>
-              </Link> */}
               <UserMenu
                 user={profileData}
-              // user={{
-              //   name: "John Doe",
-              //   email: "john@example.com",
-              //   plan: "Basic Premium",
-              // }}
               />
             </div>
           </div>
@@ -298,12 +298,15 @@ function Dashboard() {
                       {dashboard.memorials.subtitle}
                     </CardDescription>
                   </div>
-                  <Link href="/memorial/create">
-                    <Button className="bg-[#547455] hover:bg-[#243b31] text-white">
-                      <Plus className="h-4 w-4" />
-                      {dashboard.memorials.newMemorial}
-                    </Button>
-                  </Link>
+                  {/* MODIFIED: Changed from Link to Button with onClick handler */}
+                  <Button 
+                    onClick={handleCreateDraftMemorial}
+                    disabled={isCreatingDraft}
+                    className="bg-[#547455] hover:bg-[#243b31] text-white"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {isCreatingDraft ? "Creating..." : dashboard.memorials.newMemorial}
+                  </Button>
                 </div>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -322,7 +325,6 @@ function Dashboard() {
                   animate="animate"
                   className="space-y-4"
                 >
-
                   {memorials.map((memorial) => (
                     <motion.div key={memorial._id} variants={fadeInUp}>
                       <Link href={`/memorial/${memorial._id}`} target="_blank">
@@ -389,16 +391,6 @@ function Dashboard() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {/* <DropdownMenuItem asChild>
-                              <Link
-                                href={`/memorial/${memorial._id}`}
-                                target="_blank"
-                                className="flex items-center"
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                {dashboard.memorials.viewMemorial}
-                              </Link>
-                            </DropdownMenuItem> */}
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/memorial/edit/${memorial._id}`}
@@ -450,8 +442,6 @@ function Dashboard() {
                       Next
                     </Button>
                   </div>
-
-
                 </motion.div>
               </CardContent>
             </Card>
@@ -465,15 +455,15 @@ function Dashboard() {
                 <CardTitle>{dashboard.quickActions.title}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Link href="/memorial/create">
-                  <Button
-                    className="w-full justify-start bg-transparent mb-2"
-                    variant="outline"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    {dashboard.quickActions.createMemorial}
-                  </Button>
-                </Link>
+                <Button
+                  onClick={handleCreateDraftMemorial}
+                  disabled={isCreatingDraft}
+                  className="w-full justify-start bg-transparent mb-2"
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {isCreatingDraft ? "Creating..." : dashboard.quickActions.createMemorial}
+                </Button>
                 <Link href="/qr-generator">
                   <Button
                     className="w-full justify-start bg-transparent mb-2"
@@ -547,42 +537,3 @@ const DashboardPage = () => {
   )
 }
 export default DashboardPage;
-
-// "dashboard": {
-//     "header": {
-//       "title": "Dashboard",
-//       "welcome": "Welcome back, {name}",
-//       "subtitle": "Manage your memorials and honor the memories of your loved ones"
-//     },
-//     "stats": {
-//       "totalMemorials": "Total Memorials",
-//       "totalViews": "Total Views",
-//       "qrScans": "QR Scans",
-//       "familyMembers": "Family Members"
-//     },
-//     "memorials": {
-//       "title": "Your Memorials",
-//       "subtitle": "Manage and view your created memorials",
-//       "searchPlaceholder": "Search memorials...",
-//       "newMemorial": "New Memorial",
-//       "viewMemorial": "View Memorial",
-//       "edit": "Edit",
-//       "downloadQR": "Download QR",
-//       "delete": "Delete",
-//       "deleteConfirm": "Are you sure you want to delete this memorial?",
-//       "active": "Active",
-//       "draft": "Draft"
-//     },
-//     "quickActions": {
-//       "title": "Quick Actions",
-//       "createMemorial": "Create Memorial",
-//       "generateQR": "Generate QR Code",
-//       "manageSubscription": "Manage Subscription"
-//     },
-//     "recentActivity": {
-//       "title": "Recent Activity",
-//       "qrScanned": "QR code scanned for {name}",
-//       "memorialUpdated": "Memorial updated for {name}",
-//       "photoAdded": "New photo added to {name}"
-//     }
-//   }

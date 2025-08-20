@@ -37,10 +37,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
-import { ADD_MEMORIAL } from "@/services/apiEndPoint";
+import { ADD_MEMORIAL, GET_MEMORIAL, UPDATE_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
+import {  useParams, useRouter, useSearchParams } from "next/navigation";
 
 // Media limits configuration
 const MEDIA_LIMITS = {
@@ -174,11 +174,24 @@ interface UserDetails {
 
 export default function CreateMemorialPage() {
   const router = useRouter();
+
+   
+  //     const searchParams = useSearchParams();
+  // const memorialId = searchParams.get("memorialId"); // returns string | null
+
+  const params = useParams();
+const memorialId = params.memorialId as string;
+
   const { t } = useTranslation();
   const { toast } = useToast();
   const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
 
+// const [memorialId, setMemorialId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
+  
   const [formData, setFormData] = useState({
+    _id: "", // Add _id field for editing
     firstName: "",
     lastName: "",
     birthDate: "",
@@ -194,6 +207,7 @@ export default function CreateMemorialPage() {
     }
   });
 
+  
   const [mediaFiles, setMediaFiles] = useState({
     photos: [] as File[],
     videos: [] as VideoItem[],
@@ -226,52 +240,53 @@ export default function CreateMemorialPage() {
   };
 
   // File validation function
-  const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
+// FIX: This function now uses 'minimal' and 'medium' instead of 'Free' and 'Plus'
+const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
     const errors: string[] = [];
     const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO : 
                   type === 'video' ? MEDIA_LIMITS.VIDEO : 
                   MEDIA_LIMITS.DOCUMENT;
 
-    // Check if user can upload this type
-    if (type === 'document' && userSubscription !== 'Premium') {
-      errors.push('Documents require Premium subscription');
+    // This check is correct as is
+    if (type === 'document' && userSubscription !== 'premium') {
+      errors.push('Documents require a Premium plan');
       return { valid: false, errors };
     }
 
-    // Check file count limits
+    // Check file count limits using the corrected plan names
     const currentCount = type === 'photo' ? mediaFiles.photos.length : 
                         type === 'video' ? mediaFiles.videos.length : 
                         mediaFiles.documents.length;
+                        
     const maxCount = type === 'photo' ? 
-      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
-       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL : 
+       userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
       type === 'video' ?
-      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
-       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL : 
+       userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
       limits.MAX_COUNT_PREMIUM;
 
     if (currentCount + files.length > maxCount) {
-      errors.push(`You can only upload ${maxCount} ${type}s with your current plan`);
+      errors.push(`You can only upload up to ${maxCount} ${type}s with your current plan.`);
     }
 
     // Validate each file
     Array.from(files).forEach(file => {
-      // Check file type
       if (!limits.ACCEPTED_TYPES.includes(file.type)) {
         errors.push(`Unsupported file type: ${file.name}`);
         return;
       }
 
-      // Check file size
+      // Check file size using the corrected plan names
       const maxSize = type === 'photo' ? 
-        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : limits.MAX_SIZE_PAID) :
+        (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL : limits.MAX_SIZE_PAID) :
         type === 'video' ?
-        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : 
-         userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
+        (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL : 
+         userSubscription === 'medium' ? limits.MAX_SIZE_MEDIUM : limits.MAX_SIZE_PREMIUM) :
         limits.MAX_SIZE_PREMIUM;
 
       if (file.size > maxSize) {
-        errors.push(`${file.name} exceeds maximum size of ${maxSize / (1024 * 1024)}MB`);
+        errors.push(`${file.name} exceeds the maximum size of ${maxSize / (1024 * 1024)}MB.`);
       }
     });
 
@@ -280,7 +295,6 @@ export default function CreateMemorialPage() {
       errors
     };
   };
-
   // Subscription check functions
   const canUploadMedia = () => userSubscription !== "Free";
   const canUploadDocuments = () => userSubscription === "Premium";
@@ -397,34 +411,39 @@ export default function CreateMemorialPage() {
     }));
   };
 
-  const handleDocumentsUpload = (files: FileList | null) => {
-    if (!files) return;
+const handleDocumentsUpload = (files: FileList | null) => {
+  if (!files) return;
 
-    const validation = validateFiles(files, 'document');
-    if (!validation.valid) {
-      toast({
-        title: "Upload Error",
-        description: validation.errors.join('\n'),
-        variant: "destructive",
-      });
-      return;
-    }
+  const validation = validateFiles(files, 'document');
+  console.log("🚀 ~ handleDocumentsUpload ~ validation:", validation)
+  if (!validation.valid) {
+    toast({
+      title: "Upload Error",
+      description: validation.errors.join('\n'),
+      variant: "destructive",
+    });
+    return;
+  }
 
-    if (!canUploadDocuments()) {
-      showUpgradeToast("Premium");
-      return;
-    }
+  // if (!canUploadDocuments()) {
+  //   showUpgradeToast("Premium");
+  //   return;
+  // }
 
-    const newDocuments = Array.from(files).map(file => ({
-      fileName: file.name,
-      file
-    }));
+  const newDocuments = Array.from(files).map(file => ({
+    fileName: file.name,
+    file
+  }));
 
-    setMediaFiles(prev => ({
+  setMediaFiles(prev => {
+    const updatedDocuments = [...prev.documents, ...newDocuments];
+    console.log("Updated documents:", updatedDocuments); // Debug log
+    return {
       ...prev,
-      documents: [...prev.documents, ...newDocuments]
-    }));
-  };
+      documents: updatedDocuments
+    };
+  });
+};
 
   const handleAddFamilyMember = () => {
     if (!canAddFamilyMembers()) {
@@ -487,6 +506,10 @@ export default function CreateMemorialPage() {
   };
 
   useEffect(() => {
+
+
+
+
     const fetchUserData = async () => {
       try {
         const userData = await getUserDetails();
@@ -507,8 +530,86 @@ export default function CreateMemorialPage() {
     fetchUserData();
   }, [toast]);
 
+
+
+
+
+  useEffect(() => {
+ // Check if we have a memorialId from payment success
+    // const paidMemorialId = localStorage.getItem('paidMemorialId');
+    if (memorialId) {
+      // setMemorialId(paidMemorialId);
+      setIsEditing(true);
+      fetchMemorialData(memorialId);
+      // localStorage.removeItem('paidMemorialId'); // Clean up
+    }
+
+
+      }, [memorialId]);
+
+
+    const fetchMemorialData = async (id: string) => {
+    setIsLoadingMemorial(true);
+    try {
+      const response = await axiosInstance.get(GET_MEMORIAL(id));
+      const memorial = response.data.data;
+      
+      // Populate form with existing memorial data
+      setFormData({
+        _id: memorial._id,
+        firstName: memorial.firstName || "",
+        lastName: memorial.lastName || "",
+        birthDate: memorial.birthDate ? new Date(memorial.birthDate).toISOString().split('T')[0] : "",
+        deathDate: memorial.deathDate ? new Date(memorial.deathDate).toISOString().split('T')[0] : "",
+        biography: memorial.biography || "",
+        epitaph: memorial.epitaph || "",
+        location: memorial.location || "",
+        isPublic: memorial.isPublic !== undefined ? memorial.isPublic : true,
+        profileImage: memorial.profileImage || null,
+        gps: memorial.gps || { lat: null, lng: null }
+      });
+
+      // Set achievements
+      if (memorial.achievements) {
+        setAchievements(memorial.achievements);
+      }
+
+      // Set family tree
+      if (memorial.familyTree) {
+        setMediaFiles(prev => ({
+          ...prev,
+          familyTree: memorial.familyTree
+        }));
+      }
+
+      // Note: For photos, videos, and documents, you might need to handle them differently
+      // as they are files that need to be downloaded or handled specially
+
+    } catch (error) {
+      console.error("Error fetching memorial data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load memorial data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingMemorial(false);
+    }
+  };
+
+
+
   const prepareFormData = () => {
+    
     const formDataToSend = new FormData();
+
+        // Add _id if we're editing
+    const memorialIdToUse = memorialId || formData._id;
+ if (memorialId) {
+    formDataToSend.append("_id", memorialId);
+    console.log("Adding memorial ID to form data:", memorialId);
+  }
+
     formDataToSend.append("firstName", formData.firstName);
     formDataToSend.append("lastName", formData.lastName);
     formDataToSend.append("birthDate", formData.birthDate);
@@ -527,9 +628,18 @@ export default function CreateMemorialPage() {
       formDataToSend.append(`achievements[${index}]`, achievement);
     });
 
-    if (formData.profileImage) {
+ 
+
+       // Handle profile image
+    if (formData.profileImage instanceof File) {
       formDataToSend.append("profileImage", formData.profileImage);
+    } else if (typeof formData.profileImage === 'string') {
+      // If it's a string (URL), we need to handle it differently
+      // You might want to add a flag to indicate this is an existing image
+      formDataToSend.append("profileImageUrl", formData.profileImage);
     }
+
+
     mediaFiles.photos.forEach((photo) => {
       formDataToSend.append("photoGallery", photo);
     });
@@ -553,16 +663,22 @@ export default function CreateMemorialPage() {
   const handleSaveMemorial = async (e?: React.FormEvent) => {
     e?.preventDefault();
     try {
+  console.log("🚀 ~ handleSaveMemorial called");
+  console.log("🚀 ~ memorialId from URL:", memorialId);
+  console.log("🚀 ~ formData._id:", formData._id);
+  console.log("🚀 ~ isEditing:", isEditing);
       const formDataToSend = prepareFormData();
-      const response = await axiosInstance.post(ADD_MEMORIAL, formDataToSend, {
+      // Use appropriate endpoint based on whether we're editing or creating
+      const response = await axiosInstance.post('/api/memorials/create-update', formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
-      console.log("Memorial created:", response.data);
+      
+      console.log("Memorial saved:", response.data);
       toast({
         title: "Success",
-        description: "Memorial created successfully!",
+         description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
         variant: "default",
       });
       router.push("/dashboard");
@@ -581,7 +697,7 @@ export default function CreateMemorialPage() {
         cancelButtonColor: '#6e7881',
       }).then((result) => {
         if (result.isConfirmed) {
-          router.push('/subscription');
+          router.push('/dashboard');
         }
       });
     } else {
@@ -615,8 +731,7 @@ export default function CreateMemorialPage() {
       </Link>
     </div>
   );
-
-  if (loadingSubscription) {
+  if (loadingSubscription || isLoadingMemorial) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -644,10 +759,10 @@ export default function CreateMemorialPage() {
             <div className="flex items-center space-x-3">
               <Button
                 className="bg-[#547455] hover:bg-white hover:text-[#547455]"
-                onClick={handleSaveMemorial}
+                 onClick={(e) => handleSaveMemorial(e)}
               >
                 <Save className="h-4 w-4" />
-                {createMemorialTranslations.header.save}
+                {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
               </Button>
             </div>
           </div>
@@ -662,10 +777,10 @@ export default function CreateMemorialPage() {
         >
           <div className="mb-8">
             <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
-              {createMemorialTranslations.title}
+             {isEditing ? "Edit Memorial" : createMemorialTranslations.title}
             </h1>
             <p className="text-gray-600 text-base">
-              {createMemorialTranslations.subtitle}
+              {isEditing ? "Update the memorial for your loved one" : createMemorialTranslations.subtitle}
             </p>
           </div>
 
@@ -1103,7 +1218,7 @@ export default function CreateMemorialPage() {
                           </p>
                           <Button
                             variant="outline"
-                            disabled={userSubscription !== 'Premium'}
+                            disabled={userSubscription !== 'premium'}
                             onClick={() => {
                               const input = document.createElement("input");
                               input.type = "file";
