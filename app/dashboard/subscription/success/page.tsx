@@ -35,7 +35,7 @@ export default function SubscriptionSuccessPage() {
     // Store the memorialId in localStorage or context to use in the create page
    if (memorialId) {
       // Navigate to memorial creation with the memorialId
-      router.push(`/memorial/edit/${memorialId}`);
+      router.push(`/memorial/create/${memorialId}`);
     } 
   };
 
