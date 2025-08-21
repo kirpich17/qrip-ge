@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/hooks/useTranslate";
+import { useRouter } from "next/navigation";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -37,6 +38,7 @@ type Plan = {
 const Plans = () => {
   const { t } = useTranslation();
   const plansTranslations = t("plans");
+    const router = useRouter();
 
   // Sample plans data matching the image
   const plans: Plan[] = [
@@ -103,6 +105,24 @@ const Plans = () => {
         return Star;
     }
   };
+  const clickHandler=()=>{
+
+    if (typeof window !== "undefined") {
+    const loginData = localStorage.getItem("loginData");
+    console.log("🚀 ~ clickHandler ~ loginData:", loginData)
+
+    if (loginData) {
+      // user is logged in → go to dashboard
+      // window.location.href = "/dashboard";
+      router.push("/dashboard")
+    } else {
+      // user not logged in → go to login
+      // window.location.href = "/login";
+      router.push("/login")
+    }
+
+  }
+  }
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
@@ -211,6 +231,7 @@ const Plans = () => {
                           : "bg-[#547455] hover:bg-[#547455] text-white"
                       }`}
                       size="lg"
+                      onClick={ clickHandler}
                     >
                       {getButtonText(plan.planType)}
                     </Button>

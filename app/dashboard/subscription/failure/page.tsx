@@ -33,19 +33,14 @@ const SubscriptionFailurePage = () => {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           {/* Primary Action: Go back to plans to try again */}
           <Link
-             href="/subscription"
+             href="/dashboard"
             className="w-full sm:w-auto bg-[#243b31] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#243b31] transition-colors duration-300"
           >
             Try Again
           </Link>
 
           {/* Secondary Action: Go back to the main dashboard */}
-          <Link
-            href="/dashboard"
-            className="w-full sm:w-auto text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors duration-300"
-          >
-            Back to Dashboard
-          </Link>
+        
         </div>
       </div>
     </div>
