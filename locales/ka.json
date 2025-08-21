@@ -252,7 +252,8 @@
       "title": "სწრაფი მოქმედებები",
       "createMemorial": "მემორიალის შექმნა",
       "generateQR": "QR კოდის გენერირება",
-      "manageSubscription": "გამოწერის მართვა"
+      "manageSubscription": "გამოწერის მართვა",
+      "managePlan": "გეგმის მართვა"
     },
     "recentActivity": {
       "title": "ბოლო აქტივობა",

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Swal from 'sweetalert2'
-;
+import Swal from 'sweetalert2';
 import {
   ArrowLeft,
   Upload,
@@ -40,7 +39,7 @@ import axiosInstance from "@/services/axiosInstance";
 import { ADD_MEMORIAL, GET_MEMORIAL, UPDATE_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
-import {  useParams, useRouter, useSearchParams } from "next/navigation";
+import {  useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Media limits configuration
 const MEDIA_LIMITS = {
@@ -56,7 +55,7 @@ const MEDIA_LIMITS = {
     MAX_SIZE_FREE: 50 * 1024 * 1024, // 50MB
     MAX_SIZE_PLUS: 200 * 1024 * 1024, // 200MB
     MAX_SIZE_PREMIUM: 500 * 1024 * 1024, // 500MB
-    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo'],
+    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo','video/avi',  'video/x-msvideo' ],
     MAX_DURATION_FREE: 30, // seconds
     MAX_DURATION_PLUS: 120, // seconds
     MAX_DURATION_PREMIUM: 300, // seconds
@@ -172,6 +171,16 @@ interface UserDetails {
   subscriptionPlan: "Free" | "Plus" | "Premium";
 }
 
+const LoadingOverlay = () => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 flex flex-col items-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mb-4"></div>
+      <p className="text-gray-700 font-medium">Saving memorial...</p>
+      <p className="text-gray-500 text-sm mt-1">This may take a few moments</p>
+    </div>
+  </div>
+);
+
 export default function CreateMemorialPage() {
   const router = useRouter();
 
@@ -180,6 +189,12 @@ export default function CreateMemorialPage() {
   // const memorialId = searchParams.get("memorialId"); // returns string | null
 
   const params = useParams();
+
+      const pathName=usePathname()
+       const isCreate= pathName.includes("/memorial/create");
+       console.log("🚀 ~ CreateMemorialPage ~ isCreate:", isCreate)
+   const isEdit =    pathName.includes("/memorial/edit");
+
 const memorialId = params.memorialId as string;
 
   const { t } = useTranslation();
@@ -189,7 +204,10 @@ const memorialId = params.memorialId as string;
 // const [memorialId, setMemorialId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
-  
+  const [isSaving, setIsSaving] = useState(false);
+
+
+
   const [formData, setFormData] = useState({
     _id: "", // Add _id field for editing
     firstName: "",
@@ -607,8 +625,18 @@ const handleDocumentsUpload = (files: FileList | null) => {
     const memorialIdToUse = memorialId || formData._id;
  if (memorialId) {
     formDataToSend.append("_id", memorialId);
-    console.log("Adding memorial ID to form data:", memorialId);
+ 
   }
+
+      if (isCreate) {
+      formDataToSend.append("createReq", "true");
+     
+    }
+
+    if (isEdit ) {
+    
+      formDataToSend.append("editReq", "true");
+    }
 
     formDataToSend.append("firstName", formData.firstName);
     formDataToSend.append("lastName", formData.lastName);
@@ -662,11 +690,13 @@ const handleDocumentsUpload = (files: FileList | null) => {
 
   const handleSaveMemorial = async (e?: React.FormEvent) => {
     e?.preventDefault();
+    setIsSaving(true); // Start loading
     try {
   console.log("🚀 ~ handleSaveMemorial called");
   console.log("🚀 ~ memorialId from URL:", memorialId);
   console.log("🚀 ~ formData._id:", formData._id);
   console.log("🚀 ~ isEditing:", isEditing);
+     console.log("Adding memorial ID to form data:", isCreate,isEdit);
       const formDataToSend = prepareFormData();
       // Use appropriate endpoint based on whether we're editing or creating
       const response = await axiosInstance.post('/api/memorials/create-update', formDataToSend, {
@@ -700,7 +730,16 @@ const handleDocumentsUpload = (files: FileList | null) => {
           router.push('/dashboard');
         }
       });
-    } else {
+    }    // Check if it's a video duration error
+    else if (error.response?.data?.actionCode === "VIDEO_TOO_LONG") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Video Too Long',
+        text: error.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#E53935',
+      });
+    }else {
       // Show generic error for other issues
       toast({
         title: "Error",
@@ -708,7 +747,9 @@ const handleDocumentsUpload = (files: FileList | null) => {
         variant: "destructive",
       });
     }
-    }
+    }finally {
+    setIsSaving(false); // Stop loading regardless of success/failure
+  }
   };
 
   const SubscriptionRestricted = ({ requiredPlan = "Plus" }: { requiredPlan?: "Plus" | "Premium" }) => (
@@ -743,7 +784,8 @@ const handleDocumentsUpload = (files: FileList | null) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+   <div className="min-h-screen bg-gray-50 relative">
+     {isSaving && <LoadingOverlay />}
       <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -760,9 +802,18 @@ const handleDocumentsUpload = (files: FileList | null) => {
               <Button
                 className="bg-[#547455] hover:bg-white hover:text-[#547455]"
                  onClick={(e) => handleSaveMemorial(e)}
-              >
-                <Save className="h-4 w-4" />
-                {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
+               disabled={isSaving} // Disable button while saving
+>
+  {isSaving ? (
+    <>
+      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+      Saving...
+    </>
+  ) : (
+    <>
+      <Save className="h-4 w-4" />
+      {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
+    </>  )}
               </Button>
             </div>
           </div>
@@ -1120,12 +1171,12 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             {createMemorialTranslations.media.photos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: JPEG, PNG, WebP • Max {userSubscription === 'Free' ? '5MB' : '10MB'} per photo
+                            Supported: JPEG, PNG, WebP 
                           </p>
                           {mediaFiles.photos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Photos ({mediaFiles.photos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_PLUS : 'Unlimited'}):
+                                Selected Photos 
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.photos.map((photo, index) => (
@@ -1174,12 +1225,12 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             {createMemorialTranslations.media.videos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: MP4, MOV, AVI • Max {userSubscription === 'Free' ? '30s, 50MB' : userSubscription === 'Plus' ? '2min, 200MB' : '5min, 500MB'}
+                            Supported: MP4, MOV • Max {'1min'}
                           </p>
                           {mediaFiles.videos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Videos ({mediaFiles.videos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_PLUS : 'Unlimited'}):
+                                Selected Videos
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.videos.map((video, index) => (
@@ -1234,16 +1285,16 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             {createMemorialTranslations.media.documents.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: PDF, DOC, DOCX, TXT • Max 10MB • Premium only
+                            Supported: PDF, DOC, DOCX, TXT 
                           </p>
                           {mediaFiles.documents.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Documents ({mediaFiles.documents.length}/{MEDIA_LIMITS.DOCUMENT.MAX_COUNT_PREMIUM}):
+                                Selected Documents 
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.documents.map((doc, index) => (
-                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                  <div key={`doc-${index}-${doc.fileName}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
                                     <span className="text-xs truncate">{doc.fileName}</span>
                                     <Button
                                       variant="ghost"

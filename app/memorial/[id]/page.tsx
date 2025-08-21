@@ -313,7 +313,8 @@ export default function MemorialPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
-  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial)
+  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial?.planName
+)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -465,7 +466,7 @@ export default function MemorialPage() {
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
-  const isPremium = apiMemorial.plan === "Life Time" || apiMemorial.plan === "Monthly Premium" ;
+  const isPremium = apiMemorial.planName == "Premium Plan" 
 
   const nextImage = () => {
     if (!apiMemorial.photoGallery?.length) return;
@@ -771,7 +772,7 @@ export default function MemorialPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isPremium ? (
+                    {
                       apiMemorial.familyTree?.length > 0 ? (
                         <div className="space-y-3">
                           {apiMemorial.familyTree.map((member, index) => (
@@ -794,14 +795,8 @@ export default function MemorialPage() {
                           </p>
                         </div>
                       )
-                    ) : (
-                      <div className="text-center py-6">
-                        <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">
-                          Family tree available with premium
-                        </p>
-                      </div>
-                    )}
+                     
+                    }
                   </CardContent>
                 </Card>
               </motion.div>
@@ -818,7 +813,8 @@ export default function MemorialPage() {
                   <CardContent>
 
 
-                    {isPremium ? (
+                    {
+                    // isPremium ? (
                       apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
                         <div className="space-y-4 z-0">
                           <div className="h-64 rounded-lg overflow-hidden">
@@ -858,14 +854,15 @@ export default function MemorialPage() {
                           </p>
                         </div>
                       )
-                    ) : (
-                      <div className="text-center py-6">
-                        <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">
-                          GPS location available with premium 
-                        </p>
-                      </div>
-                    )}
+                    // ) : (
+                    //   <div className="text-center py-6">
+                    //     <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                    //     <p className="text-sm text-gray-600">
+                    //       GPS location available with premium 
+                    //     </p>
+                    //   </div>
+                    // )
+                    }
 
                   </CardContent>
                 </Card>

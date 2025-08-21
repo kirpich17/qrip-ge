@@ -271,7 +271,8 @@
       "title": "Quick Actions",
       "createMemorial": "Create Memorial",
       "generateQR": "Generate QR Code",
-      "manageSubscription": "Manage Subscription"
+      "manageSubscription": "Manage Subscription",
+      "managePlan": "Manage Plan"
     },
     "recentActivity": {
       "title": "Recent Activity",

@@ -273,7 +273,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {demomemorialTranslations.mediaGallery.title}
+                      {demomemorialTranslations.mediaGallery.title}23233
                     </CardTitle>
                     <CardDescription>
                       {demomemorialTranslations.mediaGallery.description}

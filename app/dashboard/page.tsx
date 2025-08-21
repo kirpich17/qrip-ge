@@ -65,6 +65,7 @@ function Dashboard() {
   const dashboard: any = dashboardTranslations;
   const [searchQuery, setSearchQuery] = useState("");
   const [memorials, setMemorials] = useState<Memorial[]>([]);
+  console.log("🚀 ~ Dashboard ~ memorials:", memorials)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -325,7 +326,13 @@ function Dashboard() {
                   animate="animate"
                   className="space-y-4"
                 >
-                  {memorials.map((memorial) => (
+                  {memorials.map((memorial) => 
+                    {
+
+                    
+                    if(memorial?.firstName !== "Untitled"){
+                      return(
+                    
                     <motion.div key={memorial._id} variants={fadeInUp}>
                       <Link href={`/memorial/${memorial._id}`} target="_blank">
                       <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
@@ -421,8 +428,8 @@ function Dashboard() {
                         </div>
                       </div>
                       </Link>
-                    </motion.div>
-                  ))}
+                    </motion.div>)}
+})}
                   <div className="flex justify-center items-center gap-4 mt-4">
                     <Button
                       variant="outline"
@@ -479,7 +486,7 @@ function Dashboard() {
                     variant="outline"
                   >
                     <Crown className="h-4 w-4 mr-2" />
-                    {dashboard.quickActions.manageSubscription}
+                    {dashboard.quickActions.managePlan}
                   </Button>
                 </Link>
               </CardContent>
