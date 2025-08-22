@@ -791,7 +791,7 @@ export default function MemorialPage() {
                       ) : (
                         <div className="text-center py-6">
                           <p className="text-sm text-gray-600">
-                            No family members added yet
+                                   {memorialTranslations.sections.family.noFamily}
                           </p>
                         </div>
                       )
@@ -850,7 +850,7 @@ export default function MemorialPage() {
                         <div className="text-center py-6">
                           <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">
-                            No location data available for this memorial
+                               {memorialTranslations.sections.location.noLocation}
                           </p>
                         </div>
                       )
@@ -889,7 +889,7 @@ export default function MemorialPage() {
                     ) : (
                       <div className="text-center py-6">
                         <p className="text-sm text-gray-600">
-                          No achievements added yet
+                        {memorialTranslations.sections.achievements.noAchievements}
                         </p>
                       </div>
                     )}

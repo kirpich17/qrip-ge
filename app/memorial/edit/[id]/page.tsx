@@ -103,17 +103,17 @@ export default function EditMemorialPage() {
   });
   const { t } = useTranslation();
   const editMemorialTranslations = t("editMemorial");
-
   const [mediaFiles, setMediaFiles] = useState({
     photos: [] as File[],
     videos: [] as VideoItem[],
     documents: [] as DocumentItem[],
     familyTree: [] as FamilyMember[],
   });
-
-
+  
+  
   const [selectedProfileImage, setSelectedProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  console.log(profileImagePreview,"profileImagePreview")
   const [updating, setUpdating] = useState(false);
   const [isEditingFamilyMember, setIsEditingFamilyMember] = useState<string | null>(null);
 
@@ -677,12 +677,12 @@ export default function EditMemorialPage() {
                           </Button>
                         )} */}
                       </div>
-                      <p className="text-sm text-gray-500 text-center md:text-left">
+                     {!profileImagePreview && <p className="text-sm text-gray-500 text-center md:text-left">
                         {
                           editMemorialTranslations.basicInfo.profileImage
                             .description
                         }
-                      </p>
+                      </p>}
                     </div>
                   </div>
 
@@ -1029,7 +1029,7 @@ export default function EditMemorialPage() {
                               input.click();
                             }}
                           >
-                            <Upload className="h-4 w-4 mr-2" />
+                            <Upload className="h-4 w-4 mr-2" />11
                             Upload Videos
                           </Button>
 
@@ -1271,11 +1271,11 @@ export default function EditMemorialPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            {editMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                            {editMemorialTranslations.familyTree?.familyMember}
                           </Label>
                           <Input
                             id="familyMemberName"
-                            placeholder="John Doe"
+                            placeholder={editMemorialTranslations.familyTree?.namePlaceholder}
                             value={newFamilyMember.name}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1288,11 +1288,11 @@ export default function EditMemorialPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            {editMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                            {editMemorialTranslations.familyTree?.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                            placeholder="Father"
+                           placeholder={editMemorialTranslations.familyTree?.relationshipPlaceholder}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({

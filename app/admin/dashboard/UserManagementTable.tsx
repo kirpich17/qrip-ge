@@ -133,7 +133,7 @@ export function UserManagementTable({
                     onClick={() => {
                       if (
                         confirm(
-                          `Are you sure you want to suspend ${user.name}?`
+                          `Are you sure you want to suspend ?`
                         )
                       ) {
                         console.log("Suspend user:", user._id);

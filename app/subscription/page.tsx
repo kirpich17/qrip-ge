@@ -15,10 +15,15 @@ const fadeInUp = {
 
 // A simple loading component to use as a fallback
 const LoadingPlans = () => {
+      const { t } = useTranslation();
+    const pageTranslations = t("selectPlanPage");
     return (
         <div className="text-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading Plans...</p>
+            <p className="mt-4 text-gray-600">
+                {/* Use optional chaining for safety in a fallback component */}
+                {pageTranslations?.loading?.text || 'Loading...'}
+            </p>
         </div>
     );
 }
@@ -26,7 +31,8 @@ const LoadingPlans = () => {
 
 export default function SelectMemorialPlanPage() {
   const { t } = useTranslation();
-  const subscriptionTranslations = t("subscription");
+  // Fetch translations from the new 'selectPlanPage' object
+  const translations = t("selectPlanPage");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,12 +41,12 @@ export default function SelectMemorialPlanPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center text-white hover:underline gap-2">
             <ArrowLeft className="h-5 w-5" />
-            {subscriptionTranslations.header.back}
+       {translations.header.back}
           </Link>
           <div className="flex items-center space-x-2">
             <Crown className="md:h-6 md:w-6 w-4 h-4 text-white" />
             <span className="md:text-xl text-base font-bold text-white">
-              Choose a Plan
+                 {translations.header.title}
             </span>
           </div>
         </div>
@@ -50,10 +56,10 @@ export default function SelectMemorialPlanPage() {
         <motion.div {...fadeInUp}>
           <div className="text-center mb-12">
             <h1 className="md:text-4xl text-2xl font-bold text-gray-900 md:mb-4 mb-3">
-              Select a Plan for Your Memorial
+            {translations.main.title}
             </h1>
             <p className="md:text-lg text-base text-gray-600 max-w-3xl mx-auto">
-              Choose one of the one-time payment plans below to create a beautiful and lasting digital memorial.
+              {translations.main.description}
             </p>
           </div>
           

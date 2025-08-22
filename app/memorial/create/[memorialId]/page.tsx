@@ -828,7 +828,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
         >
           <div className="mb-8">
             <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
-             {isEditing ? "Edit Memorial" : createMemorialTranslations.title}
+             { createMemorialTranslations.title}
             </h1>
             <p className="text-gray-600 text-base">
               {isEditing ? "Update the memorial for your loved one" : createMemorialTranslations.subtitle}
@@ -903,11 +903,13 @@ const handleDocumentsUpload = (files: FileList | null) => {
                           />
                         </Button>
                       </label>
+
+                      {!formData.profileImage &&
                       <p className="text-sm text-gray-500 md:text-left text-center">
                         {createMemorialTranslations.basicInfo.photoDescription}
                         <br />
                         Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
-                      </p>
+                      </p>}
                     </div>
                   </div>
 
@@ -1222,7 +1224,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            {createMemorialTranslations.media.videos.button}
+                            {createMemorialTranslations.media.videos.button}332
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
                             Supported: MP4, MOV • Max {'1min'}
@@ -1336,7 +1338,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            {createMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                            {createMemorialTranslations.familyTree?.familyMember}
                           </Label>
                           <Input
                             id="familyMemberName"
@@ -1353,7 +1355,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            {createMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                        {createMemorialTranslations.familyTree?.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"

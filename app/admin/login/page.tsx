@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
   useEffect(() => {
     const loginData = localStorage.getItem("loginData");
     if (loginData) {
-      router.push("/admin/dashboard"); // typo? maybe /admin/dashboard?
+      // router.push("/admin/dashboard"); // typo? maybe /admin/dashboard?
     }
   }, []);
 

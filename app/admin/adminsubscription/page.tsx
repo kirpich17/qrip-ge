@@ -70,7 +70,7 @@ type NewPlan = Omit<Plan, "_id">;
 
 function AdminSubscription() {
   const { t } = useTranslation();
-  const adsubscriptionTranslations = t("adsubscription");
+  const translations = t("adminSubscriptionPage");
 
   const [editingPlan, setEditingPlan] = useState<Plan | NewPlan | null>(null);
   const [isAddingPlan, setIsAddingPlan] = useState(false);
@@ -189,18 +189,18 @@ function AdminSubscription() {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center">Loading plans...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{error} <Button onClick={fetchPlans}>Retry</Button></div>;
+    if (isLoading) return <div className="p-8 text-center">{translations.states.loading}</div>;
+  if (error) return <div className="p-8 text-center text-red-500">{error} <Button onClick={fetchPlans}>{translations.states.retry}</Button></div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-[#243b31] py-4 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/admin/dashboard" className="flex items-center text-white hover:underline gap-2">
-            <ArrowLeft size={20} /> Back
+            <ArrowLeft size={20} /> {translations.header.back}
           </Link>
           <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <Crown size={24} /> Manage Subscription Plans
+            <Crown size={24} /> {translations.header.title}
           </h1>
         </div>
       </header>
@@ -208,9 +208,9 @@ function AdminSubscription() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div {...fadeInUp}>
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">Subscription Plans</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-3">{translations.main.title}</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-              Configure and customize all subscription plans for your platform.
+            {translations.main.description}
             </p>
             {/* <Button onClick={handleAddPlan} className="bg-[#243b31] hover:bg-[#547455]">
               <Plus size={16} className="mr-2" /> Add New Plan
@@ -239,40 +239,40 @@ function AdminSubscription() {
                 <div className="space-y-6">
                   {/* Section: Basic Details */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                    <h4 className="font-semibold text-gray-800">Basic Details</h4>
-                    <Input placeholder="Plan Name" value={editingPlan.name} onChange={(e) => handlePlanChange("name", e.target.value)} />
-                    <Textarea placeholder="Plan Description" value={editingPlan.description} onChange={(e) => handlePlanChange("description", e.target.value)} />
+                    <h4 className="font-semibold text-gray-800">{translations.modal.sectionBasic}</h4>
+                    <Input placeholder={translations.modal.placeholders.name}  value={editingPlan.name} onChange={(e) => handlePlanChange("name", e.target.value)} />
+                    <Textarea placeholder={translations.modal.placeholders.description}  value={editingPlan.description} onChange={(e) => handlePlanChange("description", e.target.value)} />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="relative">
-                        <Input type="number" placeholder="Price" value={editingPlan.price} onChange={(e) => handlePlanChange("price", Number(e.target.value))} />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">GEL</span>
+                        <Input type="number" placeholder={translations.modal.placeholders.price} value={editingPlan.price} onChange={(e) => handlePlanChange("price", Number(e.target.value))} />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{translations.modal.currency}</span>
                       </div>
                       <select value={editingPlan.planType} onChange={(e) => handlePlanChange("planType", e.target.value)} className="w-full border border-gray-300 px-3 py-2 rounded-md">
-                        <option value="minimal">Minimal</option>
-                        <option value="medium">Medium</option>
-                        <option value="premium">Premium</option>
+                        <option value="minimal">{translations.modal.planTypes.minimal}</option>
+                        <option value="medium">{translations.modal.planTypes.medium}</option>
+                        <option value="premium">{translations.modal.planTypes.premium}</option>
                       </select>
                     </div>
                   </div>
 
                   {/* Section: Feature Configuration */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                     <h4 className="font-semibold text-gray-800">Core Feature Configuration</h4>
+                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionCoreFeatures}</h4>
                      <div className="space-y-4">
                         {/* Photo Settings */}
                         <div className={`p-3 rounded-lg ${editingPlan.maxPhotos > 0 ? 'bg-green-50' : 'bg-gray-100'}`}>
                            <div className="flex items-center justify-between">
-                              <label htmlFor="allowPhotos" className="flex items-center gap-2 font-medium"><ImageIcon size={16} /> Allow Photo Uploads</label>
+                              <label htmlFor="allowPhotos" className="flex items-center gap-2 font-medium"><ImageIcon size={16} />{translations.modal.photos.label}</label>
                               <Switch id="allowPhotos" checked={editingPlan.maxPhotos > 0} onCheckedChange={handleAllowPhotosToggle} />
                            </div>
                            {editingPlan.maxPhotos > 0 && (
                               <div className="mt-4 pl-6 space-y-3">
                                  <div className="flex items-center gap-4">
-                                    <label htmlFor="maxPhotos" className="text-sm">Max Photos:</label>
+                                    <label htmlFor="maxPhotos" className="text-sm">{translations.modal.photos.maxLabel}</label>
                                     <Input id="maxPhotos" type="number" min={1} value={editingPlan.maxPhotos} onChange={(e) => handlePlanChange("maxPhotos", Number(e.target.value))} className="w-24 h-8" />
                                  </div>
                                  <div className="flex items-center justify-between">
-                                    <label htmlFor="allowSlideshow" className="text-sm">Enable Slideshow:</label>
+                                    <label htmlFor="allowSlideshow" className="text-sm">{translations.modal.photos.slideshowLabel}</label>
                                     <Switch id="allowSlideshow" checked={editingPlan.allowSlideshow} onCheckedChange={(c) => handlePlanChange("allowSlideshow", c)} />
                                  </div>
                               </div>
@@ -281,12 +281,12 @@ function AdminSubscription() {
                         {/* Video Settings */}
                         <div className={`p-3 rounded-lg ${editingPlan.allowVideos ? 'bg-green-50' : 'bg-gray-100'}`}>
                            <div className="flex items-center justify-between">
-                              <label htmlFor="allowVideos" className="flex items-center gap-2 font-medium"><Video size={16} /> Allow Video Uploads</label>
+                              <label htmlFor="allowVideos" className="flex items-center gap-2 font-medium"><Video size={16} /> {translations.modal.videos.label}</label>
                               <Switch id="allowVideos" checked={editingPlan.allowVideos} onCheckedChange={handleAllowVideosToggle} />
                            </div>
                            {editingPlan.allowVideos && (
                               <div className="mt-4 pl-6 flex items-center gap-4">
-                                 <label htmlFor="maxDuration" className="text-sm">Max Duration (seconds):</label>
+                                 <label htmlFor="maxDuration" className="text-sm">{translations.modal.videos.maxDurationLabel}</label>
                                  <Input id="maxDuration" type="number" min={1} value={editingPlan.maxVideoDuration} onChange={(e) => handlePlanChange("maxVideoDuration", Number(e.target.value))} className="w-24 h-8" />
                               </div>
                            )}
@@ -296,29 +296,29 @@ function AdminSubscription() {
 
                   {/* Section: Additional Features */}
                   <div className="p-4 border rounded-lg">
-                    <h4 className="font-semibold text-gray-800 mb-2">Additional Features List</h4>
+                    <h4 className="font-semibold text-gray-800 mb-2">{translations.modal.sectionAdditionalFeatures}</h4>
                     <div className="space-y-2 mb-3">
                       {editingPlan.features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-2">
-                          <Input value={feature.text} onChange={(e) => updateFeatureInPlan(index, "text", e.target.value)} placeholder="e.g., QR Code Generation" />
+                          <Input value={feature.text} onChange={(e) => updateFeatureInPlan(index, "text", e.target.value)} placeholder={translations.modal.placeholders.feature} />
                           <Switch checked={feature.included} onCheckedChange={(c) => updateFeatureInPlan(index, "included", c)} />
                           <Button variant="ghost" size="icon" onClick={() => removeFeatureFromPlan(index)}><Trash2 size={16} className="text-red-500" /></Button>
                         </div>
                       ))}
                     </div>
-                    <Button onClick={addFeatureToPlan} variant="outline" size="sm"><Plus size={16} className="mr-1" /> Add Feature</Button>
+                    <Button onClick={addFeatureToPlan} variant="outline" size="sm"><Plus size={16} className="mr-1" />{translations.modal.addFeature}</Button>
                   </div>
 
                   {/* Section: Plan Settings */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                     <h4 className="font-semibold text-gray-800">Plan Settings</h4>
-                      <Input placeholder="CTA Button Text (e.g., Get Started)" value={editingPlan.ctaButtonText} onChange={(e) => handlePlanChange("ctaButtonText", e.target.value)} />
+                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionSettings}</h4>
+                      <Input placeholder={translations.modal.placeholders.cta} value={editingPlan.ctaButtonText} onChange={(e) => handlePlanChange("ctaButtonText", e.target.value)} />
                       <div className="flex items-center justify-between">
-                          <label htmlFor="popular" className="font-medium">Mark as Popular</label>
+                          <label htmlFor="popular" className="font-medium">{translations.modal.markPopular}</label>
                           <Switch id="popular" checked={editingPlan.isPopular} onCheckedChange={(c) => handlePlanChange("isPopular", c)} />
                       </div>
                       <div className="flex items-center justify-between">
-                          <label htmlFor="active" className="font-medium">Set Plan as Active</label>
+                          <label htmlFor="active" className="font-medium">{translations.modal.setActive}</label>
                           <Switch id="active" checked={editingPlan.isActive} onCheckedChange={(c) => handlePlanChange("isActive", c)} />
                       </div>
                   </div>
@@ -326,7 +326,7 @@ function AdminSubscription() {
                   <div className="pt-4 border-t">
                     <Button onClick={handleSavePlan} className="w-full bg-[#243b31] hover:bg-[#547455]">
                       <Save size={16} className="mr-2" />
-                      {isAddingPlan ? "Save New Plan" : "Save Changes"}
+                      {isAddingPlan ? translations.modal.buttonSaveNew : translations.modal.buttonSaveChanges}
                     </Button>
                   </div>
                 </div>
@@ -339,8 +339,8 @@ function AdminSubscription() {
             {plans.map((plan) => (
               <motion.div key={plan._id} {...fadeInUp}>
                 <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border"} ${!plan.isActive ? "bg-gray-100 opacity-70" : "bg-white"}`}>
-                  {plan.isPopular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#547455]">Popular</Badge>}
-                  {!plan.isActive && <Badge variant="destructive" className="absolute top-3 right-3">Inactive</Badge>}
+                  {plan.isPopular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#547455]">{translations.card.popular}</Badge>}
+                  {!plan.isActive && <Badge variant="destructive" className="absolute top-3 right-3">{translations.card.inactive}</Badge>}
                   
                   <CardHeader className="text-center pb-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -351,17 +351,20 @@ function AdminSubscription() {
                     <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                     <CardDescription>{plan.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
-                      <span className="text-gray-600"> / one-time</span>
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}  {translations.modal.currency}</span>
+                      <span className="text-gray-600">{translations.card.oneTime}</span>
                     </div>
                   </CardHeader>
 
                   <CardContent className="pt-0 flex-grow flex flex-col">
                     <ul className="space-y-2 flex-grow">
                       {/* Dynamically generated features based on configuration */}
-                       <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos === 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
-                       <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
-                       <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
+              
+
+                         <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translations.card.features.unlimitedPhotos : translations.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
+
+                       <FeatureListItem included={plan.allowSlideshow} text={translations.card.features.slideshow} />
+                       <FeatureListItem included={plan.allowVideos}  text={translations.card.features.videoUploads.replace('{duration}', String(plan.maxVideoDuration))} />
                       {/* Additional features */}
                       {plan.features.map((feature, idx) => (
                         <FeatureListItem key={idx} included={feature.included} text={feature.text} />

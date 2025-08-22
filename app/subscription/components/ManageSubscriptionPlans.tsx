@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import axiosInstance from "@/services/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -49,7 +50,8 @@ type Plan = {
 
 export default function PlanSelection() {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
-
+  const { t } = useTranslation();
+  const translations = t("planSelection");
 
     const searchParams = useSearchParams();
   const memorialId = searchParams.get("memorialId");
@@ -66,11 +68,11 @@ export default function PlanSelection() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-10">Loading Plans...</div>;
+        return <div className="text-center py-10">{translations.loading}</div>;
   }
 
   if (error) {
-    return <div className="text-center py-10 text-red-500">Failed to load plans. Please try again later.</div>;
+     return <div className="text-center py-10 text-red-500">{translations.error}</div>;
   }
 
   // --- Payment Handler ---
@@ -86,10 +88,10 @@ export default function PlanSelection() {
         // Redirect the user to the payment gateway
         window.location.href = response.data.redirectUrl;
       } else {
-        toast.error("Could not initiate payment. Please try again.");
+             toast.error(translations.paymentError.initiate);
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || `Failed to start payment process.`);
+      toast.error(err.response?.data?.message  || translations.paymentError.process);
     } finally {
       setIsProcessing(null);
     }
@@ -105,7 +107,7 @@ export default function PlanSelection() {
           >
             {plan.isPopular && (
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10">
-                Popular
+              {translations.badgePopular}
               </Badge>
             )}
             
@@ -143,7 +145,7 @@ export default function PlanSelection() {
                   onClick={() => handleSelectPlan(plan._id)}
                   disabled={isProcessing === plan._id}
                 >
-                  {isProcessing === plan._id ? "Processing..." : plan.ctaButtonText || "Select Plan"}
+                   {isProcessing === plan._id ? translations.cta.processing : plan.ctaButtonText || translations.cta.selectPlan}
                 </Button>
               </div>
             </CardContent>

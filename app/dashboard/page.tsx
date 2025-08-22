@@ -63,6 +63,7 @@ function Dashboard() {
   const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
   const dashboard: any = dashboardTranslations;
+  console.log("🚀 ~ Dashboard ~ dashboard:", dashboard)
   const [searchQuery, setSearchQuery] = useState("");
   const [memorials, setMemorials] = useState<Memorial[]>([]);
   console.log("🚀 ~ Dashboard ~ memorials:", memorials)
@@ -71,29 +72,30 @@ function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
+  const [isCreatingDraft2, setIsCreatingDraft2] = useState(false);
   const limit = 5;
   const [profileData, setProfileData] = useState({});
   const [stats, setStats] = useState([
     {
-      label: "Total Memorials",
+      label: dashboard.stats.totalMemorials,
       value: "0",
       icon: Heart,
       color: "text-red-600",
     },
     {
-      label: "Total Views",
+      label: dashboard.stats.totalViews,
       value: "0",
       icon: Eye,
       color: "text-blue-600",
     },
     {
-      label: "QR Scans",
+      label:dashboard.stats.qrScans,
       value: "0",
       icon: QrCode,
       color: "text-green-600",
     },
     {
-      label: "Family Members",
+      label: dashboard.stats.familyMembers,
       value: "0",
       icon: Users,
       color: "text-purple-600",
@@ -129,6 +131,12 @@ function Dashboard() {
     fetchMemorials();
   }, [currentPage, searchQuery]);
 
+
+    // FIX: Create a derived state for memorials that are not "Untitled" drafts.
+  const filteredMemorials = memorials.filter(
+    (memorial) => memorial.firstName !== "Untitled"
+  );
+  
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
       try {
@@ -159,6 +167,24 @@ function Dashboard() {
     }
   };
 
+
+    const handleCreateDraftMemorial2 = async () => {
+    setIsCreatingDraft2(true);
+    try {
+      const response = await axiosInstance.post('/api/memorials/create-draft');
+      const { memorialId } = response.data;
+      
+      // Redirect to plan selection page with the memorial ID
+      router.push(`/subscription?memorialId=${memorialId}`);
+    } catch (error: any) {
+      console.error("Failed to create draft memorial:", error);
+      toast.error(error.response?.data?.message || "Failed to create draft memorial");
+    } finally {
+      setIsCreatingDraft2(false);
+    }
+  };
+
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -176,25 +202,25 @@ function Dashboard() {
           const apiData = result.data;
           setStats([
             {
-              label: "Total Memorials",
+                 label: dashboard.stats.totalMemorials,
               value: String(apiData.totalMemorials),
               icon: Heart,
               color: "text-red-600",
             },
             {
-              label: "Total Views",
+             label: dashboard.stats.totalViews,
               value: String(apiData.totalViews),
               icon: Eye,
               color: "text-blue-600",
             },
             {
-              label: "QR Scans",
+             label:dashboard.stats.qrScans,
               value: String(apiData.totalScans),
               icon: QrCode,
               color: "text-green-600",
             },
             {
-              label: "Family Members",
+             label: dashboard.stats.familyMembers,
               value: String(apiData.totalFamilyTreeCount),
               icon: Users,
               color: "text-purple-600",
@@ -326,13 +352,11 @@ function Dashboard() {
                   animate="animate"
                   className="space-y-4"
                 >
-                  {memorials.map((memorial) => 
-                    {
+                   {filteredMemorials.map((memorial) => (
+                    
 
                     
-                    if(memorial?.firstName !== "Untitled"){
-                      return(
-                    
+                  
                     <motion.div key={memorial._id} variants={fadeInUp}>
                       <Link href={`/memorial/${memorial._id}`} target="_blank">
                       <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
@@ -428,27 +452,35 @@ function Dashboard() {
                         </div>
                       </div>
                       </Link>
-                    </motion.div>)}
-})}
-                  <div className="flex justify-center items-center gap-4 mt-4">
-                    <Button
-                      variant="outline"
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    >
-                      Previous
-                    </Button>
-                    <span className="text-sm text-gray-700">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage((prev) => prev + 1)}
-                    >
-                      Next
-                    </Button>
-                  </div>
+                    </motion.div>)
+)}
+
+                  {/* FIX: New robust logic for pagination and "No Memorials Found" message */}
+                  {!loading && filteredMemorials.length === 0 && (
+                    <p className="text-center text-gray-500 py-8">No Memorials Found</p>
+                  )}
+               
+                {filteredMemorials.length > 0 && totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-4 mt-4">
+                      <Button
+                        variant="outline"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-gray-700">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  )}
                 </motion.div>
               </CardContent>
             </Card>
@@ -463,13 +495,13 @@ function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
-                  onClick={handleCreateDraftMemorial}
-                  disabled={isCreatingDraft}
+                  onClick={handleCreateDraftMemorial2}
+                  disabled={isCreatingDraft2}
                   className="w-full justify-start bg-transparent mb-2"
                   variant="outline"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  {isCreatingDraft ? "Creating..." : dashboard.quickActions.createMemorial}
+                  {isCreatingDraft2 ? "Creating..." : dashboard.quickActions.createMemorial}
                 </Button>
                 <Link href="/qr-generator">
                   <Button
@@ -480,7 +512,7 @@ function Dashboard() {
                     {dashboard.quickActions.generateQR}
                   </Button>
                 </Link>
-                <Link href="/subscription">
+                {/* <Link href="/subscription">
                   <Button
                     className="w-full justify-start bg-transparent"
                     variant="outline"
@@ -488,7 +520,7 @@ function Dashboard() {
                     <Crown className="h-4 w-4 mr-2" />
                     {dashboard.quickActions.managePlan}
                   </Button>
-                </Link>
+                </Link> */}
               </CardContent>
             </Card>
 

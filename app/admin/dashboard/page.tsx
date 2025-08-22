@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Heart, DollarSign, Search, Bell, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 import {
   Card,
   CardContent,
@@ -45,7 +46,7 @@ function AdminDashboardPage() {
   const [memorialPage, setMemorialPage] = useState(1);
   const [memorialLimit] = useState(10);
   const [totalMemorialPages, setTotalMemorialPages] = useState(1);
-
+  const [hasSearched, setHasSearched] = useState(false);
   const fetchStats = async () => {
     try {
       const res = await axiosInstance.get("/api/admin/stats");
@@ -87,8 +88,11 @@ function AdminDashboardPage() {
       );
       setUsers(res.data.users);
       setTotalUserPages(res.data.pagination.totalPages);
+       setHasSearched(true);
     } catch (error) {
       console.log(error);
+      setUsers([]);
+       setHasSearched(true);
     }
   };
 
@@ -114,8 +118,14 @@ function AdminDashboardPage() {
   };
   const memorailStatusToggle = async (id) => {
     try {
-      await axiosInstance.patch(`/api/admin/toggle-status-memorial/${id}`);
+      const res =  await axiosInstance.patch(`/api/admin/toggle-status-memorial/${id}`);
       fetchAllMemorials();
+      console.log("🚀 ~ memorailStatusToggle ~ res:", res)
+if(res.data.status == 'active')
+       toast.success(res.data.message);
+      else if(res.data.status == 'inactive') {
+  toast.error(res.data.message);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -223,6 +233,7 @@ function AdminDashboardPage() {
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
                         setUserPage(1);
+                        setHasSearched(false);
                       }}
                       className="pl-10 text-black"
                     />
@@ -230,6 +241,15 @@ function AdminDashboardPage() {
                 </div>
               </CardHeader>
               <CardContent>
+
+                {users.length === 0 && hasSearched ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">
+                      {admindashTranslations.userManagement.noResults || "No users found"}
+                    </p>
+                  </div>
+                ) : (
+                  <>
                 <UserManagementTable
                   users={users}
                   fetchAllUsers={fetchAllUsers}
@@ -259,6 +279,7 @@ function AdminDashboardPage() {
                     </Button>
                   </div>
                 </div>
+                </>)}
               </CardContent>
             </Card>
           </TabsContent>

@@ -76,8 +76,8 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.log("🚀 ~ handleLogin ~ error:", error)
-      if (error?.response?.status === 400) {
-        toast.error(error?.response?.message || "Invalid credentials");
+      if (error?.response?.status === 400 || error?.response?.status === 401) {
+        toast.error(error?.response?.data?.message || "Invalid credentials");
       } else if (error?.response?.status === 404) {
         toast.error("Something went wrong. Please try again.");
       } else {

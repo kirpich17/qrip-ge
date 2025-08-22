@@ -330,6 +330,8 @@
     "familyTree": {
       "title": "Family Tree",
       "description": "Build a family tree to show relationships and connections",
+        "familyMember":"Family Member Name",
+        "relationship":"Relationship",
       "placeholder": {
         "title": "Family Tree Builder",
         "description": "Create connections between family members and show relationships",
@@ -591,6 +593,12 @@
     "familyTree": {
       "title": "Family Tree",
       "description": "Edit family relationships and connections",
+          "familyMember":"Family Member Name",
+        "relationship":"Relationship",
+
+
+         "namePlaceholder": "e.g., John Doe",
+    "relationshipPlaceholder": "e.g., Father",
       "placeholder": {
         "title": "Family Tree Editor",
         "description": "Edit connections between family members and relationships",
@@ -739,16 +747,19 @@
     "sections": {
       "family": {
         "title": "Family",
-        "locked": "Family tree available with premium"
+        "locked": "Family tree available with premium",
+        "noFamily":"No family members added yet"
       },
       "location": {
         "title": "Memorial Location",
         "mapPlaceholder": "Interactive Map",
         "getDirections": "Get Directions",
-        "locked": "GPS location available with premium"
+        "locked": "GPS location available with premium",
+       "noLocation": "No location data available for this memorial"
       },
       "achievements": {
-        "title": "Achievements & Legacy"
+        "title": "Achievements & Legacy",
+        "noAchievements": "No achievements added yet"
       },
       "info": {
         "title": "Memorial Information",
@@ -1206,6 +1217,143 @@
 
   "subscription_management": {
   "my_subscription_tab": "My Subscription",
-  "manage_plans_tab": "Manage Plans"
+  "manage_plans_tab": "Manage Plans",
+   "payment_success":"Payment Successful!",
+   "thank_you":"Thank you for your purchase. You can now create a beautiful memorial for your loved one",
+  "create_memorial": "Create Your Memorial",
+  "loading": "Loading...",
+  "paymentFailed":{
+
+    "payment_failed":"Payment Failed",
+     "msg": "Unfortunately, we couldn't process your payment. This can happen for a few reasons.",
+     "troubleshooting_title": "Please check the following:",
+      "check_card_details": "Your card details (number, expiry date, CVC) are correct.",
+      "check_sufficient_funds": "You have sufficient funds in your account.",
+      "check_card_expiry": "Your card has not expired.",
+      "check_bank_block": "Your bank has not blocked the transaction.",
+      "try_again_button": "Try Again"
+     
+
+  }
+},
+
+
+  "selectPlanPage": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "Choose a Plan"
+    },
+    "main": {
+      "title": "Select a Plan for Your Memorial",
+      "description": "Choose one of the one-time payment plans below to create a beautiful and lasting digital memorial."
+    },
+    "loading": {
+      "text": "Loading Plans..."
+    }
+  },
+
+
+  
+"planSelection": {
+"loading": "Loading Plans...",
+"error": "Failed to load plans. Please try again later.",
+"paymentError": {
+"initiate": "Could not initiate payment. Please try again.",
+"process": "Failed to start payment process."
+},
+"badgePopular": "Popular",
+"oneTimePayment": "/ one-time",
+"features": {
+"photoUploads": "{count} Photo Uploads",
+"unlimitedPhotos": "Unlimited Photo Uploads",
+"slideshow": "Photo Slideshow",
+"videoUploads": "Video Uploads (Max {duration}s)"
+},
+"cta": {
+"processing": "Processing...",
+"selectPlan": "Select Plan"
 }
+},
+
+
+
+  "adminSubscriptionPage": {
+    "header": {
+      "back": "Back",
+      "title": "Manage Subscription Plans"
+    },
+    "main": {
+      "title": "Subscription Plans",
+      "description": "Configure and customize all subscription plans for your platform.",
+      "addNewPlan": "Add New Plan"
+    },
+    "states": {
+      "loading": "Loading plans...",
+      "retry": "Retry",
+      "error": {
+        "fetch": "Failed to fetch plans",
+        "create": "Failed to create new plan",
+        "update": "Failed to update plan"
+      }
+    },
+    "modal": {
+      "titleAdd": "Add New Plan",
+      "titleEdit": "Edit Plan",
+      "sectionBasic": "Basic Details",
+      "placeholders": {
+        "name": "Plan Name",
+        "description": "Plan Description",
+        "price": "Price",
+        "cta": "CTA Button Text (e.g., Get Started)",
+        "feature": "e.g., QR Code Generation"
+      },
+      "currency": "GEL",
+      "planTypes": {
+        "minimal": "Minimal",
+        "medium": "Medium",
+        "premium": "Premium"
+      },
+      "sectionCoreFeatures": "Core Feature Configuration",
+      "photos": {
+        "label": "Allow Photo Uploads",
+        "maxLabel": "Max Photos:",
+        "slideshowLabel": "Enable Slideshow:"
+      },
+      "videos": {
+        "label": "Allow Video Uploads",
+        "maxDurationLabel": "Max Duration (seconds):"
+      },
+      "sectionAdditionalFeatures": "Additional Features List",
+      "addFeature": "Add Feature",
+      "sectionSettings": "Plan Settings",
+      "markPopular": "Mark as Popular",
+      "setActive": "Set Plan as Active",
+      "buttonSaveNew": "Save New Plan",
+      "buttonSaveChanges": "Save Changes"
+    },
+    "card": {
+      "popular": "Popular",
+      "inactive": "Inactive",
+      "oneTime": "/ one-time",
+      "editPlan": "Edit Plan",
+      "features": {
+        "photoUploads": "{count} Photo Uploads",
+        "unlimitedPhotos": "Unlimited Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max {duration}s)"
+      }
+    }
+  }
+,
+
+  "userMenu": {
+    "logoutConfirm": "Are you sure you want to sign out?",
+    "planSuffix": " Plan",
+    "profile": "Profile",
+    "subscription": "Subscription",
+    "settings": "Settings",
+    "signOut": "Sign out"
+  }
+
+
 }

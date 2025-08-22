@@ -110,7 +110,7 @@ export function MemorialsTable({
                       variant="outline"
                       className={`${memorial.status === "active"
                         ? " border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
-                        : "border-blue-600 hover:bg-blue-600 text-blue-600 hover:text-white"
+                        : "border-red-600 hover:bg-red-600 text-red-600 hover:text-white"
                         } bg-transparent`}
                       onClick={() => {
                         memorailStatusToggle(memorial._id);

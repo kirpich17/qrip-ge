@@ -28,6 +28,7 @@ export default function SignupPage() {
   const commonTranslations = t("common");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordCon, setShowPasswordCon] = useState(false);
   const [showShippingForm, setShowShippingForm] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -210,9 +211,9 @@ export default function SignupPage() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
                       <Eye className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
                     )}
                   </Button>
                 </div>
@@ -225,7 +226,7 @@ export default function SignupPage() {
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type={showPassword ? "text" : "password"}
+                    type={showPasswordCon ? "text" : "password"}
                     placeholder={
                       authTranslations.signup.confirmPasswordPlaceholder
                     }
@@ -241,12 +242,12 @@ export default function SignupPage() {
                     variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => setShowPasswordCon(!showPasswordCon)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
+                    {showPasswordCon ? (
                       <Eye className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
                     )}
                   </Button>
                 </div>

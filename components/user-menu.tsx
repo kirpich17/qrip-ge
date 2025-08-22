@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/services/AuthUserData";
+import { useTranslation } from "@/hooks/useTranslate";
 
 interface UserMenuProps {
   user?: {
@@ -28,8 +29,12 @@ export function UserMenu({
 }: UserMenuProps) {
   const router = useRouter();
 
+    const { t } = useTranslation(); // Initialize the translation hook
+  const translations = t("userMenu"); // Get the specific translations for this component
+
+
   const handleLogout = () => {
-    if (confirm("Are you sure you want to sign out?")) {
+    if (confirm(translations.logoutConfirm)) {
       console.log("Logging out user");
       logoutUser();
       router.push("/");
@@ -66,7 +71,8 @@ export function UserMenu({
               <div className="flex items-center space-x-1 mt-1">
                 <Crown className="h-3 w-3 text-yellow-600" />
                 <span className="text-xs text-yellow-600 font-medium">
-                  {user.subscriptionPlan} Plan
+                                   {`${user.subscriptionPlan}${translations.planSuffix}`}
+
                 </span>
               </div>
             )}
@@ -76,13 +82,13 @@ export function UserMenu({
         <DropdownMenuItem asChild>
           <Link href="/profile" className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+           <span>{translations.profile}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/subscription" className="cursor-pointer">
             <Crown className="mr-2 h-4 w-4" />
-            <span>Subscription</span>
+                <span>{translations.subscription}</span>
           </Link>
         </DropdownMenuItem>
         {/* <DropdownMenuItem asChild>
@@ -97,7 +103,7 @@ export function UserMenu({
           className="cursor-pointer text-[#243b31] focus:text-[#243b31]"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Sign out</span>
+         <span>{translations.signOut}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

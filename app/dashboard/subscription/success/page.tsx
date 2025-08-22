@@ -9,6 +9,7 @@ import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useQueryClient } from '@tanstack/react-query'; 
+import { useTranslation } from '@/hooks/useTranslate';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -22,6 +23,13 @@ export default function SubscriptionSuccessPage() {
   const searchParams = useSearchParams();
   const memorialId = searchParams.get('memorialId');
   const [isLoading, setIsLoading] = useState(false);
+
+      const { t } = useTranslation();
+  
+    const subscriptionManageTranslations = t("subscription_management" as any);
+  const subscriptionManage: any = subscriptionManageTranslations;
+  console.log("🚀 ~ SubscriptionSuccessPage ~ subscriptionManage:", subscriptionManage)
+
 
   useEffect(() => {
     // When this page loads, it's a good idea to invalidate any cached
@@ -47,11 +55,15 @@ export default function SubscriptionSuccessPage() {
             <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
             
             <h1 className="text-2xl font-bold text-gray-800 mb-2">
-              Payment Successful!
+              
+              
+           {subscriptionManage.payment_success}
+
             </h1>
             
             <p className="text-gray-600 mb-6">
-              Thank you for your purchase. You can now create a beautiful memorial for your loved one.
+               {subscriptionManage.thank_you}
+
             </p>
             
             <Button
@@ -60,7 +72,7 @@ export default function SubscriptionSuccessPage() {
               size="lg"
               disabled={isLoading}
             >
-              {isLoading ? 'Loading...' : 'Create Your Memorial'}
+     {isLoading ? subscriptionManage.loading : subscriptionManage.create_memorial}
             </Button>
           </CardContent>
         </Card>
