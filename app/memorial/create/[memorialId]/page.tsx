@@ -18,6 +18,7 @@ import {
   X,
   AlertCircle,
   Lock,
+  Search, // Added import for the Search icon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -184,10 +185,6 @@ const LoadingOverlay = () => (
 export default function CreateMemorialPage() {
   const router = useRouter();
 
-   
-  //     const searchParams = useSearchParams();
-  // const memorialId = searchParams.get("memorialId"); // returns string | null
-
   const params = useParams();
 
       const pathName=usePathname()
@@ -201,15 +198,16 @@ const memorialId = params.memorialId as string;
   const { toast } = useToast();
   const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
 
-// const [memorialId, setMemorialId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-
+  // States for the geocoding feature
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [geocodingError, setGeocodingError] = useState("");
 
   const [formData, setFormData] = useState({
-    _id: "", // Add _id field for editing
+    _id: "",
     firstName: "",
     lastName: "",
     birthDate: "",
@@ -225,7 +223,6 @@ const memorialId = params.memorialId as string;
     }
   });
 
-  
   const [mediaFiles, setMediaFiles] = useState({
     photos: [] as File[],
     videos: [] as VideoItem[],
@@ -244,7 +241,55 @@ const memorialId = params.memorialId as string;
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState<string>("");
 
-  // Helper function to get video duration
+  // Function to handle geocoding from location text
+  const handleGeocodeLocation = async () => {
+    if (!formData.location) {
+      setGeocodingError("Please enter a location first");
+      return;
+    }
+  
+    setIsGeocoding(true);
+    setGeocodingError("");
+  
+    try {
+      // Using OpenStreetMap's Nominatim API (free, no API key required)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          formData.location
+        )}`
+      );
+      
+      if (!response.ok) {
+        throw new Error("Geocoding service unavailable");
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const firstResult = data[0];
+        setFormData(prev => ({
+          ...prev,
+          gps: {
+            lat: parseFloat(firstResult.lat),
+            lng: parseFloat(firstResult.lon)
+          }
+        }));
+        toast({
+          title: "Location found",
+          description: "GPS coordinates have been auto-filled",
+          variant: "default",
+        });
+      } else {
+        setGeocodingError("No location found. Please try a more specific location.");
+      }
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      setGeocodingError("Failed to fetch location data. Please enter coordinates manually.");
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
   const getVideoDuration = (file: File): Promise<number> => {
     return new Promise((resolve) => {
       const video = document.createElement('video');
@@ -288,7 +333,6 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
       errors.push(`You can only upload up to ${maxCount} ${type}s with your current plan.`);
     }
 
-    // Validate each file
     Array.from(files).forEach(file => {
       if (!limits.ACCEPTED_TYPES.includes(file.type)) {
         errors.push(`Unsupported file type: ${file.name}`);
@@ -401,7 +445,6 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
       return;
     }
 
-    // Additional video duration validation
     const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE : 
                        userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS : 
                        MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
@@ -524,10 +567,6 @@ const handleDocumentsUpload = (files: FileList | null) => {
   };
 
   useEffect(() => {
-
-
-
-
     const fetchUserData = async () => {
       try {
         const userData = await getUserDetails();
@@ -548,31 +587,19 @@ const handleDocumentsUpload = (files: FileList | null) => {
     fetchUserData();
   }, [toast]);
 
-
-
-
-
   useEffect(() => {
- // Check if we have a memorialId from payment success
-    // const paidMemorialId = localStorage.getItem('paidMemorialId');
     if (memorialId) {
-      // setMemorialId(paidMemorialId);
       setIsEditing(true);
       fetchMemorialData(memorialId);
-      // localStorage.removeItem('paidMemorialId'); // Clean up
     }
+  }, [memorialId]);
 
-
-      }, [memorialId]);
-
-
-    const fetchMemorialData = async (id: string) => {
+  const fetchMemorialData = async (id: string) => {
     setIsLoadingMemorial(true);
     try {
       const response = await axiosInstance.get(GET_MEMORIAL(id));
       const memorial = response.data.data;
       
-      // Populate form with existing memorial data
       setFormData({
         _id: memorial._id,
         firstName: memorial.firstName || "",
@@ -587,22 +614,16 @@ const handleDocumentsUpload = (files: FileList | null) => {
         gps: memorial.gps || { lat: null, lng: null }
       });
 
-      // Set achievements
       if (memorial.achievements) {
         setAchievements(memorial.achievements);
       }
 
-      // Set family tree
       if (memorial.familyTree) {
         setMediaFiles(prev => ({
           ...prev,
           familyTree: memorial.familyTree
         }));
       }
-
-      // Note: For photos, videos, and documents, you might need to handle them differently
-      // as they are files that need to be downloaded or handled specially
-
     } catch (error) {
       console.error("Error fetching memorial data:", error);
       toast({
@@ -615,26 +636,18 @@ const handleDocumentsUpload = (files: FileList | null) => {
     }
   };
 
-
-
   const prepareFormData = () => {
-    
     const formDataToSend = new FormData();
 
-        // Add _id if we're editing
-    const memorialIdToUse = memorialId || formData._id;
- if (memorialId) {
-    formDataToSend.append("_id", memorialId);
- 
-  }
-
-      if (isCreate) {
-      formDataToSend.append("createReq", "true");
-     
+    if (memorialId) {
+      formDataToSend.append("_id", memorialId);
     }
 
-    if (isEdit ) {
-    
+    if (isCreate) {
+      formDataToSend.append("createReq", "true");
+    }
+
+    if (isEdit) {
       formDataToSend.append("editReq", "true");
     }
 
@@ -656,17 +669,11 @@ const handleDocumentsUpload = (files: FileList | null) => {
       formDataToSend.append(`achievements[${index}]`, achievement);
     });
 
- 
-
-       // Handle profile image
     if (formData.profileImage instanceof File) {
       formDataToSend.append("profileImage", formData.profileImage);
     } else if (typeof formData.profileImage === 'string') {
-      // If it's a string (URL), we need to handle it differently
-      // You might want to add a flag to indicate this is an existing image
       formDataToSend.append("profileImageUrl", formData.profileImage);
     }
-
 
     mediaFiles.photos.forEach((photo) => {
       formDataToSend.append("photoGallery", photo);
@@ -690,22 +697,15 @@ const handleDocumentsUpload = (files: FileList | null) => {
 
   const handleSaveMemorial = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    setIsSaving(true); // Start loading
+    setIsSaving(true);
     try {
-  console.log("🚀 ~ handleSaveMemorial called");
-  console.log("🚀 ~ memorialId from URL:", memorialId);
-  console.log("🚀 ~ formData._id:", formData._id);
-  console.log("🚀 ~ isEditing:", isEditing);
-     console.log("Adding memorial ID to form data:", isCreate,isEdit);
       const formDataToSend = prepareFormData();
-      // Use appropriate endpoint based on whether we're editing or creating
       const response = await axiosInstance.post('/api/memorials/create-update', formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
       
-      console.log("Memorial saved:", response.data);
       toast({
         title: "Success",
          description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
@@ -713,43 +713,39 @@ const handleDocumentsUpload = (files: FileList | null) => {
       });
       router.push("/dashboard");
     } catch (error: any) {
-      
-    // Check if it's a subscription-related error
-    if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Upgrade Required',
-        text: error.response?.data?.message || "You need a premium subscription to use this feature",
-        showCancelButton: true,
-        confirmButtonText: 'View Plans',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#E53935',
-        cancelButtonColor: '#6e7881',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/dashboard');
-        }
-      });
-    }    // Check if it's a video duration error
-    else if (error.response?.data?.actionCode === "VIDEO_TOO_LONG") {
-      Swal.fire({
-        icon: 'error',
-        title: 'Video Too Long',
-        text: error.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#E53935',
-      });
-    }else {
-      // Show generic error for other issues
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to create memorial. Please try again.",
-        variant: "destructive",
-      });
+      if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Upgrade Required',
+          text: error.response?.data?.message || "You need a premium subscription to use this feature",
+          showCancelButton: true,
+          confirmButtonText: 'View Plans',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#E53935',
+          cancelButtonColor: '#6e7881',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/dashboard');
+          }
+        });
+      } else if (error.response?.data?.actionCode === "VIDEO_TOO_LONG") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Video Too Long',
+          text: error.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#E53935',
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.response?.data?.message || "Failed to create memorial. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSaving(false);
     }
-    }finally {
-    setIsSaving(false); // Stop loading regardless of success/failure
-  }
   };
 
   const SubscriptionRestricted = ({ requiredPlan = "Plus" }: { requiredPlan?: "Plus" | "Premium" }) => (
@@ -982,20 +978,44 @@ const handleDocumentsUpload = (files: FileList | null) => {
                       className="h-12"
                     />
                   </div>
-
+                  
+                  {/* --- ENHANCED LOCATION INPUT --- */}
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
                       {createMemorialTranslations.basicInfo.location}
                     </Label>
-                    <Input
-                      id="location"
-                      placeholder="Tbilisi, Georgia"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
-                      className="h-12"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="location"
+                        placeholder="Tbilisi, Georgia"
+                        value={formData.location}
+                        onChange={(e) => handleInputChange("location", e.target.value)}
+                        className="h-12 flex-1"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleGeocodeLocation}
+                        disabled={isGeocoding || !formData.location}
+                        variant="outline"
+                        className="h-12 whitespace-nowrap"
+                      >
+                        {isGeocoding ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#547455] mr-2"></div>
+                        ) : (
+                          <Search className="h-4 w-4 mr-2" />
+                        )}
+                        Auto-fill GPS
+                      </Button>
+                    </div>
+                    {geocodingError && (
+                      <p className="text-sm text-red-500 flex items-center pt-1">
+                        <AlertCircle className="h-4 w-4 mr-1" />
+                        {geocodingError}
+                      </p>
+                    )}
                   </div>
+                  {/* --- END OF ENHANCED LOCATION INPUT --- */}
 
                   <div className="space-y-2">
                     <Label htmlFor="biography">
@@ -1224,7 +1244,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            {createMemorialTranslations.media.videos.button}332
+                            {createMemorialTranslations.media.videos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
                             Supported: MP4, MOV • Max {'1min'}

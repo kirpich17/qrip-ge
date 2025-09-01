@@ -32,6 +32,7 @@ function AdminDashboardPage() {
   const admindashTranslations: any = t("admindash" as any);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchQueryMemorial, setSearchQueryMemorial] = useState("");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [stats, setStats] = useState([]);
   const [recentMemorials, setRecentMemorials] = useState([]);
@@ -87,7 +88,7 @@ function AdminDashboardPage() {
         `/api/admin/allusers?page=${userPage}&limit=${userLimit}&search=${searchQuery}`
       );
       setUsers(res.data.users);
-      setTotalUserPages(res.data.pagination.totalPages);
+      // setTotalUserPages(res.data.pagination.totalPages);
        setHasSearched(true);
     } catch (error) {
       console.log(error);
@@ -99,7 +100,7 @@ function AdminDashboardPage() {
   const fetchAllMemorials = async () => {
     try {
       const res = await axiosInstance.get(
-        `/api/admin/allmemorials?page=${memorialPage}&limit=${memorialLimit}`
+        `/api/admin/allmemorials?page=${memorialPage}&limit=${memorialLimit}&search=${searchQueryMemorial}`
       );
       setRecentMemorials(res.data.memorials || []);
       setTotalMemorialPages(res.data.pagination.totalPages);
@@ -141,7 +142,7 @@ if(res.data.status == 'active')
 
   useEffect(() => {
     fetchAllMemorials();
-  }, [memorialPage]);
+  }, [memorialPage,searchQueryMemorial]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -228,6 +229,7 @@ if(res.data.status == 'active')
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
+                    type='search'
                       placeholder="Search users..."
                       value={searchQuery}
                       onChange={(e) => {
@@ -256,7 +258,7 @@ if(res.data.status == 'active')
                   userStatusToggle={userStatusToggle}
                   translations={admindashTranslations.userManagement}
                 />
-                <div className="flex items-center justify-between mt-4">
+                {/* <div className="flex items-center justify-between mt-4">
                   <span className="text-sm text-gray-600">
                     Page {userPage} of {totalUserPages}
                   </span>
@@ -278,7 +280,7 @@ if(res.data.status == 'active')
                       Next
                     </Button>
                   </div>
-                </div>
+                </div> */}
                 </>)}
               </CardContent>
             </Card>
@@ -288,12 +290,30 @@ if(res.data.status == 'active')
           <TabsContent value="memorials" className="space-y-6">
             <Card>
               <CardHeader>
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div>
                 <CardTitle>
                   {admindashTranslations.recentMemorials.title}
                 </CardTitle>
                 <CardDescription>
                   {admindashTranslations.recentMemorials.description}
                 </CardDescription>
+</div>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
+                    <Input
+                    type='search'
+                      placeholder="Search memorial..."
+                      value={searchQueryMemorial}
+                      onChange={(e) => {
+                        setSearchQueryMemorial(e.target.value);
+                        setUserPage(1);
+                        setHasSearched(false);
+                      }}
+                      className="pl-10 text-black"
+                    />
+                  </div></div>
+
               </CardHeader>
               <CardContent>
                 <MemorialsTable
@@ -302,7 +322,7 @@ if(res.data.status == 'active')
                   fetchAllMemorials={fetchAllMemorials}
                   translations={admindashTranslations.recentMemorials}
                 />
-                <div className="flex items-center justify-between mt-4">
+                {/* <div className="flex items-center justify-between mt-4">
                   <span className="text-sm text-gray-600">
                     Page {memorialPage} of {totalMemorialPages}
                   </span>
@@ -326,7 +346,7 @@ if(res.data.status == 'active')
                       Next
                     </Button>
                   </div>
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           </TabsContent>

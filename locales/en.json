@@ -265,7 +265,8 @@
       "delete": "Delete",
       "deleteConfirm": "Are you sure you want to delete this memorial?",
       "active": "Active",
-      "draft": "Draft"
+      "draft": "Draft",
+      "managePlan": "Manage Plan" 
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -849,7 +850,19 @@
       "bio": "Bio",
       "bioPlaceholder": "Tell us a bit about yourself...",
       "saveChanges": "Save Changes"
+    },
+
+       "shippingInfo": {
+      "title": "Shipping Address",
+      "description": "Update your shipping address for physical deliveries.",
+      "fullName": "Full Name",
+      "address": "Street Address",
+      "phone": "Phone Number",
+      "zipCode": "ZIP / Postal Code",
+      "city": "City",
+      "country": "Country"
     }
+
   },
   "setting": {
     "header": {
@@ -1234,7 +1247,10 @@
       "try_again_button": "Try Again"
      
 
-  }
+  },
+  "plan_updated_success": "Plan Updated Successfully!",
+"plan_updated_msg": "Your subscription plan has been successfully updated.",
+"go_to_dashboard": "Go to Dashboard"
 },
 
 

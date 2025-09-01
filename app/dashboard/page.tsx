@@ -136,6 +136,7 @@ function Dashboard() {
   const filteredMemorials = memorials.filter(
     (memorial) => memorial.firstName !== "Untitled"
   );
+  console.log("🚀 ~ Dashboard ~ filteredMemorials:", filteredMemorials)
   
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
@@ -249,6 +250,8 @@ function Dashboard() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   className="p-2 bg-white rounded-xl"
+
+                    onClick={() => router.push("/")}
                 >
                   <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
                 </motion.div>
@@ -394,6 +397,23 @@ function Dashboard() {
                             >
                               {memorial.status}
                             </Badge>
+
+
+                              <Badge
+                              variant={
+                                memorial.status === "active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className=
+                                
+                                  "!bg-yellow-600 text-white"
+                                  
+                              
+                            >
+                              {memorial.purchase?.planId?.name}
+                            </Badge>
+
                           </div>
                           <p className="text-gray-600 mb-2 text-sm">
                             {memorial.dates}
@@ -431,6 +451,20 @@ function Dashboard() {
                                 {dashboard.memorials.edit}
                               </Link>
                             </DropdownMenuItem>
+
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/subscription?memorialId=${memorial._id}`}
+                                  className="flex items-center"
+                                >
+                                  <Crown className="h-4 w-4 mr-2" />
+                                  {dashboard.memorials.managePlan}
+                                  
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                
+                              </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link
                                 href="/qr-generator"
