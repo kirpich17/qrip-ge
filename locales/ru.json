@@ -1323,5 +1323,23 @@
     "subscription": "Подписка",
     "settings": "Настройки",
     "signOut": "Выйти"
+  },
+  "publicMemorials": {
+    "title": "Общая библиотека",
+    "description": "Просматривайте и открывайте для себя истории жизней, увековеченных на нашей платформе.",
+    "searchPlaceholder": "Поиск по имени...",
+    "sortByLabel": "Сортировать по:",
+    "sortOptions": {
+      "recent": "Самые новые",
+      "az": "А-Я"
+    },
+    "loading": "Загрузка мемориалов...",
+    "error": "Произошла ошибка при загрузке данных.",
+    "noMemorials": "Мемориалы не найдены.",
+    "pagination": {
+      "previous": "Назад",
+      "next": "Вперёд",
+      "pageInfo": "Страница {currentPage} из {totalPages}"
+    }
   }
 }

@@ -1364,5 +1364,23 @@
     "subscription": "გამოწერა",
     "settings": "პარამეტრები",
     "signOut": "გასვლა"
+  },
+    "publicMemorials": {
+    "title": "საერთო ბიბლიოთეკა",
+    "description": "აღმოაჩინეთ და გაეცანით ჩვენს პლატფორმაზე უკვდავყოფილი ცხოვრების ისტორიებს.",
+    "searchPlaceholder": "ძიება სახელით...",
+    "sortByLabel": "სორტირება:",
+    "sortOptions": {
+      "recent": "უახლესი",
+      "az": "ა-ჰ"
+    },
+    "loading": "მემორიალები იტვირთება...",
+    "error": "მონაცემების ჩატვირთვისას მოხდა შეცდომა.",
+    "noMemorials": "მემორიალები არ მოიძებნა.",
+    "pagination": {
+      "previous": "წინა",
+      "next": "შემდეგი",
+      "pageInfo": "გვერდი {currentPage} / {totalPages}"
+    }
   }
 }

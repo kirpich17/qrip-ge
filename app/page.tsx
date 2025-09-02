@@ -6,6 +6,7 @@ import Features from "./home/features";
 import Plans from "./home/plans";
 import Testimonials from "./home/testimonials";
 import Memories from "./home/memories";
+import PublicMemorials from "./home/publicMemorials";
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -51,6 +52,7 @@ export default function HomePage() {
       <Plans />
       <Howitwork />
       <Features />
+        <PublicMemorials /> 
       <Testimonials />
       {/* <Memories /> */}
     </div>

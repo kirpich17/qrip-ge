@@ -264,6 +264,8 @@ function Dashboard() {
               <UserMenu
                 user={profileData}
               />
+
+             <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">help</Link> 
             </div>
           </div>
         </div>

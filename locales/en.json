@@ -1370,6 +1370,25 @@
     "settings": "Settings",
     "signOut": "Sign out"
   }
+,
 
+  "publicMemorials": {
+    "title": "Shared Library",
+    "description": "Browse and discover the stories of lives celebrated on our platform.",
+    "searchPlaceholder": "Search by name...",
+    "sortByLabel": "Sort by:",
+    "sortOptions": {
+      "recent": "Most Recent",
+      "az": "A-Z"
+    },
+    "loading": "Loading memorials...",
+    "error": "An error occurred while fetching data.",
+    "noMemorials": "No memorials found.",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {currentPage} of {totalPages}"
+    }
+  }
 
 }
