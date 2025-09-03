@@ -197,6 +197,7 @@ function QRPageTransition({
             </div>
 
             {/* Content */}
+            
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
               {hasPremium ? (
                 <div className="max-w-2xl mx-auto">

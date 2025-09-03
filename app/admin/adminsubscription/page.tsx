@@ -247,11 +247,11 @@ function AdminSubscription() {
                         <Input type="number" placeholder={translations.modal.placeholders.price} value={editingPlan.price} onChange={(e) => handlePlanChange("price", Number(e.target.value))} />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{translations.modal.currency}</span>
                       </div>
-                      <select value={editingPlan.planType} onChange={(e) => handlePlanChange("planType", e.target.value)} className="w-full border border-gray-300 px-3 py-2 rounded-md">
+                      {/* <select disabled value={editingPlan.planType} onChange={(e) => handlePlanChange("planType", e.target.value)} className="w-full border border-gray-300 px-3 py-2 rounded-md">
                         <option value="minimal">{translations.modal.planTypes.minimal}</option>
                         <option value="medium">{translations.modal.planTypes.medium}</option>
                         <option value="premium">{translations.modal.planTypes.premium}</option>
-                      </select>
+                      </select> */}
                     </div>
                   </div>
 
@@ -298,25 +298,29 @@ function AdminSubscription() {
                   <div className="p-4 border rounded-lg">
                     <h4 className="font-semibold text-gray-800 mb-2">{translations.modal.sectionAdditionalFeatures}</h4>
                     <div className="space-y-2 mb-3">
-                      {editingPlan.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2">
+                      {editingPlan.features.map((feature, index) => {
+                        if(feature?.text !=="Family Tree"){
+                        return(                        
+                          <div key={index} className="flex items-center gap-2">
                           <Input value={feature.text} onChange={(e) => updateFeatureInPlan(index, "text", e.target.value)} placeholder={translations.modal.placeholders.feature} />
                           <Switch checked={feature.included} onCheckedChange={(c) => updateFeatureInPlan(index, "included", c)} />
                           <Button variant="ghost" size="icon" onClick={() => removeFeatureFromPlan(index)}><Trash2 size={16} className="text-red-500" /></Button>
-                        </div>
-                      ))}
+                          </div>)}
+                        
+                        
+})}
                     </div>
-                    <Button onClick={addFeatureToPlan} variant="outline" size="sm"><Plus size={16} className="mr-1" />{translations.modal.addFeature}</Button>
+                    {/* <Button onClick={addFeatureToPlan} variant="outline" size="sm"><Plus size={16} className="mr-1" />{translations.modal.addFeature}</Button> */}
                   </div>
 
                   {/* Section: Plan Settings */}
                   <div className="space-y-4 p-4 border rounded-lg">
                      <h4 className="font-semibold text-gray-800">{translations.modal.sectionSettings}</h4>
-                      <Input placeholder={translations.modal.placeholders.cta} value={editingPlan.ctaButtonText} onChange={(e) => handlePlanChange("ctaButtonText", e.target.value)} />
-                      <div className="flex items-center justify-between">
+                      {/* <Input placeholder={translations.modal.placeholders.cta} value={editingPlan.ctaButtonText} onChange={(e) => handlePlanChange("ctaButtonText", e.target.value)} /> */}
+                      {/* <div className="flex items-center justify-between">
                           <label htmlFor="popular" className="font-medium">{translations.modal.markPopular}</label>
                           <Switch id="popular" checked={editingPlan.isPopular} onCheckedChange={(c) => handlePlanChange("isPopular", c)} />
-                      </div>
+                      </div> */}
                       <div className="flex items-center justify-between">
                           <label htmlFor="active" className="font-medium">{translations.modal.setActive}</label>
                           <Switch id="active" checked={editingPlan.isActive} onCheckedChange={(c) => handlePlanChange("isActive", c)} />
@@ -370,10 +374,10 @@ function AdminSubscription() {
                         <FeatureListItem key={idx} included={feature.included} text={feature.text} />
                       ))}
                     </ul>
-                    {/* <Separator className="my-6" />
+                  <Separator className="my-6" />
                     <Button variant="outline" onClick={() => handleEditPlan(plan)}>
                       <Edit size={16} className="mr-2" /> Edit Plan
-                    </Button> */}
+                    </Button> 
                   </CardContent>
                 </Card>
               </motion.div>

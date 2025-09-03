@@ -73,7 +73,7 @@ function Dashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [isCreatingDraft2, setIsCreatingDraft2] = useState(false);
-  const limit = 5;
+  const limit = 10;
   const [profileData, setProfileData] = useState({});
   const [stats, setStats] = useState([
     {

@@ -30,6 +30,7 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const BASE_URL=process.env.NEXT_PUBLIC_BASE_URL
 
   useEffect(() => {
     const loginData = localStorage.getItem("loginData");
@@ -45,7 +46,9 @@ export default function AdminLoginPage() {
 
     try {
       const response = await axios.post(
-        "https://qrip-ge-backend.vercel.app/api/admin/signIn",
+        `${BASE_URL}api/admin/signIn`,
+        
+
         {
           email,
           password,
