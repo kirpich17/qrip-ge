@@ -83,6 +83,7 @@ interface Memorial {
   location?: string;
   createdAt: string;
   updatedAt: string;
+  allowSlideshow:boolean
 }
 
 function QRPageTransition({
@@ -314,7 +315,7 @@ export default function MemorialPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
-  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial?.planName
+  console.log("🚀 ~ MemorialPage ~ apiMemorial:",apiMemorial?.allowSlideshow
 )
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -607,7 +608,7 @@ export default function MemorialPage() {
                               alt={`Memory ${currentImageIndex + 1}`}
                               className="w-full h-96 object-cover rounded-lg"
                             />
-                            {apiMemorial.photoGallery?.length > 1 && (
+                            {apiMemorial.photoGallery?.length > 1 && apiMemorial?.allowSlideshow &&(
                               <div className="absolute inset-0 flex items-center justify-between p-4">
                                 <Button
                                   variant="secondary"

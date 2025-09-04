@@ -15,6 +15,10 @@ import {
   Save,
   ImageIcon,
   Video,
+  Gift, // New icon for promo codes
+  Calendar, // For expiry
+  Tag, // For discount type
+  Users, // For max usage
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +37,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format, addDays, addWeeks, addMonths } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -68,6 +86,20 @@ type Plan = {
 
 type NewPlan = Omit<Plan, "_id">;
 
+// --- PROMO CODE TYPES ---
+type PromoCode = {
+  _id: string;
+  code: string;
+  discountType: "percentage" | "fixed" | "free";
+  discountValue: number; // Percentage (e.g., 20) or fixed amount (e.g., 10 GEL)
+  expiryDate: string; // ISO date string
+  maxUsage?: number;
+  currentUsage?: number;
+  isActive: boolean;
+};
+
+type NewPromoCode = Omit<PromoCode, "_id" | "currentUsage">;
+
 function AdminSubscription() {
   const { t } = useTranslation();
   const translations = t("adminSubscriptionPage");
@@ -77,6 +109,37 @@ function AdminSubscription() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Promo Code States
+  // const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+
+
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([
+  {
+    _id: "1",
+    code: "SUMMER20",
+    discountType: "percentage",
+    discountValue: 20,
+    expiryDate: "2024-12-31",
+    maxUsage: 100,
+    currentUsage: 42,
+    isActive: true,
+  },
+  {
+    _id: "2",
+    code: "WELCOME10",
+    discountType: "fixed",
+    discountValue: 10,
+    expiryDate: "2024-10-31",
+    maxUsage: undefined,
+    currentUsage: 0,
+    isActive: true,
+  },
+]);
+  const [editingPromoCode, setEditingPromoCode] = useState<PromoCode | NewPromoCode | null>(null);
+  const [isAddingPromoCode, setIsAddingPromoCode] = useState(false);
+  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+
 
   const fetchPlans = async () => {
     setIsLoading(true);
@@ -90,10 +153,21 @@ function AdminSubscription() {
     }
   };
 
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await axiosInstance.get("/api/admin/promocodes");
+      setPromoCodes(response.data);
+    } catch (err) {
+      setError("Failed to fetch promo codes");
+    }
+  };
+
   useEffect(() => {
     fetchPlans();
+    // fetchPromoCodes();
   }, []);
 
+  // --- PLAN MANAGEMENT HANDLERS ---
   const handleEditPlan = (plan: Plan) => {
     setEditingPlan(JSON.parse(JSON.stringify(plan)));
     setIsAddingPlan(false);
@@ -117,15 +191,15 @@ function AdminSubscription() {
     setEditingPlan(newPlan);
     setIsAddingPlan(true);
   };
-  
+
   const handleSavePlan = async () => {
     if (!editingPlan) return;
-  
+
     const payload = {
       ...editingPlan,
       features: editingPlan.features.filter((f) => f.text.trim() !== ""),
     };
-  
+
     try {
       if (isAddingPlan) {
         await axiosInstance.post("/api/admin/subscription", payload);
@@ -140,7 +214,7 @@ function AdminSubscription() {
     }
   };
 
-  // --- MODAL STATE UPDATE HANDLERS ---
+  // --- PLAN MODAL STATE UPDATE HANDLERS ---
   const handlePlanChange = (field: keyof (Plan | NewPlan), value: any) => {
     if (editingPlan) {
       setEditingPlan({ ...editingPlan, [field]: value });
@@ -189,7 +263,70 @@ function AdminSubscription() {
     }
   };
 
-    if (isLoading) return <div className="p-8 text-center">{translations.states.loading}</div>;
+  // --- PROMO CODE MANAGEMENT HANDLERS ---
+  const handleAddPromoCode = () => {
+    const newPromoCode: NewPromoCode = {
+      code: "",
+      discountType: "percentage",
+      discountValue: 0,
+      expiryDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"), // Default to 1 month from now
+      maxUsage: undefined,
+      isActive: true,
+    };
+    setEditingPromoCode(newPromoCode);
+    setIsAddingPromoCode(true);
+    setIsPromoModalOpen(true);
+  };
+
+  const handleEditPromoCode = (promo: PromoCode) => {
+    setEditingPromoCode(JSON.parse(JSON.stringify(promo)));
+    setIsAddingPromoCode(false);
+    setIsPromoModalOpen(true);
+  };
+
+  const handleSavePromoCode = async () => {
+    if (!editingPromoCode) return;
+
+    try {
+      if (isAddingPromoCode) {
+        await axiosInstance.post("/api/admin/promocodes", editingPromoCode);
+      } else if ("_id" in editingPromoCode) {
+        await axiosInstance.put(`/api/admin/promocodes/${editingPromoCode._id}`, editingPromoCode);
+      }
+      fetchPromoCodes();
+      setEditingPromoCode(null);
+      setIsAddingPromoCode(false);
+      setIsPromoModalOpen(false);
+    } catch (err) {
+      setError(isAddingPromoCode ? "Failed to create promo code" : "Failed to update promo code");
+    }
+  };
+
+  const handleDeletePromoCode = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this promo code?")) {
+      try {
+        await axiosInstance.delete(`/api/admin/promocodes/${id}`);
+        fetchPromoCodes();
+      } catch (err) {
+        setError("Failed to delete promo code");
+      }
+    }
+  };
+
+  const handlePromoCodeChange = (field: keyof (PromoCode | NewPromoCode), value: any) => {
+    if (editingPromoCode) {
+      setEditingPromoCode({ ...editingPromoCode, [field]: value });
+    }
+  };
+
+  const handleExpiryDateSelect = (date: Date | undefined) => {
+    if (editingPromoCode && date) {
+      handlePromoCodeChange("expiryDate", format(date, "yyyy-MM-dd"));
+    }
+  };
+
+
+  if (isLoading) return <div className="p-8 text-center">{translations.states.loading}</div>;
   if (error) return <div className="p-8 text-center text-red-500">{error} <Button onClick={fetchPlans}>{translations.states.retry}</Button></div>;
 
   return (
@@ -210,11 +347,9 @@ function AdminSubscription() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-3">{translations.main.title}</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-            {translations.main.description}
+              {translations.main.description}
             </p>
-            {/* <Button onClick={handleAddPlan} className="bg-[#243b31] hover:bg-[#547455]">
-              <Plus size={16} className="mr-2" /> Add New Plan
-            </Button> */}
+            {/* Removed "Add New Plan" button as we now manage plans via cards directly or the promo code section */}
           </div>
 
           {/* --- ADD/EDIT PLAN MODAL --- */}
@@ -240,58 +375,53 @@ function AdminSubscription() {
                   {/* Section: Basic Details */}
                   <div className="space-y-4 p-4 border rounded-lg">
                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionBasic}</h4>
-                    <Input placeholder={translations.modal.placeholders.name}  value={editingPlan.name} onChange={(e) => handlePlanChange("name", e.target.value)} />
-                    <Textarea placeholder={translations.modal.placeholders.description}  value={editingPlan.description} onChange={(e) => handlePlanChange("description", e.target.value)} />
+                    <Input placeholder={translations.modal.placeholders.name} value={editingPlan.name} onChange={(e) => handlePlanChange("name", e.target.value)} />
+                    <Textarea placeholder={translations.modal.placeholders.description} value={editingPlan.description} onChange={(e) => handlePlanChange("description", e.target.value)} />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="relative">
                         <Input type="number" placeholder={translations.modal.placeholders.price} value={editingPlan.price} onChange={(e) => handlePlanChange("price", Number(e.target.value))} />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{translations.modal.currency}</span>
                       </div>
-                      {/* <select disabled value={editingPlan.planType} onChange={(e) => handlePlanChange("planType", e.target.value)} className="w-full border border-gray-300 px-3 py-2 rounded-md">
-                        <option value="minimal">{translations.modal.planTypes.minimal}</option>
-                        <option value="medium">{translations.modal.planTypes.medium}</option>
-                        <option value="premium">{translations.modal.planTypes.premium}</option>
-                      </select> */}
                     </div>
                   </div>
 
                   {/* Section: Feature Configuration */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionCoreFeatures}</h4>
-                     <div className="space-y-4">
-                        {/* Photo Settings */}
-                        <div className={`p-3 rounded-lg ${editingPlan.maxPhotos > 0 ? 'bg-green-50' : 'bg-gray-100'}`}>
-                           <div className="flex items-center justify-between">
-                              <label htmlFor="allowPhotos" className="flex items-center gap-2 font-medium"><ImageIcon size={16} />{translations.modal.photos.label}</label>
-                              <Switch id="allowPhotos" checked={editingPlan.maxPhotos > 0} onCheckedChange={handleAllowPhotosToggle} />
-                           </div>
-                           {editingPlan.maxPhotos > 0 && (
-                              <div className="mt-4 pl-6 space-y-3">
-                                 <div className="flex items-center gap-4">
-                                    <label htmlFor="maxPhotos" className="text-sm">{translations.modal.photos.maxLabel}</label>
-                                    <Input id="maxPhotos" type="number" min={1} value={editingPlan.maxPhotos} onChange={(e) => handlePlanChange("maxPhotos", Number(e.target.value))} className="w-24 h-8" />
-                                 </div>
-                                 <div className="flex items-center justify-between">
-                                    <label htmlFor="allowSlideshow" className="text-sm">{translations.modal.photos.slideshowLabel}</label>
-                                    <Switch id="allowSlideshow" checked={editingPlan.allowSlideshow} onCheckedChange={(c) => handlePlanChange("allowSlideshow", c)} />
-                                 </div>
-                              </div>
-                           )}
+                    <h4 className="font-semibold text-gray-800">{translations.modal.sectionCoreFeatures}</h4>
+                    <div className="space-y-4">
+                      {/* Photo Settings */}
+                      <div className={`p-3 rounded-lg ${editingPlan.maxPhotos > 0 ? 'bg-green-50' : 'bg-gray-100'}`}>
+                        <div className="flex items-center justify-between">
+                          <label htmlFor="allowPhotos" className="flex items-center gap-2 font-medium"><ImageIcon size={16} />{translations.modal.photos.label}</label>
+                          <Switch id="allowPhotos" checked={editingPlan.maxPhotos > 0} onCheckedChange={handleAllowPhotosToggle} />
                         </div>
-                        {/* Video Settings */}
-                        <div className={`p-3 rounded-lg ${editingPlan.allowVideos ? 'bg-green-50' : 'bg-gray-100'}`}>
-                           <div className="flex items-center justify-between">
-                              <label htmlFor="allowVideos" className="flex items-center gap-2 font-medium"><Video size={16} /> {translations.modal.videos.label}</label>
-                              <Switch id="allowVideos" checked={editingPlan.allowVideos} onCheckedChange={handleAllowVideosToggle} />
-                           </div>
-                           {editingPlan.allowVideos && (
-                              <div className="mt-4 pl-6 flex items-center gap-4">
-                                 <label htmlFor="maxDuration" className="text-sm">{translations.modal.videos.maxDurationLabel}</label>
-                                 <Input id="maxDuration" type="number" min={1} value={editingPlan.maxVideoDuration} onChange={(e) => handlePlanChange("maxVideoDuration", Number(e.target.value))} className="w-24 h-8" />
-                              </div>
-                           )}
+                        {editingPlan.maxPhotos > 0 && (
+                          <div className="mt-4 pl-6 space-y-3">
+                            <div className="flex items-center gap-4">
+                              <label htmlFor="maxPhotos" className="text-sm">{translations.modal.photos.maxLabel}</label>
+                              <Input id="maxPhotos" type="number" min={1} value={editingPlan.maxPhotos} onChange={(e) => handlePlanChange("maxPhotos", Number(e.target.value))} className="w-24 h-8" />
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <label htmlFor="allowSlideshow" className="text-sm">{translations.modal.photos.slideshowLabel}</label>
+                              <Switch id="allowSlideshow" checked={editingPlan.allowSlideshow} onCheckedChange={(c) => handlePlanChange("allowSlideshow", c)} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {/* Video Settings */}
+                      <div className={`p-3 rounded-lg ${editingPlan.allowVideos ? 'bg-green-50' : 'bg-gray-100'}`}>
+                        <div className="flex items-center justify-between">
+                          <label htmlFor="allowVideos" className="flex items-center gap-2 font-medium"><Video size={16} /> {translations.modal.videos.label}</label>
+                          <Switch id="allowVideos" checked={editingPlan.allowVideos} onCheckedChange={handleAllowVideosToggle} />
                         </div>
-                     </div>
+                        {editingPlan.allowVideos && (
+                          <div className="mt-4 pl-6 flex items-center gap-4">
+                            <label htmlFor="maxDuration" className="text-sm">{translations.modal.videos.maxDurationLabel}</label>
+                            <Input id="maxDuration" type="number" min={1} value={editingPlan.maxVideoDuration} onChange={(e) => handlePlanChange("maxVideoDuration", Number(e.target.value))} className="w-24 h-8" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Section: Additional Features */}
@@ -299,32 +429,26 @@ function AdminSubscription() {
                     <h4 className="font-semibold text-gray-800 mb-2">{translations.modal.sectionAdditionalFeatures}</h4>
                     <div className="space-y-2 mb-3">
                       {editingPlan.features.map((feature, index) => {
-                        if(feature?.text !=="Family Tree"){
-                        return(                        
-                          <div key={index} className="flex items-center gap-2">
-                          <Input value={feature.text} onChange={(e) => updateFeatureInPlan(index, "text", e.target.value)} placeholder={translations.modal.placeholders.feature} />
-                          <Switch checked={feature.included} onCheckedChange={(c) => updateFeatureInPlan(index, "included", c)} />
-                          <Button variant="ghost" size="icon" onClick={() => removeFeatureFromPlan(index)}><Trash2 size={16} className="text-red-500" /></Button>
-                          </div>)}
-                        
-                        
-})}
+                        if (feature?.text !== "Family Tree") {
+                          return (
+                            <div key={index} className="flex items-center gap-2">
+                              <Input value={feature.text} onChange={(e) => updateFeatureInPlan(index, "text", e.target.value)} placeholder={translations.modal.placeholders.feature} />
+                              <Switch checked={feature.included} onCheckedChange={(c) => updateFeatureInPlan(index, "included", c)} />
+                              <Button variant="ghost" size="icon" onClick={() => removeFeatureFromPlan(index)}><Trash2 size={16} className="text-red-500" /></Button>
+                            </div>
+                          )
+                        }
+                      })}
                     </div>
-                    {/* <Button onClick={addFeatureToPlan} variant="outline" size="sm"><Plus size={16} className="mr-1" />{translations.modal.addFeature}</Button> */}
                   </div>
 
                   {/* Section: Plan Settings */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionSettings}</h4>
-                      {/* <Input placeholder={translations.modal.placeholders.cta} value={editingPlan.ctaButtonText} onChange={(e) => handlePlanChange("ctaButtonText", e.target.value)} /> */}
-                      {/* <div className="flex items-center justify-between">
-                          <label htmlFor="popular" className="font-medium">{translations.modal.markPopular}</label>
-                          <Switch id="popular" checked={editingPlan.isPopular} onCheckedChange={(c) => handlePlanChange("isPopular", c)} />
-                      </div> */}
-                      <div className="flex items-center justify-between">
-                          <label htmlFor="active" className="font-medium">{translations.modal.setActive}</label>
-                          <Switch id="active" checked={editingPlan.isActive} onCheckedChange={(c) => handlePlanChange("isActive", c)} />
-                      </div>
+                    <h4 className="font-semibold text-gray-800">{translations.modal.sectionSettings}</h4>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="active" className="font-medium">{translations.modal.setActive}</label>
+                      <Switch id="active" checked={editingPlan.isActive} onCheckedChange={(c) => handlePlanChange("isActive", c)} />
+                    </div>
                   </div>
 
                   <div className="pt-4 border-t">
@@ -339,13 +463,13 @@ function AdminSubscription() {
           )}
 
           {/* --- PLANS GRID --- */}
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 mb-12">
             {plans.map((plan) => (
               <motion.div key={plan._id} {...fadeInUp}>
                 <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border"} ${!plan.isActive ? "bg-gray-100 opacity-70" : "bg-white"}`}>
                   {plan.isPopular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#547455]">{translations.card.popular}</Badge>}
                   {!plan.isActive && <Badge variant="destructive" className="absolute top-3 right-3">{translations.card.inactive}</Badge>}
-                  
+
                   <CardHeader className="text-center pb-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       {plan.planType === "premium" && <Crown className="text-black" size={32} />}
@@ -355,34 +479,235 @@ function AdminSubscription() {
                     <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                     <CardDescription>{plan.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold text-gray-900">{plan.price}  {translations.modal.currency}</span>
+                      <span className="text-4xl font-bold text-gray-900">{plan.price} {translations.modal.currency}</span>
                       <span className="text-gray-600">{translations.card.oneTime}</span>
                     </div>
                   </CardHeader>
 
                   <CardContent className="pt-0 flex-grow flex flex-col">
                     <ul className="space-y-2 flex-grow">
-                      {/* Dynamically generated features based on configuration */}
-              
-
-                         <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translations.card.features.unlimitedPhotos : translations.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
-
-                       <FeatureListItem included={plan.allowSlideshow} text={translations.card.features.slideshow} />
-                       <FeatureListItem included={plan.allowVideos}  text={translations.card.features.videoUploads.replace('{duration}', String(plan.maxVideoDuration))} />
-                      {/* Additional features */}
+                      <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translations.card.features.unlimitedPhotos : translations.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
+                      <FeatureListItem included={plan.allowSlideshow} text={translations.card.features.slideshow} />
+                      <FeatureListItem included={plan.allowVideos} text={translations.card.features.videoUploads.replace('{duration}', String(plan.maxVideoDuration))} />
                       {plan.features.map((feature, idx) => (
                         <FeatureListItem key={idx} included={feature.included} text={feature.text} />
                       ))}
                     </ul>
-                  <Separator className="my-6" />
+                    <Separator className="my-6" />
                     <Button variant="outline" onClick={() => handleEditPlan(plan)}>
                       <Edit size={16} className="mr-2" /> Edit Plan
-                    </Button> 
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
           </div>
+
+          {/* --- PROMO CODE MANAGEMENT SECTION --- */}
+          <motion.div {...fadeInUp} className="mt-12">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center flex-wrap gap-4">
+                  <div>
+                    <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                      <Gift size={24} /> Promo Code Management
+                    </CardTitle>
+                    <CardDescription>
+                      Create and manage promotional codes for discounts or free plans.
+                    </CardDescription>
+                  </div>
+                  <Button onClick={handleAddPromoCode} className="bg-[#243b31] hover:bg-[#547455]">
+                    <Plus size={16} className="mr-2" /> Add New Promo Code
+                  </Button>
+                </div>
+              </CardHeader>
+              {/* <CardContent>
+                {promoCodes.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">No promo codes found. Click "Add New Promo Code" to create one.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expires</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {promoCodes.map((promo) => (
+                          <tr key={promo._id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promo.code}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {promo.discountType === "percentage" && `${promo.discountValue}% Off`}
+                              {promo.discountType === "fixed" && `${promo.discountValue} ${translations.modal.currency} Off`}
+                              {promo.discountType === "free" && "100% Off (Free Plan)"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{format(new Date(promo.expiryDate), "MMM dd, yyyy")}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {promo.maxUsage ? `${promo.currentUsage || 0}/${promo.maxUsage}` : "Unlimited"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <Badge variant={promo.isActive ? "default" : "destructive"}>
+                                {promo.isActive ? "Active" : "Inactive"}
+                              </Badge>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <Button variant="ghost" size="icon" onClick={() => handleEditPromoCode(promo)} className="mr-2">
+                                <Edit size={16} />
+                              </Button>
+                              <Button variant="ghost" size="icon" onClick={() => handleDeletePromoCode(promo._id)}>
+                                <Trash2 size={16} className="text-red-500" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent> */}
+            </Card>
+          </motion.div>
+
+          {/* --- ADD/EDIT PROMO CODE MODAL --- */}
+          {isPromoModalOpen && editingPromoCode && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                className="bg-white rounded-lg p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold">{isAddingPromoCode ? "Add New Promo Code" : "Edit Promo Code"}</h3>
+                  <Button variant="ghost" size="icon" onClick={() => setIsPromoModalOpen(false)}>
+                    <X size={20} />
+                  </Button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Code and Discount Type */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="promoCode" className="block text-sm font-medium text-gray-700 mb-1">Promo Code</label>
+                      <Input
+                        id="promoCode"
+                        placeholder="SUMMER20"
+                        value={editingPromoCode.code}
+                        onChange={(e) => handlePromoCodeChange("code", e.target.value.toUpperCase())}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="discountType" className="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+                      <Select
+                        value={editingPromoCode.discountType}
+                        onValueChange={(value: "percentage" | "fixed" | "free") => handlePromoCodeChange("discountType", value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select discount type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="percentage">Percentage Discount (%)</SelectItem>
+                          <SelectItem value="fixed">Fixed Amount Discount ({translations.modal.currency})</SelectItem>
+                          <SelectItem value="free">100% Off (Free Plan)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Discount Value */}
+                  {editingPromoCode.discountType !== "free" && (
+                    <div>
+                      <label htmlFor="discountValue" className="block text-sm font-medium text-gray-700 mb-1">
+                        Discount Value ({editingPromoCode.discountType === "percentage" ? "%" : translations.modal.currency})
+                      </label>
+                      <Input
+                        id="discountValue"
+                        type="number"
+                        min={0}
+                        max={editingPromoCode.discountType === "percentage" ? 100 : undefined}
+                        placeholder={editingPromoCode.discountType === "percentage" ? "e.g., 20" : "e.g., 10"}
+                        value={editingPromoCode.discountValue}
+                        onChange={(e) => handlePromoCodeChange("discountValue", Number(e.target.value))}
+                      />
+                    </div>
+                  )}
+
+                  {/* Expiry Date */}
+                  <div>
+                    <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={`w-full justify-start text-left font-normal ${!editingPromoCode.expiryDate && "text-muted-foreground"
+                            }`}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {editingPromoCode.expiryDate ? (
+                            format(new Date(editingPromoCode.expiryDate), "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <CalendarComponent
+                          mode="single"
+                          selected={editingPromoCode.expiryDate ? new Date(editingPromoCode.expiryDate) : undefined}
+                          onSelect={handleExpiryDateSelect}
+                          initialFocus
+                        />
+                         <div className="flex justify-around p-2 border-t">
+                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addDays(new Date(), 1))}>1 Day</Button>
+                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addWeeks(new Date(), 1))}>1 Week</Button>
+                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addMonths(new Date(), 1))}>1 Month</Button>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Max Usage */}
+                  <div>
+                    <label htmlFor="maxUsage" className="block text-sm font-medium text-gray-700 mb-1">Max Usage (Optional)</label>
+                    <Input
+                      id="maxUsage"
+                      type="number"
+                      min={1}
+                      placeholder="e.g., 100 (leave empty for unlimited)"
+                      value={editingPromoCode.maxUsage || ""}
+                      onChange={(e) => handlePromoCodeChange("maxUsage", e.target.value ? Number(e.target.value) : undefined)}
+                    />
+                  </div>
+
+                  {/* Active Status */}
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="promoActive" className="font-medium">Set Active</label>
+                    <Switch
+                      id="promoActive"
+                      checked={editingPromoCode.isActive}
+                      onCheckedChange={(c) => handlePromoCodeChange("isActive", c)}
+                    />
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Button onClick={handleSavePromoCode} className="w-full bg-[#243b31] hover:bg-[#547455]">
+                      <Save size={16} className="mr-2" />
+                      {isAddingPromoCode ? "Save Promo Code" : "Update Promo Code"}
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
         </motion.div>
       </main>
     </div>

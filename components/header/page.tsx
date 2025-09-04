@@ -93,14 +93,14 @@ const Header = () => {
                 </AnimatePresence>
               </div>
 
-              <Link href="/admin/login">
+              {/* <Link href="/admin/login">
                 <Button
                   variant="outline"
                   className="border-white text-white bg-[#243b31]"
                 >
                   {t("header").admin}
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/login">
                 <Button className="bg-white shadow-lg text-[#243b31] hover:bg-[#243b31] hover:text-white border-white border">
                   {t("header").getStarted}
