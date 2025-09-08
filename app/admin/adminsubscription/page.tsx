@@ -15,10 +15,10 @@ import {
   Save,
   ImageIcon,
   Video,
-  Gift, // New icon for promo codes
-  Calendar, // For expiry
-  Tag, // For discount type
-  Users, // For max usage
+  Gift,
+  Calendar,
+  Tag,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/popover";
 import { format, addDays, addWeeks, addMonths } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { toast } from "sonner";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -78,7 +79,7 @@ type Plan = {
   maxPhotos: number;
   allowSlideshow: boolean;
   allowVideos: boolean;
-  maxVideoDuration: number; // in seconds
+  maxVideoDuration: number;
   color?: string;
   bgColor?: string;
   borderColor?: string;
@@ -91,11 +92,12 @@ type PromoCode = {
   _id: string;
   code: string;
   discountType: "percentage" | "fixed" | "free";
-  discountValue: number; // Percentage (e.g., 20) or fixed amount (e.g., 10 GEL)
-  expiryDate: string; // ISO date string
+  discountValue: number;
+  expiryDate: string;
   maxUsage?: number;
   currentUsage?: number;
   isActive: boolean;
+  appliesToPlan: string; // Added to match backend requirement
 };
 
 type NewPromoCode = Omit<PromoCode, "_id" | "currentUsage">;
@@ -103,43 +105,27 @@ type NewPromoCode = Omit<PromoCode, "_id" | "currentUsage">;
 function AdminSubscription() {
   const { t } = useTranslation();
   const translations = t("adminSubscriptionPage");
+  const promoTranslations = t("promoCodeManagement");
 
   const [editingPlan, setEditingPlan] = useState<Plan | NewPlan | null>(null);
   const [isAddingPlan, setIsAddingPlan] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPromoCodes, setTotalPromoCodes] = useState(0);
+  
   // Promo Code States
-  // const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
-
-
-  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([
-  {
-    _id: "1",
-    code: "SUMMER20",
-    discountType: "percentage",
-    discountValue: 20,
-    expiryDate: "2024-12-31",
-    maxUsage: 100,
-    currentUsage: 42,
-    isActive: true,
-  },
-  {
-    _id: "2",
-    code: "WELCOME10",
-    discountType: "fixed",
-    discountValue: 10,
-    expiryDate: "2024-10-31",
-    maxUsage: undefined,
-    currentUsage: 0,
-    isActive: true,
-  },
-]);
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  console.log("🚀 ~ AdminSubscription ~ totalPromoCodes:", promoCodes)
   const [editingPromoCode, setEditingPromoCode] = useState<PromoCode | NewPromoCode | null>(null);
   const [isAddingPromoCode, setIsAddingPromoCode] = useState(false);
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
-
+  const [promoError, setPromoError] = useState<string | null>(null);
 
   const fetchPlans = async () => {
     setIsLoading(true);
@@ -153,18 +139,24 @@ function AdminSubscription() {
     }
   };
 
-  const fetchPromoCodes = async () => {
+  const fetchPromoCodes = async (page = 1) => {
     try {
-      const response = await axiosInstance.get("/api/admin/promocodes");
-      setPromoCodes(response.data);
+      setLoading(true);
+      const response = await axiosInstance.get(`/api/admin/promocode?page=${page}`);
+      setPromoCodes(response?.data?.data);
+      setTotalPages(response.data.totalPages);
+      setTotalPromoCodes(response.data.total);
+      setCurrentPage(response.data.page);
     } catch (err) {
-      setError("Failed to fetch promo codes");
+      setError(promoTranslations.errors.failedFetch);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPlans();
-    // fetchPromoCodes();
+    fetchPromoCodes();
   }, []);
 
   // --- PLAN MANAGEMENT HANDLERS ---
@@ -203,14 +195,19 @@ function AdminSubscription() {
     try {
       if (isAddingPlan) {
         await axiosInstance.post("/api/admin/subscription", payload);
+        toast.success("Plan created successfully");
       } else if ("_id" in editingPlan) {
         await axiosInstance.put(`/api/admin/subscription/${editingPlan._id}`, payload);
+        toast.success("Plan updated successfully");
       }
       fetchPlans();
       setEditingPlan(null);
       setIsAddingPlan(false);
-    } catch (err) {
-      setError(isAddingPlan ? "Failed to create new plan" : "Failed to update plan");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 
+        (isAddingPlan ? translations.states.error.create : translations.states.error.update);
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -225,8 +222,8 @@ function AdminSubscription() {
     if (editingPlan) {
       setEditingPlan({
         ...editingPlan,
-        maxPhotos: checked ? 1 : 0, // Default to 1 photo when enabled
-        allowSlideshow: checked ? editingPlan.allowSlideshow : false, // Disable slideshow if photos are off
+        maxPhotos: checked ? 1 : 0,
+        allowSlideshow: checked ? editingPlan.allowSlideshow : false,
       });
     }
   };
@@ -236,7 +233,7 @@ function AdminSubscription() {
       setEditingPlan({
         ...editingPlan,
         allowVideos: checked,
-        maxVideoDuration: checked ? editingPlan.maxVideoDuration : 0, // Reset duration if videos are off
+        maxVideoDuration: checked ? editingPlan.maxVideoDuration : 0,
       });
     }
   };
@@ -269,46 +266,63 @@ function AdminSubscription() {
       code: "",
       discountType: "percentage",
       discountValue: 0,
-      expiryDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"), // Default to 1 month from now
+      expiryDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"),
       maxUsage: undefined,
       isActive: true,
+      appliesToPlan: plans.length > 0 ? plans[0]._id : "", // Default to first plan
     };
     setEditingPromoCode(newPromoCode);
     setIsAddingPromoCode(true);
     setIsPromoModalOpen(true);
+    setPromoError(null);
   };
 
   const handleEditPromoCode = (promo: PromoCode) => {
     setEditingPromoCode(JSON.parse(JSON.stringify(promo)));
     setIsAddingPromoCode(false);
     setIsPromoModalOpen(true);
+    setPromoError(null);
   };
 
   const handleSavePromoCode = async () => {
     if (!editingPromoCode) return;
 
+    // Validation
+    if (!editingPromoCode.appliesToPlan) {
+      setPromoError(promoTranslations.errors.selectPlanFirst);
+      return;
+    }
+
     try {
       if (isAddingPromoCode) {
-        await axiosInstance.post("/api/admin/promocodes", editingPromoCode);
+        await axiosInstance.post("/api/admin/promocode", editingPromoCode);
+        toast.success("Promo code created successfully");
       } else if ("_id" in editingPromoCode) {
-        await axiosInstance.put(`/api/admin/promocodes/${editingPromoCode._id}`, editingPromoCode);
+        await axiosInstance.put(`/api/admin/promocode/${editingPromoCode._id}`, editingPromoCode);
+        toast.success("Promo code updated successfully");
       }
-      fetchPromoCodes();
+      fetchPromoCodes(currentPage);
       setEditingPromoCode(null);
       setIsAddingPromoCode(false);
       setIsPromoModalOpen(false);
-    } catch (err) {
-      setError(isAddingPromoCode ? "Failed to create promo code" : "Failed to update promo code");
+      setPromoError(null);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 
+        (isAddingPromoCode ? promoTranslations.errors.failedCreate : promoTranslations.errors.failedUpdate);
+      setPromoError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
   const handleDeletePromoCode = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this promo code?")) {
+    if (window.confirm(promoTranslations.deleteConfirm)) {
       try {
-        await axiosInstance.delete(`/api/admin/promocodes/${id}`);
-        fetchPromoCodes();
+        await axiosInstance.delete(`/api/admin/promocode/${id}`);
+        fetchPromoCodes(currentPage);
+        toast.success("Promo code deleted successfully");
       } catch (err) {
-        setError("Failed to delete promo code");
+        setError(promoTranslations.errors.failedDelete);
+        toast.error(promoTranslations.errors.failedDelete);
       }
     }
   };
@@ -324,7 +338,6 @@ function AdminSubscription() {
       handlePromoCodeChange("expiryDate", format(date, "yyyy-MM-dd"));
     }
   };
-
 
   if (isLoading) return <div className="p-8 text-center">{translations.states.loading}</div>;
   if (error) return <div className="p-8 text-center text-red-500">{error} <Button onClick={fetchPlans}>{translations.states.retry}</Button></div>;
@@ -349,7 +362,6 @@ function AdminSubscription() {
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
               {translations.main.description}
             </p>
-            {/* Removed "Add New Plan" button as we now manage plans via cards directly or the promo code section */}
           </div>
 
           {/* --- ADD/EDIT PLAN MODAL --- */}
@@ -504,74 +516,129 @@ function AdminSubscription() {
           </div>
 
           {/* --- PROMO CODE MANAGEMENT SECTION --- */}
+            {promoTranslations && (
           <motion.div {...fadeInUp} className="mt-12">
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center flex-wrap gap-4">
                   <div>
                     <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                      <Gift size={24} /> Promo Code Management
+                      <Gift size={24} /> {promoTranslations.title}
                     </CardTitle>
                     <CardDescription>
-                      Create and manage promotional codes for discounts or free plans.
+                      {promoTranslations.description}
                     </CardDescription>
                   </div>
                   <Button onClick={handleAddPromoCode} className="bg-[#243b31] hover:bg-[#547455]">
-                    <Plus size={16} className="mr-2" /> Add New Promo Code
+                    <Plus size={16} className="mr-2" /> {promoTranslations.addNewButton}
                   </Button>
                 </div>
               </CardHeader>
-              {/* <CardContent>
-                {promoCodes.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">No promo codes found. Click "Add New Promo Code" to create one.</p>
+              <CardContent>
+                {loading ? (
+                  <div className="text-center py-8">Loading promo codes...</div>
+                ) : promoCodes.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">{promoTranslations.noPromoCodes}</p>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expires</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                          <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {promoCodes.map((promo) => (
-                          <tr key={promo._id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promo.code}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {promo.discountType === "percentage" && `${promo.discountValue}% Off`}
-                              {promo.discountType === "fixed" && `${promo.discountValue} ${translations.modal.currency} Off`}
-                              {promo.discountType === "free" && "100% Off (Free Plan)"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{format(new Date(promo.expiryDate), "MMM dd, yyyy")}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {promo.maxUsage ? `${promo.currentUsage || 0}/${promo.maxUsage}` : "Unlimited"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Badge variant={promo.isActive ? "default" : "destructive"}>
-                                {promo.isActive ? "Active" : "Inactive"}
-                              </Badge>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <Button variant="ghost" size="icon" onClick={() => handleEditPromoCode(promo)} className="mr-2">
-                                <Edit size={16} />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => handleDeletePromoCode(promo._id)}>
-                                <Trash2 size={16} className="text-red-500" />
-                              </Button>
-                            </td>
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {promoTranslations.tableHeaders.code}
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {promoTranslations.tableHeaders.discount}
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {promoTranslations.tableHeaders.expires}
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {promoTranslations.tableHeaders.usage}
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {promoTranslations.tableHeaders.status}
+                            </th>
+                            <th scope="col" className="relative px-6 py-3">
+                              <span className="sr-only">{promoTranslations.tableHeaders.actions}</span>
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {promoCodes.map((promo) => (
+                            <tr key={promo._id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promo.code}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {promo.discountType === "percentage" && `${promo.discountValue}% Off`}
+                                {promo.discountType === "fixed" && `${promo.discountValue} ${translations.modal.currency} Off`}
+                                {promo.discountType === "free" && "100% Off (Free Plan)"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {format(new Date(promo.expiryDate), "MMM dd, yyyy")}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {promo.maxUsage ? `${promo.currentUsage || 0}/${promo.maxUsage}` : "Unlimited"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <Badge variant={promo.isActive ? "default" : "destructive"}>
+                                  {promo.isActive ? promoTranslations.status.active : promoTranslations.status.inactive}
+                                </Badge>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <Button variant="ghost" size="icon" onClick={() => handleEditPromoCode(promo)} className="mr-2">
+                                  <Edit size={16} />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => handleDeletePromoCode(promo._id)}>
+                                  <Trash2 size={16} className="text-red-500" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-sm text-gray-700">
+                          Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalPromoCodes)} of {totalPromoCodes} entries
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fetchPromoCodes(currentPage - 1)}
+                            disabled={currentPage === 1}
+                          >
+                            Previous
+                          </Button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                            <Button
+                              key={page}
+                              variant={currentPage === page ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => fetchPromoCodes(page)}
+                            >
+                              {page}
+                            </Button>
+                          ))}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fetchPromoCodes(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
-              </CardContent> */}
+              </CardContent>
             </Card>
-          </motion.div>
+          </motion.div>)}
 
           {/* --- ADD/EDIT PROMO CODE MODAL --- */}
           {isPromoModalOpen && editingPromoCode && (
@@ -586,26 +653,38 @@ function AdminSubscription() {
                 className="bg-white rounded-lg p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold">{isAddingPromoCode ? "Add New Promo Code" : "Edit Promo Code"}</h3>
+                  <h3 className="text-2xl font-bold">
+                    {isAddingPromoCode ? promoTranslations.modal.addTitle : promoTranslations.modal.editTitle}
+                  </h3>
                   <Button variant="ghost" size="icon" onClick={() => setIsPromoModalOpen(false)}>
                     <X size={20} />
                   </Button>
                 </div>
 
                 <div className="space-y-6">
+                  {promoError && (
+                    <div className="p-3 bg-red-100 text-red-700 rounded-md">
+                      {promoError}
+                    </div>
+                  )}
+
                   {/* Code and Discount Type */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="promoCode" className="block text-sm font-medium text-gray-700 mb-1">Promo Code</label>
+                      <label htmlFor="promoCode" className="block text-sm font-medium text-gray-700 mb-1">
+                        {promoTranslations.modal.codeLabel}
+                      </label>
                       <Input
                         id="promoCode"
-                        placeholder="SUMMER20"
+                        placeholder={promoTranslations.modal.codePlaceholder}
                         value={editingPromoCode.code}
                         onChange={(e) => handlePromoCodeChange("code", e.target.value.toUpperCase())}
                       />
                     </div>
                     <div>
-                      <label htmlFor="discountType" className="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+                      <label htmlFor="discountType" className="block text-sm font-medium text-gray-700 mb-1">
+                        {promoTranslations.modal.discountTypeLabel}
+                      </label>
                       <Select
                         value={editingPromoCode.discountType}
                         onValueChange={(value: "percentage" | "fixed" | "free") => handlePromoCodeChange("discountType", value)}
@@ -614,26 +693,61 @@ function AdminSubscription() {
                           <SelectValue placeholder="Select discount type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="percentage">Percentage Discount (%)</SelectItem>
-                          <SelectItem value="fixed">Fixed Amount Discount ({translations.modal.currency})</SelectItem>
-                          <SelectItem value="free">100% Off (Free Plan)</SelectItem>
+                          <SelectItem value="percentage">
+                            {promoTranslations.modal.discountTypeOptions.percentage}
+                          </SelectItem>
+                          <SelectItem value="fixed">
+                            {promoTranslations.modal.discountTypeOptions.fixed.replace('{currency}', translations.modal.currency)}
+                          </SelectItem>
+                          <SelectItem value="free">
+                            {promoTranslations.modal.discountTypeOptions.free}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  {/* Plan Selection */}
+                  <div>
+                    <label htmlFor="appliesToPlan" className="block text-sm font-medium text-gray-700 mb-1">
+                      {promoTranslations.modal.selectPlanLabel}
+                    </label>
+                    <Select
+                      value={editingPromoCode.appliesToPlan}
+                      onValueChange={(value) => handlePromoCodeChange("appliesToPlan", value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={promoTranslations.modal.selectPlanPlaceholder} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {plans.map((plan) => (
+                          <SelectItem key={plan._id} value={plan._id}>
+                            {plan.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Discount Value */}
                   {editingPromoCode.discountType !== "free" && (
                     <div>
                       <label htmlFor="discountValue" className="block text-sm font-medium text-gray-700 mb-1">
-                        Discount Value ({editingPromoCode.discountType === "percentage" ? "%" : translations.modal.currency})
+                        {promoTranslations.modal.discountValueLabel.replace(
+                          '{symbol}', 
+                          editingPromoCode.discountType === "percentage" ? "%" : translations.modal.currency
+                        )}
                       </label>
                       <Input
                         id="discountValue"
                         type="number"
                         min={0}
                         max={editingPromoCode.discountType === "percentage" ? 100 : undefined}
-                        placeholder={editingPromoCode.discountType === "percentage" ? "e.g., 20" : "e.g., 10"}
+                        placeholder={
+                          editingPromoCode.discountType === "percentage" 
+                            ? promoTranslations.modal.discountValuePlaceholderPercentage
+                            : promoTranslations.modal.discountValuePlaceholderFixed
+                        }
                         value={editingPromoCode.discountValue}
                         onChange={(e) => handlePromoCodeChange("discountValue", Number(e.target.value))}
                       />
@@ -642,13 +756,14 @@ function AdminSubscription() {
 
                   {/* Expiry Date */}
                   <div>
-                    <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                    <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">
+                      {promoTranslations.modal.expiryDateLabel}
+                    </label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
-                          className={`w-full justify-start text-left font-normal ${!editingPromoCode.expiryDate && "text-muted-foreground"
-                            }`}
+                          className={`w-full justify-start text-left font-normal ${!editingPromoCode.expiryDate && "text-muted-foreground"}`}
                         >
                           <Calendar className="mr-2 h-4 w-4" />
                           {editingPromoCode.expiryDate ? (
@@ -665,10 +780,16 @@ function AdminSubscription() {
                           onSelect={handleExpiryDateSelect}
                           initialFocus
                         />
-                         <div className="flex justify-around p-2 border-t">
-                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addDays(new Date(), 1))}>1 Day</Button>
-                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addWeeks(new Date(), 1))}>1 Week</Button>
-                            <Button variant="ghost" onClick={() => handleExpiryDateSelect(addMonths(new Date(), 1))}>1 Month</Button>
+                        <div className="flex justify-around p-2 border-t">
+                          <Button variant="ghost" onClick={() => handleExpiryDateSelect(addDays(new Date(), 1))}>
+                            {promoTranslations.modal.quickExpiryOptions['1day']}
+                          </Button>
+                          <Button variant="ghost" onClick={() => handleExpiryDateSelect(addWeeks(new Date(), 1))}>
+                            {promoTranslations.modal.quickExpiryOptions['1week']}
+                          </Button>
+                          <Button variant="ghost" onClick={() => handleExpiryDateSelect(addMonths(new Date(), 1))}>
+                            {promoTranslations.modal.quickExpiryOptions['1month']}
+                          </Button>
                         </div>
                       </PopoverContent>
                     </Popover>
@@ -676,12 +797,14 @@ function AdminSubscription() {
 
                   {/* Max Usage */}
                   <div>
-                    <label htmlFor="maxUsage" className="block text-sm font-medium text-gray-700 mb-1">Max Usage (Optional)</label>
+                    <label htmlFor="maxUsage" className="block text-sm font-medium text-gray-700 mb-1">
+                      {promoTranslations.modal.maxUsageLabel}
+                    </label>
                     <Input
                       id="maxUsage"
                       type="number"
                       min={1}
-                      placeholder="e.g., 100 (leave empty for unlimited)"
+                      placeholder={promoTranslations.modal.maxUsagePlaceholder}
                       value={editingPromoCode.maxUsage || ""}
                       onChange={(e) => handlePromoCodeChange("maxUsage", e.target.value ? Number(e.target.value) : undefined)}
                     />
@@ -689,7 +812,9 @@ function AdminSubscription() {
 
                   {/* Active Status */}
                   <div className="flex items-center justify-between">
-                    <label htmlFor="promoActive" className="font-medium">Set Active</label>
+                    <label htmlFor="promoActive" className="font-medium">
+                      {promoTranslations.modal.activeLabel}
+                    </label>
                     <Switch
                       id="promoActive"
                       checked={editingPromoCode.isActive}
@@ -700,14 +825,13 @@ function AdminSubscription() {
                   <div className="pt-4 border-t">
                     <Button onClick={handleSavePromoCode} className="w-full bg-[#243b31] hover:bg-[#547455]">
                       <Save size={16} className="mr-2" />
-                      {isAddingPromoCode ? "Save Promo Code" : "Update Promo Code"}
+                      {isAddingPromoCode ? promoTranslations.modal.saveButtonAdd : promoTranslations.modal.saveButtonEdit}
                     </Button>
                   </div>
                 </div>
               </motion.div>
             </motion.div>
           )}
-
         </motion.div>
       </main>
     </div>

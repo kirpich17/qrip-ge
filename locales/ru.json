@@ -1341,5 +1341,59 @@
       "next": "Вперёд",
       "pageInfo": "Страница {currentPage} из {totalPages}"
     }
+  },
+    "promoCodeManagement": {
+    "title": "პრომო კოდების მართვა",
+    "description": "შექმენით და მართეთ პრომო კოდები ფასდაკლებისთვის ან უფასო გეგმებისთვის.",
+    "addNewButton": "ახალი პრომო კოდის დამატება",
+    "tableHeaders": {
+      "code": "კოდი",
+      "discount": "ფასდაკლება",
+      "expires": "ვადა",
+      "usage": "გამოყენება",
+      "status": "სტატუსი",
+      "actions": "მოქმედებები"
+    },
+    "status": {
+      "active": "აქტიური",
+      "inactive": "არააქტიური"
+    },
+    "modal": {
+      "addTitle": "ახალი პრომო კოდის დამატება",
+      "editTitle": "პრომო კოდის რედაქტირება",
+      "codeLabel": "პრომო კოდი",
+      "codePlaceholder": "SUMMER20",
+      "discountTypeLabel": "ფასდაკლების ტიპი",
+      "discountTypeOptions": {
+        "percentage": "პროცენტული ფასდაკლება (%)",
+        "fixed": "ფიქსირებული თანხის ფასდაკლება ({currency})",
+        "free": "100% ფასდაკლება (უფასო გეგმა)"
+      },
+      "selectPlanLabel": "აირჩიეთ გეგმა",
+      "selectPlanPlaceholder": "აირჩიეთ გეგმა",
+      "discountValueLabel": "ფასდაკლების ღირებულება ({symbol})",
+      "discountValuePlaceholderPercentage": "მაგ., 20",
+      "discountValuePlaceholderFixed": "მაგ., 10",
+      "expiryDateLabel": "ვადის გასვლის თარიღი",
+      "maxUsageLabel": "მაქსიმალური გამოყენება (არასავალდებულო)",
+      "maxUsagePlaceholder": "მაგ., 100 (დატოვეთ ცარიელი შეუზღუდავი გამოყენებისთვის)",
+      "activeLabel": "აქტიურად დაყენება",
+      "saveButtonAdd": "პრომო კოდის შენახვა",
+      "saveButtonEdit": "პრომო კოდის განახლება",
+      "quickExpiryOptions": {
+        "1day": "1 დღე",
+        "1week": "1 კვირა",
+        "1month": "1 თვე"
+      }
+    },
+    "errors": {
+      "selectPlanFirst": "გთხოვთ, ჯერ აირჩიოთ გეგმა.",
+      "failedCreate": "პრომო კოდის შექმნა ვერ მოხერხდა",
+      "failedUpdate": "პრომო კოდის განახლება ვერ მოხერხდა",
+      "failedDelete": "პრომო კოდის წაშლა ვერ მოხერხდა",
+      "failedFetch": "პრომო კოდების ჩატვირთვა ვერ მოხერხდა"
+    },
+    "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ პრომო კოდის წაშლა?",
+    "noPromoCodes": "პრომო კოდები არ მოიძებნა."
   }
 }

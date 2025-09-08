@@ -1389,6 +1389,60 @@
       "next": "Next",
       "pageInfo": "Page {currentPage} of {totalPages}"
     }
-  }
+  },
+  "promoCodeManagement": {
+  "title": "Promo Code Management",
+  "description": "Create and manage promotional codes for discounts or free plans.",
+  "addNewButton": "Add New Promo Code",
+  "tableHeaders": {
+    "code": "Code",
+    "discount": "Discount",
+    "expires": "Expires",
+    "usage": "Usage",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "modal": {
+    "addTitle": "Add New Promo Code",
+    "editTitle": "Edit Promo Code",
+    "codeLabel": "Promo Code",
+    "codePlaceholder": "SUMMER20",
+    "discountTypeLabel": "Discount Type",
+    "discountTypeOptions": {
+      "percentage": "Percentage Discount (%)",
+      "fixed": "Fixed Amount Discount ({currency})",
+      "free": "100% Off (Free Plan)"
+    },
+    "selectPlanLabel": "Select Plan",
+    "selectPlanPlaceholder": "Select Plan",
+    "discountValueLabel": "Discount Value ({symbol})",
+    "discountValuePlaceholderPercentage": "e.g., 20",
+    "discountValuePlaceholderFixed": "e.g., 10",
+    "expiryDateLabel": "Expiry Date",
+    "maxUsageLabel": "Max Usage (Optional)",
+    "maxUsagePlaceholder": "e.g., 100 (leave empty for unlimited)",
+    "activeLabel": "Set Active",
+    "saveButtonAdd": "Save Promo Code",
+    "saveButtonEdit": "Update Promo Code",
+    "quickExpiryOptions": {
+      "1day": "1 Day",
+      "1week": "1 Week",
+      "1month": "1 Month"
+    }
+  },
+  "errors": {
+    "selectPlanFirst": "Please select plan first.",
+    "failedCreate": "Failed to create promo code",
+    "failedUpdate": "Failed to update promo code",
+    "failedDelete": "Failed to delete promo code",
+    "failedFetch": "Failed to fetch promo codes"
+  },
+  "deleteConfirm": "Are you sure you want to delete this promo code?",
+  "noPromoCodes": "No promo codes found."
+}
 
 }
