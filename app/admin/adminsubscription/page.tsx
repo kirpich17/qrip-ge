@@ -52,6 +52,7 @@ import {
 import { format, addDays, addWeeks, addMonths } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -349,6 +350,7 @@ function AdminSubscription() {
           <Link href="/admin/dashboard" className="flex items-center text-white hover:underline gap-2">
             <ArrowLeft size={20} /> {translations.header.back}
           </Link>
+          <LanguageDropdown/>
           <h1 className="text-xl font-bold text-white flex items-center gap-2">
             <Crown size={24} /> {translations.header.title}
           </h1>
@@ -482,7 +484,7 @@ function AdminSubscription() {
                   {plan.isPopular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#547455]">{translations.card.popular}</Badge>}
                   {!plan.isActive && <Badge variant="destructive" className="absolute top-3 right-3">{translations.card.inactive}</Badge>}
 
-                  <CardHeader className="text-center pb-4">
+                  {/* <CardHeader className="text-center pb-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       {plan.planType === "premium" && <Crown className="text-black" size={32} />}
                       {plan.planType === "medium" && <Zap className="text-black" size={32} />}
@@ -494,16 +496,40 @@ function AdminSubscription() {
                       <span className="text-4xl font-bold text-gray-900">{plan.price} {translations.modal.currency}</span>
                       <span className="text-gray-600">{translations.card.oneTime}</span>
                     </div>
-                  </CardHeader>
+                  </CardHeader> */}
+
+
+                     <CardHeader className="text-center pb-4">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  {plan.planType === "premium" && <Crown className="text-black" size={32} />}
+                                  {plan.planType === "medium" && <Zap className="text-black" size={32} />}
+                                  {plan.planType === "minimal" && <Star className="text-black" size={32} />}
+                                </div>
+                                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                                <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                                <div className="mt-4">
+                                  <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
+                                  <span className="text-gray-600"> / one-time</span>
+                                </div>
+                              </CardHeader>
 
                   <CardContent className="pt-0 flex-grow flex flex-col">
                     <ul className="space-y-2 flex-grow">
-                      <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translations.card.features.unlimitedPhotos : translations.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
+                      {/* <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translations.card.features.unlimitedPhotos : translations.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
                       <FeatureListItem included={plan.allowSlideshow} text={translations.card.features.slideshow} />
                       <FeatureListItem included={plan.allowVideos} text={translations.card.features.videoUploads.replace('{duration}', String(plan.maxVideoDuration))} />
                       {plan.features.map((feature, idx) => (
                         <FeatureListItem key={idx} included={feature.included} text={feature.text} />
-                      ))}
+                      ))} */}
+
+
+                       <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
+                <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
+                <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
+                {plan.features.map((feature) => (
+                  <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
+                ))}
+
                     </ul>
                     <Separator className="my-6" />
                     <Button variant="outline" onClick={() => handleEditPlan(plan)}>

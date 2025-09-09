@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Crown } from "lucide-react";
 import ManageSubscriptionPlans from "./components/ManageSubscriptionPlans";
 import { Suspense } from "react";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -43,6 +44,7 @@ export default function SelectMemorialPlanPage() {
             <ArrowLeft className="h-5 w-5" />
        {translations.header.back}
           </Link>
+          <LanguageDropdown/>
           <div className="flex items-center space-x-2">
             <Crown className="md:h-6 md:w-6 w-4 h-4 text-white" />
             <span className="md:text-xl text-base font-bold text-white">

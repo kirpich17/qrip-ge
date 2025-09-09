@@ -37,6 +37,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Image from 'next/image';
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 // Fix for Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -498,6 +499,7 @@ export default function MemorialPage() {
               </motion.div>
               <span className="text-2xl font-bold text-white">QRIP.ge</span>
             </Link>
+            <LanguageDropdown/>
             <div className="flex items-center space-x-3">
               <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
                 {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}

@@ -44,6 +44,7 @@ import { ADD_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 interface Memorial {
   _id: string;
@@ -568,6 +569,7 @@ export default function EditMemorialPage() {
                 {editMemorialTranslations.header.back}
               </Link>
             </div>
+            <LanguageDropdown/>
             <div className="flex items-center flex-wrap gap-2">
               <Button
                 className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"

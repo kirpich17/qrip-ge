@@ -42,6 +42,7 @@ import IsUserAuth from "@/lib/IsUserAuth/page";
 import { getUserDetails } from "@/services/userService";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/services/axiosInstance";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -62,6 +63,7 @@ function Dashboard() {
   const { t } = useTranslation();
   const dashboardTranslations = t("dashboard" as any);
   const commonTranslations = t("common");
+  const helpTranslations = t("help");
   const dashboard: any = dashboardTranslations;
   console.log("🚀 ~ Dashboard ~ dashboard:", dashboard)
   const [searchQuery, setSearchQuery] = useState("");
@@ -260,12 +262,13 @@ function Dashboard() {
                 </span>
               </div>
             </div>
+            <LanguageDropdown/>
             <div className="flex items-center space-x-2">
               <UserMenu
                 user={profileData}
               />
 
-             <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">help</Link> 
+             <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">{helpTranslations.helpButton}</Link> 
             </div>
           </div>
         </div>

@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import axiosInstance from "@/services/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
@@ -51,7 +51,11 @@ type Plan = {
 export default function PlanSelection() {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const { t } = useTranslation();
+     const router = useRouter();
   const translations = t("planSelection");
+    const translationsAd = t("adminSubscriptionPage");
+
+  
 
     const searchParams = useSearchParams();
   const memorialId = searchParams.get("memorialId");
@@ -97,6 +101,25 @@ export default function PlanSelection() {
     }
   };
 
+    const clickHandler=()=>{
+
+    if (typeof window !== "undefined") {
+    const loginData = localStorage.getItem("loginData");
+    console.log("🚀 ~ clickHandler ~ loginData:", loginData)
+
+    if (loginData) {
+      // user is logged in → go to dashboard
+      // window.location.href = "/dashboard";
+      router.push("/dashboard")
+    } else {
+      // user not logged in → go to login
+      // window.location.href = "/login";
+      router.push("/login")
+    }
+
+  }
+  }
+
   return (
     <div className="grid lg:grid-cols-3 md:gap-8 gap-5">
       {plans?.map((plan, index) => (
@@ -127,7 +150,6 @@ export default function PlanSelection() {
 
             <CardContent className="pt-0 flex-grow flex flex-col">
               <ul className="space-y-2 flex-grow mb-6">
-                {/* Dynamically generated features from plan data */}
                 <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
                 <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
                 <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
@@ -135,6 +157,18 @@ export default function PlanSelection() {
                   <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
                 ))}
               </ul>
+
+              {/* <ul className="space-y-2 flex-grow mb-6">
+                      <FeatureListItem included={plan.maxPhotos > 0} text={plan.maxPhotos >= 999 ? translationsAd.card.features.unlimitedPhotos : translationsAd.card.features.photoUploads.replace('{count}', String(plan.maxPhotos))} />
+                      <FeatureListItem included={plan.allowSlideshow} text={translationsAd.card.features.slideshow} />
+                      <FeatureListItem included={plan.allowVideos} text={translationsAd.card.features.videoUploads.replace('{duration}', String(plan.maxVideoDuration))} />
+                      {plan.features.map((feature, idx) => (
+                        <FeatureListItem key={idx} included={feature.included} text={feature.text} />
+                      ))}
+
+
+                      
+                    </ul> */}
               
               <Separator className="my-4" />
 
@@ -142,10 +176,19 @@ export default function PlanSelection() {
                 <Button
                   className="w-full bg-[#243b31] hover:bg-green-700 text-white"
                   size="lg"
-                  onClick={() => handleSelectPlan(plan._id)}
+
+                    onClick={() =>
+                    memorialId ? handleSelectPlan(plan._id) : clickHandler()
+                  }
                   disabled={isProcessing === plan._id}
                 >
-                   {isProcessing === plan._id ? translations.cta.processing : plan.ctaButtonText || translations.cta.selectPlan}
+                     {isProcessing === plan._id
+                        ? translations.cta.processing
+                        : (plan.planType === "minimal" && translations.cta.getStarted) || // Example conditional text
+                          (plan.planType === "premium" && translations.cta.goPremium) || // Example conditional text
+                          (plan.planType === "medium" && translations.cta.medium) || // Example conditional text
+                          plan.ctaButtonText ||
+                          translations.cta.selectPlan}
                 </Button>
               </div>
             </CardContent>

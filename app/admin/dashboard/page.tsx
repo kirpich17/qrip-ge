@@ -26,6 +26,7 @@ import { NotificationModal } from "./NotificationModal";
 import { ProfileDropdown } from "./ProfileDropdown";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import axiosInstance from "@/services/axiosInstance";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 function AdminDashboardPage() {
   const { t } = useTranslation();
@@ -162,6 +163,7 @@ if(res.data.status == 'active')
                 {admindashTranslations.header.title}
               </span>
             </div>
+            <LanguageDropdown/>
             <div className="flex items-center space-x-4">
               {/* <Button
                 variant="ghost"

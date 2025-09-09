@@ -31,6 +31,7 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { getUserDetails, updateUserDetails, uploadProfileImage } from "@/services/userService";
 import { toast } from "react-toastify";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 export default function ProfilePage() {
   const { t } = useTranslation();
@@ -142,6 +143,7 @@ export default function ProfilePage() {
                 {profileTranslations.header.backButton}
               </Link>
             </div>
+            <LanguageDropdown/>
             <div className="flex items-center gap-1">
               <User className="h-5 w-5 text-white" />
               <span className="text-xs sm:text-lg font-bold text-white">

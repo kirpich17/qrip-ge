@@ -36,6 +36,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
 import axios from "axios";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 interface Memorial {
   _id: string;
@@ -282,6 +283,7 @@ export default function QRGeneratorPage() {
                 {qrGeneratorTranslations.header.back}
               </Link>
             </div>
+            <LanguageDropdown/>
             <div className="flex items-center space-x-2">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="p-2 bg-white rounded-xl">
                 <QrCode className="h-5 w-5 text-[#243b31]" />

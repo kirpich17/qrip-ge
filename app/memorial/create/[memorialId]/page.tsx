@@ -41,6 +41,7 @@ import { ADD_MEMORIAL, GET_MEMORIAL, UPDATE_MEMORIAL } from "@/services/apiEndPo
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
 import {  useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 // Media limits configuration
 const MEDIA_LIMITS = {
@@ -794,6 +795,8 @@ const handleDocumentsUpload = (files: FileList | null) => {
                 {createMemorialTranslations.header.back}
               </Link>
             </div>
+
+             <LanguageDropdown/>
             <div className="flex items-center space-x-3">
               <Button
                 className="bg-[#547455] hover:bg-white hover:text-[#547455]"
