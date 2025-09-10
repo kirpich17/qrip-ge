@@ -1295,7 +1295,27 @@
 
 
       
-    }
+    },
+
+      "promoCode": {
+    "applyButton": "Apply",
+    "applying": "Applying...",
+    "placeholder": "Enter promo code",
+    "success": "Promo code applied successfully!",
+    "invalid": "Invalid promo code",
+    "failed": "Failed to apply promo code",
+    "tooltip": "Enter a promo code to get discounts on this plan.",
+    "sectionTitle": "Apply Promo Code",
+    "applied": "Promo code applied: {code}",
+    "discountPercentage": "{value}% off",
+    "discountFixed": "{value} GEL off",
+    "discountFree": "100% off - FREE",
+    "removeButton": "Remove",
+    "youSave": "You save",
+    "getForFree": "Get For Free",
+    "memorialIdRequired": "Memorial ID is required to apply promo code",
+    "enterCode": "Please enter a promo code"
+  }
 },
 
 

@@ -408,7 +408,7 @@
 
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Crown, Star, Zap, X, Tag, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -478,10 +478,13 @@ export default function PlanSelection() {
   const [planPromoStates, setPlanPromoStates] = useState<Record<string, PlanPromoState>>({});
   const { t } = useTranslation();
   const router = useRouter();
-  const translations = t("planSelection");
-
   const searchParams = useSearchParams();
   const memorialId = searchParams.get("memorialId");
+
+  // Get translations
+  const translations = t("planSelection");
+  const commonTranslations = t("common");
+  const promoTranslations = t("promoCodeManagement");
 
   // Fetch all active plans using React Query
   const { data: plans, isLoading, error } = useQuery<Plan[]>({
@@ -494,7 +497,7 @@ export default function PlanSelection() {
   });
 
   // Initialize promo states when plans are loaded
-  useState(() => {
+  useEffect(() => {
     if (plans && !Object.keys(planPromoStates).length) {
       const initialStates: Record<string, PlanPromoState> = {};
       plans.forEach(plan => {
@@ -507,12 +510,12 @@ export default function PlanSelection() {
       });
       setPlanPromoStates(initialStates);
     }
-  });
+  }, [plans, planPromoStates]);
 
   // Function to apply promo code to a specific plan
   const handleApplyPromoCode = async (planId: string) => {
     if (!memorialId) {
-      toast.error("Memorial ID is required to apply promo code");
+      toast.error(translations.memorialIdRequired );
       return;
     }
 
@@ -522,8 +525,7 @@ export default function PlanSelection() {
         ...prev,
         [planId]: {
           ...prev[planId],
-          error: "Please enter a promo code"
-        }
+          error: translations.promoCode?.enterCode}
       }));
       return;
     }
@@ -559,13 +561,13 @@ export default function PlanSelection() {
             isValidating: false
           }
         }));
-        toast.success("Promo code applied successfully!");
+        toast.success(translations.promoCode?.success || "Promo code applied successfully!");
       } else {
         setPlanPromoStates(prev => ({
           ...prev,
           [planId]: {
             ...prev[planId],
-            error: response.data.message || "Invalid promo code",
+            error: response.data.message || translations.promoCode?.invalid || "Invalid promo code",
             isValidating: false
           }
         }));
@@ -575,7 +577,7 @@ export default function PlanSelection() {
         ...prev,
         [planId]: {
           ...prev[planId],
-          error: err.response?.data?.message || "Failed to apply promo code",
+          error: err.response?.data?.message || translations.promoCode?.failed || "Failed to apply promo code",
           isValidating: false
         }
       }));
@@ -638,10 +640,10 @@ export default function PlanSelection() {
         // Redirect the user to the payment gateway
         window.location.href = response.data.redirectUrl;
       } else {
-        toast.error(translations.paymentError.initiate);
+        toast.error(translations.paymentError?.initiate || "Could not initiate payment. Please try again.");
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || translations.paymentError.process);
+      toast.error(err.response?.data?.message || translations.paymentError?.process || "Failed to start payment process.");
     } finally {
       setIsProcessing(null);
     }
@@ -668,9 +670,6 @@ export default function PlanSelection() {
 
   return (
     <div className="max-w-6xl mx-auto px-4">
-      {/* Header */}
-  
-
       {/* Plans Grid */}
       <div className="grid lg:grid-cols-3 md:gap-8 gap-6">
         {plans?.map((plan, index) => {
@@ -710,7 +709,7 @@ export default function PlanSelection() {
                         <span className="text-gray-600"> / one-time</span>
                         <div className="text-sm text-gray-500 line-through">{formatCurrency(originalPrice)}</div>
                         <Badge variant="outline" className="mt-1 bg-green-50 text-green-700 border-green-200">
-                          You save {formatCurrency(discountAmount)}
+                          {translations.promoCode?.youSave} {formatCurrency(discountAmount)}
                         </Badge>
                       </div>
                     ) : (
@@ -736,14 +735,14 @@ export default function PlanSelection() {
                  { memorialId && <div className="mt-4 pt-4 border-t">
                     <div className="flex items-center mb-2">
                       <Tag className="mr-2 h-4 w-4 text-[#243b31]" />
-                      <span className="text-sm font-medium">Apply Promo Code</span>
+                      <span className="text-sm font-medium">{translations.promoCode?.sectionTitle}</span>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Info className="ml-2 h-3 w-3 text-gray-400 cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="max-w-xs text-xs">Enter a promo code to get discounts on this plan.</p>
+                            <p className="max-w-xs text-xs">{translations.promoCode?.tooltip}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -754,14 +753,14 @@ export default function PlanSelection() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="text-green-800 font-medium text-sm">
-                              Promo code applied: {promoState.appliedPromo.code}
+                              {translations.promoCode?.applied?.replace('{code}', promoState.appliedPromo.code)}
                             </p>
                             <p className="text-green-600 text-xs">
                               {promoState.appliedPromo.discountType === "percentage" 
-                                ? `${promoState.appliedPromo.discountValue}% off` 
+                                ? translations.promoCode?.discountPercentage?.replace('{value}', promoState.appliedPromo.discountValue.toString())
                                 : promoState.appliedPromo.discountType === "fixed"
-                                  ? `${promoState.appliedPromo.discountValue} GEL off`
-                                  : "100% off - FREE"}
+                                  ? translations.promoCode?.discountFixed?.replace('{value}', promoState.appliedPromo.discountValue.toString())
+                                  : translations.promoCode?.discountFree}
                             </p>
                           </div>
                           <Button 
@@ -770,14 +769,14 @@ export default function PlanSelection() {
                             onClick={() => handleRemovePromoCode(plan._id)}
                             className="text-red-600 border-red-200 hover:bg-red-50 h-7 text-xs"
                           >
-                            Remove
+                            {translations.promoCode?.removeButton}
                           </Button>
                         </div>
                       </div>
                     ) : (
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Enter promo code"
+                          placeholder={translations.promoCode?.placeholder}
                           value={promoState.input}
                           onChange={(e) => setPlanPromoStates(prev => ({
                             ...prev,
@@ -797,7 +796,9 @@ export default function PlanSelection() {
                           disabled={promoState.isValidating}
                           className="h-9 text-sm"
                         >
-                          {promoState.isValidating ? "Applying..." : "Apply"}
+                          {promoState.isValidating 
+                            ? translations.promoCode?.applying 
+                            : translations.promoCode?.applyButton}
                         </Button>
                       </div>
                     )}
@@ -817,7 +818,7 @@ export default function PlanSelection() {
                     {isProcessing === plan._id
                       ? translations.cta.processing
                       : hasDiscount && promoState.appliedPromo?.discountType === "free"
-                        ? "Get For Free"
+                        ? translations.promoCode?.getForFree || "Get For Free"
                         : (plan.planType === "minimal" && translations.cta.getStarted) ||
                           (plan.planType === "premium" && translations.cta.goPremium) ||
                           (plan.planType === "medium" && translations.cta.medium) ||

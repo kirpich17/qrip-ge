@@ -1252,7 +1252,27 @@
    "getStarted": "Начать",
   "goPremium": "Перейти на Премиум",
   "medium": "Перейти на Премиум"
-    }
+    },
+
+      "promoCode": {
+     "applyButton": "Применить",
+    "applying": "Применение...",
+    "placeholder": "Введите промокод",
+    "success": "Промокод успешно применен!",
+    "invalid": "Неверный промокод",
+    "failed": "Не удалось применить промокод",
+    "tooltip": "Введите промокод, чтобы получить скидки на этот план.",
+    "sectionTitle": "Применить промокод",
+    "applied": "Промокод применен: {code}",
+    "discountPercentage": "{value}% скидка",
+    "discountFixed": "{value} GEL скидка",
+    "discountFree": "100% скидка - БЕСПЛАТНО",
+    "removeButton": "Удалить",
+    "youSave": "Вы экономите",
+    "getForFree": "Получить бесплатно",
+    "memorialIdRequired": "Для применения промокода требуется ID мемориала",
+    "enterCode": "Пожалуйста, введите промокод"
+  }
   },
   "adminSubscriptionPage": {
     "header": {

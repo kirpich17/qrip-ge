@@ -1295,7 +1295,27 @@
        "getStarted": "დაწყება",
   "goPremium": "პრემიუმზე გადასვლა",
   "medium": "გეგმის არჩევა"
-    }
+    },
+
+      "promoCode": {
+    "applyButton": "გამოყენება",
+    "applying": "გამოყენება...",
+    "placeholder": "შეიყვანეთ პრომო კოდი",
+    "success": "პრომო კოდი წარმატებით გამოიყენა!",
+    "invalid": "არასწორი პრომო კოდი",
+    "failed": "პრომო კოდის გამოყენება ვერ მოხერხდა",
+    "tooltip": "შეიყვანეთ პრომო კოდი ამ გეგმაზე ფასდაკლების მისაღებად.",
+    "sectionTitle": "პრომო კოდის გამოყენება",
+    "applied": "პრომო კოდი გამოყენებულია: {code}",
+    "discountPercentage": "{value}% ფასდაკლება",
+    "discountFixed": "{value} GEL ფასდაკლება",
+    "discountFree": "100% ფასდაკლება - უფასო",
+    "removeButton": "წაშლა",
+    "youSave": "თქვენ ზოგავთ",
+    "getForFree": "მიიღეთ უფასოდ",
+    "memorialIdRequired": "მემორიალის ID საჭიროა პრომო კოდის გამოსაყენებლად",
+    "enterCode": "გთხოვთ, შეიყვანოთ პრომო კოდი"
+  }
   },
   "adminSubscriptionPage": {
     "header": {
