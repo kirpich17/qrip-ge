@@ -354,7 +354,11 @@
         "label": "Email Notifications",
         "description": "Get notified when someone visits or comments"
       }
-    }
+    },
+      "latitude":"Latitude",
+      "longitude":"Longitude",
+"autoFillGPS":"Auto-fill GPS"
+    
   },
   "qrGenerator": {
     "header": {
@@ -570,7 +574,12 @@
       "deathDate": "Date of Passing",
       "location": "Memorial Location",
       "biography": "Life Story",
-      "biographyPlaceholder": "Share the beautiful story of your loved one's life..."
+      "biographyPlaceholder": "Share the beautiful story of your loved one's life...",
+      "achievements":"Achievements",
+      "awards":"Add notable achievements or awards",
+      "nobelPrice":"Nobel Prize in Physics",
+      "achievement": "Add notable achievements or awards (e.g., \"Nobel Prize\", \"Olympic Gold Medal\")"
+    
     },
     "media": {
       "title": "Photos & Videos",
@@ -589,6 +598,20 @@
         "title": "Documents",
         "description": "Manage documents",
         "button": "Manage Files"
+      }
+      ,
+      "videosCard":{
+        "videos":"Videos",
+        "upload":"Upload video memories",
+        "uploadVideo": "Upload Videos",
+        "existingVideos":"Existing Videos",
+        "newVideos":"New Videos"
+      },
+        "documentCard":{
+        "document":"Documents",
+        "upload":"Upload important documents",
+        "uploadDocument": "Upload Documents",
+        "existingDocument":"Existing Documents"
       }
     },
     "familyTree": {
@@ -1224,6 +1247,7 @@
   "Profiledropdown": {
     "subscription": "Subscription",
     "profile": "Profile",
+    "termsAndCondition": "Terms And Condition",
     "logout": "Logout"
   },
 
@@ -1477,6 +1501,35 @@
 },
 "help":{
 "helpButton":"help"
-}
+},
+  "TermsPage":{
+    "manage":"Manage Terms And Conditions",
+    "termAndCondition":"Terms And Conditions",
+   "heading":"Terms & Conditions Editor",
+   "Preview":"Preview",
+   "ExitPreview":"Exit Preview",
+   "NoteSection":"Note Section",
+   "NoteTitle":"Note Title",
+   "NoteContent":"Note Content",
+   "Sections":"Sections",
+   "AddSections":"Add New Sections",
+   "TermsConditions":"Terms & Conditions",
+   "SectionTitle":"Section Title",
+   "SectionType":"Section Type",
+   "Content":"Content",
+    "characters":"characters",
+   "Introduction":"Introduction (Optional)",
+   "EnterTitle":"Enter title",
+   "Entercontent":"Enter content...",
+   "EnterIntroduction": "Enter introduction text (optional)",
+   "EnterListItem":"Enter list item",
+   "ListItems":"List Items",
+   "AddItam":"Add Item",
+   "List":"List",
+   "Text":"Text",
+   "Saving":"Saving",
+   "Save":"Save",
+   "ResetAll":"Reset All"
+  }
 
 }

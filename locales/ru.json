@@ -351,7 +351,12 @@
         "label": "Email-уведомления",
         "description": "Получать уведомления, когда кто-то посещает страницу или оставляет комментарий"
       }
-    }
+    },
+    
+  "latitude": "Широта",
+  "longitude": "Долгота",
+  "autoFillGPS": "Автозаполнение GPS"
+
   },
   "qrGenerator": {
     "header": {
@@ -567,7 +572,11 @@
       "deathDate": "Дата ухода из жизни",
       "location": "Местоположение мемориала",
       "biography": "История жизни",
-      "biographyPlaceholder": "Поделитесь прекрасной историей жизни вашего близкого..."
+      "biographyPlaceholder": "Поделитесь прекрасной историей жизни вашего близкого...",
+          "achievements": "Достижения",
+  "awards": "Добавьте заметные достижения или награды",
+  "nobelPrice": "Нобелевская премия по физике",
+  "achievement": "Добавьте заметные достижения или награды (напр., «Нобелевская премия», «Золотая олимпийская медаль»)"
     },
     "media": {
       "title": "Фото и Видео",
@@ -586,7 +595,20 @@
         "title": "Документы",
         "description": "Управляйте документами",
         "button": "Управлять файлами"
-      }
+      },
+  "videosCard": {
+    "videos": "Видео",
+    "upload": "Загрузите видео воспоминания",
+    "uploadVideo": "Загрузить видео",
+    "existingVideos": "Существующие видео",
+    "newVideos": "Новые видео"
+  },
+  "documentCard": {
+    "document": "Документы",
+    "upload": "Загрузите важные документы",
+    "uploadDocument": "Загрузить документы",
+    "existingDocument": "Существующие документы"
+  }
     },
     "familyTree": {
       "title": "Семейное древо",
@@ -1193,6 +1215,7 @@
   "Profiledropdown": {
     "subscription": "Подписка",
     "profile": "Профиль",
+          "termsAndCondition": "Terms And Condition",
     "logout": "Выйти"
   },
 "subscription_management": {
@@ -1427,5 +1450,34 @@
 },
 "help":{
 "helpButton": "помощь"
-}
+},
+    "TermsPage": {
+      "manage": "Управление Условиями и Положениями",
+        "termAndCondition": "Условия и Положения",
+      "heading": "Редактор Условий и Положений",
+      "Preview": "Предпросмотр",
+      "ExitPreview": "Выйти из предпросмотра",
+      "NoteSection": "Раздел заметки",
+      "NoteTitle": "Заголовок заметки",
+      "NoteContent": "Содержание заметки",
+      "Sections": "Разделы",
+      "AddSections": "Добавить новый раздел",
+      "TermsConditions": "Условия и Положения",
+      "SectionTitle": "Заголовок раздела",
+      "SectionType": "Тип раздела",
+      "Content": "Содержание",
+      "characters": "символов",
+      "Introduction": "Введение (необязательно)",
+      "EnterTitle": "Введите заголовок",
+      "Entercontent": "Введите содержание...",
+      "EnterIntroduction": "Введите текст введения (необязательно)",
+      "EnterListItem": "Введите элемент списка",
+      "ListItems": "Элементы списка",
+      "AddItam": "Добавить элемент",
+      "List": "Список",
+       "Text": "Текст",
+      "Saving": "Сохранение",
+      "Save": "Сохранить",
+      "ResetAll": "Сбросить всё"
+    }
 }

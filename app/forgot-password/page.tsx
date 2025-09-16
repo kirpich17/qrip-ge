@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
     setError("");
     try {
       // Replace with your actual API call
-      const response = await fetch("https://qrip-ge-backend.vercel.app/api/auth/forgot-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

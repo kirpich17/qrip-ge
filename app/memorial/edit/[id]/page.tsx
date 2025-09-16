@@ -790,9 +790,9 @@ export default function EditMemorialPage() {
 
 
                   <div className="space-y-4">
-                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <Label className="text-lg font-semibold">{editMemorialTranslations.basicInfo.achievements}</Label>
                     <p className="text-sm text-gray-500">
-                      Add notable achievements or awards
+                      {editMemorialTranslations.basicInfo.awards}
                     </p>
 
                     {/* Add new achievement */}
@@ -800,7 +800,7 @@ export default function EditMemorialPage() {
                       <Input
                         value={newAchievement}
                         onChange={(e) => setNewAchievement(e.target.value)}
-                        placeholder="e.g. Nobel Prize in Physics"
+                        placeholder= {editMemorialTranslations.basicInfo.nobelPrice}
                         className="flex-1"
                       />
                       <Button
@@ -1017,8 +1017,8 @@ export default function EditMemorialPage() {
                       <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <Video className="h-12 w-12 text-gray-400 mb-4" />
-                          <h3 className="font-semibold text-gray-900 mb-2">Videos</h3>
-                          <p className="text-sm text-gray-500 mb-4">Upload video memories</p>
+                          <h3 className="font-semibold text-gray-900 mb-2">  {editMemorialTranslations.media.videosCard.videos}</h3>
+                          <p className="text-sm text-gray-500 mb-4">{editMemorialTranslations.media.videosCard.upload}</p>
 
                           <Button
                             variant="outline"
@@ -1031,14 +1031,14 @@ export default function EditMemorialPage() {
                               input.click();
                             }}
                           >
-                            <Upload className="h-4 w-4 mr-2" />11
-                            Upload Videos
+                            <Upload className="h-4 w-4 mr-2" />
+                           {editMemorialTranslations.media.videosCard.uploadVideo}
                           </Button>
 
                           {/* Existing Videos */}
                           {formData.videoGallery?.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">Existing Videos</p>
+                              <p className="text-xs font-medium mb-2"> {editMemorialTranslations.media.videosCard.existingVideos}</p>
                               <div className="space-y-1 mb-4">
                                 {formData.videoGallery.map((videoUrl, index) => (
                                   <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1065,7 +1065,7 @@ export default function EditMemorialPage() {
                           {/* New Videos */}
                           {mediaFiles.videos.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">New Videos</p>
+                              <p className="text-xs font-medium mb-2">{editMemorialTranslations.media.videosCard.newVideos}</p>
                               <div className="space-y-1">
                                 {mediaFiles.videos.map((video, index) => (
                                   <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1177,8 +1177,8 @@ export default function EditMemorialPage() {
                       <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                          <h3 className="font-semibold text-gray-900 mb-2">Documents</h3>
-                          <p className="text-sm text-gray-500 mb-4">Upload important documents</p>
+                          <h3 className="font-semibold text-gray-900 mb-2">{editMemorialTranslations.media.documentCard.document}</h3>
+                          <p className="text-sm text-gray-500 mb-4">{editMemorialTranslations.media.documentCard.upload}</p>
 
                           <Button
                             variant="outline"   
@@ -1193,13 +1193,13 @@ export default function EditMemorialPage() {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            Upload Documents
+                           {editMemorialTranslations.media.documentCard.uploadDocument}
                           </Button>
 
                           {/* Existing Documents */}
                           {formData.documents?.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">Existing Documents</p>
+                              <p className="text-xs font-medium mb-2">{editMemorialTranslations.media.documentCard.existingDocument}</p>
                               <div className="space-y-1 mb-4">
                                 {formData.documents.map((docUrl, index) => (
                                   <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1325,7 +1325,7 @@ export default function EditMemorialPage() {
                               ...prev!,
                               familyTree: [...prev!.familyTree, {
                                 ...newFamilyMember,
-                                _id: `temp-${Date.now()}`
+                                // _id: `temp-${Date.now()}`
                               }]
                             }));
                           }

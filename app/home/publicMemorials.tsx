@@ -15,7 +15,7 @@ const MemorialCard = ({ memorial }) => {
   };
 
   return (
-    // <Link href={`/memorial/${memorial._id}`} key={memorial._id}>
+    // <Link href={`/memorial/${memorial._id}`} key={memorial._id} target='_blank'>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2 flex flex-col h-full cursor-pointer">
         <div className="h-48 bg-gray-200 flex-shrink-0">
           {memorial.profileImage ? (
@@ -82,7 +82,11 @@ export default function PublicMemorials() {
             fetchedMemorials.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           }
 
-          setMemorials(fetchedMemorials);
+              const filteredMemorials = response.data.memorials.filter(
+      (memorial: any) => memorial.firstName !== "Untitled"
+    );
+
+          setMemorials(filteredMemorials);
 
           if (response.data.pagination) {
             setTotalPages(response.data.pagination.totalPages);

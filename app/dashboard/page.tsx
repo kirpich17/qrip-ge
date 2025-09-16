@@ -198,8 +198,9 @@ function Dashboard() {
         }
         const user = JSON.parse(loginData);
         const userId = user._id;
-        const response = await fetch(`https://qrip-ge-backend.vercel.app/api/auth/stats/${userId}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/auth/stats/${userId}`);
         const result = await response.json();
+        console.log("🚀 ~ fetchStats ~ result:", result)
 
         if (result.status && result.data) {
           const apiData = result.data;
@@ -238,7 +239,7 @@ function Dashboard() {
     };
 
     fetchStats();
-  }, []);
+  }, [dashboard]);
 
   return (
     <div className="min-h-screen bg-gray-50">

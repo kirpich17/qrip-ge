@@ -198,6 +198,8 @@ const memorialId = params.memorialId as string;
   const { t } = useTranslation();
   const { toast } = useToast();
   const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
+  console.log("🚀 ~ CreateMemorialPage ~ createMemorialTranslations:", createMemorialTranslations)
+  const editMemorialTranslations = t("editMemorial");
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
@@ -1008,7 +1010,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                         ) : (
                           <Search className="h-4 w-4 mr-2" />
                         )}
-                        Auto-fill GPS
+                         {createMemorialTranslations.autoFillGPS}
                       </Button>
                     </div>
                     {geocodingError && (
@@ -1034,16 +1036,16 @@ const handleDocumentsUpload = (files: FileList | null) => {
                   </div>
                   
                   <div className="space-y-4">
-                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <Label className="text-lg font-semibold">{editMemorialTranslations.basicInfo.achievements}</Label>
                     <p className="text-sm text-gray-500">
-                      Add notable achievements or awards (e.g., "Nobel Prize", "Olympic Gold Medal")
+                      {editMemorialTranslations.basicInfo.achievement}
                     </p>
 
                     <div className="flex gap-2">
                       <Input
                         value={newAchievement}
                         onChange={(e) => setNewAchievement(e.target.value)}
-                        placeholder="e.g. Nobel Prize in Physics"
+                        placeholder={editMemorialTranslations.basicInfo.nobelPrice}
                         className="flex-1"
                       />
                       <Button
@@ -1082,7 +1084,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                     <div className="space-y-2">
                       <Label htmlFor="latitude" className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                        Latitude
+                          {createMemorialTranslations.latitude}
                       </Label>
                       <Input
                         id="latitude"
@@ -1111,7 +1113,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                     <div className="space-y-2">
                       <Label htmlFor="longitude" className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                        Longitude
+                       {createMemorialTranslations.longitude}
                       </Label>
                       <Input
                         id="longitude"

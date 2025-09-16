@@ -20,6 +20,7 @@ const staggerContainer = {
 };
 
 export function StatsCards({ stats }: { stats: any[] }) {
+  console.log("🚀 ~ StatsCards ~ stats:", stats)
   return (
     <motion.div
       variants={staggerContainer}

@@ -54,6 +54,7 @@ export default function QRGeneratorPage() {
   const qrGeneratorTranslations = t("qrGenerator");
   const [memorials, setMemorials] = useState<Memorial[]>([]);
   const [selectedMemorialId, setSelectedMemorialId] = useState<string | undefined>(undefined);
+  console.log("🚀 ~ QRGeneratorPage ~ selectedMemorialId:", selectedMemorialId)
   const [isLoadingMemorials, setIsLoadingMemorials] = useState(true);
   const [qrSize, setQrSize] = useState<"small" | "medium" | "large" | "xlarge">("medium");
   const [qrStyle, setQrStyle] = useState<"standard" | "rounded" | "dots" | "branded">("standard");
@@ -79,12 +80,20 @@ export default function QRGeneratorPage() {
         return;
       }
       try {
-        const response = await axios.get('https://qrip-ge-backend.vercel.app/api/memorials/my-memorials', {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}api/memorials/my-memorials`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.data.status && response.data.data.length > 0) {
-          setMemorials(response.data.data);
-          setSelectedMemorialId(response.data.data[0]._id);
+          // Filter out memorials with firstName === "Untitled"
+    const filteredMemorials = response.data.data.filter(
+      (memorial: any) => memorial.firstName !== "Untitled"
+    );
+
+    setMemorials(filteredMemorials);
+
+    if (filteredMemorials.length > 0) {
+      setSelectedMemorialId(filteredMemorials[0]._id);
+    }
         } else {
           setMemorials([]);
           toast.error("No memorials found");
@@ -101,6 +110,7 @@ export default function QRGeneratorPage() {
 
   const selectedMemorialData = memorials.find((m) => m._id === selectedMemorialId);
   const publicMemorialUrl = selectedMemorialData ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}/memorial/${selectedMemorialData._id}?isScan=true` : "";
+  console.log("🚀 ~ QRGeneratorPage ~ publicMemorialUrl:", publicMemorialUrl)
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success("URL copied!"));
@@ -118,7 +128,7 @@ export default function QRGeneratorPage() {
 
     try {
       const response = await axios.post(
-        'https://qrip-ge-backend.vercel.app/api/qrcode/generate',
+        `${process.env.NEXT_PUBLIC_BASE_URL}api/qrcode/generate`,
         {
           memorialId: selectedMemorialData._id,
           format,
@@ -331,7 +341,7 @@ export default function QRGeneratorPage() {
                           <SelectItem key={memorial._id} value={memorial._id}>
                             <div className="flex items-center justify-between w-full">
                               <span>{`${memorial.firstName} ${memorial.lastName}`}</span>
-                              <Badge variant={memorial.plan === "Premium" ? "default" : "secondary"}>
+                              <Badge variant={memorial.plan === "premium" ? "default" : "secondary"}>
                                 {memorial.plan}
                               </Badge>
                             </div>

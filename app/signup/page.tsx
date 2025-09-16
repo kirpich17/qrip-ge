@@ -381,13 +381,13 @@ export default function SignupPage() {
                   >
                     {authTranslations.signup.termsOfService}
                   </Link>{" "}
-                  {authTranslations.signup.and}{" "}
-                  <Link
+                  {/* {authTranslations.signup.and}{" "} */}
+                  {/* <Link
                     href="/privacy"
                     className="text-[#243b31] hover:underline"
                   >
                     {authTranslations.signup.privacyPolicy}
-                  </Link>
+                  </Link> */}
                 </Label>
               </div>
 

@@ -19,6 +19,12 @@ export function ProfileDropdown() {
   const handleSubscriptionClick = () => {
     router.push("/admin/adminsubscription"); // Change route as needed
   };
+
+
+    const handleTermsAndConditionClick = () => {
+    router.push("/admin/termAndCondition"); // Change route as needed
+  };
+
   const handleProfileClick = () => {
     router.push("/admin/adminprofile"); // Change route as needed
   };
@@ -45,12 +51,12 @@ export function ProfileDropdown() {
         >
           {profiledropdownTranslations.subscription}
         </DropdownMenuItem>
-        {/* <DropdownMenuItem
-          onClick={handleProfileClick}
+        <DropdownMenuItem
+          onClick={handleTermsAndConditionClick}
           className="cursor-pointer"
         >
-          {profiledropdownTranslations.profile}
-        </DropdownMenuItem> */}
+          {profiledropdownTranslations.termsAndCondition}
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleLogoutClick}
           className="cursor-pointer"

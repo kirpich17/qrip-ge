@@ -135,7 +135,7 @@ if(res.data.status == 'active')
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [admindashTranslations]);
 
   useEffect(() => {
     fetchAllUsers();
