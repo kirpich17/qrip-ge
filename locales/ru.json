@@ -1215,7 +1215,7 @@
   "Profiledropdown": {
     "subscription": "Подписка",
     "profile": "Профиль",
-          "termsAndCondition": "Terms And Condition",
+      "termsAndCondition": "Условия использования",
     "logout": "Выйти"
   },
 "subscription_management": {

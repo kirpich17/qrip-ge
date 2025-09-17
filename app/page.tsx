@@ -7,6 +7,7 @@ import Plans from "./home/plans";
 import Testimonials from "./home/testimonials";
 import Memories from "./home/memories";
 import PublicMemorials from "./home/publicMemorials";
+import { Suspense } from "react";
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -46,6 +47,7 @@ const floatingAnimation = {
 
 export default function HomePage() {
   return (
+     <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
       <Herobanner />
 
@@ -56,5 +58,6 @@ export default function HomePage() {
       <Testimonials />
       {/* <Memories /> */}
     </div>
+    </Suspense>
   );
 }

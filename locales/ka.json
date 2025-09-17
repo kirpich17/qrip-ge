@@ -1261,7 +1261,7 @@
   "Profiledropdown": {
     "subscription": "ჩემი პაკეტი",
     "profile": "პროფილი",
-      "termsAndCondition": "Terms And Condition",
+   "termsAndCondition": "წესები და პირობები",
     "logout": "გასვლა"
   },
   "subscription_management": {
