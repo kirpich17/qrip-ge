@@ -143,13 +143,16 @@ export default function ProfilePage() {
                 {profileTranslations.header.backButton}
               </Link>
             </div>
-            <LanguageDropdown/>
-            <div className="flex items-center gap-1">
-              <User className="h-5 w-5 text-white" />
-              <span className="text-xs sm:text-lg font-bold text-white">
-                {profileTranslations.header.title}
-              </span>
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center gap-1">
+                <User className="h-5 w-5 text-white" />
+                <span className="text-xs sm:text-lg font-bold text-white">
+                  {profileTranslations.header.title}
+                </span>
+              </div>
             </div>
+
           </div>
         </div>
       </header>

@@ -21,7 +21,7 @@ export function ProfileDropdown() {
   };
 
 
-    const handleTermsAndConditionClick = () => {
+  const handleTermsAndConditionClick = () => {
     router.push("/admin/termAndCondition"); // Change route as needed
   };
 
@@ -44,7 +44,7 @@ export function ProfileDropdown() {
           <AvatarFallback>AD</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
+      <DropdownMenuContent align="end" className="w-50  ">
         <DropdownMenuItem
           onClick={handleSubscriptionClick}
           className="cursor-pointer"

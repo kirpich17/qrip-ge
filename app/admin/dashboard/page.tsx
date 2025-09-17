@@ -90,11 +90,11 @@ function AdminDashboardPage() {
       );
       setUsers(res.data.users);
       // setTotalUserPages(res.data.pagination.totalPages);
-       setHasSearched(true);
+      setHasSearched(true);
     } catch (error) {
       console.log(error);
       setUsers([]);
-       setHasSearched(true);
+      setHasSearched(true);
     }
   };
 
@@ -120,13 +120,13 @@ function AdminDashboardPage() {
   };
   const memorailStatusToggle = async (id) => {
     try {
-      const res =  await axiosInstance.patch(`/api/admin/toggle-status-memorial/${id}`);
+      const res = await axiosInstance.patch(`/api/admin/toggle-status-memorial/${id}`);
       fetchAllMemorials();
       console.log("🚀 ~ memorailStatusToggle ~ res:", res)
-if(res.data.status == 'active')
-       toast.success(res.data.message);
-      else if(res.data.status == 'inactive') {
-  toast.error(res.data.message);
+      if (res.data.status == 'active')
+        toast.success(res.data.message);
+      else if (res.data.status == 'inactive') {
+        toast.error(res.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -143,15 +143,15 @@ if(res.data.status == 'active')
 
   useEffect(() => {
     fetchAllMemorials();
-  }, [memorialPage,searchQueryMemorial]);
+  }, [memorialPage, searchQueryMemorial]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-[#243b31]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center sm:space-x-4 space-x-2">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -159,13 +159,14 @@ if(res.data.status == 'active')
               >
                 <QrCode className="h-5 w-5 text-[#243b31]" />
               </motion.div>
-              <span className="md:text-2xl text-base font-bold text-white">
+              <span className="md:text-2xl  text-xs font-bold text-white">
                 {admindashTranslations.header.title}
               </span>
             </div>
-            <LanguageDropdown/>
-            <div className="flex items-center space-x-4">
-              {/* <Button
+            <div className="flex sm:gap-3 gap-0">
+              <LanguageDropdown />
+              <div className="flex items-center space-x-4">
+                {/* <Button
                 variant="ghost"
                 size="sm"
                 className="text-white md:flex hidden gap-1"
@@ -175,8 +176,10 @@ if(res.data.status == 'active')
                 {admindashTranslations.header.notifications}
               </Button> */}
 
-              <ProfileDropdown />
+                <ProfileDropdown />
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -231,7 +234,7 @@ if(res.data.status == 'active')
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
-                    type='search'
+                      type='search'
                       placeholder="Search users..."
                       value={searchQuery}
                       onChange={(e) => {
@@ -254,13 +257,13 @@ if(res.data.status == 'active')
                   </div>
                 ) : (
                   <>
-                <UserManagementTable
-                  users={users}
-                  fetchAllUsers={fetchAllUsers}
-                  userStatusToggle={userStatusToggle}
-                  translations={admindashTranslations.userManagement}
-                />
-                {/* <div className="flex items-center justify-between mt-4">
+                    <UserManagementTable
+                      users={users}
+                      fetchAllUsers={fetchAllUsers}
+                      userStatusToggle={userStatusToggle}
+                      translations={admindashTranslations.userManagement}
+                    />
+                    {/* <div className="flex items-center justify-between mt-4">
                   <span className="text-sm text-gray-600">
                     Page {userPage} of {totalUserPages}
                   </span>
@@ -283,7 +286,7 @@ if(res.data.status == 'active')
                     </Button>
                   </div>
                 </div> */}
-                </>)}
+                  </>)}
               </CardContent>
             </Card>
           </TabsContent>
@@ -292,19 +295,19 @@ if(res.data.status == 'active')
           <TabsContent value="memorials" className="space-y-6">
             <Card>
               <CardHeader>
-                  <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                <CardTitle>
-                  {admindashTranslations.recentMemorials.title}
-                </CardTitle>
-                <CardDescription>
-                  {admindashTranslations.recentMemorials.description}
-                </CardDescription>
-</div>
+                    <CardTitle>
+                      {admindashTranslations.recentMemorials.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {admindashTranslations.recentMemorials.description}
+                    </CardDescription>
+                  </div>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
-                    type='search'
+                      type='search'
                       placeholder="Search memorial..."
                       value={searchQueryMemorial}
                       onChange={(e) => {

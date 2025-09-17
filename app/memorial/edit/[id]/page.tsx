@@ -93,7 +93,7 @@ interface UserDetails {
 }
 
 export default function EditMemorialPage() {
-    const router = useRouter();
+  const router = useRouter();
   const params = useParams();
   const [formData, setFormData] = useState<Memorial | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,11 +110,11 @@ export default function EditMemorialPage() {
     documents: [] as DocumentItem[],
     familyTree: [] as FamilyMember[],
   });
-  
-  
+
+
   const [selectedProfileImage, setSelectedProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
-  console.log(profileImagePreview,"profileImagePreview")
+  console.log(profileImagePreview, "profileImagePreview")
   const [updating, setUpdating] = useState(false);
   const [isEditingFamilyMember, setIsEditingFamilyMember] = useState<string | null>(null);
 
@@ -366,13 +366,13 @@ export default function EditMemorialPage() {
       });
 
       // Append family tree members
-    formData.familyTree.forEach((member, index) => {
-  formDataToSend.append(`familyTree[${index}][name]`, member.name);
-  formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
-  if (member._id) {
-    formDataToSend.append(`familyTree[${index}][_id]`, member._id);
-  }
-});
+      formData.familyTree.forEach((member, index) => {
+        formDataToSend.append(`familyTree[${index}][name]`, member.name);
+        formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
+        if (member._id) {
+          formDataToSend.append(`familyTree[${index}][_id]`, member._id);
+        }
+      });
 
       // Append deleted files information
       formDataToSend.append('deletedPhotos', JSON.stringify(deletedFiles.photos));
@@ -418,41 +418,42 @@ export default function EditMemorialPage() {
       }
     } catch (err: any) {
       console.error("Failed to update memorial:", err);
-     if (err.response?.data?.actionCode === "UPGRADE_REQUIRED") {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Upgrade Required',
-        text: err.response?.data?.message || "You need to upgrade your plan to use this feature",
-        showCancelButton: true,
-        confirmButtonText: 'View Plans',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#E53935',
-        cancelButtonColor: '#6e7881',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/dashboard'); // Redirect to pricing page
-        }
-      });
-    }
+      if (err.response?.data?.actionCode === "UPGRADE_REQUIRED") {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Upgrade Required',
+          text: err.response?.data?.message || "You need to upgrade your plan to use this feature",
+          showCancelButton: true,
+          confirmButtonText: 'View Plans',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#E53935',
+          cancelButtonColor: '#6e7881',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/dashboard'); // Redirect to pricing page
+          }
+        });
+      }
       else if (err.response?.data?.actionCode === "VIDEO_TOO_LONG") {
-         Swal.fire({
-           icon: 'error',
-           title: 'Video Too Long',
-           text: err.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
-           confirmButtonText: 'OK',
-           confirmButtonColor: '#E53935',
-         });
-       }
-   
-    else {
-      // Show generic error for other issues
-      toast.error({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Failed to update memorial",
-        variant: "destructive",
-      });
-    }}
-   finally {
+        Swal.fire({
+          icon: 'error',
+          title: 'Video Too Long',
+          text: err.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#E53935',
+        });
+      }
+
+      else {
+        // Show generic error for other issues
+        toast.error({
+          title: "Error",
+          description: err instanceof Error ? err.message : "Failed to update memorial",
+          variant: "destructive",
+        });
+      }
+    }
+    finally {
       setUpdating(false);
     }
   };
@@ -569,27 +570,30 @@ export default function EditMemorialPage() {
                 {editMemorialTranslations.header.back}
               </Link>
             </div>
-            <LanguageDropdown/>
-            <div className="flex items-center flex-wrap gap-2">
-              <Button
-                className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"
-                onClick={handleSubmit}
-                disabled={updating}
-              >
-                {updating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    {editMemorialTranslations.header.save}
-                  </>
-                )}
-              </Button>
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center flex-wrap gap-2">
+                <Button
+                  className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"
+                  onClick={handleSubmit}
+                  disabled={updating}
+                >
+                  {updating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      {editMemorialTranslations.header.save}
+                    </>
+                  )}
+                </Button>
 
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -679,7 +683,7 @@ export default function EditMemorialPage() {
                           </Button>
                         )} */}
                       </div>
-                     {!profileImagePreview && <p className="text-sm text-gray-500 text-center md:text-left">
+                      {!profileImagePreview && <p className="text-sm text-gray-500 text-center md:text-left">
                         {
                           editMemorialTranslations.basicInfo.profileImage
                             .description
@@ -800,7 +804,7 @@ export default function EditMemorialPage() {
                       <Input
                         value={newAchievement}
                         onChange={(e) => setNewAchievement(e.target.value)}
-                        placeholder= {editMemorialTranslations.basicInfo.nobelPrice}
+                        placeholder={editMemorialTranslations.basicInfo.nobelPrice}
                         className="flex-1"
                       />
                       <Button
@@ -1032,7 +1036,7 @@ export default function EditMemorialPage() {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                           {editMemorialTranslations.media.videosCard.uploadVideo}
+                            {editMemorialTranslations.media.videosCard.uploadVideo}
                           </Button>
 
                           {/* Existing Videos */}
@@ -1181,7 +1185,7 @@ export default function EditMemorialPage() {
                           <p className="text-sm text-gray-500 mb-4">{editMemorialTranslations.media.documentCard.upload}</p>
 
                           <Button
-                            variant="outline"   
+                            variant="outline"
                             disabled={userSubscription !== 'premium'}
                             onClick={() => {
                               const input = document.createElement("input");
@@ -1193,7 +1197,7 @@ export default function EditMemorialPage() {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                           {editMemorialTranslations.media.documentCard.uploadDocument}
+                            {editMemorialTranslations.media.documentCard.uploadDocument}
                           </Button>
 
                           {/* Existing Documents */}
@@ -1294,7 +1298,7 @@ export default function EditMemorialPage() {
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                           placeholder={editMemorialTranslations.familyTree?.relationshipPlaceholder}
+                            placeholder={editMemorialTranslations.familyTree?.relationshipPlaceholder}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({

@@ -22,7 +22,7 @@ const Header = () => {
     setLanguage(lang);
     setIsLanguageOpen(false);
   };
-  
+
 
   return (
     <>
@@ -51,7 +51,7 @@ const Header = () => {
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
               {/* Language Dropdown */}
-            <LanguageDropdown/>
+              <LanguageDropdown />
 
               {/* <Link href="/admin/login">
                 <Button

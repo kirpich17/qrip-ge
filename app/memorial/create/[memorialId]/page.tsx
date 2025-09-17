@@ -40,7 +40,7 @@ import axiosInstance from "@/services/axiosInstance";
 import { ADD_MEMORIAL, GET_MEMORIAL, UPDATE_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
-import {  useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import LanguageDropdown from "@/components/languageDropdown/page";
 
 // Media limits configuration
@@ -57,7 +57,7 @@ const MEDIA_LIMITS = {
     MAX_SIZE_FREE: 50 * 1024 * 1024, // 50MB
     MAX_SIZE_PLUS: 200 * 1024 * 1024, // 200MB
     MAX_SIZE_PREMIUM: 500 * 1024 * 1024, // 500MB
-    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo','video/avi',  'video/x-msvideo' ],
+    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/avi', 'video/x-msvideo'],
     MAX_DURATION_FREE: 30, // seconds
     MAX_DURATION_PLUS: 120, // seconds
     MAX_DURATION_PREMIUM: 300, // seconds
@@ -188,12 +188,12 @@ export default function CreateMemorialPage() {
 
   const params = useParams();
 
-      const pathName=usePathname()
-       const isCreate= pathName.includes("/memorial/create");
-       console.log("🚀 ~ CreateMemorialPage ~ isCreate:", isCreate)
-   const isEdit =    pathName.includes("/memorial/edit");
+  const pathName = usePathname()
+  const isCreate = pathName.includes("/memorial/create");
+  console.log("🚀 ~ CreateMemorialPage ~ isCreate:", isCreate)
+  const isEdit = pathName.includes("/memorial/edit");
 
-const memorialId = params.memorialId as string;
+  const memorialId = params.memorialId as string;
 
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -250,10 +250,10 @@ const memorialId = params.memorialId as string;
       setGeocodingError("Please enter a location first");
       return;
     }
-  
+
     setIsGeocoding(true);
     setGeocodingError("");
-  
+
     try {
       // Using OpenStreetMap's Nominatim API (free, no API key required)
       const response = await fetch(
@@ -261,13 +261,13 @@ const memorialId = params.memorialId as string;
           formData.location
         )}`
       );
-      
+
       if (!response.ok) {
         throw new Error("Geocoding service unavailable");
       }
-      
+
       const data = await response.json();
-      
+
       if (data && data.length > 0) {
         const firstResult = data[0];
         setFormData(prev => ({
@@ -306,12 +306,12 @@ const memorialId = params.memorialId as string;
   };
 
   // File validation function
-// FIX: This function now uses 'minimal' and 'medium' instead of 'Free' and 'Plus'
-const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
+  // FIX: This function now uses 'minimal' and 'medium' instead of 'Free' and 'Plus'
+  const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
     const errors: string[] = [];
-    const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO : 
-                  type === 'video' ? MEDIA_LIMITS.VIDEO : 
-                  MEDIA_LIMITS.DOCUMENT;
+    const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO :
+      type === 'video' ? MEDIA_LIMITS.VIDEO :
+        MEDIA_LIMITS.DOCUMENT;
 
     // This check is correct as is
     if (type === 'document' && userSubscription !== 'premium') {
@@ -320,17 +320,17 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
     }
 
     // Check file count limits using the corrected plan names
-    const currentCount = type === 'photo' ? mediaFiles.photos.length : 
-                        type === 'video' ? mediaFiles.videos.length : 
-                        mediaFiles.documents.length;
-                        
-    const maxCount = type === 'photo' ? 
-      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL : 
-       userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
+    const currentCount = type === 'photo' ? mediaFiles.photos.length :
+      type === 'video' ? mediaFiles.videos.length :
+        mediaFiles.documents.length;
+
+    const maxCount = type === 'photo' ?
+      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL :
+        userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
       type === 'video' ?
-      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL : 
-       userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
-      limits.MAX_COUNT_PREMIUM;
+        (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL :
+          userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
+        limits.MAX_COUNT_PREMIUM;
 
     if (currentCount + files.length > maxCount) {
       errors.push(`You can only upload up to ${maxCount} ${type}s with your current plan.`);
@@ -343,12 +343,12 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
       }
 
       // Check file size using the corrected plan names
-      const maxSize = type === 'photo' ? 
+      const maxSize = type === 'photo' ?
         (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL : limits.MAX_SIZE_PAID) :
         type === 'video' ?
-        (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL : 
-         userSubscription === 'medium' ? limits.MAX_SIZE_MEDIUM : limits.MAX_SIZE_PREMIUM) :
-        limits.MAX_SIZE_PREMIUM;
+          (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL :
+            userSubscription === 'medium' ? limits.MAX_SIZE_MEDIUM : limits.MAX_SIZE_PREMIUM) :
+          limits.MAX_SIZE_PREMIUM;
 
       if (file.size > maxSize) {
         errors.push(`${file.name} exceeds the maximum size of ${maxSize / (1024 * 1024)}MB.`);
@@ -448,9 +448,9 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
       return;
     }
 
-    const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE : 
-                       userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS : 
-                       MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
+    const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE :
+      userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS :
+        MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
 
     const videoItems = await Promise.all(Array.from(files).map(async (file) => {
       const duration = await getVideoDuration(file);
@@ -475,39 +475,39 @@ const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') =>
     }));
   };
 
-const handleDocumentsUpload = (files: FileList | null) => {
-  if (!files) return;
+  const handleDocumentsUpload = (files: FileList | null) => {
+    if (!files) return;
 
-  const validation = validateFiles(files, 'document');
-  console.log("🚀 ~ handleDocumentsUpload ~ validation:", validation)
-  if (!validation.valid) {
-    toast({
-      title: "Upload Error",
-      description: validation.errors.join('\n'),
-      variant: "destructive",
+    const validation = validateFiles(files, 'document');
+    console.log("🚀 ~ handleDocumentsUpload ~ validation:", validation)
+    if (!validation.valid) {
+      toast({
+        title: "Upload Error",
+        description: validation.errors.join('\n'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // if (!canUploadDocuments()) {
+    //   showUpgradeToast("Premium");
+    //   return;
+    // }
+
+    const newDocuments = Array.from(files).map(file => ({
+      fileName: file.name,
+      file
+    }));
+
+    setMediaFiles(prev => {
+      const updatedDocuments = [...prev.documents, ...newDocuments];
+      console.log("Updated documents:", updatedDocuments); // Debug log
+      return {
+        ...prev,
+        documents: updatedDocuments
+      };
     });
-    return;
-  }
-
-  // if (!canUploadDocuments()) {
-  //   showUpgradeToast("Premium");
-  //   return;
-  // }
-
-  const newDocuments = Array.from(files).map(file => ({
-    fileName: file.name,
-    file
-  }));
-
-  setMediaFiles(prev => {
-    const updatedDocuments = [...prev.documents, ...newDocuments];
-    console.log("Updated documents:", updatedDocuments); // Debug log
-    return {
-      ...prev,
-      documents: updatedDocuments
-    };
-  });
-};
+  };
 
   const handleAddFamilyMember = () => {
     if (!canAddFamilyMembers()) {
@@ -602,7 +602,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
     try {
       const response = await axiosInstance.get(GET_MEMORIAL(id));
       const memorial = response.data.data;
-      
+
       setFormData({
         _id: memorial._id,
         firstName: memorial.firstName || "",
@@ -708,10 +708,10 @@ const handleDocumentsUpload = (files: FileList | null) => {
           "Content-Type": "multipart/form-data"
         }
       });
-      
+
       toast({
         title: "Success",
-         description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
+        description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
         variant: "default",
       });
       router.push("/dashboard");
@@ -783,8 +783,8 @@ const handleDocumentsUpload = (files: FileList | null) => {
   }
 
   return (
-   <div className="min-h-screen bg-gray-50 relative">
-     {isSaving && <LoadingOverlay />}
+    <div className="min-h-screen bg-gray-50 relative">
+      {isSaving && <LoadingOverlay />}
       <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -797,26 +797,28 @@ const handleDocumentsUpload = (files: FileList | null) => {
                 {createMemorialTranslations.header.back}
               </Link>
             </div>
-
-             <LanguageDropdown/>
-            <div className="flex items-center space-x-3">
-              <Button
-                className="bg-[#547455] hover:bg-white hover:text-[#547455]"
-                 onClick={(e) => handleSaveMemorial(e)}
-               disabled={isSaving} // Disable button while saving
->
-  {isSaving ? (
-    <>
-      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-      Saving...
-    </>
-  ) : (
-    <>
-      <Save className="h-4 w-4" />
-      {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
-    </>  )}
-              </Button>
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center space-x-3">
+                <Button
+                  className="bg-[#547455] hover:bg-white hover:text-[#547455]"
+                  onClick={(e) => handleSaveMemorial(e)}
+                  disabled={isSaving} // Disable button while saving
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
+                    </>)}
+                </Button>
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -829,7 +831,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
         >
           <div className="mb-8">
             <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
-             { createMemorialTranslations.title}
+              {createMemorialTranslations.title}
             </h1>
             <p className="text-gray-600 text-base">
               {isEditing ? "Update the memorial for your loved one" : createMemorialTranslations.subtitle}
@@ -874,19 +876,19 @@ const handleDocumentsUpload = (files: FileList | null) => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
-           <div className="relative w-24 h-24 rounded-full overflow-hidden">
-  <img
-    src={
-      typeof formData.profileImage === "string"
-        ? formData.profileImage
-        : formData.profileImage
-        ? URL.createObjectURL(formData.profileImage) // File → string URL
-        : "/default-avatar.png"
-    }
-   
-    className="object-cover"
-  />
-</div>
+                    <div className="relative w-24 h-24 rounded-full overflow-hidden">
+                      <img
+                        src={
+                          typeof formData.profileImage === "string"
+                            ? formData.profileImage
+                            : formData.profileImage
+                              ? URL.createObjectURL(formData.profileImage) // File → string URL
+                              : "/default-avatar.png"
+                        }
+
+                        className="object-cover"
+                      />
+                    </div>
                     <div className="flex md:justify-start justify-center flex-col">
                       <label htmlFor="profileImageUpload" className="w-fit">
                         <Button
@@ -906,11 +908,11 @@ const handleDocumentsUpload = (files: FileList | null) => {
                       </label>
 
                       {!formData.profileImage &&
-                      <p className="text-sm text-gray-500 md:text-left text-center">
-                        {createMemorialTranslations.basicInfo.photoDescription}
-                        <br />
-                        Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
-                      </p>}
+                        <p className="text-sm text-gray-500 md:text-left text-center">
+                          {createMemorialTranslations.basicInfo.photoDescription}
+                          <br />
+                          Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
+                        </p>}
                     </div>
                   </div>
 
@@ -983,7 +985,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                       className="h-12"
                     />
                   </div>
-                  
+
                   {/* --- ENHANCED LOCATION INPUT --- */}
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
@@ -1010,7 +1012,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                         ) : (
                           <Search className="h-4 w-4 mr-2" />
                         )}
-                         {createMemorialTranslations.autoFillGPS}
+                        {createMemorialTranslations.autoFillGPS}
                       </Button>
                     </div>
                     {geocodingError && (
@@ -1034,7 +1036,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                       className="min-h-[120px]"
                     />
                   </div>
-                  
+
                   <div className="space-y-4">
                     <Label className="text-lg font-semibold">{editMemorialTranslations.basicInfo.achievements}</Label>
                     <p className="text-sm text-gray-500">
@@ -1084,7 +1086,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                     <div className="space-y-2">
                       <Label htmlFor="latitude" className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                          {createMemorialTranslations.latitude}
+                        {createMemorialTranslations.latitude}
                       </Label>
                       <Input
                         id="latitude"
@@ -1113,7 +1115,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                     <div className="space-y-2">
                       <Label htmlFor="longitude" className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                       {createMemorialTranslations.longitude}
+                        {createMemorialTranslations.longitude}
                       </Label>
                       <Input
                         id="longitude"
@@ -1198,12 +1200,12 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             {createMemorialTranslations.media.photos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: JPEG, PNG, WebP 
+                            Supported: JPEG, PNG, WebP
                           </p>
                           {mediaFiles.photos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Photos 
+                                Selected Photos
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.photos.map((photo, index) => (
@@ -1312,12 +1314,12 @@ const handleDocumentsUpload = (files: FileList | null) => {
                             {createMemorialTranslations.media.documents.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: PDF, DOC, DOCX, TXT 
+                            Supported: PDF, DOC, DOCX, TXT
                           </p>
                           {mediaFiles.documents.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Documents 
+                                Selected Documents
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.documents.map((doc, index) => (
@@ -1380,7 +1382,7 @@ const handleDocumentsUpload = (files: FileList | null) => {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                        {createMemorialTranslations.familyTree?.relationship}
+                            {createMemorialTranslations.familyTree?.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"

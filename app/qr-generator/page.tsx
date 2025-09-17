@@ -85,15 +85,15 @@ export default function QRGeneratorPage() {
         });
         if (response.data.status && response.data.data.length > 0) {
           // Filter out memorials with firstName === "Untitled"
-    const filteredMemorials = response.data.data.filter(
-      (memorial: any) => memorial.firstName !== "Untitled"
-    );
+          const filteredMemorials = response.data.data.filter(
+            (memorial: any) => memorial.firstName !== "Untitled"
+          );
 
-    setMemorials(filteredMemorials);
+          setMemorials(filteredMemorials);
 
-    if (filteredMemorials.length > 0) {
-      setSelectedMemorialId(filteredMemorials[0]._id);
-    }
+          if (filteredMemorials.length > 0) {
+            setSelectedMemorialId(filteredMemorials[0]._id);
+          }
         } else {
           setMemorials([]);
           toast.error("No memorials found");
@@ -293,15 +293,18 @@ export default function QRGeneratorPage() {
                 {qrGeneratorTranslations.header.back}
               </Link>
             </div>
-            <LanguageDropdown/>
-            <div className="flex items-center space-x-2">
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="p-2 bg-white rounded-xl">
-                <QrCode className="h-5 w-5 text-[#243b31]" />
-              </motion.div>
-              <span className="md:text-2xl text-base font-bold text-white">
-                {qrGeneratorTranslations.header.title}
-              </span>
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center space-x-2">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="p-2 bg-white rounded-xl">
+                  <QrCode className="h-5 w-5 text-[#243b31]" />
+                </motion.div>
+                <span className="md:text-2xl text-base font-bold text-white">
+                  {qrGeneratorTranslations.header.title}
+                </span>
+              </div>
             </div>
+
           </div>
         </div>
       </header>

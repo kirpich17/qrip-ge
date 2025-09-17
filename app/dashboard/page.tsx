@@ -91,7 +91,7 @@ function Dashboard() {
       color: "text-blue-600",
     },
     {
-      label:dashboard.stats.qrScans,
+      label: dashboard.stats.qrScans,
       value: "0",
       icon: QrCode,
       color: "text-green-600",
@@ -134,12 +134,12 @@ function Dashboard() {
   }, [currentPage, searchQuery]);
 
 
-    // FIX: Create a derived state for memorials that are not "Untitled" drafts.
+  // FIX: Create a derived state for memorials that are not "Untitled" drafts.
   const filteredMemorials = memorials.filter(
     (memorial) => memorial.firstName !== "Untitled"
   );
   console.log("🚀 ~ Dashboard ~ filteredMemorials:", filteredMemorials)
-  
+
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
       try {
@@ -159,7 +159,7 @@ function Dashboard() {
     try {
       const response = await axiosInstance.post('/api/memorials/create-draft');
       const { memorialId } = response.data;
-      
+
       // Redirect to plan selection page with the memorial ID
       router.push(`/subscription?memorialId=${memorialId}`);
     } catch (error: any) {
@@ -171,12 +171,12 @@ function Dashboard() {
   };
 
 
-    const handleCreateDraftMemorial2 = async () => {
+  const handleCreateDraftMemorial2 = async () => {
     setIsCreatingDraft2(true);
     try {
       const response = await axiosInstance.post('/api/memorials/create-draft');
       const { memorialId } = response.data;
-      
+
       // Redirect to plan selection page with the memorial ID
       router.push(`/subscription?memorialId=${memorialId}`);
     } catch (error: any) {
@@ -206,25 +206,25 @@ function Dashboard() {
           const apiData = result.data;
           setStats([
             {
-                 label: dashboard.stats.totalMemorials,
+              label: dashboard.stats.totalMemorials,
               value: String(apiData.totalMemorials),
               icon: Heart,
               color: "text-red-600",
             },
             {
-             label: dashboard.stats.totalViews,
+              label: dashboard.stats.totalViews,
               value: String(apiData.totalViews),
               icon: Eye,
               color: "text-blue-600",
             },
             {
-             label:dashboard.stats.qrScans,
+              label: dashboard.stats.qrScans,
               value: String(apiData.totalScans),
               icon: QrCode,
               color: "text-green-600",
             },
             {
-             label: dashboard.stats.familyMembers,
+              label: dashboard.stats.familyMembers,
               value: String(apiData.totalFamilyTreeCount),
               icon: Users,
               color: "text-purple-600",
@@ -245,7 +245,7 @@ function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-[#243b31] border-b ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="flex items-center justify-center md:space-x-3 space-x-2 my-4">
@@ -254,23 +254,26 @@ function Dashboard() {
                   whileTap={{ scale: 0.95 }}
                   className="p-2 bg-white rounded-xl"
 
-                    onClick={() => router.push("/")}
+                  onClick={() => router.push("/")}
                 >
                   <QrCode className="h-5 w-5 text-[#243b31]" />{" "}
                 </motion.div>
-                <span className="md:text-2xl text-xl font-bold text-white">
+                <span className="md:text-2xl text-lg font-bold text-white whitespace-nowrap">
                   QRIP.ge
                 </span>
               </div>
             </div>
-            <LanguageDropdown/>
-            <div className="flex items-center space-x-2">
-              <UserMenu
-                user={profileData}
-              />
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center sm:space-x-2 space-x-0">
+                <UserMenu
+                  user={profileData}
+                />
 
-             <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">{helpTranslations.helpButton}</Link> 
+                <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">{helpTranslations.helpButton}</Link>
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -283,7 +286,7 @@ function Dashboard() {
           transition={{ duration: 0.6 }}
           className="md:mb-8 mb-3"
         >
-          <h1 className="md:text-3xl text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="md:text-3xl text-xl font-bold text-gray-900 mb-2">
             {dashboard.header.welcome}{profileData.firstname} {profileData.lastname}
           </h1>
           <p className="text-gray-600 text-base">{dashboard.header.subtitle}</p>
@@ -335,7 +338,7 @@ function Dashboard() {
                     </CardDescription>
                   </div>
                   {/* MODIFIED: Changed from Link to Button with onClick handler */}
-                  <Button 
+                  <Button
                     onClick={handleCreateDraftMemorial}
                     disabled={isCreatingDraft}
                     className="bg-[#547455] hover:bg-[#243b31] text-white"
@@ -361,146 +364,146 @@ function Dashboard() {
                   animate="animate"
                   className="space-y-4"
                 >
-                   {filteredMemorials.map((memorial) => (
-                    
+                  {filteredMemorials.map((memorial) => (
 
-                    
-                  
+
+
+
                     <motion.div key={memorial._id} variants={fadeInUp}>
                       <Link href={`/memorial/${memorial._id}`} target="_blank">
-                      <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
-                        <Avatar className="md:h-16 md:w-16 h-8 w-8">
-                          <AvatarImage
-                            src={memorial.profileImage || "/placeholder.svg"}
-                          />
-                          <AvatarFallback>
-                            {memorial.firstName
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
+                          <Avatar className="md:h-16 md:w-16 h-8 w-8">
+                            <AvatarImage
+                              src={memorial.profileImage || "/placeholder.svg"}
+                            />
+                            <AvatarFallback>
+                              {memorial.firstName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
 
-                        <div className="sm:flex-1 min-w-0">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="md:text-lg sm:text-base text-sm font-semibold text-gray-900 truncate">
-                              {memorial.firstName}
-                            </h3>
-                            {memorial.plan === "premium" && (
-                              <Crown className="h-4 w-4 text-yellow-500" />
-                            )}
-                            <Badge
-                              variant={
-                                memorial.status === "active"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className={
-                                memorial.status === "active"
-                                  ? "!bg-green-600 text-white"
-                                  : "!bg-red-600 text-white"
-                              }
-                            >
-                              {memorial.status}
-                            </Badge>
+                          <div className="sm:flex-1 min-w-0">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <h3 className="md:text-lg sm:text-base text-sm font-semibold text-gray-900 truncate">
+                                {memorial.firstName}
+                              </h3>
+                              {memorial.plan === "premium" && (
+                                <Crown className="h-4 w-4 text-yellow-500" />
+                              )}
+                              <Badge
+                                variant={
+                                  memorial.status === "active"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className={
+                                  memorial.status === "active"
+                                    ? "!bg-green-600 text-white"
+                                    : "!bg-red-600 text-white"
+                                }
+                              >
+                                {memorial.status}
+                              </Badge>
 
 
                               <Badge
-                              variant={
-                                memorial.status === "active"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className=
-                                
-                                  "!bg-yellow-600 text-white"
-                                  
-                              
-                            >
-                              {memorial.purchase?.planId?.name}
-                            </Badge>
+                                variant={
+                                  memorial.status === "active"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className=
 
-                          </div>
-                          <p className="text-gray-600 mb-2 text-sm">
-                            {memorial.dates}
-                          </p>
-                          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-                            <span className="flex items-center">
-                              <Eye className="h-4 w-4 mr-1" />
-                              {memorial.viewsCount} views
-                            </span>
-                            <span className="flex items-center">
-                              <QrCode className="h-4 w-4 mr-1" />
-                              {memorial.scanCount}
-                            </span>
-                            <span className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
-                              {memorial.location}
-                            </span>
-                          </div>
-                        </div>
+                                "!bg-yellow-600 text-white"
 
-                        <div className="flex justify-end items-center w-full">
-                          <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/memorial/edit/${memorial._id}`}
-                                className="flex items-center"
+
                               >
-                                <Edit className="h-4 w-4 mr-2" />
-                                {dashboard.memorials.edit}
-                              </Link>
-                            </DropdownMenuItem>
+                                {memorial.purchase?.planId?.name}
+                              </Badge>
 
-                              <DropdownMenuItem asChild>
-                                <Link
-                                  href={`/subscription?memorialId=${memorial._id}`}
-                                  className="flex items-center"
+                            </div>
+                            <p className="text-gray-600 mb-2 text-sm">
+                              {memorial.dates}
+                            </p>
+                            <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+                              <span className="flex items-center">
+                                <Eye className="h-4 w-4 mr-1" />
+                                {memorial.viewsCount} views
+                              </span>
+                              <span className="flex items-center">
+                                <QrCode className="h-4 w-4 mr-1" />
+                                {memorial.scanCount}
+                              </span>
+                              <span className="flex items-center">
+                                <MapPin className="h-4 w-4 mr-1" />
+                                {memorial.location}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end items-center w-full">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href={`/memorial/edit/${memorial._id}`}
+                                    className="flex items-center"
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    {dashboard.memorials.edit}
+                                  </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href={`/subscription?memorialId=${memorial._id}`}
+                                    className="flex items-center"
+                                  >
+                                    <Crown className="h-4 w-4 mr-2" />
+                                    {dashboard.memorials.managePlan}
+
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href="/qr-generator"
+                                    className="flex items-center"
+                                  >
+                                    <QrCode className="h-4 w-4 mr-2" />
+                                    {dashboard.memorials.downloadQR}
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-600 cursor-pointer"
+                                  onClick={() => handleDeleteMemorial(memorial._id)}
                                 >
-                                  <Crown className="h-4 w-4 mr-2" />
-                                  {dashboard.memorials.managePlan}
-                                  
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
-                                
-                              </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href="/qr-generator"
-                                className="flex items-center"
-                              >
-                                <QrCode className="h-4 w-4 mr-2" />
-                                {dashboard.memorials.downloadQR}
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-red-600 cursor-pointer"
-                              onClick={() => handleDeleteMemorial(memorial._id)}
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              {dashboard.memorials.delete}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  {dashboard.memorials.delete}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
-                      </div>
                       </Link>
                     </motion.div>)
-)}
+                  )}
 
                   {/* FIX: New robust logic for pagination and "No Memorials Found" message */}
                   {!loading && filteredMemorials.length === 0 && (
                     <p className="text-center text-gray-500 py-8">No Memorials Found</p>
                   )}
-               
-                {filteredMemorials.length > 0 && totalPages > 1 && (
+
+                  {filteredMemorials.length > 0 && totalPages > 1 && (
                     <div className="flex justify-center items-center gap-4 mt-4">
                       <Button
                         variant="outline"

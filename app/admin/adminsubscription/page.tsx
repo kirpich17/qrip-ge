@@ -119,7 +119,7 @@ function AdminSubscription() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalPromoCodes, setTotalPromoCodes] = useState(0);
-  
+
   // Promo Code States
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   console.log("🚀 ~ AdminSubscription ~ totalPromoCodes:", promoCodes)
@@ -205,7 +205,7 @@ function AdminSubscription() {
       setEditingPlan(null);
       setIsAddingPlan(false);
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 
+      const errorMsg = err.response?.data?.message ||
         (isAddingPlan ? translations.states.error.create : translations.states.error.update);
       setError(errorMsg);
       toast.error(errorMsg);
@@ -308,7 +308,7 @@ function AdminSubscription() {
       setIsPromoModalOpen(false);
       setPromoError(null);
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 
+      const errorMsg = err.response?.data?.message ||
         (isAddingPromoCode ? promoTranslations.errors.failedCreate : promoTranslations.errors.failedUpdate);
       setPromoError(errorMsg);
       toast.error(errorMsg);
@@ -347,20 +347,23 @@ function AdminSubscription() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-[#243b31] py-4 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/admin/dashboard" className="flex items-center text-white hover:underline gap-2">
+          <Link href="/admin/dashboard" className="flex items-center text-white hover:underline gap-2 whitespace-nowrap">
             <ArrowLeft size={20} /> {translations.header.back}
           </Link>
-          <LanguageDropdown/>
-          <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <Crown size={24} /> {translations.header.title}
-          </h1>
+          <div className="flex gap-3">
+            <LanguageDropdown />
+            <h1 className="sm:text-xl text-xs font-bold text-white flex items-center gap-2">
+              <Crown size={24} /> {translations.header.title}
+            </h1>
+          </div>
+
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div {...fadeInUp}>
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">{translations.main.title}</h2>
+            <h2 className="sm:text-4xl text-2xl font-bold text-gray-900 mb-3">{translations.main.title}</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
               {translations.main.description}
             </p>
@@ -499,19 +502,19 @@ function AdminSubscription() {
                   </CardHeader> */}
 
 
-                     <CardHeader className="text-center pb-4">
-                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                  {plan.planType === "premium" && <Crown className="text-black" size={32} />}
-                                  {plan.planType === "medium" && <Zap className="text-black" size={32} />}
-                                  {plan.planType === "minimal" && <Star className="text-black" size={32} />}
-                                </div>
-                                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                                <CardDescription className="text-gray-600">{plan.description}</CardDescription>
-                                <div className="mt-4">
-                                  <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
-                                  <span className="text-gray-600"> / one-time</span>
-                                </div>
-                              </CardHeader>
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      {plan.planType === "premium" && <Crown className="text-black" size={32} />}
+                      {plan.planType === "medium" && <Zap className="text-black" size={32} />}
+                      {plan.planType === "minimal" && <Star className="text-black" size={32} />}
+                    </div>
+                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                    <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                    <div className="mt-4">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
+                      <span className="text-gray-600"> / one-time</span>
+                    </div>
+                  </CardHeader>
 
                   <CardContent className="pt-0 flex-grow flex flex-col">
                     <ul className="space-y-2 flex-grow">
@@ -523,12 +526,12 @@ function AdminSubscription() {
                       ))} */}
 
 
-                       <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
-                <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
-                <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
-                {plan.features.map((feature) => (
-                  <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
-                ))}
+                      <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
+                      <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
+                      <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
+                      {plan.features.map((feature) => (
+                        <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
+                      ))}
 
                     </ul>
                     <Separator className="my-6" />
@@ -542,129 +545,129 @@ function AdminSubscription() {
           </div>
 
           {/* --- PROMO CODE MANAGEMENT SECTION --- */}
-            {promoTranslations && (
-          <motion.div {...fadeInUp} className="mt-12">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center flex-wrap gap-4">
-                  <div>
-                    <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                      <Gift size={24} /> {promoTranslations.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {promoTranslations.description}
-                    </CardDescription>
-                  </div>
-                  <Button onClick={handleAddPromoCode} className="bg-[#243b31] hover:bg-[#547455]">
-                    <Plus size={16} className="mr-2" /> {promoTranslations.addNewButton}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">Loading promo codes...</div>
-                ) : promoCodes.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">{promoTranslations.noPromoCodes}</p>
-                ) : (
-                  <>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              {promoTranslations.tableHeaders.code}
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              {promoTranslations.tableHeaders.discount}
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              {promoTranslations.tableHeaders.expires}
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              {promoTranslations.tableHeaders.usage}
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              {promoTranslations.tableHeaders.status}
-                            </th>
-                            <th scope="col" className="relative px-6 py-3">
-                              <span className="sr-only">{promoTranslations.tableHeaders.actions}</span>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {promoCodes.map((promo) => (
-                            <tr key={promo._id}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promo.code}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {promo.discountType === "percentage" && `${promo.discountValue}% Off`}
-                                {promo.discountType === "fixed" && `${promo.discountValue} ${translations.modal.currency} Off`}
-                                {promo.discountType === "free" && "100% Off (Free Plan)"}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {format(new Date(promo.expiryDate), "MMM dd, yyyy")}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {promo.maxUsage ? `${promo.currentUsage || 0}/${promo.maxUsage}` : "Unlimited"}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <Badge variant={promo.isActive ? "default" : "destructive"}>
-                                  {promo.isActive ? promoTranslations.status.active : promoTranslations.status.inactive}
-                                </Badge>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <Button variant="ghost" size="icon" onClick={() => handleEditPromoCode(promo)} className="mr-2">
-                                  <Edit size={16} />
-                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDeletePromoCode(promo._id)}>
-                                  <Trash2 size={16} className="text-red-500" />
-                                </Button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+          {promoTranslations && (
+            <motion.div {...fadeInUp} className="mt-12">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                      <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                        <Gift size={24} /> {promoTranslations.title}
+                      </CardTitle>
+                      <CardDescription>
+                        {promoTranslations.description}
+                      </CardDescription>
                     </div>
-
-                    {totalPages > 1 && (
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="text-sm text-gray-700">
-                          Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalPromoCodes)} of {totalPromoCodes} entries
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => fetchPromoCodes(currentPage - 1)}
-                            disabled={currentPage === 1}
-                          >
-                            Previous
-                          </Button>
-                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                            <Button
-                              key={page}
-                              variant={currentPage === page ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => fetchPromoCodes(page)}
-                            >
-                              {page}
-                            </Button>
-                          ))}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => fetchPromoCodes(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                          </Button>
-                        </div>
+                    <Button onClick={handleAddPromoCode} className="bg-[#243b31] hover:bg-[#547455]">
+                      <Plus size={16} className="mr-2" /> {promoTranslations.addNewButton}
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-center py-8">Loading promo codes...</div>
+                  ) : promoCodes.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">{promoTranslations.noPromoCodes}</p>
+                  ) : (
+                    <>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {promoTranslations.tableHeaders.code}
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {promoTranslations.tableHeaders.discount}
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {promoTranslations.tableHeaders.expires}
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {promoTranslations.tableHeaders.usage}
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {promoTranslations.tableHeaders.status}
+                              </th>
+                              <th scope="col" className="relative px-6 py-3">
+                                <span className="sr-only">{promoTranslations.tableHeaders.actions}</span>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {promoCodes.map((promo) => (
+                              <tr key={promo._id}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promo.code}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {promo.discountType === "percentage" && `${promo.discountValue}% Off`}
+                                  {promo.discountType === "fixed" && `${promo.discountValue} ${translations.modal.currency} Off`}
+                                  {promo.discountType === "free" && "100% Off (Free Plan)"}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {format(new Date(promo.expiryDate), "MMM dd, yyyy")}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {promo.maxUsage ? `${promo.currentUsage || 0}/${promo.maxUsage}` : "Unlimited"}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <Badge variant={promo.isActive ? "default" : "destructive"}>
+                                    {promo.isActive ? promoTranslations.status.active : promoTranslations.status.inactive}
+                                  </Badge>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <Button variant="ghost" size="icon" onClick={() => handleEditPromoCode(promo)} className="mr-2">
+                                    <Edit size={16} />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" onClick={() => handleDeletePromoCode(promo._id)}>
+                                    <Trash2 size={16} className="text-red-500" />
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>)}
+
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-4">
+                          <div className="text-sm text-gray-700">
+                            Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalPromoCodes)} of {totalPromoCodes} entries
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fetchPromoCodes(currentPage - 1)}
+                              disabled={currentPage === 1}
+                            >
+                              Previous
+                            </Button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                              <Button
+                                key={page}
+                                variant={currentPage === page ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => fetchPromoCodes(page)}
+                              >
+                                {page}
+                              </Button>
+                            ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fetchPromoCodes(currentPage + 1)}
+                              disabled={currentPage === totalPages}
+                            >
+                              Next
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>)}
 
           {/* --- ADD/EDIT PROMO CODE MODAL --- */}
           {isPromoModalOpen && editingPromoCode && (
@@ -760,7 +763,7 @@ function AdminSubscription() {
                     <div>
                       <label htmlFor="discountValue" className="block text-sm font-medium text-gray-700 mb-1">
                         {promoTranslations.modal.discountValueLabel.replace(
-                          '{symbol}', 
+                          '{symbol}',
                           editingPromoCode.discountType === "percentage" ? "%" : translations.modal.currency
                         )}
                       </label>
@@ -770,7 +773,7 @@ function AdminSubscription() {
                         min={0}
                         max={editingPromoCode.discountType === "percentage" ? 100 : undefined}
                         placeholder={
-                          editingPromoCode.discountType === "percentage" 
+                          editingPromoCode.discountType === "percentage"
                             ? promoTranslations.modal.discountValuePlaceholderPercentage
                             : promoTranslations.modal.discountValuePlaceholderFixed
                         }

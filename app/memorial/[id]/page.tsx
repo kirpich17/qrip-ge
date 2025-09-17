@@ -84,7 +84,7 @@ interface Memorial {
   location?: string;
   createdAt: string;
   updatedAt: string;
-  allowSlideshow:boolean
+  allowSlideshow: boolean
 }
 
 function QRPageTransition({
@@ -144,7 +144,7 @@ function QRPageTransition({
 
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % premiumSlides.length);
-    },4000); // Increased duration to 4 seconds
+    }, 4000); // Increased duration to 4 seconds
 
     return () => clearInterval(interval);
   }, [hasPremium, isInitialView, premiumSlides.length]);
@@ -199,7 +199,7 @@ function QRPageTransition({
             </div>
 
             {/* Content */}
-            
+
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
               {hasPremium ? (
                 <div className="max-w-2xl mx-auto">
@@ -266,12 +266,12 @@ function QRPageTransition({
                 </div>
               ) : (
                 <>
-                  <div className="relative h-64 w-64 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                  <div className="relative h-64 w-[22%] rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
                     <Image
                       src={profilePhoto || '/default-profile.jpg'}
                       alt={`${firstName} ${lastName}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       priority
                     />
                   </div>
@@ -316,8 +316,8 @@ export default function MemorialPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
-  console.log("🚀 ~ MemorialPage ~ apiMemorial:",apiMemorial?.allowSlideshow
-)
+  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial?.allowSlideshow
+  )
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -469,7 +469,7 @@ export default function MemorialPage() {
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
-  const isPremium = apiMemorial.planName == "Premium Plan" 
+  const isPremium = apiMemorial.planName == "Premium Plan"
 
   const nextImage = () => {
     if (!apiMemorial.photoGallery?.length) return;
@@ -499,17 +499,20 @@ export default function MemorialPage() {
               </motion.div>
               <span className="text-2xl font-bold text-white">QRIP.ge</span>
             </Link>
-            <LanguageDropdown/>
-            <div className="flex items-center space-x-3">
-              <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
-                {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
-                {memorialTranslations.header.views}
-              </Badge>
-              {/* <Button variant="outline" size="sm">
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center space-x-3">
+                <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
+                  {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
+                  {memorialTranslations.header.views}
+                </Badge>
+                {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4" />
                 {memorialTranslations.header.share}
               </Button> */}
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -610,7 +613,7 @@ export default function MemorialPage() {
                               alt={`Memory ${currentImageIndex + 1}`}
                               className="w-full h-96 object-cover rounded-lg"
                             />
-                            {apiMemorial.photoGallery?.length > 1 && apiMemorial?.allowSlideshow &&(
+                            {apiMemorial.photoGallery?.length > 1 && apiMemorial?.allowSlideshow && (
                               <div className="absolute inset-0 flex items-center justify-between p-4">
                                 <Button
                                   variant="secondary"
@@ -795,11 +798,11 @@ export default function MemorialPage() {
                       ) : (
                         <div className="text-center py-6">
                           <p className="text-sm text-gray-600">
-                                   {memorialTranslations.sections.family.noFamily}
+                            {memorialTranslations.sections.family.noFamily}
                           </p>
                         </div>
                       )
-                     
+
                     }
                   </CardContent>
                 </Card>
@@ -818,7 +821,7 @@ export default function MemorialPage() {
 
 
                     {
-                    // isPremium ? (
+                      // isPremium ? (
                       apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
                         <div className="space-y-4 z-0">
                           <div className="h-64 rounded-lg overflow-hidden">
@@ -854,18 +857,18 @@ export default function MemorialPage() {
                         <div className="text-center py-6">
                           <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">
-                               {memorialTranslations.sections.location.noLocation}
+                            {memorialTranslations.sections.location.noLocation}
                           </p>
                         </div>
                       )
-                    // ) : (
-                    //   <div className="text-center py-6">
-                    //     <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                    //     <p className="text-sm text-gray-600">
-                    //       GPS location available with premium 
-                    //     </p>
-                    //   </div>
-                    // )
+                      // ) : (
+                      //   <div className="text-center py-6">
+                      //     <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                      //     <p className="text-sm text-gray-600">
+                      //       GPS location available with premium 
+                      //     </p>
+                      //   </div>
+                      // )
                     }
 
                   </CardContent>
@@ -893,7 +896,7 @@ export default function MemorialPage() {
                     ) : (
                       <div className="text-center py-6">
                         <p className="text-sm text-gray-600">
-                        {memorialTranslations.sections.achievements.noAchievements}
+                          {memorialTranslations.sections.achievements.noAchievements}
                         </p>
                       </div>
                     )}
