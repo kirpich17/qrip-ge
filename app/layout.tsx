@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { QueryProvider } from "./QueryProvider";
+import "@/services/authDebug"; // Import debug utilities
 // const inter = Inter({ subsets: ["latin"] });
 
 const inter = Inter({ 

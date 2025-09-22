@@ -1,0 +1,541 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Package,
+  User,
+  MapPin,
+  Calendar,
+  CreditCard,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Trash2,
+  Truck,
+  Download,
+  QrCode,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import axiosInstance from "@/services/axiosInstance";
+import { toast } from "react-toastify";
+import IsAdminAuth from "@/lib/IsAdminAuth/page";
+import { QRCodeSVG } from 'qrcode.react';
+import { saveAs } from 'file-saver';
+import axios from "axios";
+
+interface Order {
+  _id: string;
+  user: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    phone: string;
+  };
+  memorial: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    slug: string;
+  };
+  stickerOption: {
+    _id: string;
+    name: string;
+    type: string;
+    size: string;
+    price: number;
+  };
+  quantity: number;
+  unitPrice: number;
+  totalAmount: number;
+  shippingAddress: {
+    fullName: string;
+    address: string;
+    city: string;
+    zipCode: string;
+    country: string;
+    phone: string;
+  };
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentId?: string;
+  trackingNumber?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function OrderDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const orderId = params.orderId as string;
+  
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloadingFormat, setDownloadingFormat] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (orderId) {
+      fetchOrderDetails();
+    }
+  }, [orderId]);
+
+  const fetchOrderDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get(`/api/stickers/admin/orders/${orderId}`);
+      
+      if (response.data.status && response.data.data) {
+        setOrder(response.data.data);
+      } else {
+        toast.error("Order not found");
+        router.push("/admin/orders");
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      toast.error("Failed to load order details");
+      router.push("/admin/orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const deleteOrder = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this order?\n\n" +
+      "This action cannot be undone and will permanently remove all order data."
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await axiosInstance.delete(`/api/stickers/admin/orders/${orderId}`);
+      toast.success("Order deleted successfully");
+      router.push("/admin/orders");
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      toast.error("Failed to delete order");
+    }
+  };
+
+  const handleDownloadQR = async (format: 'png' | 'svg') => {
+    if (!order) return;
+    
+    setDownloadingFormat(format);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      toast.error("You are not logged in");
+      setDownloadingFormat(null);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}api/qrcode/generate`,
+        {
+          memorialId: order.memorial._id,
+          format,
+          size: 512, 
+          style: 'default',
+        },
+        {
+          headers: { 'Authorization': `Bearer ${token}` },
+          responseType: 'blob',
+        }
+      );
+      
+      const fileName = `QR_Sticker_${order.memorial.firstName}_${order.memorial.lastName}_${order._id.slice(-8)}.${format}`;
+      saveAs(response.data, fileName);
+      toast.success(`QR code downloaded as ${fileName}`);
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast.error("Failed to generate QR code");
+    } finally {
+      setDownloadingFormat(null);
+    }
+  };
+
+  const getStatusBadge = (status: string, type: 'payment' | 'order') => {
+    const statusConfig = {
+      payment: {
+        pending: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
+        paid: { color: "bg-green-100 text-green-800", icon: CheckCircle },
+        failed: { color: "bg-red-100 text-red-800", icon: XCircle },
+        refunded: { color: "bg-gray-100 text-gray-800", icon: XCircle },
+      },
+      order: {
+        pending: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
+        processing: { color: "bg-blue-100 text-blue-800", icon: Package },
+        shipped: { color: "bg-purple-100 text-purple-800", icon: Truck },
+        delivered: { color: "bg-green-100 text-green-800", icon: CheckCircle },
+        cancelled: { color: "bg-red-100 text-red-800", icon: XCircle },
+      },
+    };
+
+    const config = (statusConfig[type] as any)[status] || statusConfig[type].pending;
+    const Icon = config.icon;
+
+    return (
+      <Badge className={`${config.color} flex items-center gap-1`}>
+        <Icon className="h-3 w-3" />
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading order details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h2>
+          <p className="text-gray-600 mb-4">The order you're looking for doesn't exist.</p>
+          <Link href="/admin/orders">
+            <Button className="bg-[#547455] hover:bg-[#243b31]">
+              Back to Orders
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-[#243b31] py-4 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/admin/orders"
+              className="flex items-center text-white hover:underline gap-2 text-base"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Back to Orders
+            </Link>
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-semibold text-white">Order Details</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-6"
+        >
+          {/* Order Header */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Order #{order._id.slice(-8).toUpperCase()}
+                  </CardTitle>
+                  <CardDescription>
+                    Created on {formatDate(order.createdAt)}
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  {getStatusBadge(order.paymentStatus, 'payment')}
+                  {getStatusBadge(order.orderStatus, 'order')}
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Customer Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Customer Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Name</p>
+                      <p className="font-semibold">{order.user.firstname} {order.user.lastname}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Email</p>
+                      <p className="font-semibold">{order.user.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Phone</p>
+                      <p className="font-semibold">{order.user.phone}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">User ID</p>
+                      <p className="font-mono text-sm">{order.user._id}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Memorial Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Memorial Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Memorial Name</p>
+                      <p className="font-semibold">{order.memorial.firstName} {order.memorial.lastName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Slug</p>
+                      <p className="font-mono text-sm">/{order.memorial.slug}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Memorial ID</p>
+                      <p className="font-mono text-sm">{order.memorial._id}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Shipping Address */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Shipping Address
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="font-semibold">{order.shippingAddress.fullName}</p>
+                    <p>{order.shippingAddress.address}</p>
+                    <p>{order.shippingAddress.city}, {order.shippingAddress.zipCode}</p>
+                    <p>{order.shippingAddress.country}</p>
+                    <p className="mt-2 font-medium">Phone: {order.shippingAddress.phone}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Order Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Order Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Sticker:</span>
+                    <span className="font-semibold">{order.stickerOption.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Type:</span>
+                    <span>{order.stickerOption.type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Size:</span>
+                    <span>{order.stickerOption.size}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Quantity:</span>
+                    <span>{order.quantity}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Unit Price:</span>
+                    <span>₾{order.unitPrice}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span>₾{order.totalAmount}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* QR Code Download */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <QrCode className="h-5 w-5" />
+                    QR Code Download
+                  </CardTitle>
+                  <CardDescription>
+                    Download the QR code for this memorial
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="bg-gray-50 p-4 rounded-lg text-center">
+                    <QRCodeSVG
+                      value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/memorial/${order.memorial._id}?isScan=true`}
+                      size={128}
+                      className="mx-auto"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      Memorial: {order.memorial.firstName} {order.memorial.lastName}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handleDownloadQR('png')}
+                      disabled={downloadingFormat === 'png'}
+                    >
+                      {downloadingFormat === 'png' ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                      ) : (
+                        <Download className="h-4 w-4 mr-2" />
+                      )}
+                      PNG
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handleDownloadQR('svg')}
+                      disabled={downloadingFormat === 'svg'}
+                    >
+                      {downloadingFormat === 'svg' ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                      ) : (
+                        <Download className="h-4 w-4 mr-2" />
+                      )}
+                      SVG
+                    </Button>
+                  </div>
+                  
+                  <p className="text-xs text-gray-500 text-center">
+                    High quality QR codes suitable for printing on stickers
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Payment Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Payment Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    {getStatusBadge(order.paymentStatus, 'payment')}
+                  </div>
+                  {order.paymentId && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Payment ID</p>
+                      <p className="font-mono text-sm">{order.paymentId}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Order Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Order Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={deleteOrder}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Order
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Order Timeline */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Timeline
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div>
+                      <p className="text-sm font-medium">Order Created</p>
+                      <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
+                    </div>
+                  </div>
+                  
+                  {order.updatedAt !== order.createdAt && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium">Last Updated</p>
+                        <p className="text-xs text-gray-500">{formatDate(order.updatedAt)}</p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export default function OrderDetailPageWrapper() {
+  return (
+    <IsAdminAuth>
+      <OrderDetailPage />
+    </IsAdminAuth>
+  );
+}

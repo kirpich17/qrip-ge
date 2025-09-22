@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, DollarSign, Search, Bell, QrCode } from "lucide-react";
+import { Users, Heart, DollarSign, Search, Bell, QrCode, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { StatsCards } from "./StatsCards";
 import { UserManagementTable } from "./UserManagementTable";
@@ -216,6 +217,13 @@ function AdminDashboardPage() {
             >
               {admindashTranslations.tabs.memorials}
             </TabsTrigger>
+            <TabsTrigger
+              value="orders"
+              className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
+            >
+              <Package className="h-4 w-4 mr-2" />
+              Orders
+            </TabsTrigger>
           </TabsList>
 
           {/* Users Tab */}
@@ -352,6 +360,50 @@ function AdminDashboardPage() {
                     </Button>
                   </div>
                 </div> */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Orders Tab */}
+          <TabsContent value="orders" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>QR Sticker Orders</CardTitle>
+                    <CardDescription>
+                      Manage and track all QR sticker orders
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link href="/admin/orders">
+                      <Button className="bg-[#547455] hover:bg-[#243b31]">
+                        <Package className="h-4 w-4 mr-2" />
+                        View All Orders
+                      </Button>
+                    </Link>
+                    <Link href="/admin/stickers">
+                      <Button variant="outline">
+                        <Package className="h-4 w-4 mr-2" />
+                        Manage Stickers
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Order Management</h3>
+                  <p className="text-gray-500 mb-4">
+                    View and manage all QR sticker orders in the dedicated orders page.
+                  </p>
+                  <Link href="/admin/orders">
+                    <Button className="bg-[#547455] hover:bg-[#243b31]">
+                      Go to Orders
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

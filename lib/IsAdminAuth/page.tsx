@@ -21,7 +21,8 @@ export default function IsAdminAuth({
 
     try {
       const parsed = JSON.parse(data);
-      if (parsed?.token) {
+      // Check if token exists and user is admin
+      if (parsed?.token && parsed?.user?.userType === "admin") {
         setIsValid(true);
       } else {
         router.replace("/admin/login");

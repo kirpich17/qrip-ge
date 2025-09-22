@@ -15,6 +15,7 @@ import {
   Trash2,
   Crown,
   MapPin,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -483,6 +484,15 @@ function Dashboard() {
                                     {dashboard.memorials.downloadQR}
                                   </Link>
                                 </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href={`/stickers/purchase?memorialId=${memorial._id}`}
+                                    className="flex items-center"
+                                  >
+                                    <ShoppingCart className="h-4 w-4 mr-2" />
+                                    Buy QR Sticker
+                                  </Link>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="text-red-600 cursor-pointer"
                                   onClick={() => handleDeleteMemorial(memorial._id)}
@@ -553,6 +563,15 @@ function Dashboard() {
                   >
                     <QrCode className="h-4 w-4 mr-2" />
                     {dashboard.quickActions.generateQR}
+                  </Button>
+                </Link>
+                <Link href="/stickers/purchase">
+                  <Button
+                    className="w-full justify-start bg-transparent mb-2"
+                    variant="outline"
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    Buy QR Sticker
                   </Button>
                 </Link>
                 {/* <Link href="/subscription">
