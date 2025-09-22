@@ -1524,5 +1524,430 @@
       "Saving": "შენახვა მიმდინარეობს",
       "Save": "შენახვა",
       "ResetAll": "ყველაფრის განულება"
+    },
+    "adminStickers": {
+      "header": {
+        "back": "დაბრუნება ადმინისტრატორის დაფაზე",
+        "title": "QR სტიკერების ვარიანტები"
+      },
+      "main": {
+        "title": "QR სტიკერების ვარიანტები",
+        "description": "მართეთ ხელმისაწვდომი QR სტიკერების ტიპები და ფასები",
+        "addButton": "სტიკერის ვარიანტის დამატება"
+      },
+      "search": {
+        "placeholder": "სტიკერების ვარიანტების ძიება..."
+      },
+      "table": {
+        "title": "სტიკერების ვარიანტები ({count})",
+        "description": "მართეთ ყველა ხელმისაწვდომი QR სტიკერის ვარიანტი",
+        "headers": {
+          "name": "სახელი",
+          "type": "ტიპი",
+          "size": "ზომა",
+          "price": "ფასი",
+          "stock": "საწყობი",
+          "status": "სტატუსი",
+          "actions": "მოქმედებები"
+        },
+        "status": {
+          "active": "აქტიური",
+          "inactive": "არააქტიური"
+        }
+      },
+      "createDialog": {
+        "title": "ახალი სტიკერის ვარიანტის შექმნა",
+        "description": "დაამატეთ ახალი QR სტიკერის ვარიანტი ფასებითა და სპეციფიკაციებით.",
+        "form": {
+          "name": "სახელი",
+          "namePlaceholder": "სტანდარტული ვინილის QR სტიკერი",
+          "type": "ტიპი",
+          "typePlaceholder": "აირჩიეთ ტიპი",
+          "description": "აღწერა",
+          "descriptionPlaceholder": "მაღალი ხარისხის ვინილის QR კოდის სტიკერი...",
+          "size": "ზომა",
+          "sizePlaceholder": "3x3 ინჩი",
+          "price": "ფასი ($)",
+          "pricePlaceholder": "9.99",
+          "stock": "საწყობი",
+          "stockPlaceholder": "100",
+          "material": "მასალა",
+          "materialPlaceholder": "პრემიუმ ვინილი",
+          "dimensions": "ზომები",
+          "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+          "durability": "გამძლეობა",
+          "durabilityPlaceholder": "2-3 წელი გარეთ",
+          "weatherResistance": "ამინდის წინააღმდეგობა",
+          "weatherResistancePlaceholder": "წყალგაუმტარი, UV-ს წინააღმდეგობა"
+        },
+        "buttons": {
+          "cancel": "გაუქმება",
+          "create": "შექმნა"
+        }
+      },
+      "editDialog": {
+        "title": "სტიკერის ვარიანტის რედაქტირება",
+        "description": "განაახლეთ სტიკერის ვარიანტის დეტალები და სპეციფიკაციები.",
+        "buttons": {
+          "cancel": "გაუქმება",
+          "update": "განახლება"
+        }
+      },
+      "types": {
+        "vinyl": "ვინილი",
+        "engraving": "გრავირება",
+        "premium": "პრემიუმი"
+      },
+      "messages": {
+        "loading": "სტიკერების ვარიანტები იტვირთება...",
+        "createSuccess": "სტიკერის ვარიანტი წარმატებით შეიქმნა",
+        "updateSuccess": "სტიკერის ვარიანტი წარმატებით განახლდა",
+        "deleteSuccess": "სტიკერის ვარიანტი წარმატებით წაიშალა",
+        "statusUpdateSuccess": "სტატუსი წარმატებით განახლდა",
+        "createError": "სტიკერის ვარიანტის შექმნა ვერ მოხერხდა",
+        "updateError": "სტიკერის ვარიანტის განახლება ვერ მოხერხდა",
+        "deleteError": "სტიკერის ვარიანტის წაშლა ვერ მოხერხდა",
+        "statusUpdateError": "სტატუსის განახლება ვერ მოხერხდა",
+        "loadError": "სტიკერების ვარიანტების ჩატვირთვა ვერ მოხერხდა",
+        "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ სტიკერის ვარიანტის წაშლა?"
+      }
+    },
+    "adminOrders": {
+      "header": {
+        "back": "დაბრუნება ადმინისტრატორის დაფაზე",
+        "title": "QR სტიკერების შეკვეთები"
+      },
+      "main": {
+        "title": "QR სტიკერების შეკვეთები",
+        "description": "მართეთ ყველა QR სტიკერის შეკვეთა და აკონტროლეთ მათი სტატუსი"
+      },
+      "stats": {
+        "totalOrders": "სულ შეკვეთები",
+        "pending": "მოლოდინში",
+        "paid": "გადახდილი",
+        "shipped": "გაგზავნილი",
+        "totalRevenue": "სულ შემოსავალი"
+      },
+      "filters": {
+        "searchPlaceholder": "ძიება სახელით, ელ.ფოსტით ან მიმოწმების ნომრით...",
+        "orderStatus": "შეკვეთის სტატუსი",
+        "paymentStatus": "გადახდის სტატუსი",
+        "allStatuses": "ყველა სტატუსი",
+        "allPayments": "ყველა გადახდა"
+      },
+      "table": {
+        "title": "შეკვეთები ({count})",
+        "description": "მართეთ და აკონტროლეთ ყველა QR სტიკერის შეკვეთა",
+        "headers": {
+          "orderId": "შეკვეთის ID",
+          "customer": "მომხმარებელი",
+          "memorial": "მემორიალი",
+          "sticker": "სტიკერი",
+          "quantity": "რაოდენობა",
+          "total": "სულ",
+          "payment": "გადახდა",
+          "status": "სტატუსი",
+          "date": "თარიღი",
+          "actions": "მოქმედებები"
+        },
+        "status": {
+          "pending": "მოლოდინში",
+          "processing": "მუშავდება",
+          "shipped": "გაგზავნილი",
+          "delivered": "მიწოდებული",
+          "cancelled": "გაუქმებული"
+        },
+        "paymentStatus": {
+          "pending": "მოლოდინში",
+          "paid": "გადახდილი",
+          "failed": "ჩავარდა",
+          "refunded": "დაბრუნებული"
+        },
+        "actions": {
+          "ship": "გაგზავნა",
+          "markDelivered": "მიწოდებულად მონიშვნა",
+          "viewDetails": "დეტალების ნახვა და QR-ის ჩამოტვირთვა",
+          "deleteOrder": "შეკვეთის წაშლა"
+        }
+      },
+      "pagination": {
+        "pageInfo": "გვერდი {currentPage} / {totalPages}",
+        "previous": "წინა",
+        "next": "შემდეგი"
+      },
+      "messages": {
+        "loading": "შეკვეთები იტვირთება...",
+        "loadError": "შეკვეთების ჩატვირთვა ვერ მოხერხდა",
+        "updateSuccess": "შეკვეთის სტატუსი წარმატებით განახლდა",
+        "updateError": "შეკვეთის სტატუსის განახლება ვერ მოხერხდა",
+        "deleteSuccess": "შეკვეთა წარმატებით წაიშალა",
+        "deleteError": "შეკვეთის წაშლა ვერ მოხერხდა",
+        "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ შეკვეთის წაშლა?\n\nეს მოქმედება შეუქცევადია და მუდმივად წაშლის:\n• შეკვეთის დეტალებს\n• გადახდის ინფორმაციას\n• მიწოდების მისამართს\n• ყველა დაკავშირებულ მონაცემს\n\nდააჭირეთ OK-ს წაშლის დასადასტურებლად.",
+        "trackingPrompt": "შეიყვანეთ მიმოწმების ნომერი:"
+      },
+      "pagination": {
+        "previous": "წინა",
+        "next": "შემდეგი",
+        "page": "გვერდი",
+        "of": "დან",
+        "showing": "ნაჩვენები",
+        "to": "დან",
+        "results": "შედეგი"
+      }
+    },
+    "adminOrderDetail": {
+      "header": {
+        "back": "დაბრუნება შეკვეთებზე",
+        "title": "შეკვეთის დეტალები"
+      },
+      "loading": {
+        "message": "შეკვეთის დეტალები იტვირთება..."
+      },
+      "notFound": {
+        "title": "შეკვეთა არ მოიძებნა",
+        "message": "შეკვეთა, რომელსაც ეძებთ, არ არსებობს.",
+        "backButton": "დაბრუნება შეკვეთებზე"
+      },
+      "orderHeader": {
+        "orderNumber": "შეკვეთა #{orderId}",
+        "createdOn": "შექმნილია {date}"
+      },
+      "sections": {
+        "customerInfo": {
+          "title": "მომხმარებლის ინფორმაცია",
+          "name": "სახელი",
+          "email": "ელ. ფოსტა",
+          "phone": "ტელეფონი",
+          "userId": "მომხმარებლის ID"
+        },
+        "memorialInfo": {
+          "title": "მემორიალის ინფორმაცია",
+          "memorialName": "მემორიალის სახელი",
+          "slug": "Slug",
+          "memorialId": "მემორიალის ID"
+        },
+        "shippingAddress": {
+          "title": "მიწოდების მისამართი",
+          "phone": "ტელეფონი"
+        },
+        "orderSummary": {
+          "title": "შეკვეთის შეჯამება",
+          "sticker": "სტიკერი",
+          "type": "ტიპი",
+          "size": "ზომა",
+          "quantity": "რაოდენობა",
+          "unitPrice": "ერთეულის ფასი",
+          "total": "სულ"
+        },
+        "qrCodeDownload": {
+          "title": "QR კოდის ჩამოტვირთვა",
+          "description": "ჩამოტვირთეთ QR კოდი ამ მემორიალისთვის",
+          "memorialLabel": "მემორიალი: {name}",
+          "qualityNote": "მაღალი ხარისხის QR კოდები სტიკერებზე დასაბეჭდად"
+        },
+        "paymentInfo": {
+          "title": "გადახდის ინფორმაცია",
+          "status": "სტატუსი",
+          "paymentId": "გადახდის ID"
+        },
+        "orderActions": {
+          "title": "შეკვეთის მოქმედებები",
+          "deleteOrder": "შეკვეთის წაშლა"
+        },
+        "timeline": {
+          "title": "ქრონოლოგია",
+          "orderCreated": "შეკვეთა შეიქმნა",
+          "lastUpdated": "ბოლოს განახლდა"
+        }
+      },
+      "status": {
+        "pending": "მოლოდინში",
+        "processing": "მუშავდება",
+        "shipped": "გაგზავნილი",
+        "delivered": "მიწოდებული",
+        "cancelled": "გაუქმებული"
+      },
+      "paymentStatus": {
+        "pending": "მოლოდინში",
+        "paid": "გადახდილი",
+        "failed": "ჩავარდა",
+        "refunded": "დაბრუნებული"
+      },
+      "messages": {
+        "orderNotFound": "შეკვეთა არ მოიძებნა",
+        "loadError": "შეკვეთის დეტალების ჩატვირთვა ვერ მოხერხდა",
+        "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ შეკვეთის წაშლა?\n\nეს მოქმედება შეუქცევადია და მუდმივად წაშლის ყველა შეკვეთის მონაცემს.",
+        "deleteSuccess": "შეკვეთა წარმატებით წაიშალა",
+        "deleteError": "შეკვეთის წაშლა ვერ მოხერხდა",
+        "notLoggedIn": "თქვენ არ ხართ შესული",
+        "downloadSuccess": "QR კოდი ჩამოტვირთულია როგორც {fileName}",
+        "downloadError": "QR კოდის გენერირება ვერ მოხერხდა"
+      }
+    },
+    "adminDashboard": {
+      "orders": {
+        "tabTitle": "შეკვეთები",
+        "title": "QR სტიკერების შეკვეთები",
+        "description": "მართეთ და თვალყურს ადევნეთ ყველა QR სტიკერის შეკვეთას",
+        "viewAllOrders": "ყველა შეკვეთის ნახვა",
+        "manageStickers": "სტიკერების მართვა",
+        "orderManagement": "შეკვეთების მართვა",
+        "orderManagementDescription": "ნახეთ და მართეთ ყველა QR სტიკერის შეკვეთა დედიკატირებულ შეკვეთების გვერდზე.",
+        "goToOrders": "შეკვეთებზე გადასვლა"
+      }
+    },
+    "adminStickersPage": {
+      "header": {
+        "back": "ადმინისტრატორის დაშბორდზე დაბრუნება",
+        "title": "QR სტიკერების ვარიანტები",
+        "description": "მართეთ ხელმისაწვდომი QR სტიკერების ტიპები და ფასები"
+      },
+      "loading": {
+        "message": "სტიკერების ვარიანტების ჩატვირთვა..."
+      },
+      "search": {
+        "placeholder": "სტიკერების ვარიანტების ძებნა..."
+      },
+      "table": {
+        "title": "სტიკერების ვარიანტები ({count})",
+        "description": "მართეთ ყველა ხელმისაწვდომი QR სტიკერის ვარიანტი",
+        "headers": {
+          "name": "სახელი",
+          "type": "ტიპი",
+          "size": "ზომა",
+          "price": "ფასი",
+          "stock": "მარაგი",
+          "status": "სტატუსი",
+          "actions": "მოქმედებები"
+        },
+        "status": {
+          "active": "აქტიური",
+          "inactive": "არააქტიური"
+        }
+      },
+      "createDialog": {
+        "title": "ახალი სტიკერის ვარიანტის შექმნა",
+        "description": "დაამატეთ ახალი QR სტიკერის ვარიანტი ფასებითა და სპეციფიკაციებით.",
+        "form": {
+          "name": "სახელი",
+          "namePlaceholder": "სტანდარტული ვინილის QR სტიკერი",
+          "type": "ტიპი",
+          "typePlaceholder": "აირჩიეთ ტიპი",
+          "description": "აღწერა",
+          "descriptionPlaceholder": "მაღალი ხარისხის ვინილის QR კოდის სტიკერი...",
+          "size": "ზომა",
+          "sizePlaceholder": "3x3 ინჩი",
+          "price": "ფასი ($)",
+          "pricePlaceholder": "9.99",
+          "stock": "მარაგი",
+          "stockPlaceholder": "100",
+          "material": "მასალა",
+          "materialPlaceholder": "პრემიუმ ვინილი",
+          "dimensions": "ზომები",
+          "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+          "durability": "გამძლეობა",
+          "durabilityPlaceholder": "2-3 წელი გარეთ",
+          "weatherResistance": "ამინდის წინააღმდეგობა",
+          "weatherResistancePlaceholder": "წყალგაუმტარი, UV-ს წინააღმდეგობა"
+        },
+        "buttons": {
+          "cancel": "გაუქმება",
+          "create": "შექმნა"
+        }
+      },
+      "editDialog": {
+        "title": "სტიკერის ვარიანტის რედაქტირება",
+        "description": "განაახლეთ სტიკერის ვარიანტის დეტალები და სპეციფიკაციები.",
+        "buttons": {
+          "cancel": "გაუქმება",
+          "update": "განახლება"
+        }
+      },
+      "types": {
+        "vinyl": "ვინილი",
+        "engraving": "გრავირება",
+        "premium": "პრემიუმი"
+      },
+      "messages": {
+        "loading": "სტიკერების ვარიანტების ჩატვირთვა...",
+        "createSuccess": "სტიკერის ვარიანტი წარმატებით შეიქმნა",
+        "updateSuccess": "სტიკერის ვარიანტი წარმატებით განახლდა",
+        "deleteSuccess": "სტიკერის ვარიანტი წარმატებით წაიშალა",
+        "statusUpdateSuccess": "სტატუსი წარმატებით განახლდა",
+        "createError": "სტიკერის ვარიანტის შექმნა ვერ მოხერხდა",
+        "updateError": "სტიკერის ვარიანტის განახლება ვერ მოხერხდა",
+        "deleteError": "სტიკერის ვარიანტის წაშლა ვერ მოხერხდა",
+        "statusUpdateError": "სტატუსის განახლება ვერ მოხერხდა",
+        "loadError": "სტიკერების ვარიანტების ჩატვირთვა ვერ მოხერხდა",
+        "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ სტიკერის ვარიანტის წაშლა?"
+      }
+    },
+    "stickerPurchase": {
+      "header": {
+        "back": "დაშბორდზე დაბრუნება",
+        "title": "QR სტიკერის შეძენა",
+        "description": "შეუკვეთეთ ფიზიკური QR კოდის სტიკერი თქვენი მემორიალისთვის"
+      },
+      "loading": {
+        "message": "ჩატვირთვა..."
+      },
+      "comingSoon": {
+        "title": "მალე იქნება",
+        "message": "QR სტიკერები ამჟამად არ არის ხელმისაწვდომი. გთხოვთ, მოგვიანებით შემოწმდით.",
+        "backButton": "დაშბორდზე დაბრუნება"
+      },
+      "sections": {
+        "memorialSelection": {
+          "title": "მემორიალის არჩევა",
+          "description": "აირჩიეთ რომელი მემორიალისთვის იქნება ეს სტიკერი"
+        },
+        "stickerOptions": {
+          "title": "სტიკერის ტიპის არჩევა",
+          "description": "აირჩიეთ QR სტიკერის ტიპი და ზომა",
+          "specifications": {
+            "material": "მასალა:",
+            "dimensions": "ზომები:",
+            "durability": "გამძლეობა:"
+          }
+        },
+        "quantity": {
+          "title": "რაოდენობა",
+          "description": "რამდენი სტიკერი გინდათ?"
+        },
+        "shippingAddress": {
+          "title": "მიწოდების მისამართი",
+          "description": "დაადასტურეთ თქვენი მიწოდების დეტალები",
+          "form": {
+            "fullName": "სრული სახელი *",
+            "fullNamePlaceholder": "იოანე დოე",
+            "address": "მისამართი *",
+            "addressPlaceholder": "123 მთავარი ქუჩა, ბინა 4B",
+            "city": "ქალაქი *",
+            "cityPlaceholder": "თბილისი",
+            "zipCode": "საფოსტო კოდი",
+            "zipCodePlaceholder": "0100",
+            "country": "ქვეყანა",
+            "countryPlaceholder": "საქართველო",
+            "phone": "ტელეფონის ნომერი *",
+            "phonePlaceholder": "+995 555 123 456"
+          }
+        },
+        "orderSummary": {
+          "title": "შეკვეთის შეჯამება",
+          "quantity": "რაოდენობა:",
+          "total": "სულ",
+          "proceedToPayment": "გადახდაზე გადასვლა",
+          "processing": "დამუშავება...",
+          "securePayment": "უსაფრთხო გადახდის დამუშავება"
+        }
+      },
+      "messages": {
+        "loadError": "მონაცემების ჩატვირთვა ვერ მოხერხდა",
+        "selectMemorialAndSticker": "გთხოვთ, აირჩიოთ მემორიალი და სტიკერის ვარიანტი",
+        "fillShippingDetails": "გთხოვთ, შეავსოთ ყველა საჭირო მიწოდების დეტალი",
+        "orderCreated": "შეკვეთა წარმატებით შეიქმნა! გადახდის ინიციაცია...",
+        "paymentInitiationFailed": "გადახდის ინიციაცია ვერ მოხერხდა. გთხოვთ, კვლავ სცადოთ.",
+        "orderCreationFailed": "შეკვეთის შექმნა ვერ მოხერხდა"
+      }
     }
 }

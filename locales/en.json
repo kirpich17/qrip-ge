@@ -1530,6 +1530,431 @@
    "Saving":"Saving",
    "Save":"Save",
    "ResetAll":"Reset All"
+  },
+  "adminStickers": {
+    "header": {
+      "back": "Back to Admin Dashboard",
+      "title": "QR Sticker Options"
+    },
+    "main": {
+      "title": "QR Sticker Options",
+      "description": "Manage available QR sticker types and pricing",
+      "addButton": "Add Sticker Option"
+    },
+    "search": {
+      "placeholder": "Search sticker options..."
+    },
+    "table": {
+      "title": "Sticker Options ({count})",
+      "description": "Manage all available QR sticker options",
+      "headers": {
+        "name": "Name",
+        "type": "Type",
+        "size": "Size",
+        "price": "Price",
+        "stock": "Stock",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "createDialog": {
+      "title": "Create New Sticker Option",
+      "description": "Add a new QR sticker option with pricing and specifications.",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Standard Vinyl QR Sticker",
+        "type": "Type",
+        "typePlaceholder": "Select type",
+        "description": "Description",
+        "descriptionPlaceholder": "High-quality vinyl QR code sticker...",
+        "size": "Size",
+        "sizePlaceholder": "3x3 inches",
+        "price": "Price ($)",
+        "pricePlaceholder": "9.99",
+        "stock": "Stock",
+        "stockPlaceholder": "100",
+        "material": "Material",
+        "materialPlaceholder": "Premium Vinyl",
+        "dimensions": "Dimensions",
+        "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+        "durability": "Durability",
+        "durabilityPlaceholder": "2-3 years outdoor",
+        "weatherResistance": "Weather Resistance",
+        "weatherResistancePlaceholder": "Waterproof, UV resistant"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create"
+      }
+    },
+    "editDialog": {
+      "title": "Edit Sticker Option",
+      "description": "Update the sticker option details and specifications.",
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update"
+      }
+    },
+    "types": {
+      "vinyl": "Vinyl",
+      "engraving": "Engraving",
+      "premium": "Premium"
+    },
+    "messages": {
+      "loading": "Loading sticker options...",
+      "createSuccess": "Sticker option created successfully",
+      "updateSuccess": "Sticker option updated successfully",
+      "deleteSuccess": "Sticker option deleted successfully",
+      "statusUpdateSuccess": "Status updated successfully",
+      "createError": "Failed to create sticker option",
+      "updateError": "Failed to update sticker option",
+      "deleteError": "Failed to delete sticker option",
+      "statusUpdateError": "Failed to update status",
+      "loadError": "Failed to load sticker options",
+      "deleteConfirm": "Are you sure you want to delete this sticker option?"
+    }
+  },
+  "adminOrders": {
+    "header": {
+      "back": "Back to Admin Dashboard",
+      "title": "QR Sticker Orders"
+    },
+    "main": {
+      "title": "QR Sticker Orders",
+      "description": "Manage all QR sticker orders and track their status"
+    },
+    "stats": {
+      "totalOrders": "Total Orders",
+      "pending": "Pending",
+      "paid": "Paid",
+      "shipped": "Shipped",
+      "totalRevenue": "Total Revenue"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name, email, or tracking number...",
+      "orderStatus": "Order Status",
+      "paymentStatus": "Payment Status",
+      "allStatuses": "All Statuses",
+      "allPayments": "All Payments"
+    },
+    "table": {
+      "title": "Orders ({count})",
+      "description": "Manage and track all QR sticker orders",
+      "headers": {
+        "orderId": "Order ID",
+        "customer": "Customer",
+        "memorial": "Memorial",
+        "sticker": "Sticker",
+        "quantity": "Quantity",
+        "total": "Total",
+        "payment": "Payment",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "paymentStatus": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "actions": {
+        "ship": "Ship",
+        "markDelivered": "Mark Delivered",
+        "viewDetails": "View Details & Download QR",
+        "deleteOrder": "Delete Order"
+      }
+    },
+    "pagination": {
+      "pageInfo": "Page {currentPage} of {totalPages}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "messages": {
+      "loading": "Loading orders...",
+      "loadError": "Failed to load orders",
+      "updateSuccess": "Order status updated successfully",
+      "updateError": "Failed to update order status",
+      "deleteSuccess": "Order deleted successfully",
+      "deleteError": "Failed to delete order",
+      "deleteConfirm": "Are you sure you want to delete this order?\n\nThis action cannot be undone and will permanently remove:\n• Order details\n• Payment information\n• Shipping address\n• All associated data\n\nClick OK to confirm deletion.",
+      "trackingPrompt": "Enter tracking number:"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "showing": "Showing",
+      "to": "to",
+      "results": "results"
+    }
+  },
+  "adminOrderDetail": {
+    "header": {
+      "back": "Back to Orders",
+      "title": "Order Details"
+    },
+    "loading": {
+      "message": "Loading order details..."
+    },
+    "notFound": {
+      "title": "Order Not Found",
+      "message": "The order you're looking for doesn't exist.",
+      "backButton": "Back to Orders"
+    },
+    "orderHeader": {
+      "orderNumber": "Order #{orderId}",
+      "createdOn": "Created on {date}"
+    },
+    "sections": {
+      "customerInfo": {
+        "title": "Customer Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "userId": "User ID"
+      },
+      "memorialInfo": {
+        "title": "Memorial Information",
+        "memorialName": "Memorial Name",
+        "slug": "Slug",
+        "memorialId": "Memorial ID"
+      },
+      "shippingAddress": {
+        "title": "Shipping Address",
+        "phone": "Phone"
+      },
+      "orderSummary": {
+        "title": "Order Summary",
+        "sticker": "Sticker",
+        "type": "Type",
+        "size": "Size",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "total": "Total"
+      },
+      "qrCodeDownload": {
+        "title": "QR Code Download",
+        "description": "Download the QR code for this memorial",
+        "memorialLabel": "Memorial: {name}",
+        "qualityNote": "High quality QR codes suitable for printing on stickers"
+      },
+      "paymentInfo": {
+        "title": "Payment Information",
+        "status": "Status",
+        "paymentId": "Payment ID"
+      },
+      "orderActions": {
+        "title": "Order Actions",
+        "deleteOrder": "Delete Order"
+      },
+      "timeline": {
+        "title": "Timeline",
+        "orderCreated": "Order Created",
+        "lastUpdated": "Last Updated"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "messages": {
+      "orderNotFound": "Order not found",
+      "loadError": "Failed to load order details",
+      "deleteConfirm": "Are you sure you want to delete this order?\n\nThis action cannot be undone and will permanently remove all order data.",
+      "deleteSuccess": "Order deleted successfully",
+      "deleteError": "Failed to delete order",
+      "notLoggedIn": "You are not logged in",
+      "downloadSuccess": "QR code downloaded as {fileName}",
+      "downloadError": "Failed to generate QR code"
+    }
+  },
+  "adminDashboard": {
+    "orders": {
+      "tabTitle": "Orders",
+      "title": "QR Sticker Orders",
+      "description": "Manage and track all QR sticker orders",
+      "viewAllOrders": "View All Orders",
+      "manageStickers": "Manage Stickers",
+      "orderManagement": "Order Management",
+      "orderManagementDescription": "View and manage all QR sticker orders in the dedicated orders page.",
+      "goToOrders": "Go to Orders"
+    }
+  },
+  "adminStickersPage": {
+    "header": {
+      "back": "Back to Admin Dashboard",
+      "title": "QR Sticker Options",
+      "description": "Manage available QR sticker types and pricing"
+    },
+    "loading": {
+      "message": "Loading sticker options..."
+    },
+    "search": {
+      "placeholder": "Search sticker options..."
+    },
+    "table": {
+      "title": "Sticker Options ({count})",
+      "description": "Manage all available QR sticker options",
+      "headers": {
+        "name": "Name",
+        "type": "Type",
+        "size": "Size",
+        "price": "Price",
+        "stock": "Stock",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "createDialog": {
+      "title": "Create New Sticker Option",
+      "description": "Add a new QR sticker option with pricing and specifications.",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Standard Vinyl QR Sticker",
+        "type": "Type",
+        "typePlaceholder": "Select type",
+        "description": "Description",
+        "descriptionPlaceholder": "High-quality vinyl QR code sticker...",
+        "size": "Size",
+        "sizePlaceholder": "3x3 inches",
+        "price": "Price ($)",
+        "pricePlaceholder": "9.99",
+        "stock": "Stock",
+        "stockPlaceholder": "100",
+        "material": "Material",
+        "materialPlaceholder": "Premium Vinyl",
+        "dimensions": "Dimensions",
+        "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+        "durability": "Durability",
+        "durabilityPlaceholder": "2-3 years outdoor",
+        "weatherResistance": "Weather Resistance",
+        "weatherResistancePlaceholder": "Waterproof, UV resistant"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create"
+      }
+    },
+    "editDialog": {
+      "title": "Edit Sticker Option",
+      "description": "Update the sticker option details and specifications.",
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update"
+      }
+    },
+    "types": {
+      "vinyl": "Vinyl",
+      "engraving": "Engraving",
+      "premium": "Premium"
+    },
+    "messages": {
+      "loading": "Loading sticker options...",
+      "createSuccess": "Sticker option created successfully",
+      "updateSuccess": "Sticker option updated successfully",
+      "deleteSuccess": "Sticker option deleted successfully",
+      "statusUpdateSuccess": "Status updated successfully",
+      "createError": "Failed to create sticker option",
+      "updateError": "Failed to update sticker option",
+      "deleteError": "Failed to delete sticker option",
+      "statusUpdateError": "Failed to update status",
+      "loadError": "Failed to load sticker options",
+      "deleteConfirm": "Are you sure you want to delete this sticker option?"
+    }
+  },
+  "stickerPurchase": {
+    "header": {
+      "back": "Back to Dashboard",
+      "title": "Buy QR Sticker",
+      "description": "Order a physical QR code sticker for your memorial"
+    },
+    "loading": {
+      "message": "Loading..."
+    },
+    "comingSoon": {
+      "title": "Coming Soon",
+      "message": "QR Stickers are not available at the moment. Please check back later.",
+      "backButton": "Back to Dashboard"
+    },
+    "sections": {
+      "memorialSelection": {
+        "title": "Select Memorial",
+        "description": "Choose which memorial this sticker will be for"
+      },
+      "stickerOptions": {
+        "title": "Choose Sticker Type",
+        "description": "Select the type and size of QR sticker you want",
+        "specifications": {
+          "material": "Material:",
+          "dimensions": "Dimensions:",
+          "durability": "Durability:"
+        }
+      },
+      "quantity": {
+        "title": "Quantity",
+        "description": "How many stickers would you like?"
+      },
+      "shippingAddress": {
+        "title": "Shipping Address",
+        "description": "Confirm your shipping details",
+        "form": {
+          "fullName": "Full Name *",
+          "fullNamePlaceholder": "John Doe",
+          "address": "Address *",
+          "addressPlaceholder": "123 Main Street, Apartment 4B",
+          "city": "City *",
+          "cityPlaceholder": "Tbilisi",
+          "zipCode": "ZIP Code",
+          "zipCodePlaceholder": "0100",
+          "country": "Country",
+          "countryPlaceholder": "Georgia",
+          "phone": "Phone Number *",
+          "phonePlaceholder": "+995 555 123 456"
+        }
+      },
+      "orderSummary": {
+        "title": "Order Summary",
+        "quantity": "Quantity:",
+        "total": "Total",
+        "proceedToPayment": "Proceed to Payment",
+        "processing": "Processing...",
+        "securePayment": "Secure payment processing"
+      }
+    },
+    "messages": {
+      "loadError": "Failed to load data",
+      "selectMemorialAndSticker": "Please select a memorial and sticker option",
+      "fillShippingDetails": "Please fill in all required shipping details",
+      "orderCreated": "Order created successfully! Initiating payment...",
+      "paymentInitiationFailed": "Payment initiation failed. Please try again.",
+      "orderCreationFailed": "Failed to create order"
+    }
   }
 
 }

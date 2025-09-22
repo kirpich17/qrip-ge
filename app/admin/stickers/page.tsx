@@ -83,6 +83,16 @@ const fadeInUp = {
 
 function AdminStickersPage() {
   const { t } = useTranslation();
+  const stickersTranslations = t("adminStickersPage") || {
+    header: { back: "Back to Admin Dashboard", title: "QR Sticker Options", description: "Manage available QR sticker types and pricing" },
+    loading: { message: "Loading sticker options..." },
+    search: { placeholder: "Search sticker options..." },
+    table: { title: "Sticker Options ({count})", description: "Manage all available QR sticker options", headers: { name: "Name", type: "Type", size: "Size", price: "Price", stock: "Stock", status: "Status", actions: "Actions" }, status: { active: "Active", inactive: "Inactive" } },
+    createDialog: { title: "Create New Sticker Option", description: "Add a new QR sticker option with pricing and specifications.", form: { name: "Name", namePlaceholder: "Standard Vinyl QR Sticker", type: "Type", typePlaceholder: "Select type", description: "Description", descriptionPlaceholder: "High-quality vinyl QR code sticker...", size: "Size", sizePlaceholder: "3x3 inches", price: "Price ($)", pricePlaceholder: "9.99", stock: "Stock", stockPlaceholder: "100", material: "Material", materialPlaceholder: "Premium Vinyl", dimensions: "Dimensions", dimensionsPlaceholder: "3\" x 3\" (76mm x 76mm)", durability: "Durability", durabilityPlaceholder: "2-3 years outdoor", weatherResistance: "Weather Resistance", weatherResistancePlaceholder: "Waterproof, UV resistant" }, buttons: { cancel: "Cancel", create: "Create" } },
+    editDialog: { title: "Edit Sticker Option", description: "Update the sticker option details and specifications.", buttons: { cancel: "Cancel", update: "Update" } },
+    types: { vinyl: "Vinyl", engraving: "Engraving", premium: "Premium" },
+    messages: { loading: "Loading sticker options...", createSuccess: "Sticker option created successfully", updateSuccess: "Sticker option updated successfully", deleteSuccess: "Sticker option deleted successfully", statusUpdateSuccess: "Status updated successfully", createError: "Failed to create sticker option", updateError: "Failed to update sticker option", deleteError: "Failed to delete sticker option", statusUpdateError: "Failed to update status", loadError: "Failed to load sticker options", deleteConfirm: "Are you sure you want to delete this sticker option?" }
+  };
   
   const [loading, setLoading] = useState(true);
   const [stickerOptions, setStickerOptions] = useState<StickerOption[]>([]);
@@ -120,7 +130,7 @@ function AdminStickersPage() {
       setStickerOptions(response.data.data);
     } catch (error) {
       console.error("Error fetching sticker options:", error);
-      toast.error("Failed to load sticker options");
+      toast.error(stickersTranslations?.messages?.loadError || "Failed to load sticker options");
     } finally {
       setLoading(false);
     }
@@ -163,13 +173,13 @@ function AdminStickersPage() {
       };
 
       await axiosInstance.post("/api/admin/sticker-options", optionData);
-      toast.success("Sticker option created successfully");
+      toast.success(stickersTranslations?.messages?.createSuccess || "Sticker option created successfully");
       setIsCreateDialogOpen(false);
       resetForm();
       fetchStickerOptions();
     } catch (error: any) {
       console.error("Error creating sticker option:", error);
-      toast.error(error.response?.data?.message || "Failed to create sticker option");
+      toast.error(error.response?.data?.message || stickersTranslations?.messages?.createError || "Failed to create sticker option");
     }
   };
 
@@ -207,27 +217,27 @@ function AdminStickersPage() {
       };
 
       await axiosInstance.put(`/api/admin/sticker-options/${editingOption._id}`, optionData);
-      toast.success("Sticker option updated successfully");
+      toast.success(stickersTranslations?.messages?.updateSuccess || "Sticker option updated successfully");
       setIsEditDialogOpen(false);
       setEditingOption(null);
       resetForm();
       fetchStickerOptions();
     } catch (error: any) {
       console.error("Error updating sticker option:", error);
-      toast.error(error.response?.data?.message || "Failed to update sticker option");
+      toast.error(error.response?.data?.message || stickersTranslations?.messages?.updateError || "Failed to update sticker option");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this sticker option?")) return;
+    if (!confirm(stickersTranslations?.messages?.deleteConfirm || "Are you sure you want to delete this sticker option?")) return;
 
     try {
       await axiosInstance.delete(`/api/admin/sticker-options/${id}`);
-      toast.success("Sticker option deleted successfully");
+      toast.success(stickersTranslations?.messages?.deleteSuccess || "Sticker option deleted successfully");
       fetchStickerOptions();
     } catch (error: any) {
       console.error("Error deleting sticker option:", error);
-      toast.error(error.response?.data?.message || "Failed to delete sticker option");
+      toast.error(error.response?.data?.message || stickersTranslations?.messages?.deleteError || "Failed to delete sticker option");
     }
   };
 
@@ -235,11 +245,11 @@ function AdminStickersPage() {
     try {
       setUpdating(id);
       await axiosInstance.patch(`/api/admin/sticker-options/${id}/toggle`);
-      toast.success("Status updated successfully");
+      toast.success(stickersTranslations?.messages?.statusUpdateSuccess || "Status updated successfully");
       fetchStickerOptions();
     } catch (error: any) {
       console.error("Error toggling status:", error);
-      toast.error("Failed to update status");
+      toast.error(stickersTranslations?.messages?.statusUpdateError || "Failed to update status");
     } finally {
       setUpdating(null);
     }
@@ -250,7 +260,7 @@ function AdminStickersPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading sticker options...</p>
+          <p className="mt-4 text-gray-600">{stickersTranslations?.loading?.message || "Loading sticker options..."}</p>
         </div>
       </div>
     );
@@ -267,7 +277,7 @@ function AdminStickersPage() {
               className="flex items-center text-white hover:underline gap-2 text-base"
             >
               <ArrowLeft className="h-5 w-5" />
-              Back to Admin Dashboard
+{stickersTranslations?.header?.back || "Back to Admin Dashboard"}
             </Link>
             <LanguageDropdown />
           </div>
@@ -284,139 +294,139 @@ function AdminStickersPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                QR Sticker Options
+                {stickersTranslations?.header?.title || "QR Sticker Options"}
               </h1>
               <p className="text-gray-600">
-                Manage available QR sticker types and pricing
+                {stickersTranslations?.header?.description || "Manage available QR sticker types and pricing"}
               </p>
             </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-[#547455] hover:bg-[#243b31]">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Sticker Option
+{stickersTranslations?.createDialog?.buttons?.create || "Add Sticker Option"}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>Create New Sticker Option</DialogTitle>
+                  <DialogTitle>{stickersTranslations?.createDialog?.title || "Create New Sticker Option"}</DialogTitle>
                   <DialogDescription>
-                    Add a new QR sticker option with pricing and specifications.
+                    {stickersTranslations?.createDialog?.description || "Add a new QR sticker option with pricing and specifications."}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{stickersTranslations?.createDialog?.form?.name || "Name"}</Label>
                       <Input
                         id="name"
                         value={formData.name}
                         onChange={(e) => handleInputChange("name", e.target.value)}
-                        placeholder="Standard Vinyl QR Sticker"
+                        placeholder={stickersTranslations?.createDialog?.form?.namePlaceholder || "Standard Vinyl QR Sticker"}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="type">Type</Label>
+                      <Label htmlFor="type">{stickersTranslations?.createDialog?.form?.type || "Type"}</Label>
                       <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
+                          <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="vinyl">Vinyl</SelectItem>
-                          {/* <SelectItem value="engraving">Engraving</SelectItem>
-                          <SelectItem value="premium">Premium</SelectItem> */}
+                          <SelectItem value="vinyl">{stickersTranslations?.types?.vinyl || "Vinyl"}</SelectItem>
+                          {/* <SelectItem value="engraving">{stickersTranslations?.types?.engraving || "Engraving"}</SelectItem>
+                          <SelectItem value="premium">{stickersTranslations?.types?.premium || "Premium"}</SelectItem> */}
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{stickersTranslations?.createDialog?.form?.description || "Description"}</Label>
                     <Textarea
                       id="description"
                       value={formData.description}
                       onChange={(e) => handleInputChange("description", e.target.value)}
-                      placeholder="High-quality vinyl QR code sticker..."
+                      placeholder={stickersTranslations?.createDialog?.form?.descriptionPlaceholder || "High-quality vinyl QR code sticker..."}
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label htmlFor="size">Size</Label>
+                      <Label htmlFor="size">{stickersTranslations?.createDialog?.form?.size || "Size"}</Label>
                       <Input
                         id="size"
                         value={formData.size}
                         onChange={(e) => handleInputChange("size", e.target.value)}
-                        placeholder="3x3 inches"
+                        placeholder={stickersTranslations?.createDialog?.form?.sizePlaceholder || "3x3 inches"}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="price">Price ($)</Label>
+                      <Label htmlFor="price">{stickersTranslations?.createDialog?.form?.price || "Price ($)"}</Label>
                       <Input
                         id="price"
                         type="number"
                         step="0.01"
                         value={formData.price}
                         onChange={(e) => handleInputChange("price", e.target.value)}
-                        placeholder="9.99"
+                        placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "9.99"}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="stock">Stock</Label>
+                      <Label htmlFor="stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"}</Label>
                       <Input
                         id="stock"
                         type="number"
                         value={formData.stock}
                         onChange={(e) => handleInputChange("stock", e.target.value)}
-                        placeholder="100"
+                        placeholder={stickersTranslations?.createDialog?.form?.stockPlaceholder || "100"}
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="material">Material</Label>
+                      <Label htmlFor="material">{stickersTranslations?.createDialog?.form?.material || "Material"}</Label>
                       <Input
                         id="material"
                         value={formData.material}
                         onChange={(e) => handleInputChange("material", e.target.value)}
-                        placeholder="Premium Vinyl"
+                        placeholder={stickersTranslations?.createDialog?.form?.materialPlaceholder || "Premium Vinyl"}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="dimensions">Dimensions</Label>
+                      <Label htmlFor="dimensions">{stickersTranslations?.createDialog?.form?.dimensions || "Dimensions"}</Label>
                       <Input
                         id="dimensions"
                         value={formData.dimensions}
                         onChange={(e) => handleInputChange("dimensions", e.target.value)}
-                        placeholder='3" x 3" (76mm x 76mm)'
+                        placeholder={stickersTranslations?.createDialog?.form?.dimensionsPlaceholder || '3" x 3" (76mm x 76mm)'}
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="durability">Durability</Label>
+                      <Label htmlFor="durability">{stickersTranslations?.createDialog?.form?.durability || "Durability"}</Label>
                       <Input
                         id="durability"
                         value={formData.durability}
                         onChange={(e) => handleInputChange("durability", e.target.value)}
-                        placeholder="2-3 years outdoor"
+                        placeholder={stickersTranslations?.createDialog?.form?.durabilityPlaceholder || "2-3 years outdoor"}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="weatherResistance">Weather Resistance</Label>
+                      <Label htmlFor="weatherResistance">{stickersTranslations?.createDialog?.form?.weatherResistance || "Weather Resistance"}</Label>
                       <Input
                         id="weatherResistance"
                         value={formData.weatherResistance}
                         onChange={(e) => handleInputChange("weatherResistance", e.target.value)}
-                        placeholder="Waterproof, UV resistant"
+                        placeholder={stickersTranslations?.createDialog?.form?.weatherResistancePlaceholder || "Waterproof, UV resistant"}
                       />
                     </div>
                   </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                    Cancel
+                    {stickersTranslations?.createDialog?.buttons?.cancel || "Cancel"}
                   </Button>
                   <Button onClick={handleCreate} className="bg-[#547455] hover:bg-[#243b31]">
-                    Create
+                    {stickersTranslations?.createDialog?.buttons?.create || "Create"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -430,7 +440,7 @@ function AdminStickersPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search sticker options..."
+                placeholder={stickersTranslations?.search?.placeholder || "Search sticker options..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -442,9 +452,9 @@ function AdminStickersPage() {
         {/* Sticker Options Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Sticker Options ({stickerOptions.length})</CardTitle>
+            <CardTitle>{stickersTranslations?.table?.title?.replace('{count}', stickerOptions.length.toString()) || `Sticker Options (${stickerOptions.length})`}</CardTitle>
             <CardDescription>
-              Manage all available QR sticker options
+              {stickersTranslations?.table?.description || "Manage all available QR sticker options"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -452,13 +462,13 @@ function AdminStickersPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.name || "Name"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.type || "Type"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.size || "Size"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.price || "Price"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.stock || "Stock"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.status || "Status"}</TableHead>
+                    <TableHead>{stickersTranslations?.table?.headers?.actions || "Actions"}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -483,7 +493,7 @@ function AdminStickersPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Badge className={option.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                            {option.isActive ? "Active" : "Inactive"}
+                            {option.isActive ? (stickersTranslations?.table?.status?.active || "Active") : (stickersTranslations?.table?.status?.inactive || "Inactive")}
                           </Badge>
                           <Button
                             size="sm"
@@ -530,124 +540,124 @@ function AdminStickersPage() {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Edit Sticker Option</DialogTitle>
+              <DialogTitle>{stickersTranslations?.editDialog?.title || "Edit Sticker Option"}</DialogTitle>
               <DialogDescription>
-                Update the sticker option details and specifications.
+                {stickersTranslations?.editDialog?.description || "Update the sticker option details and specifications."}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-name">Name</Label>
+                  <Label htmlFor="edit-name">{stickersTranslations?.createDialog?.form?.name || "Name"}</Label>
                   <Input
                     id="edit-name"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="Standard Vinyl QR Sticker"
+                    placeholder={stickersTranslations?.createDialog?.form?.namePlaceholder || "Standard Vinyl QR Sticker"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-type">Type</Label>
+                  <Label htmlFor="edit-type">{stickersTranslations?.createDialog?.form?.type || "Type"}</Label>
                   <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="vinyl">Vinyl</SelectItem>
-                      <SelectItem value="engraving">Engraving</SelectItem>
-                      <SelectItem value="premium">Premium</SelectItem>
+                      <SelectItem value="vinyl">{stickersTranslations?.types?.vinyl || "Vinyl"}</SelectItem>
+                      <SelectItem value="engraving">{stickersTranslations?.types?.engraving || "Engraving"}</SelectItem>
+                      <SelectItem value="premium">{stickersTranslations?.types?.premium || "Premium"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-description">Description</Label>
+                <Label htmlFor="edit-description">{stickersTranslations?.createDialog?.form?.description || "Description"}</Label>
                 <Textarea
                   id="edit-description"
                   value={formData.description}
                   onChange={(e) => handleInputChange("description", e.target.value)}
-                  placeholder="High-quality vinyl QR code sticker..."
+                  placeholder={stickersTranslations?.createDialog?.form?.descriptionPlaceholder || "High-quality vinyl QR code sticker..."}
                 />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="edit-size">Size</Label>
+                  <Label htmlFor="edit-size">{stickersTranslations?.createDialog?.form?.size || "Size"}</Label>
                   <Input
                     id="edit-size"
                     value={formData.size}
                     onChange={(e) => handleInputChange("size", e.target.value)}
-                    placeholder="3x3 inches"
+                    placeholder={stickersTranslations?.createDialog?.form?.sizePlaceholder || "3x3 inches"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-price">Price ($)</Label>
+                  <Label htmlFor="edit-price">{stickersTranslations?.createDialog?.form?.price || "Price ($)"}</Label>
                   <Input
                     id="edit-price"
                     type="number"
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => handleInputChange("price", e.target.value)}
-                    placeholder="9.99"
+                    placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "9.99"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-stock">Stock</Label>
+                  <Label htmlFor="edit-stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"}</Label>
                   <Input
                     id="edit-stock"
                     type="number"
                     value={formData.stock}
                     onChange={(e) => handleInputChange("stock", e.target.value)}
-                    placeholder="100"
+                    placeholder={stickersTranslations?.createDialog?.form?.stockPlaceholder || "100"}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-material">Material</Label>
+                  <Label htmlFor="edit-material">{stickersTranslations?.createDialog?.form?.material || "Material"}</Label>
                   <Input
                     id="edit-material"
                     value={formData.material}
                     onChange={(e) => handleInputChange("material", e.target.value)}
-                    placeholder="Premium Vinyl"
+                    placeholder={stickersTranslations?.createDialog?.form?.materialPlaceholder || "Premium Vinyl"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-dimensions">Dimensions</Label>
+                  <Label htmlFor="edit-dimensions">{stickersTranslations?.createDialog?.form?.dimensions || "Dimensions"}</Label>
                   <Input
                     id="edit-dimensions"
                     value={formData.dimensions}
                     onChange={(e) => handleInputChange("dimensions", e.target.value)}
-                    placeholder='3" x 3" (76mm x 76mm)'
+                    placeholder={stickersTranslations?.createDialog?.form?.dimensionsPlaceholder || '3" x 3" (76mm x 76mm)'}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-durability">Durability</Label>
+                  <Label htmlFor="edit-durability">{stickersTranslations?.createDialog?.form?.durability || "Durability"}</Label>
                   <Input
                     id="edit-durability"
                     value={formData.durability}
                     onChange={(e) => handleInputChange("durability", e.target.value)}
-                    placeholder="2-3 years outdoor"
+                    placeholder={stickersTranslations?.createDialog?.form?.durabilityPlaceholder || "2-3 years outdoor"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-weatherResistance">Weather Resistance</Label>
+                  <Label htmlFor="edit-weatherResistance">{stickersTranslations?.createDialog?.form?.weatherResistance || "Weather Resistance"}</Label>
                   <Input
                     id="edit-weatherResistance"
                     value={formData.weatherResistance}
                     onChange={(e) => handleInputChange("weatherResistance", e.target.value)}
-                    placeholder="Waterproof, UV resistant"
+                    placeholder={stickersTranslations?.createDialog?.form?.weatherResistancePlaceholder || "Waterproof, UV resistant"}
                   />
                 </div>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                Cancel
+                {stickersTranslations?.editDialog?.buttons?.cancel || "Cancel"}
               </Button>
               <Button onClick={handleUpdate} className="bg-[#547455] hover:bg-[#243b31]">
-                Update
+                {stickersTranslations?.editDialog?.buttons?.update || "Update"}
               </Button>
             </DialogFooter>
           </DialogContent>

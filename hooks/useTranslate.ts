@@ -11,7 +11,7 @@ type TranslationKey = keyof typeof enTranslations;
 export const useTranslation = () => {
   const { language } = useLanguage();
 
-  const t = <K extends keyof Translations>(namespace: K): Translations[K] => {
+  const t = <K extends keyof Translations>(namespace: K): Translations[K] | undefined => {
     let translations;
 
     if (language === "English") {
@@ -24,7 +24,7 @@ export const useTranslation = () => {
       translations = enTranslations; // fallback
     }
 
-    return translations[namespace];
+    return translations[namespace as keyof typeof translations] as Translations[K] | undefined;
   };
 
   return { t };

@@ -89,6 +89,19 @@ function StickerPurchasePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
+  const purchaseTranslations = t("stickerPurchase") || {
+    header: { back: "Back to Dashboard", title: "Buy QR Sticker", description: "Order a physical QR code sticker for your memorial" },
+    loading: { message: "Loading..." },
+    comingSoon: { title: "Coming Soon", message: "QR Stickers are not available at the moment. Please check back later.", backButton: "Back to Dashboard" },
+    sections: {
+      memorialSelection: { title: "Select Memorial", description: "Choose which memorial this sticker will be for" },
+      stickerOptions: { title: "Choose Sticker Type", description: "Select the type and size of QR sticker you want", specifications: { material: "Material:", dimensions: "Dimensions:", durability: "Durability:" } },
+      quantity: { title: "Quantity", description: "How many stickers would you like?" },
+      shippingAddress: { title: "Shipping Address", description: "Confirm your shipping details", form: { fullName: "Full Name *", fullNamePlaceholder: "John Doe", address: "Address *", addressPlaceholder: "123 Main Street, Apartment 4B", city: "City *", cityPlaceholder: "Tbilisi", zipCode: "ZIP Code", zipCodePlaceholder: "0100", country: "Country", countryPlaceholder: "Georgia", phone: "Phone Number *", phonePlaceholder: "+995 555 123 456" } },
+      orderSummary: { title: "Order Summary", quantity: "Quantity:", total: "Total", proceedToPayment: "Proceed to Payment", processing: "Processing...", securePayment: "Secure payment processing" }
+    },
+    messages: { loadError: "Failed to load data", selectMemorialAndSticker: "Please select a memorial and sticker option", fillShippingDetails: "Please fill in all required shipping details", orderCreated: "Order created successfully! Initiating payment...", paymentInitiationFailed: "Payment initiation failed. Please try again.", orderCreationFailed: "Failed to create order" }
+  };
   
   const [loading, setLoading] = useState(true);
   const [stickerOptions, setStickerOptions] = useState<StickerOption[]>([]);
@@ -139,7 +152,7 @@ function StickerPurchasePage() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Failed to load data");
+        toast.error(purchaseTranslations?.messages?.loadError || "Failed to load data");
       } finally {
         setLoading(false);
       }
@@ -161,12 +174,12 @@ function StickerPurchasePage() {
 
   const handlePurchase = async () => {
     if (!selectedMemorial || !selectedSticker) {
-      toast.error("Please select a memorial and sticker option");
+      toast.error(purchaseTranslations?.messages?.selectMemorialAndSticker || "Please select a memorial and sticker option");
       return;
     }
 
     if (!shippingAddress.fullName || !shippingAddress.address || !shippingAddress.city || !shippingAddress.phone) {
-      toast.error("Please fill in all required shipping details");
+      toast.error(purchaseTranslations?.messages?.fillShippingDetails || "Please fill in all required shipping details");
       return;
     }
 
@@ -184,7 +197,7 @@ function StickerPurchasePage() {
       console.log("🚀 Order creation response:", response.data);
       
       if (response.data.status && response.data.data._id) {
-        toast.success("Order created successfully! Initiating payment...");
+        toast.success(purchaseTranslations?.messages?.orderCreated || "Order created successfully! Initiating payment...");
         
         // Initiate payment
         try {
@@ -203,7 +216,7 @@ function StickerPurchasePage() {
           }
         } catch (paymentError: any) {
           console.error("Payment initiation error:", paymentError);
-          toast.error("Payment initiation failed. Please try again.");
+          toast.error(purchaseTranslations?.messages?.paymentInitiationFailed || "Payment initiation failed. Please try again.");
         }
       } else {
         throw new Error("Failed to create order");
@@ -211,7 +224,7 @@ function StickerPurchasePage() {
 
     } catch (error: any) {
       console.error("Error creating order:", error);
-      toast.error(error.response?.data?.message || "Failed to create order");
+      toast.error(error.response?.data?.message || purchaseTranslations?.messages?.orderCreationFailed || "Failed to create order");
     } finally {
       setIsProcessing(false);
     }
@@ -222,7 +235,7 @@ function StickerPurchasePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">{purchaseTranslations?.loading?.message || "Loading..."}</p>
         </div>
       </div>
     );
@@ -239,7 +252,7 @@ function StickerPurchasePage() {
                 className="flex items-center text-white hover:underline gap-2 text-base"
               >
                 <ArrowLeft className="h-5 w-5" />
-                Back to Dashboard
+                {purchaseTranslations?.header?.back || "Back to Dashboard"}
               </Link>
               <LanguageDropdown />
             </div>
@@ -250,13 +263,13 @@ function StickerPurchasePage() {
           <Card>
             <CardContent className="p-8 text-center">
               <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Coming Soon</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{purchaseTranslations?.comingSoon?.title || "Coming Soon"}</h2>
               <p className="text-gray-600 mb-4">
-                QR Stickers are not available at the moment. Please check back later.
+                {purchaseTranslations?.comingSoon?.message || "QR Stickers are not available at the moment. Please check back later."}
               </p>
               <Link href="/dashboard">
                 <Button className="bg-[#547455] hover:bg-[#243b31]">
-                  Back to Dashboard
+                  {purchaseTranslations?.comingSoon?.backButton || "Back to Dashboard"}
                 </Button>
               </Link>
             </CardContent>
@@ -277,7 +290,7 @@ function StickerPurchasePage() {
               className="flex items-center text-white hover:underline gap-2 text-base"
             >
               <ArrowLeft className="h-5 w-5" />
-              Back to Dashboard
+              {purchaseTranslations?.header?.back || "Back to Dashboard"}
             </Link>
             <LanguageDropdown />
           </div>
@@ -292,10 +305,10 @@ function StickerPurchasePage() {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Buy QR Sticker
+            {purchaseTranslations?.header?.title || "Buy QR Sticker"}
           </h1>
           <p className="text-gray-600">
-            Order a physical QR code sticker for your memorial
+            {purchaseTranslations?.header?.description || "Order a physical QR code sticker for your memorial"}
           </p>
         </motion.div>
 
@@ -307,10 +320,10 @@ function StickerPurchasePage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Heart className="h-5 w-5 mr-2 text-[#547455]" />
-                  Select Memorial
+                  {purchaseTranslations?.sections?.memorialSelection?.title || "Select Memorial"}
                 </CardTitle>
                 <CardDescription>
-                  Choose which memorial this sticker will be for
+                  {purchaseTranslations?.sections?.memorialSelection?.description || "Choose which memorial this sticker will be for"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -346,10 +359,10 @@ function StickerPurchasePage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Package className="h-5 w-5 mr-2 text-blue-500" />
-                  Choose Sticker Type
+                  {purchaseTranslations?.sections?.stickerOptions?.title || "Choose Sticker Type"}
                 </CardTitle>
                 <CardDescription>
-                  Select the type and size of QR sticker you want
+                  {purchaseTranslations?.sections?.stickerOptions?.description || "Select the type and size of QR sticker you want"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -376,9 +389,9 @@ function StickerPurchasePage() {
                           </div>
                           {option.specifications && (
                             <div className="mt-3 text-xs text-gray-500">
-                              <p><strong>Material:</strong> {option.specifications.material}</p>
-                              <p><strong>Dimensions:</strong> {option.specifications.dimensions}</p>
-                              <p><strong>Durability:</strong> {option.specifications.durability}</p>
+                              <p><strong>{purchaseTranslations?.sections?.stickerOptions?.specifications?.material || "Material:"}</strong> {option.specifications.material}</p>
+                              <p><strong>{purchaseTranslations?.sections?.stickerOptions?.specifications?.dimensions || "Dimensions:"}</strong> {option.specifications.dimensions}</p>
+                              <p><strong>{purchaseTranslations?.sections?.stickerOptions?.specifications?.durability || "Durability:"}</strong> {option.specifications.durability}</p>
                             </div>
                           )}
                         </div>
@@ -392,9 +405,9 @@ function StickerPurchasePage() {
             {/* Quantity */}
             <Card>
               <CardHeader>
-                <CardTitle>Quantity</CardTitle>
+                <CardTitle>{purchaseTranslations?.sections?.quantity?.title || "Quantity"}</CardTitle>
                 <CardDescription>
-                  How many stickers would you like?
+                  {purchaseTranslations?.sections?.quantity?.description || "How many stickers would you like?"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -427,68 +440,68 @@ function StickerPurchasePage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <MapPin className="h-5 w-5 mr-2 text-green-500" />
-                  Shipping Address
+                  {purchaseTranslations?.sections?.shippingAddress?.title || "Shipping Address"}
                 </CardTitle>
                 <CardDescription>
-                  Confirm your shipping details
+                  {purchaseTranslations?.sections?.shippingAddress?.description || "Confirm your shipping details"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Label htmlFor="fullName">{purchaseTranslations?.sections?.shippingAddress?.form?.fullName || "Full Name *"}</Label>
                   <Input
                     id="fullName"
                     value={shippingAddress.fullName}
                     onChange={(e) => handleAddressChange("fullName", e.target.value)}
-                    placeholder="John Doe"
+                    placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.fullNamePlaceholder || "John Doe"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="address">Address *</Label>
+                  <Label htmlFor="address">{purchaseTranslations?.sections?.shippingAddress?.form?.address || "Address *"}</Label>
                   <Textarea
                     id="address"
                     value={shippingAddress.address}
                     onChange={(e) => handleAddressChange("address", e.target.value)}
-                    placeholder="123 Main Street, Apartment 4B"
+                    placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.addressPlaceholder || "123 Main Street, Apartment 4B"}
                     rows={2}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="city">City *</Label>
+                    <Label htmlFor="city">{purchaseTranslations?.sections?.shippingAddress?.form?.city || "City *"}</Label>
                     <Input
                       id="city"
                       value={shippingAddress.city}
                       onChange={(e) => handleAddressChange("city", e.target.value)}
-                      placeholder="Tbilisi"
+                      placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.cityPlaceholder || "Tbilisi"}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="zipCode">ZIP Code</Label>
+                    <Label htmlFor="zipCode">{purchaseTranslations?.sections?.shippingAddress?.form?.zipCode || "ZIP Code"}</Label>
                     <Input
                       id="zipCode"
                       value={shippingAddress.zipCode}
                       onChange={(e) => handleAddressChange("zipCode", e.target.value)}
-                      placeholder="0100"
+                      placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.zipCodePlaceholder || "0100"}
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="country">{purchaseTranslations?.sections?.shippingAddress?.form?.country || "Country"}</Label>
                   <Input
                     id="country"
                     value={shippingAddress.country}
                     onChange={(e) => handleAddressChange("country", e.target.value)}
-                    placeholder="Georgia"
+                    placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.countryPlaceholder || "Georgia"}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Label htmlFor="phone">{purchaseTranslations?.sections?.shippingAddress?.form?.phone || "Phone Number *"}</Label>
                   <Input
                     id="phone"
                     value={shippingAddress.phone}
                     onChange={(e) => handleAddressChange("phone", e.target.value)}
-                    placeholder="+995 555 123 456"
+                    placeholder={purchaseTranslations?.sections?.shippingAddress?.form?.phonePlaceholder || "+995 555 123 456"}
                   />
                 </div>
               </CardContent>
@@ -499,7 +512,7 @@ function StickerPurchasePage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <ShoppingCart className="h-5 w-5 mr-2 text-purple-500" />
-                  Order Summary
+                  {purchaseTranslations?.sections?.orderSummary?.title || "Order Summary"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -524,12 +537,12 @@ function StickerPurchasePage() {
                       <span>${selectedStickerOption.price}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Quantity: {quantity}</span>
+                      <span>{purchaseTranslations?.sections?.orderSummary?.quantity || "Quantity:"} {quantity}</span>
                       <span>× {quantity}</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
-                      <span>Total</span>
+                      <span>{purchaseTranslations?.sections?.orderSummary?.total || "Total"}</span>
                       <span>${totalPrice}</span>
                     </div>
                   </div>
@@ -543,19 +556,19 @@ function StickerPurchasePage() {
                   {isProcessing ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Processing...
+                      {purchaseTranslations?.sections?.orderSummary?.processing || "Processing..."}
                     </>
                   ) : (
                     <>
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Proceed to Payment
+                      {purchaseTranslations?.sections?.orderSummary?.proceedToPayment || "Proceed to Payment"}
                     </>
                   )}
                 </Button>
 
                 <div className="flex items-center text-sm text-gray-500">
                   <Check className="h-4 w-4 mr-2 text-green-500" />
-                  Secure payment processing
+{purchaseTranslations?.sections?.orderSummary?.securePayment || "Secure payment processing"}
                 </div>
               </CardContent>
             </Card>

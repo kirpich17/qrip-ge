@@ -35,6 +35,28 @@ import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import { QRCodeSVG } from 'qrcode.react';
 import { saveAs } from 'file-saver';
 import axios from "axios";
+import { useTranslation } from "@/hooks/useTranslate";
+
+// Helper function to get authentication token
+const getAuthToken = () => {
+  // Try to get token from authToken (regular user login)
+  let token = localStorage.getItem("authToken");
+  
+  // If no authToken, try to get it from loginData (admin login)
+  if (!token) {
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      try {
+        const parsed = JSON.parse(loginData);
+        token = parsed.token;
+      } catch (error) {
+        console.error("Error parsing loginData:", error);
+      }
+    }
+  }
+  
+  return token;
+};
 
 interface Order {
   _id: string;
@@ -78,9 +100,30 @@ interface Order {
 }
 
 function OrderDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const orderId = params.orderId as string;
+  
+  const orderDetailTranslations = t("adminOrderDetail") || {
+    header: { back: "Back to Orders", title: "Order Details" },
+    loading: { message: "Loading order details..." },
+    notFound: { title: "Order Not Found", message: "The order you're looking for doesn't exist.", backButton: "Back to Orders" },
+    orderHeader: { orderNumber: "Order #{orderId}", createdOn: "Created on {date}" },
+    sections: {
+      customerInfo: { title: "Customer Information", name: "Name", email: "Email", phone: "Phone", userId: "User ID" },
+      memorialInfo: { title: "Memorial Information", memorialName: "Memorial Name", slug: "Slug", memorialId: "Memorial ID" },
+      shippingAddress: { title: "Shipping Address", phone: "Phone" },
+      orderSummary: { title: "Order Summary", sticker: "Sticker", type: "Type", size: "Size", quantity: "Quantity", unitPrice: "Unit Price", total: "Total" },
+      qrCodeDownload: { title: "QR Code Download", description: "Download the QR code for this memorial", memorialLabel: "Memorial: {name}", qualityNote: "High quality QR codes suitable for printing on stickers" },
+      paymentInfo: { title: "Payment Information", status: "Status", paymentId: "Payment ID" },
+      orderActions: { title: "Order Actions", deleteOrder: "Delete Order" },
+      timeline: { title: "Timeline", orderCreated: "Order Created", lastUpdated: "Last Updated" }
+    },
+    status: { pending: "Pending", processing: "Processing", shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled" },
+    paymentStatus: { pending: "Pending", paid: "Paid", failed: "Failed", refunded: "Refunded" },
+    messages: { orderNotFound: "Order not found", loadError: "Failed to load order details", deleteConfirm: "Are you sure you want to delete this order?", deleteSuccess: "Order deleted successfully", deleteError: "Failed to delete order", notLoggedIn: "You are not logged in", downloadSuccess: "QR code downloaded as {fileName}", downloadError: "Failed to generate QR code" }
+  };
   
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,12 +143,12 @@ function OrderDetailPage() {
       if (response.data.status && response.data.data) {
         setOrder(response.data.data);
       } else {
-        toast.error("Order not found");
+        toast.error(orderDetailTranslations.messages.orderNotFound);
         router.push("/admin/orders");
       }
     } catch (error) {
       console.error("Error fetching order details:", error);
-      toast.error("Failed to load order details");
+      toast.error(orderDetailTranslations.messages.loadError);
       router.push("/admin/orders");
     } finally {
       setLoading(false);
@@ -114,20 +157,17 @@ function OrderDetailPage() {
 
 
   const deleteOrder = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this order?\n\n" +
-      "This action cannot be undone and will permanently remove all order data."
-    );
+    const confirmed = window.confirm(orderDetailTranslations.messages.deleteConfirm);
     
     if (!confirmed) return;
 
     try {
       await axiosInstance.delete(`/api/stickers/admin/orders/${orderId}`);
-      toast.success("Order deleted successfully");
+      toast.success(orderDetailTranslations.messages.deleteSuccess);
       router.push("/admin/orders");
     } catch (error) {
       console.error("Error deleting order:", error);
-      toast.error("Failed to delete order");
+      toast.error(orderDetailTranslations.messages.deleteError);
     }
   };
 
@@ -135,9 +175,10 @@ function OrderDetailPage() {
     if (!order) return;
     
     setDownloadingFormat(format);
-    const token = localStorage.getItem("authToken");
+    
+    const token = getAuthToken();
     if (!token) {
-      toast.error("You are not logged in");
+      toast.error(orderDetailTranslations.messages.notLoggedIn);
       setDownloadingFormat(null);
       return;
     }
@@ -159,10 +200,10 @@ function OrderDetailPage() {
       
       const fileName = `QR_Sticker_${order.memorial.firstName}_${order.memorial.lastName}_${order._id.slice(-8)}.${format}`;
       saveAs(response.data, fileName);
-      toast.success(`QR code downloaded as ${fileName}`);
+      toast.success(orderDetailTranslations.messages.downloadSuccess.replace('{fileName}', fileName));
     } catch (error) {
       console.error("Download failed:", error);
-      toast.error("Failed to generate QR code");
+      toast.error(orderDetailTranslations.messages.downloadError);
     } finally {
       setDownloadingFormat(null);
     }
@@ -188,10 +229,14 @@ function OrderDetailPage() {
     const config = (statusConfig[type] as any)[status] || statusConfig[type].pending;
     const Icon = config.icon;
 
+    const statusText = type === 'payment' 
+      ? orderDetailTranslations.paymentStatus[status as keyof typeof orderDetailTranslations.paymentStatus]
+      : orderDetailTranslations.status[status as keyof typeof orderDetailTranslations.status];
+
     return (
       <Badge className={`${config.color} flex items-center gap-1`}>
         <Icon className="h-3 w-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {statusText}
       </Badge>
     );
   };
@@ -211,7 +256,7 @@ function OrderDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading order details...</p>
+          <p className="mt-4 text-gray-600">{orderDetailTranslations.loading.message}</p>
         </div>
       </div>
     );
@@ -222,11 +267,11 @@ function OrderDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h2>
-          <p className="text-gray-600 mb-4">The order you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{orderDetailTranslations.notFound.title}</h2>
+          <p className="text-gray-600 mb-4">{orderDetailTranslations.notFound.message}</p>
           <Link href="/admin/orders">
             <Button className="bg-[#547455] hover:bg-[#243b31]">
-              Back to Orders
+              {orderDetailTranslations.notFound.backButton}
             </Button>
           </Link>
         </div>
@@ -245,10 +290,10 @@ function OrderDetailPage() {
               className="flex items-center text-white hover:underline gap-2 text-base"
             >
               <ArrowLeft className="h-5 w-5" />
-              Back to Orders
+{orderDetailTranslations.header.back}
             </Link>
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold text-white">Order Details</h1>
+              <h1 className="text-xl font-semibold text-white">{orderDetailTranslations.header.title}</h1>
             </div>
           </div>
         </div>
@@ -268,10 +313,10 @@ function OrderDetailPage() {
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    Order #{order._id.slice(-8).toUpperCase()}
+{orderDetailTranslations.orderHeader.orderNumber.replace('{orderId}', order._id.slice(-8).toUpperCase())}
                   </CardTitle>
                   <CardDescription>
-                    Created on {formatDate(order.createdAt)}
+{orderDetailTranslations.orderHeader.createdOn.replace('{date}', formatDate(order.createdAt))}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
@@ -290,25 +335,25 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    Customer Information
+{orderDetailTranslations.sections.customerInfo.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Name</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.customerInfo.name}</p>
                       <p className="font-semibold">{order.user.firstname} {order.user.lastname}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Email</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.customerInfo.email}</p>
                       <p className="font-semibold">{order.user.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Phone</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.customerInfo.phone}</p>
                       <p className="font-semibold">{order.user.phone}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">User ID</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.customerInfo.userId}</p>
                       <p className="font-mono text-sm">{order.user._id}</p>
                     </div>
                   </div>
@@ -320,21 +365,21 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    Memorial Information
+{orderDetailTranslations.sections.memorialInfo.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Memorial Name</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.memorialInfo.memorialName}</p>
                       <p className="font-semibold">{order.memorial.firstName} {order.memorial.lastName}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Slug</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.memorialInfo.slug}</p>
                       <p className="font-mono text-sm">/{order.memorial.slug}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Memorial ID</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.memorialInfo.memorialId}</p>
                       <p className="font-mono text-sm">{order.memorial._id}</p>
                     </div>
                   </div>
@@ -346,7 +391,7 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
-                    Shipping Address
+{orderDetailTranslations.sections.shippingAddress.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -355,7 +400,7 @@ function OrderDetailPage() {
                     <p>{order.shippingAddress.address}</p>
                     <p>{order.shippingAddress.city}, {order.shippingAddress.zipCode}</p>
                     <p>{order.shippingAddress.country}</p>
-                    <p className="mt-2 font-medium">Phone: {order.shippingAddress.phone}</p>
+                    <p className="mt-2 font-medium">{orderDetailTranslations.sections.shippingAddress.phone}: {order.shippingAddress.phone}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -366,32 +411,32 @@ function OrderDetailPage() {
               {/* Order Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle>{orderDetailTranslations.sections.orderSummary.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span>Sticker:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.sticker}:</span>
                     <span className="font-semibold">{order.stickerOption.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Type:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.type}:</span>
                     <span>{order.stickerOption.type}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Size:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.size}:</span>
                     <span>{order.stickerOption.size}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Quantity:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.quantity}:</span>
                     <span>{order.quantity}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Unit Price:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.unitPrice}:</span>
                     <span>₾{order.unitPrice}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total:</span>
+                    <span>{orderDetailTranslations.sections.orderSummary.total}:</span>
                     <span>₾{order.totalAmount}</span>
                   </div>
                 </CardContent>
@@ -402,10 +447,10 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <QrCode className="h-5 w-5" />
-                    QR Code Download
+{orderDetailTranslations.sections.qrCodeDownload.title}
                   </CardTitle>
                   <CardDescription>
-                    Download the QR code for this memorial
+{orderDetailTranslations.sections.qrCodeDownload.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -416,7 +461,7 @@ function OrderDetailPage() {
                       className="mx-auto"
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Memorial: {order.memorial.firstName} {order.memorial.lastName}
+{orderDetailTranslations.sections.qrCodeDownload.memorialLabel.replace('{name}', `${order.memorial.firstName} ${order.memorial.lastName}`)}
                     </p>
                   </div>
                   
@@ -452,7 +497,7 @@ function OrderDetailPage() {
                   </div>
                   
                   <p className="text-xs text-gray-500 text-center">
-                    High quality QR codes suitable for printing on stickers
+{orderDetailTranslations.sections.qrCodeDownload.qualityNote}
                   </p>
                 </CardContent>
               </Card>
@@ -462,17 +507,17 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CreditCard className="h-5 w-5" />
-                    Payment Information
+{orderDetailTranslations.sections.paymentInfo.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span>Status:</span>
+                    <span>{orderDetailTranslations.sections.paymentInfo.status}:</span>
                     {getStatusBadge(order.paymentStatus, 'payment')}
                   </div>
                   {order.paymentId && (
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Payment ID</p>
+                      <p className="text-sm font-medium text-gray-500">{orderDetailTranslations.sections.paymentInfo.paymentId}</p>
                       <p className="font-mono text-sm">{order.paymentId}</p>
                     </div>
                   )}
@@ -482,7 +527,7 @@ function OrderDetailPage() {
               {/* Order Actions */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Order Actions</CardTitle>
+                  <CardTitle>{orderDetailTranslations.sections.orderActions.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button
@@ -491,7 +536,7 @@ function OrderDetailPage() {
                     onClick={deleteOrder}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Order
+{orderDetailTranslations.sections.orderActions.deleteOrder}
                   </Button>
                 </CardContent>
               </Card>
@@ -501,14 +546,14 @@ function OrderDetailPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
-                    Timeline
+{orderDetailTranslations.sections.timeline.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <div>
-                      <p className="text-sm font-medium">Order Created</p>
+                      <p className="text-sm font-medium">{orderDetailTranslations.sections.timeline.orderCreated}</p>
                       <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
                     </div>
                   </div>
@@ -517,7 +562,7 @@ function OrderDetailPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                       <div>
-                        <p className="text-sm font-medium">Last Updated</p>
+                        <p className="text-sm font-medium">{orderDetailTranslations.sections.timeline.lastUpdated}</p>
                         <p className="text-xs text-gray-500">{formatDate(order.updatedAt)}</p>
                       </div>
                     </div>

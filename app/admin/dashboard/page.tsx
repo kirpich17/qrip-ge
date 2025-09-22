@@ -32,6 +32,18 @@ import LanguageDropdown from "@/components/languageDropdown/page";
 function AdminDashboardPage() {
   const { t } = useTranslation();
   const admindashTranslations: any = t("admindash" as any);
+  const dashboardTranslations = t("adminDashboard") || {
+    orders: {
+      tabTitle: "Orders",
+      title: "QR Sticker Orders",
+      description: "Manage and track all QR sticker orders",
+      viewAllOrders: "View All Orders",
+      manageStickers: "Manage Stickers",
+      orderManagement: "Order Management",
+      orderManagementDescription: "View and manage all QR sticker orders in the dedicated orders page.",
+      goToOrders: "Go to Orders"
+    }
+  };
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchQueryMemorial, setSearchQueryMemorial] = useState("");
@@ -222,7 +234,7 @@ function AdminDashboardPage() {
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
               <Package className="h-4 w-4 mr-2" />
-              Orders
+              {dashboardTranslations?.orders?.tabTitle || "Orders"}
             </TabsTrigger>
           </TabsList>
 
@@ -370,22 +382,22 @@ function AdminDashboardPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>QR Sticker Orders</CardTitle>
+                    <CardTitle>{dashboardTranslations?.orders?.title || "QR Sticker Orders"}</CardTitle>
                     <CardDescription>
-                      Manage and track all QR sticker orders
+                      {dashboardTranslations?.orders?.description || "Manage and track all QR sticker orders"}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Link href="/admin/orders">
                       <Button className="bg-[#547455] hover:bg-[#243b31]">
                         <Package className="h-4 w-4 mr-2" />
-                        View All Orders
+                        {dashboardTranslations?.orders?.viewAllOrders || "View All Orders"}
                       </Button>
                     </Link>
                     <Link href="/admin/stickers">
                       <Button variant="outline">
                         <Package className="h-4 w-4 mr-2" />
-                        Manage Stickers
+                        {dashboardTranslations?.orders?.manageStickers || "Manage Stickers"}
                       </Button>
                     </Link>
                   </div>
@@ -394,13 +406,13 @@ function AdminDashboardPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Order Management</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{dashboardTranslations?.orders?.orderManagement || "Order Management"}</h3>
                   <p className="text-gray-500 mb-4">
-                    View and manage all QR sticker orders in the dedicated orders page.
+                    {dashboardTranslations?.orders?.orderManagementDescription || "View and manage all QR sticker orders in the dedicated orders page."}
                   </p>
                   <Link href="/admin/orders">
                     <Button className="bg-[#547455] hover:bg-[#243b31]">
-                      Go to Orders
+                      {dashboardTranslations?.orders?.goToOrders || "Go to Orders"}
                     </Button>
                   </Link>
                 </div>
