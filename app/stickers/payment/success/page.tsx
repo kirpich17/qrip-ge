@@ -26,19 +26,27 @@ function PaymentSuccessContent() {
     }
   }, [orderId]);
 
-  const fetchOrderDetails = async () => {
+  const fetchOrderDetails = async (retryCount = 0) => {
     try {
-      const response = await axiosInstance.get(`/api/stickers/orders`);
+      // Use the new direct endpoint to get the specific order
+      const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
       if (response.data.status && response.data.data) {
-        const foundOrder = response.data.data.find((o: any) => o._id === orderId);
-        if (foundOrder) {
-          setOrder(foundOrder);
-        }
+        setOrder(response.data.data);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching order details:", error);
-    } finally {
-      setLoading(false);
+      
+      // If payment status is still pending and we haven't exceeded retry limit, retry
+      if (retryCount < 5) {
+        console.log(`Retrying order fetch (attempt ${retryCount + 1}/5)...`);
+        setTimeout(() => {
+          fetchOrderDetails(retryCount + 1);
+        }, 2000); // Wait 2 seconds before retry
+      } else {
+        console.error("Max retries reached, stopping...");
+        setLoading(false);
+      }
     }
   };
 
@@ -106,8 +114,16 @@ function PaymentSuccessContent() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Payment Status</p>
-                    <Badge className="bg-green-100 text-green-800">
-                      {order.paymentStatus}
+                    <Badge className={
+                      order.paymentStatus === 'paid' 
+                        ? "bg-green-100 text-green-800" 
+                        : order.paymentStatus === 'pending'
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }>
+                      {order.paymentStatus === 'paid' ? 'Paid' : 
+                       order.paymentStatus === 'pending' ? 'Processing...' : 
+                       order.paymentStatus}
                     </Badge>
                   </div>
                   <div>
@@ -150,8 +166,12 @@ function PaymentSuccessContent() {
           className="text-center space-y-4"
         >
           <p className="text-gray-600">
-            We'll process your order and ship it to the provided address. 
-            You'll receive a confirmation email shortly.
+            {order?.paymentStatus === 'paid' 
+              ? "Your payment has been confirmed! We'll process your order and ship it to the provided address. You'll receive a confirmation email shortly."
+              : order?.paymentStatus === 'pending'
+              ? "Your payment is being processed. Please wait a moment while we confirm your payment..."
+              : "We'll process your order and ship it to the provided address. You'll receive a confirmation email shortly."
+            }
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
