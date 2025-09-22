@@ -564,8 +564,6 @@ function AdminStickersPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="vinyl">{stickersTranslations?.types?.vinyl || "Vinyl"}</SelectItem>
-                      <SelectItem value="engraving">{stickersTranslations?.types?.engraving || "Engraving"}</SelectItem>
-                      <SelectItem value="premium">{stickersTranslations?.types?.premium || "Premium"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

@@ -30,8 +30,15 @@ function PaymentSuccessContent() {
     try {
       // Use the new direct endpoint to get the specific order
       const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
+      console.log("🔍 Order data received:", response.data);
       if (response.data.status && response.data.data) {
-        setOrder(response.data.data);
+        const orderData = response.data.data;
+        console.log("📋 Order details:", {
+          paymentStatus: orderData.paymentStatus,
+          orderStatus: orderData.orderStatus,
+          paymentId: orderData.paymentId
+        });
+        setOrder(orderData);
         setLoading(false);
       }
     } catch (error) {

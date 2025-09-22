@@ -594,21 +594,7 @@ function AdminOrdersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          {order.orderStatus === 'processing' && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                const trackingNumber = prompt(ordersTranslations.messages.trackingPrompt);
-                                if (trackingNumber) {
-                                  updateOrderStatus(order._id, 'shipped', trackingNumber);
-                                }
-                              }}
-                              disabled={updatingOrder === order._id}
-                            >
-                              {ordersTranslations.table.actions.ship}
-                            </Button>
-                          )}
+                          
                           {order.orderStatus === 'shipped' && (
                             <Button
                               size="sm"
