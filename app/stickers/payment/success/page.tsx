@@ -28,23 +28,50 @@ function PaymentSuccessContent() {
 
   const fetchOrderDetails = async (retryCount = 0) => {
     try {
-      // Use the new direct endpoint to get the specific order
-      const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
-      console.log("🔍 Order data received:", response.data);
-      if (response.data.status && response.data.data) {
-        const orderData = response.data.data;
-        console.log("📋 Order details:", {
-          paymentStatus: orderData.paymentStatus,
-          orderStatus: orderData.orderStatus,
-          paymentId: orderData.paymentId
-        });
-        setOrder(orderData);
-        setLoading(false);
+      console.log(`🔍 Fetching order details (attempt ${retryCount + 1})...`);
+      
+      // Try the new direct endpoint first
+      try {
+        const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
+        console.log("🔍 Order data received from direct endpoint:", response.data);
+        if (response.data.status && response.data.data) {
+          const orderData = response.data.data;
+          console.log("📋 Order details:", {
+            paymentStatus: orderData.paymentStatus,
+            orderStatus: orderData.orderStatus,
+            paymentId: orderData.paymentId
+          });
+          setOrder(orderData);
+          setLoading(false);
+          return;
+        }
+      } catch (directError) {
+        console.log("❌ Direct endpoint failed, trying fallback method...", directError.response?.status);
       }
+
+      // Fallback: Use the old method (orders list)
+      console.log("🔄 Using fallback method (orders list)...");
+      const response = await axiosInstance.get(`/api/stickers/orders`);
+      console.log("🔍 Orders list received:", response.data);
+      if (response.data.status && response.data.data) {
+        const foundOrder = response.data.data.find((o: any) => o._id === orderId);
+        if (foundOrder) {
+          console.log("📋 Found order in list:", {
+            paymentStatus: foundOrder.paymentStatus,
+            orderStatus: foundOrder.orderStatus,
+            paymentId: foundOrder.paymentId
+          });
+          setOrder(foundOrder);
+        } else {
+          console.log("❌ Order not found in list");
+        }
+      }
+      setLoading(false);
+      
     } catch (error) {
       console.error("Error fetching order details:", error);
       
-      // If payment status is still pending and we haven't exceeded retry limit, retry
+      // If we haven't exceeded retry limit, retry
       if (retryCount < 5) {
         console.log(`Retrying order fetch (attempt ${retryCount + 1}/5)...`);
         setTimeout(() => {
