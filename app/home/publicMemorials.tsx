@@ -15,7 +15,7 @@ const MemorialCard = ({ memorial }) => {
   };
 
   return (
-    // <Link href={`/memorial/${memorial._id}`} key={memorial._id} target='_blank'>
+    <Link href={`/memorial/${memorial._id}`} key={memorial._id} target='_blank'>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2 flex flex-col h-full cursor-pointer">
         <div className="h-48 bg-gray-200 flex-shrink-0">
           {memorial.profileImage ? (
@@ -42,7 +42,7 @@ const MemorialCard = ({ memorial }) => {
           )}
         </div>
       </div>
-    // </Link>
+     </Link>
   );
 };
 
@@ -166,7 +166,7 @@ export default function PublicMemorials() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {memorials.map((memorial) => (
                 <MemorialCard key={memorial._id} memorial={memorial} />
-              ))}
+              ))}1111111
             </div>
 
             {/* Pagination Controls */}
