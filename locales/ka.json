@@ -1635,6 +1635,19 @@
         "allStatuses": "ყველა სტატუსი",
         "allPayments": "ყველა გადახდა"
       },
+      "status": {
+        "pending": "მოლოდინში",
+        "processing": "მუშავდება",
+        "shipped": "გაგზავნილი",
+        "delivered": "მიწოდებული",
+        "cancelled": "გაუქმებული"
+      },
+      "paymentStatus": {
+        "pending": "მოლოდინში",
+        "paid": "გადახდილი",
+        "failed": "ჩავარდა",
+        "refunded": "დაბრუნებული"
+      },
       "table": {
         "title": "შეკვეთები ({count})",
         "description": "მართეთ და აკონტროლეთ ყველა QR სტიკერის შეკვეთა",
@@ -1649,19 +1662,6 @@
           "status": "სტატუსი",
           "date": "თარიღი",
           "actions": "მოქმედებები"
-        },
-        "status": {
-          "pending": "მოლოდინში",
-          "processing": "მუშავდება",
-          "shipped": "გაგზავნილი",
-          "delivered": "მიწოდებული",
-          "cancelled": "გაუქმებული"
-        },
-        "paymentStatus": {
-          "pending": "მოლოდინში",
-          "paid": "გადახდილი",
-          "failed": "ჩავარდა",
-          "refunded": "დაბრუნებული"
         },
         "actions": {
           "ship": "გაგზავნა",

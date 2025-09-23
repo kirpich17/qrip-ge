@@ -1590,6 +1590,19 @@
         "allStatuses": "Все статусы",
         "allPayments": "Все платежи"
       },
+      "status": {
+        "pending": "В ожидании",
+        "processing": "Обрабатывается",
+        "shipped": "Отправлено",
+        "delivered": "Доставлено",
+        "cancelled": "Отменено"
+      },
+      "paymentStatus": {
+        "pending": "В ожидании",
+        "paid": "Оплачено",
+        "failed": "Не удалось",
+        "refunded": "Возвращено"
+      },
       "table": {
         "title": "Заказы ({count})",
         "description": "Управляйте и отслеживайте все заказы QR стикеров",
@@ -1604,19 +1617,6 @@
           "status": "Статус",
           "date": "Дата",
           "actions": "Действия"
-        },
-        "status": {
-          "pending": "В ожидании",
-          "processing": "Обрабатывается",
-          "shipped": "Отправлено",
-          "delivered": "Доставлено",
-          "cancelled": "Отменено"
-        },
-        "paymentStatus": {
-          "pending": "В ожидании",
-          "paid": "Оплачено",
-          "failed": "Не удалось",
-          "refunded": "Возвращено"
         },
         "actions": {
           "ship": "Отправить",

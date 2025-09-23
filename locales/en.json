@@ -1641,6 +1641,19 @@
       "allStatuses": "All Statuses",
       "allPayments": "All Payments"
     },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
     "table": {
       "title": "Orders ({count})",
       "description": "Manage and track all QR sticker orders",
@@ -1655,19 +1668,6 @@
         "status": "Status",
         "date": "Date",
         "actions": "Actions"
-      },
-      "status": {
-        "pending": "Pending",
-        "processing": "Processing",
-        "shipped": "Shipped",
-        "delivered": "Delivered",
-        "cancelled": "Cancelled"
-      },
-      "paymentStatus": {
-        "pending": "Pending",
-        "paid": "Paid",
-        "failed": "Failed",
-        "refunded": "Refunded"
       },
       "actions": {
         "ship": "Ship",

@@ -541,7 +541,7 @@ function AdminOrdersPage() {
                     <TableHead>{ordersTranslations.table.headers.quantity}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.total}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.payment}</TableHead>
-                    <TableHead>{ordersTranslations.table.headers.status}</TableHead>
+                    {/* <TableHead>{ordersTranslations.table.headers.status}</TableHead> */}
                     <TableHead>{ordersTranslations.table.headers.date}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.actions}</TableHead>
                   </TableRow>
@@ -586,7 +586,7 @@ function AdminOrdersPage() {
                       <TableCell>{order.quantity}</TableCell>
                       <TableCell className="font-semibold">${order.totalAmount}</TableCell>
                       <TableCell>{getStatusBadge(order.paymentStatus, 'payment')}</TableCell>
-                      <TableCell>{getStatusBadge(order.orderStatus, 'order')}</TableCell>
+                      {/* <TableCell>{getStatusBadge(order.orderStatus, 'order')}</TableCell> */}
                       <TableCell>
                         <div className="text-sm">
                           <p>{formatDate(order.createdAt)}</p>
