@@ -42,6 +42,7 @@ import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import LanguageDropdown from "@/components/languageDropdown/page";
+import InteractiveMap from "@/components/InteractiveMap";
 
 // Media limits configuration
 const MEDIA_LIMITS = {
@@ -190,7 +191,6 @@ export default function CreateMemorialPage() {
 
   const pathName = usePathname()
   const isCreate = pathName.includes("/memorial/create");
-  console.log("🚀 ~ CreateMemorialPage ~ isCreate:", isCreate)
   const isEdit = pathName.includes("/memorial/edit");
 
   const memorialId = params.memorialId as string;
@@ -198,7 +198,6 @@ export default function CreateMemorialPage() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
-  console.log("🚀 ~ CreateMemorialPage ~ createMemorialTranslations:", createMemorialTranslations)
   const editMemorialTranslations = t("editMemorial");
 
   const [isEditing, setIsEditing] = useState(false);
@@ -479,7 +478,6 @@ export default function CreateMemorialPage() {
     if (!files) return;
 
     const validation = validateFiles(files, 'document');
-    console.log("🚀 ~ handleDocumentsUpload ~ validation:", validation)
     if (!validation.valid) {
       toast({
         title: "Upload Error",
@@ -501,7 +499,6 @@ export default function CreateMemorialPage() {
 
     setMediaFiles(prev => {
       const updatedDocuments = [...prev.documents, ...newDocuments];
-      console.log("Updated documents:", updatedDocuments); // Debug log
       return {
         ...prev,
         documents: updatedDocuments
@@ -664,8 +661,7 @@ export default function CreateMemorialPage() {
     formDataToSend.append("location", formData.location)
 
     if (formData.gps?.lat && formData.gps?.lng) {
-      formDataToSend.append('gps[lat]', formData.gps.lat.toString());
-      formDataToSend.append('gps[lng]', formData.gps.lng.toString());
+      formDataToSend.append('gps', JSON.stringify(formData.gps));
     }
 
     achievements.forEach((achievement, index) => {
@@ -986,43 +982,29 @@ export default function CreateMemorialPage() {
                     />
                   </div>
 
-                  {/* --- ENHANCED LOCATION INPUT --- */}
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {createMemorialTranslations.basicInfo.location}
+                  {/* --- INTERACTIVE MAP FOR PRECISE LOCATION --- */}
+                  <div className="space-y-4">
+                    <Label className="flex items-center text-lg font-semibold">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      {createMemorialTranslations.basicInfo.location} - Set Precise Location
                     </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="location"
-                        placeholder="Tbilisi, Georgia"
-                        value={formData.location}
-                        onChange={(e) => handleInputChange("location", e.target.value)}
-                        className="h-12 flex-1"
-                      />
-                      <Button
-                        type="button"
-                        onClick={handleGeocodeLocation}
-                        disabled={isGeocoding || !formData.location}
-                        variant="outline"
-                        className="h-12 whitespace-nowrap"
-                      >
-                        {isGeocoding ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#547455] mr-2"></div>
-                        ) : (
-                          <Search className="h-4 w-4 mr-2" />
-                        )}
-                        {createMemorialTranslations.autoFillGPS}
-                      </Button>
-                    </div>
-                    {geocodingError && (
-                      <p className="text-sm text-red-500 flex items-center pt-1">
-                        <AlertCircle className="h-4 w-4 mr-1" />
-                        {geocodingError}
-                      </p>
-                    )}
+                    <p className="text-sm text-gray-600">
+                      Click on the map to set the exact GPS coordinates for the memorial location.
+                    </p>
+                    <InteractiveMap
+                      initialLat={formData.gps?.lat || 41.7151}
+                      initialLng={formData.gps?.lng || 44.8271}
+                      onLocationChange={(lat, lng) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gps: { lat, lng }
+                        }));
+                      }}
+                      height="400px"
+                      showCoordinateInputs={true}
+                    />
                   </div>
-                  {/* --- END OF ENHANCED LOCATION INPUT --- */}
+                  {/* --- END OF INTERACTIVE MAP --- */}
 
                   <div className="space-y-2">
                     <Label htmlFor="biography">
@@ -1082,66 +1064,6 @@ export default function CreateMemorialPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="latitude" className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {createMemorialTranslations.latitude}
-                      </Label>
-                      <Input
-                        id="latitude"
-                        type="number"
-                        step="any"
-                        placeholder="e.g. 41.7151"
-                        value={formData.gps?.lat ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setFormData(prev => ({
-                            ...prev,
-                            gps: {
-                              ...prev.gps,
-                              lat: value ? parseFloat(value) : null
-                            }
-                          }));
-                        }}
-                        className="h-12"
-                        min="-90"
-                        max="90"
-                      />
-                      {formData.gps?.lat && (formData.gps.lat < -90 || formData.gps.lat > 90) && (
-                        <p className="text-sm text-red-500">Latitude must be between -90 and 90</p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="longitude" className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {createMemorialTranslations.longitude}
-                      </Label>
-                      <Input
-                        id="longitude"
-                        type="number"
-                        step="any"
-                        placeholder="e.g. 44.8271"
-                        value={formData.gps?.lng ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setFormData(prev => ({
-                            ...prev,
-                            gps: {
-                              ...prev.gps,
-                              lng: value ? parseFloat(value) : null
-                            }
-                          }));
-                        }}
-                        className="h-12"
-                        min="-180"
-                        max="180"
-                      />
-                      {formData.gps?.lng && (formData.gps.lng < -180 || formData.gps.lng > 180) && (
-                        <p className="text-sm text-red-500">Longitude must be between -180 and 180</p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center space-x-2">
                     <Switch

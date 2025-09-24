@@ -66,10 +66,8 @@ function Dashboard() {
   const commonTranslations = t("common");
   const helpTranslations = t("help");
   const dashboard: any = dashboardTranslations;
-  console.log("🚀 ~ Dashboard ~ dashboard:", dashboard)
   const [searchQuery, setSearchQuery] = useState("");
   const [memorials, setMemorials] = useState<Memorial[]>([]);
-  console.log("🚀 ~ Dashboard ~ memorials:", memorials)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -139,7 +137,6 @@ function Dashboard() {
   const filteredMemorials = memorials.filter(
     (memorial) => memorial.firstName !== "Untitled"
   );
-  console.log("🚀 ~ Dashboard ~ filteredMemorials:", filteredMemorials)
 
   const handleDeleteMemorial = async (memorialId: string) => {
     if (confirm("Are you sure you want to delete this memorial? This action cannot be undone.")) {
@@ -201,7 +198,6 @@ function Dashboard() {
         const userId = user._id;
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/auth/stats/${userId}`);
         const result = await response.json();
-        console.log("🚀 ~ fetchStats ~ result:", result)
 
         if (result.status && result.data) {
           const apiData = result.data;

@@ -35,12 +35,10 @@ export function UserMenu({
 
   const handleLogout = () => {
     if (confirm(translations.logoutConfirm)) {
-      console.log("Logging out user");
       logoutUser();
       router.push("/");
     }
   };
-  console.log(user)
 
   return (
     <DropdownMenu>

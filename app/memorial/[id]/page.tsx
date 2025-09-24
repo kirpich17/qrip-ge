@@ -316,8 +316,6 @@ export default function MemorialPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
-  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial?.allowSlideshow
-  )
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -823,35 +821,83 @@ export default function MemorialPage() {
                     {
                       // isPremium ? (
                       apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
-                        <div className="space-y-4 z-0">
-                          <div className="h-64 rounded-lg overflow-hidden">
+                        <div className="space-y-4">
+                          <div className="h-64 rounded-lg overflow-hidden border map-container">
                             <MapContainer
                               center={[apiMemorial.gps.lat, apiMemorial.gps.lng]}
-                              zoom={13}
+                              zoom={15}
                               style={{ height: '100%', width: '100%' }}
+                              className="map-container"
                             >
                               <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                               />
                               <Marker position={[apiMemorial.gps.lat, apiMemorial.gps.lng]}>
-                                <Popup>{apiMemorial.location || 'Memorial Location'}</Popup>
+                                <Popup>
+                                  <div className="text-center">
+                                    <strong>{apiMemorial.location || 'Memorial Location'}</strong>
+                                    <br />
+                                    <small className="text-gray-600">
+                                      {apiMemorial.gps.lat.toFixed(6)}, {apiMemorial.gps.lng.toFixed(6)}
+                                    </small>
+                                  </div>
+                                </Popup>
                               </Marker>
                             </MapContainer>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            onClick={() => {
-                              window.open(
-                                `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
-                                '_blank'
-                              );
-                            }}
-                          >
-                            Get Directions
-                          </Button>
+                          
+                          {/* Coordinate Display */}
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="flex items-center justify-between text-sm">
+                              <div>
+                                <span className="font-medium text-gray-700">Precise Location:</span>
+                                <div className="text-gray-600">
+                                  <div>Lat: {apiMemorial.gps.lat.toFixed(6)}</div>
+                                  <div>Lng: {apiMemorial.gps.lng.toFixed(6)}</div>
+                                </div>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(`${apiMemorial.gps.lat}, ${apiMemorial.gps.lng}`);
+                                  // You could add a toast notification here
+                                }}
+                              >
+                                Copy Coordinates
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => {
+                                window.open(
+                                  `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
+                                  '_blank'
+                                );
+                              }}
+                            >
+                              Get Directions
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => {
+                                window.open(
+                                  `https://www.google.com/maps/search/?api=1&query=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
+                                  '_blank'
+                                );
+                              }}
+                            >
+                              View on Google Maps
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="text-center py-6">

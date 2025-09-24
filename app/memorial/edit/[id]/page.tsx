@@ -45,6 +45,7 @@ import { getUserDetails } from "@/services/userService";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import LanguageDropdown from "@/components/languageDropdown/page";
+import InteractiveMap from "@/components/InteractiveMap";
 
 interface Memorial {
   _id: string;
@@ -114,7 +115,6 @@ export default function EditMemorialPage() {
 
   const [selectedProfileImage, setSelectedProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
-  console.log(profileImagePreview, "profileImagePreview")
   const [updating, setUpdating] = useState(false);
   const [isEditingFamilyMember, setIsEditingFamilyMember] = useState<string | null>(null);
 
@@ -339,6 +339,11 @@ export default function EditMemorialPage() {
       formDataToSend.append('biography', formData.biography);
       formDataToSend.append('location', formData.location);
       formDataToSend.append('isPublic', String(formData.isPublic));
+      
+      // Append GPS coordinates
+      if (formData.gps && formData.gps.lat && formData.gps.lng) {
+        formDataToSend.append('gps', JSON.stringify(formData.gps));
+      }
 
       // Append achievements
       achievements.forEach((achievement) => {
@@ -379,10 +384,6 @@ export default function EditMemorialPage() {
       formDataToSend.append('deletedVideos', JSON.stringify(deletedFiles.videos));
       formDataToSend.append('deletedDocuments', JSON.stringify(deletedFiles.documents));
 
-      // Log FormData contents for debugging
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
 
       const response = await axiosInstance.post(
         `${ADD_MEMORIAL}`,
@@ -759,20 +760,26 @@ export default function EditMemorialPage() {
                     </div>
                   </div>
 
-                  {/* Location */}
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {editMemorialTranslations.basicInfo.location}
+                  {/* Interactive Map for Precise Location */}
+                  <div className="space-y-4">
+                    <Label className="flex items-center text-lg font-semibold">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      {editMemorialTranslations.basicInfo.location} - Set Precise Location
                     </Label>
-                    <Input
-                      id="location"
-                      placeholder="Tbilisi, Georgia"
-                      value={formData.location}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
-                      className="h-12"
+                    <p className="text-sm text-gray-600">
+                      Click on the map to set the exact GPS coordinates for the memorial location.
+                    </p>
+                    <InteractiveMap
+                      initialLat={formData.gps?.lat || 41.7151}
+                      initialLng={formData.gps?.lng || 44.8271}
+                      onLocationChange={(lat, lng) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gps: { lat, lng }
+                        }));
+                      }}
+                      height="400px"
+                      showCoordinateInputs={true}
                     />
                   </div>
 

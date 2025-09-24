@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Z-index fixes for maps and headers */
+@layer utilities {
+  .map-container {
+    z-index: 1 !important;
+    position: relative !important;
+  }
+  
+  .leaflet-container {
+    z-index: 1 !important;
+    position: relative !important;
+  }
+  
+  .leaflet-popup {
+    z-index: 1000 !important;
+  }
+  
+  .leaflet-control {
+    z-index: 1000 !important;
+  }
+  
+  /* Ensure header stays above maps */
+  header, nav, .header, .navbar {
+    z-index: 50 !important;
+    position: relative !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
