@@ -450,4 +450,6 @@ export interface Translations {
   adminDashboard: AdminDashboardTranslations;
   adminStickersPage: AdminStickersPageTranslations;
   stickerPurchase: StickerPurchaseTranslations;
+  createMemorial: any;
+  editMemorial: any;
 }

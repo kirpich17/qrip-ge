@@ -27,6 +27,12 @@
     z-index: 50 !important;
     position: relative !important;
   }
+
+  /* Fix for Georgian text wrapping */
+  * {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
 }
 
 @layer base {

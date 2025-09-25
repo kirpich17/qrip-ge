@@ -37,7 +37,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
-import { ADD_MEMORIAL, GET_MEMORIAL, UPDATE_MEMORIAL } from "@/services/apiEndPoint";
+import { ADD_MEMORIAL, GET_MEMORIAL, GET_MY_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -48,7 +48,8 @@ import InteractiveMap from "@/components/InteractiveMap";
 const MEDIA_LIMITS = {
   PHOTO: {
     MAX_SIZE_FREE: 5 * 1024 * 1024, // 5MB
-    MAX_SIZE_PAID: 10 * 1024 * 1024, // 10MB
+    MAX_SIZE_PLUS: 10 * 1024 * 1024, // 10MB
+    MAX_SIZE_PREMIUM: 10 * 1024 * 1024, // 10MB
     ACCEPTED_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
     MAX_COUNT_FREE: 10,
     MAX_COUNT_PLUS: 50,
@@ -67,8 +68,12 @@ const MEDIA_LIMITS = {
     MAX_COUNT_PREMIUM: Infinity,
   },
   DOCUMENT: {
+    MAX_SIZE_FREE: 0, // No documents for free
+    MAX_SIZE_PLUS: 0, // No documents for plus
     MAX_SIZE_PREMIUM: 10 * 1024 * 1024, // 10MB
     ACCEPTED_TYPES: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'],
+    MAX_COUNT_FREE: 0,
+    MAX_COUNT_PLUS: 0,
     MAX_COUNT_PREMIUM: 20,
   }
 };
@@ -197,8 +202,8 @@ export default function CreateMemorialPage() {
 
   const { t } = useTranslation();
   const { toast } = useToast();
-  const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
-  const editMemorialTranslations = t("editMemorial");
+  const createMemorialTranslations = (t as any)("createMemorial");
+  const editMemorialTranslations = (t as any)("editMemorial");
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
@@ -305,7 +310,6 @@ export default function CreateMemorialPage() {
   };
 
   // File validation function
-  // FIX: This function now uses 'minimal' and 'medium' instead of 'Free' and 'Plus'
   const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
     const errors: string[] = [];
     const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO :
@@ -313,22 +317,22 @@ export default function CreateMemorialPage() {
         MEDIA_LIMITS.DOCUMENT;
 
     // This check is correct as is
-    if (type === 'document' && userSubscription !== 'premium') {
+    if (type === 'document' && userSubscription !== 'Premium') {
       errors.push('Documents require a Premium plan');
       return { valid: false, errors };
     }
 
-    // Check file count limits using the corrected plan names
+    // Check file count limits using the correct plan names
     const currentCount = type === 'photo' ? mediaFiles.photos.length :
       type === 'video' ? mediaFiles.videos.length :
         mediaFiles.documents.length;
 
     const maxCount = type === 'photo' ?
-      (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL :
-        userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
+      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE :
+        userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
       type === 'video' ?
-        (userSubscription === 'minimal' ? limits.MAX_COUNT_MINIMAL :
-          userSubscription === 'medium' ? limits.MAX_COUNT_MEDIUM : limits.MAX_COUNT_PREMIUM) :
+        (userSubscription === 'Free' ? limits.MAX_COUNT_FREE :
+          userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
         limits.MAX_COUNT_PREMIUM;
 
     if (currentCount + files.length > maxCount) {
@@ -341,12 +345,13 @@ export default function CreateMemorialPage() {
         return;
       }
 
-      // Check file size using the corrected plan names
+      // Check file size using the correct plan names
       const maxSize = type === 'photo' ?
-        (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL : limits.MAX_SIZE_PAID) :
+        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : 
+          userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
         type === 'video' ?
-          (userSubscription === 'minimal' ? limits.MAX_SIZE_MINIMAL :
-            userSubscription === 'medium' ? limits.MAX_SIZE_MEDIUM : limits.MAX_SIZE_PREMIUM) :
+          (userSubscription === 'Free' ? limits.MAX_SIZE_FREE :
+            userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
           limits.MAX_SIZE_PREMIUM;
 
       if (file.size > maxSize) {
@@ -392,10 +397,10 @@ export default function CreateMemorialPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID) {
+      if (file.size > MEDIA_LIMITS.PHOTO.MAX_SIZE_PLUS) {
         toast({
           title: "File Too Large",
-          description: `Profile image must be less than ${MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID / (1024 * 1024)}MB`,
+          description: `Profile image must be less than ${MEDIA_LIMITS.PHOTO.MAX_SIZE_PLUS / (1024 * 1024)}MB`,
           variant: "destructive",
         });
         return;
@@ -588,16 +593,19 @@ export default function CreateMemorialPage() {
   }, [toast]);
 
   useEffect(() => {
-    if (memorialId) {
+    if (memorialId && isEdit) {
       setIsEditing(true);
       fetchMemorialData(memorialId);
+    } else if (memorialId && isCreate) {
+      // For create operations, we don't need to fetch existing data
+      setIsEditing(false);
     }
-  }, [memorialId]);
+  }, [memorialId, isEdit, isCreate]);
 
   const fetchMemorialData = async (id: string) => {
     setIsLoadingMemorial(true);
     try {
-      const response = await axiosInstance.get(GET_MEMORIAL(id));
+      const response = await axiosInstance.get(GET_MY_MEMORIAL(id));
       const memorial = response.data.data;
 
       setFormData({
@@ -710,7 +718,13 @@ export default function CreateMemorialPage() {
         description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
         variant: "default",
       });
-      router.push("/dashboard");
+      
+      // If creating a new memorial, redirect to subscription page
+      if (isCreate) {
+        router.push(`/subscription?memorialId=${memorialId}`);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error: any) {
       if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
         Swal.fire({
@@ -767,7 +781,7 @@ export default function CreateMemorialPage() {
       </Link>
     </div>
   );
-  if (loadingSubscription || isLoadingMemorial) {
+  if (loadingSubscription || (isEdit && isLoadingMemorial)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -809,7 +823,7 @@ export default function CreateMemorialPage() {
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      {isEditing ? createMemorialTranslations.header.update : createMemorialTranslations.header.save}
+                      {isEditing ? "Update Memorial" : createMemorialTranslations.header.save}
                     </>)}
                 </Button>
               </div>
@@ -1220,7 +1234,7 @@ export default function CreateMemorialPage() {
                           </p>
                           <Button
                             variant="outline"
-                            disabled={userSubscription !== 'premium'}
+                            disabled={userSubscription !== 'Premium'}
                             onClick={() => {
                               const input = document.createElement("input");
                               input.type = "file";
@@ -1287,7 +1301,7 @@ export default function CreateMemorialPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            {createMemorialTranslations.familyTree?.familyMember}
+                            Family Member Name
                           </Label>
                           <Input
                             id="familyMemberName"
@@ -1304,7 +1318,7 @@ export default function CreateMemorialPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            {createMemorialTranslations.familyTree?.relationship}
+                            Relationship
                           </Label>
                           <Input
                             id="familyMemberRelationship"

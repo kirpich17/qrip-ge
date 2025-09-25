@@ -40,11 +40,8 @@ export default function SubscriptionSuccessPage() {
   }, [queryClient]);
 
   const handleProceed = () => {
-    // Store the memorialId in localStorage or context to use in the create page
-   if (memorialId) {
-      // Navigate to memorial creation with the memorialId
-      router.push(`/memorial/create/${memorialId}`);
-    } 
+    // Redirect to dashboard after successful payment
+    router.push('/dashboard');
   };
 
   return (
@@ -72,7 +69,7 @@ export default function SubscriptionSuccessPage() {
               size="lg"
               disabled={isLoading}
             >
-     {isLoading ? subscriptionManage.loading : subscriptionManage.create_memorial}
+     {isLoading ? subscriptionManage.loading : subscriptionManage.go_to_dashboard || "Go to Dashboard"}
             </Button>
           </CardContent>
         </Card>

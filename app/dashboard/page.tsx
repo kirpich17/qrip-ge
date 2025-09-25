@@ -133,9 +133,9 @@ function Dashboard() {
   }, [currentPage, searchQuery]);
 
 
-  // FIX: Create a derived state for memorials that are not "Untitled" drafts.
+  // FIX: Create a derived state for memorials that are not "Untitled" drafts and have active payment status.
   const filteredMemorials = memorials.filter(
-    (memorial) => memorial.firstName !== "Untitled"
+    (memorial) => memorial.firstName !== "Untitled" && memorial.memorialPaymentStatus === 'active'
   );
 
   const handleDeleteMemorial = async (memorialId: string) => {
@@ -151,15 +151,15 @@ function Dashboard() {
     }
   };
 
-  // NEW: Function to create draft memorial
+  // NEW: Function to create draft memorial and redirect to creation form
   const handleCreateDraftMemorial = async () => {
     setIsCreatingDraft(true);
     try {
       const response = await axiosInstance.post('/api/memorials/create-draft');
       const { memorialId } = response.data;
 
-      // Redirect to plan selection page with the memorial ID
-      router.push(`/subscription?memorialId=${memorialId}`);
+      // Redirect to memorial creation form first
+      router.push(`/memorial/create/${memorialId}`);
     } catch (error: any) {
       console.error("Failed to create draft memorial:", error);
       toast.error(error.response?.data?.message || "Failed to create draft memorial");
@@ -175,8 +175,8 @@ function Dashboard() {
       const response = await axiosInstance.post('/api/memorials/create-draft');
       const { memorialId } = response.data;
 
-      // Redirect to plan selection page with the memorial ID
-      router.push(`/subscription?memorialId=${memorialId}`);
+      // Redirect to memorial creation form first
+      router.push(`/memorial/create/${memorialId}`);
     } catch (error: any) {
       console.error("Failed to create draft memorial:", error);
       toast.error(error.response?.data?.message || "Failed to create draft memorial");
@@ -262,15 +262,13 @@ function Dashboard() {
             </div>
             <div className="flex gap-3">
               <LanguageDropdown />
-              <div className="flex items-center sm:space-x-2 space-x-0">
+              <div className="flex items-center sm:space-x-2 space-x-0 gap-2">
                 <UserMenu
                   user={profileData}
                 />
-
                 <Link target="_blank" href="https://m.me/qrip.ge" className="text-white">{helpTranslations.helpButton}</Link>
               </div>
             </div>
-
           </div>
         </div>
       </header>
@@ -362,14 +360,10 @@ function Dashboard() {
                   className="space-y-4"
                 >
                   {filteredMemorials.map((memorial) => (
-
-
-
-
                     <motion.div key={memorial._id} variants={fadeInUp}>
                       <Link href={`/memorial/${memorial._id}`} target="_blank">
-                        <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  gap-3">
-                          <Avatar className="md:h-16 md:w-16 h-8 w-8">
+                        <div className="grid grid-cols-[auto_1fr_auto] md:items-center  md:p-4 p-2 border border-gray-200 rounded-lg hover:shadow-md transition-shadow  md:gap-3 gap-1">
+                          <Avatar className="md:h-16 md:w-16 h-5 w-5">
                             <AvatarImage
                               src={memorial.profileImage || "/placeholder.svg"}
                             />
@@ -382,8 +376,8 @@ function Dashboard() {
                           </Avatar>
 
                           <div className="sm:flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="md:text-lg sm:text-base text-sm font-semibold text-gray-900 truncate">
+                            <div className="flex items-center mb-1 flex-wrap gap-1">
+                              <h3 className="md:text-lg sm:text-base text-xs font-semibold text-gray-900 truncate">
                                 {memorial.firstName}
                               </h3>
                               {memorial.plan === "premium" && (
@@ -392,8 +386,8 @@ function Dashboard() {
                               <Badge
                                 variant={
                                   memorial.status === "active"
-                                    ? "default"
-                                    : "secondary"
+                                    ? "default text-xs"
+                                    : "secondary text-xs"
                                 }
                                 className={
                                   memorial.status === "active"
@@ -408,8 +402,8 @@ function Dashboard() {
                               <Badge
                                 variant={
                                   memorial.status === "active"
-                                    ? "default"
-                                    : "secondary"
+                                    ? "default text-xs"
+                                    : "secondary text-xs"
                                 }
                                 className=
 

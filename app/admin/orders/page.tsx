@@ -147,7 +147,7 @@ function AdminOrdersPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
 
-  const limit = 20;
+  const limit = 4;
 
   useEffect(() => {
     fetchOrders();
