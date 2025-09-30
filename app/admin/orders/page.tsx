@@ -152,7 +152,16 @@ function AdminOrdersPage() {
   useEffect(() => {
     fetchOrders();
     fetchStats();
-  }, [currentPage, searchQuery, statusFilter, paymentFilter]);
+  }, [currentPage, statusFilter, paymentFilter]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchOrders();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const fetchOrders = async () => {
     try {
@@ -561,26 +570,44 @@ function AdminOrdersPage() {
                         <div className="flex items-center space-x-3 h-12 px-4 text-left align-middle font-medium text-muted-foreground  whitespace-nowrap 2xl:whitespace-normal 2xl:break-words [&:has([role=checkbox])]:pr-0">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback>
-                              {order.user.firstname?.[0]}{order.user.lastname?.[0]}
+                              {order.user ? `${order.user.firstname?.[0] || ''}${order.user.lastname?.[0] || ''}` : 'U'}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium">{order.user.firstname} {order.user.lastname}</p>
-                            <p className="text-sm text-gray-500">{order.user.email}</p>
-                            <p className="text-sm text-gray-500">{order.user.phone}</p>
+                            {order.user ? (
+                              <>
+                                <p className="font-medium">{order.user.firstname} {order.user.lastname}</p>
+                                <p className="text-sm text-gray-500">{order.user.email}</p>
+                                <p className="text-sm text-gray-500">{order.user.phone}</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-gray-500 italic">User not found</p>
+                            )}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium">{order.memorial.firstName} {order.memorial.lastName}</p>
-                          <p className="text-sm text-gray-500">/{order.memorial.slug}</p>
+                          {order.memorial ? (
+                            <>
+                              <p className="font-medium">{order.memorial.firstName} {order.memorial.lastName}</p>
+                              <p className="text-sm text-gray-500">/{order.memorial.slug}</p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-gray-500 italic">Memorial not found</p>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium">{order.stickerOption.name}</p>
-                          <p className="text-sm text-gray-500">{order.stickerOption.type} • {order.stickerOption.size}</p>
+                          {order.stickerOption ? (
+                            <>
+                              <p className="font-medium">{order.stickerOption.name}</p>
+                              <p className="text-sm text-gray-500">{order.stickerOption.type} • {order.stickerOption.size}</p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-gray-500 italic">Sticker option not found</p>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>{order.quantity}</TableCell>
