@@ -197,6 +197,7 @@ function AdminStickersPage() {
       durability: option.specifications.durability,
       weatherResistance: option.specifications.weatherResistance,
     });
+    setIsCreateDialogOpen(false); // Close create dialog if open
     setIsEditDialogOpen(true);
   };
 
@@ -300,7 +301,12 @@ function AdminStickersPage() {
                 {stickersTranslations?.header?.description || "Manage available QR sticker types and pricing"}
               </p>
             </div>
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
+              setIsCreateDialogOpen(open);
+              if (open) {
+                resetForm(); // Reset form when opening create dialog
+              }
+            }}>
               <DialogTrigger asChild>
                 <Button className="bg-[#547455] hover:bg-[#243b31]">
                   <Plus className="h-4 w-4 mr-2" />
@@ -422,7 +428,10 @@ function AdminStickersPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsCreateDialogOpen(false);
+                    resetForm();
+                  }}>
                     {stickersTranslations?.createDialog?.buttons?.cancel || "Cancel"}
                   </Button>
                   <Button onClick={handleCreate} className="bg-[#547455] hover:bg-[#243b31]">
@@ -537,7 +546,13 @@ function AdminStickersPage() {
         </Card>
 
         {/* Edit Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+          setIsEditDialogOpen(open);
+          if (!open) {
+            setEditingOption(null); // Clear editing option when dialog closes
+            resetForm(); // Reset form when edit dialog closes
+          }
+        }}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>{stickersTranslations?.editDialog?.title || "Edit Sticker Option"}</DialogTitle>
@@ -651,7 +666,11 @@ function AdminStickersPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              <Button variant="outline" onClick={() => {
+                setIsEditDialogOpen(false);
+                setEditingOption(null);
+                resetForm();
+              }}>
                 {stickersTranslations?.editDialog?.buttons?.cancel || "Cancel"}
               </Button>
               <Button onClick={handleUpdate} className="bg-[#547455] hover:bg-[#243b31]">
