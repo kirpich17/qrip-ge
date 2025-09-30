@@ -342,9 +342,11 @@ export default function MemorialPage() {
         } else {
           throw new Error("Invalid response from server");
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching memorial:", err);
-        setError("Failed to load memorial data");
+        // Use the specific error message from the API response
+        const errorMessage = err.response?.data?.message || "Failed to load memorial data";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -384,21 +386,31 @@ export default function MemorialPage() {
   }
 
   if (error) {
+    // Determine if it's a deactivation error
+    const isDeactivated = error.includes("deactivated by the administrator");
+    const isNotPublic = error.includes("not publicly accessible");
+    
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-8">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="h-8 w-8 text-gray-400" />
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+              isDeactivated ? 'bg-orange-100' : isNotPublic ? 'bg-yellow-100' : 'bg-gray-200'
+            }`}>
+              <Lock className={`h-8 w-8 ${
+                isDeactivated ? 'text-orange-600' : isNotPublic ? 'text-yellow-600' : 'text-gray-400'
+              }`} />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Error Loading Memorial
+              {isDeactivated ? 'Memorial Deactivated' : isNotPublic ? 'Memorial Not Public' : 'Error Loading Memorial'}
             </h2>
             <p className="text-gray-600 mb-6">{error}</p>
             <div className="space-y-3">
-              <Button variant="outline" className="w-full bg-transparent">
-                Contact Support
-              </Button>
+              {isDeactivated && (
+                <Button variant="outline" className="w-full bg-transparent">
+                  Contact Support
+                </Button>
+              )}
               <Link href="/">
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
                   Return Home

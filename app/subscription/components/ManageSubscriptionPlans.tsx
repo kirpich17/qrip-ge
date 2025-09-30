@@ -637,8 +637,16 @@ export default function PlanSelection() {
       );
 
       if (response.data.redirectUrl) {
-        // Redirect the user to the payment gateway
-        window.location.href = response.data.redirectUrl;
+        // Check if it's a free plan
+        if (response.data.isFreePlan) {
+          // For free plans, show success message and redirect
+          toast.success("Free plan activated successfully!");
+          // Redirect to success page
+          window.location.href = response.data.redirectUrl;
+        } else {
+          // For paid plans, redirect to payment gateway
+          window.location.href = response.data.redirectUrl;
+        }
       } else {
         toast.error(translations.paymentError?.initiate || "Could not initiate payment. Please try again.");
       }

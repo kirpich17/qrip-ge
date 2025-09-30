@@ -134,8 +134,9 @@ function Dashboard() {
 
 
   // FIX: Create a derived state for memorials that are not "Untitled" drafts and have active payment status.
+  // The backend now only returns memorials with successful payments, so we just filter out "Untitled" drafts
   const filteredMemorials = memorials.filter(
-    (memorial) => memorial.firstName !== "Untitled" && memorial.memorialPaymentStatus === 'active'
+    (memorial) => memorial.firstName !== "Untitled"
   );
 
   const handleDeleteMemorial = async (memorialId: string) => {
