@@ -40,7 +40,7 @@ import Image from 'next/image';
 import LanguageDropdown from "@/components/languageDropdown/page";
 
 // Fix for Leaflet marker icons
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -266,12 +266,12 @@ function QRPageTransition({
                 </div>
               ) : (
                 <>
-                  <div className="relative h-64 w-[22%] rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
+                  <div className="relative  lg:w-[22%] lg:h-[350px] h-[400px] w-[75%] rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
                     <Image
                       src={profilePhoto || '/default-profile.jpg'}
                       alt={`${firstName} ${lastName}`}
                       fill
-                      className="object-contain"
+                      className="object-cover"
                       priority
                     />
                   </div>

@@ -440,10 +440,34 @@ export interface StickerPurchaseTranslations {
   };
 }
 
+export interface HeroTranslations {
+  tagline: string;
+  title1: string;
+  title2: string;
+  description: string;
+  createButton: string;
+  demoButton: string;
+  stats: {
+    memorials: string;
+    families: string;
+    memories: string;
+  };
+  memorialExample: {
+    name: string;
+    years: string;
+    quote: string;
+    photos: string;
+    videos: string;
+    family: string;
+    scanCta: string;
+  };
+}
+
 export interface Translations {
   header: HeaderTranslations;
   common: CommonTranslations;
   home: HomeTranslations;
+  hero: HeroTranslations;
   adminOrders: AdminOrdersTranslations;
   adminOrderDetail: AdminOrderDetailTranslations;
   adminStickers: AdminStickersTranslations;

@@ -47,17 +47,17 @@ const floatingAnimation = {
 
 export default function HomePage() {
   return (
-     <Suspense fallback={<div>Loading...</div>}>
-    <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
-      <Herobanner />
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
+        <Herobanner />
 
-      <Plans />
-      <Howitwork />
-      <Features />
-        <PublicMemorials /> 
-      <Testimonials />
-      {/* <Memories /> */}
-    </div>
+        <Plans />
+        <Howitwork />
+        <Features />
+        <PublicMemorials />
+        <Testimonials />
+        {/* <Memories /> */}
+      </div>
     </Suspense>
   );
 }

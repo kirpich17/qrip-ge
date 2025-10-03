@@ -31,10 +31,12 @@ export function UserManagementTable({
 }: {
   users: any[];
   translations: any;
+  userStatusToggle?: (userId: string) => void;
+  fetchAllUsers?: () => void;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useTranslation();
-  const admindashTranslations = t("admindash");
+  const admindashTranslations = t("admindash" as any);
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[800px]">
@@ -44,9 +46,9 @@ export function UserManagementTable({
               <TableHead className="">
                 {admindashTranslations.userManagement.tableHeaders.user}
               </TableHead>
-              <TableHead className="">
-                {admindashTranslations.userManagement.tableHeaders.plan}
-              </TableHead>
+              {/* <TableHead className="">
+                Memorial Subscriptions
+              </TableHead> */}
               <TableHead className="">
                 {admindashTranslations.userManagement.tableHeaders.memorials}
               </TableHead>
@@ -78,18 +80,42 @@ export function UserManagementTable({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      user.subscriptionPlan === "Premium" ? "default" : "secondary"
-                    }
-                    className={
-                      user.subscriptionPlan === "Premium" ? "bg-yellow-600 " : ""
-                    }
-                  >
-                    {user.subscriptionPlan}
-                  </Badge>
-                </TableCell>
+                {/* <TableCell>
+                  <div className="space-y-2">
+                    {user.memorialSubscriptions?.map((memorial: any, index: number) => (
+                      <div key={index} className="border rounded-lg p-2 bg-gray-50">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-900">
+                            {memorial.memorialName}
+                          </span>
+                          <Badge
+                            variant={memorial.subscriptionStatus === "active" ? "default" : "secondary"}
+                            className={
+                              memorial.subscriptionStatus === "active" ? "bg-green-600" : "bg-gray-400"
+                            }
+                          >
+                            {memorial.subscriptionStatus}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                          <span className="font-medium">{memorial.planName}</span>
+                          <span>•</span>
+                          <span className="capitalize">{memorial.duration.replace('_', ' ')}</span>
+                          <span>•</span>
+                          <span>{memorial.finalPricePaid} GEL</span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Plan: {memorial.planType} • Status: {memorial.purchaseStatus}
+                        </div>
+                      </div>
+                    ))}
+                    {(!user.memorialSubscriptions || user.memorialSubscriptions.length === 0) && (
+                      <div className="text-center py-4">
+                        <span className="text-gray-400 text-sm">No memorial subscriptions</span>
+                      </div>
+                    )}
+                  </div>
+                </TableCell> */}
                 <TableCell className="">{user.memorialCount}</TableCell>
                 <TableCell>
                   <Badge
@@ -137,7 +163,7 @@ export function UserManagementTable({
                             )
                           ) {
                             console.log("Suspend user:", user._id);
-                            userStatusToggle(user._id);
+                            userStatusToggle?.(user._id);
                           }
                         }}
                       >
@@ -159,7 +185,7 @@ export function UserManagementTable({
                               .delete("/api/admin/user/" + user._id)
                               .then(() => {
                                 console.log("deletd");
-                                fetchAllUsers();
+                                fetchAllUsers?.();
                               });
                           }
                         }}

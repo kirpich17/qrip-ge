@@ -67,6 +67,13 @@ type Feature = {
   _id?: string;
 };
 
+type DurationOption = {
+  duration: string;
+  price: number;
+  discountPercentage: number;
+  isActive: boolean;
+};
+
 type Plan = {
   _id: string;
   name: string;
@@ -84,6 +91,8 @@ type Plan = {
   color?: string;
   bgColor?: string;
   borderColor?: string;
+  durationOptions?: DurationOption[];
+  defaultDuration?: string;
 };
 
 type NewPlan = Omit<Plan, "_id">;
@@ -105,8 +114,8 @@ type NewPromoCode = Omit<PromoCode, "_id" | "currentUsage">;
 
 function AdminSubscription() {
   const { t } = useTranslation();
-  const translations = t("adminSubscriptionPage");
-  const promoTranslations = t("promoCodeManagement");
+  const translations = t("adminSubscriptionPage" as any);
+  const promoTranslations = t("promoCodeManagement" as any);
 
   const [editingPlan, setEditingPlan] = useState<Plan | NewPlan | null>(null);
   const [isAddingPlan, setIsAddingPlan] = useState(false);
@@ -162,7 +171,18 @@ function AdminSubscription() {
 
   // --- PLAN MANAGEMENT HANDLERS ---
   const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(JSON.parse(JSON.stringify(plan)));
+    // If plan doesn't have duration options, initialize with default
+    const planWithDefaults = {
+      ...plan,
+      durationOptions: plan.durationOptions || [{
+        duration: '1_month',
+        price: plan.price,
+        discountPercentage: 0,
+        isActive: true
+      }],
+      defaultDuration: plan.defaultDuration || '1_month'
+    };
+    setEditingPlan(JSON.parse(JSON.stringify(planWithDefaults)));
     setIsAddingPlan(false);
   };
 
@@ -180,6 +200,13 @@ function AdminSubscription() {
       allowSlideshow: false,
       allowVideos: false,
       maxVideoDuration: 0,
+      durationOptions: [{
+        duration: '1_month',
+        price: 0,
+        discountPercentage: 0,
+        isActive: true
+      }],
+      defaultDuration: '1_month'
     };
     setEditingPlan(newPlan);
     setIsAddingPlan(true);
@@ -459,6 +486,105 @@ function AdminSubscription() {
                     </div>
                   </div>
 
+                  {/* Section: Duration Options */}
+                  <div className="space-y-4 p-4 border rounded-lg">
+                    <h4 className="font-semibold text-gray-800">Duration Options</h4>
+                    <p className="text-sm text-gray-600">Configure different pricing for various subscription durations</p>
+                    
+                    <div className="space-y-3">
+                      {editingPlan.durationOptions?.map((option, index) => (
+                        <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
+                          <div className="flex-1">
+                            <label className="text-sm font-medium">Duration</label>
+                            <Select
+                              value={option.duration}
+                              onValueChange={(value) => {
+                                const newOptions = [...(editingPlan.durationOptions || [])];
+                                newOptions[index] = { ...newOptions[index], duration: value };
+                                handlePlanChange("durationOptions", newOptions);
+                              }}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1_month">1 Month</SelectItem>
+                                <SelectItem value="3_months">3 Months</SelectItem>
+                                <SelectItem value="6_months">6 Months</SelectItem>
+                                <SelectItem value="1_year">1 Year</SelectItem>
+                                <SelectItem value="2_years">2 Years</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-sm font-medium">Price (GEL)</label>
+                            <Input
+                              type="number"
+                              value={option.price}
+                              onChange={(e) => {
+                                const newOptions = [...(editingPlan.durationOptions || [])];
+                                newOptions[index] = { ...newOptions[index], price: Number(e.target.value) };
+                                handlePlanChange("durationOptions", newOptions);
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-sm font-medium">Discount %</label>
+                            <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={option.discountPercentage}
+                              onChange={(e) => {
+                                const newOptions = [...(editingPlan.durationOptions || [])];
+                                newOptions[index] = { ...newOptions[index], discountPercentage: Number(e.target.value) };
+                                handlePlanChange("durationOptions", newOptions);
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={option.isActive}
+                              onCheckedChange={(checked) => {
+                                const newOptions = [...(editingPlan.durationOptions || [])];
+                                newOptions[index] = { ...newOptions[index], isActive: checked };
+                                handlePlanChange("durationOptions", newOptions);
+                              }}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                const newOptions = [...(editingPlan.durationOptions || [])];
+                                newOptions.splice(index, 1);
+                                handlePlanChange("durationOptions", newOptions);
+                              }}
+                            >
+                              <Trash2 size={16} className="text-red-500" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          const newOptions = [...(editingPlan.durationOptions || []), {
+                            duration: '1_month',
+                            price: 0,
+                            discountPercentage: 0,
+                            isActive: true
+                          }];
+                          handlePlanChange("durationOptions", newOptions);
+                        }}
+                        className="w-full"
+                      >
+                        <Plus size={16} className="mr-2" />
+                        Add Duration Option
+                      </Button>
+                    </div>
+                  </div>
+
                   {/* Section: Plan Settings */}
                   <div className="space-y-4 p-4 border rounded-lg">
                     <h4 className="font-semibold text-gray-800">{translations.modal.sectionSettings}</h4>
@@ -512,8 +638,43 @@ function AdminSubscription() {
                     <CardDescription className="text-gray-600">{plan.description}</CardDescription>
                     <div className="mt-4">
                       <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
-                      <span className="text-gray-600"> / one-time</span>
+                      <span className="text-gray-600"> / {plan.durationOptions && plan.durationOptions.length > 0 ? 'base price' : 'one-time'}</span>
                     </div>
+                    
+                    {plan.durationOptions && plan.durationOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <h5 className="text-sm font-medium text-gray-700 mb-2">Duration Options:</h5>
+                        <div className="space-y-1">
+                          {plan.durationOptions.filter(opt => opt.isActive).map((option, index) => (
+                            <div key={index} className="flex justify-between text-sm">
+                              <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                              <span className="font-medium">{option.price} GEL</span>
+                              {option.discountPercentage > 0 && (
+                                <span className="text-green-600">({option.discountPercentage}% off)</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-4">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                          <p className="text-yellow-800 text-sm mb-2">
+                            <strong>No duration options configured.</strong> 
+                            <br />
+                            Add duration options to enable flexible pricing.
+                          </p>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleEditPlan(plan)}
+                            className="text-yellow-800 border-yellow-300 hover:bg-yellow-100"
+                          >
+                            Configure Duration Options
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardHeader>
 
                   <CardContent className="pt-0 flex-grow flex flex-col">
