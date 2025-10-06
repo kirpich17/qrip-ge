@@ -304,7 +304,23 @@
       "deathDate": "Дата ухода из жизни",
       "location": "Местоположение мемориала",
       "biography": "История жизни",
-      "biographyPlaceholder": "Поделитесь прекрасной историей жизни вашего близкого..."
+      "biographyPlaceholder": "Поделитесь прекрасной историей жизни вашего близкого...",
+      "location": {
+        "title": "Местоположение мемориала",
+        "description": "Нажмите на карту, чтобы установить точные GPS-координаты для местоположения мемориала.",
+        "searchPlaceholder": "Поиск местоположения (например, Москва, Россия)",
+        "latitude": "Широта",
+        "longitude": "Долгота",
+        "latitudePlaceholder": "например, 55.7558",
+        "longitudePlaceholder": "например, 37.6176",
+        "instructions": {
+          "title": "Как установить точное местоположение:",
+          "clickMap": "Нажмите в любом месте карты, чтобы разместить маркер мемориала",
+          "searchLocation": "Используйте строку поиска для поиска местоположения",
+          "currentLocation": "Используйте кнопку навигации для получения вашего текущего местоположения",
+          "manualCoordinates": "Введите точные координаты вручную в поля ввода"
+        }
+      }
     },
     "media": {
       "title": "Фото и Видео",
@@ -570,9 +586,24 @@
       "lastName": "Фамилия",
       "birthDate": "Дата рождения",
       "deathDate": "Дата ухода из жизни",
-      "location": "Местоположение мемориала",
       "biography": "История жизни",
       "biographyPlaceholder": "Поделитесь прекрасной историей жизни вашего близкого...",
+      "location": {
+        "title": "Местоположение мемориала",
+        "description": "Нажмите на карту, чтобы установить точные GPS-координаты для местоположения мемориала.",
+        "searchPlaceholder": "Поиск местоположения (например, Москва, Россия)",
+        "latitude": "Широта",
+        "longitude": "Долгота",
+        "latitudePlaceholder": "например, 55.7558",
+        "longitudePlaceholder": "например, 37.6176",
+        "instructions": {
+          "title": "Как установить точное местоположение:",
+          "clickMap": "Нажмите в любом месте карты, чтобы разместить маркер мемориала",
+          "searchLocation": "Используйте строку поиска для поиска местоположения",
+          "currentLocation": "Используйте кнопку навигации для получения вашего текущего местоположения",
+          "manualCoordinates": "Введите точные координаты вручную в поля ввода"
+        }
+      },
           "achievements": "Достижения",
   "awards": "Добавьте заметные достижения или награды",
   "nobelPrice": "Нобелевская премия по физике",
@@ -639,7 +670,17 @@
         "description": "Получать уведомления, когда кто-то посещает страницу или оставляет комментарий"
       }
     },
-    "deleteConfirm": "Вы уверены, что хотите удалить этот мемориал? Это действие необратимо."
+    "deleteConfirm": "Вы уверены, что хотите удалить этот мемориал? Это действие необратимо.",
+    "subscriptionRestricted": {
+      "premiumFeature": "Премиум функция",
+      "upgradeRequired": "Требуется обновление",
+      "premiumDescription": "Эта функция доступна только с премиум подпиской.",
+      "upgradeDescription": "Обновитесь до Plus или Premium для доступа к этой функции.",
+      "upgradeButton": "Обновить до"
+    },
+    "familyTree": {
+      "updateFamilyMember": "Обновить члена семьи"
+    }
   },
   "directory": {
     "header": {
@@ -1522,8 +1563,8 @@
           "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
           "size": "Размер",
           "sizePlaceholder": "3x3 дюйма",
-          "price": "Цена ($)",
-          "pricePlaceholder": "9.99",
+          "price": "Цена (₾)",
+          "pricePlaceholder": "25.00",
           "stock": "Склад",
           "stockPlaceholder": "100",
           "material": "Материал",
@@ -1565,6 +1606,79 @@
         "statusUpdateError": "Не удалось обновить статус",
         "loadError": "Не удалось загрузить варианты стикеров",
         "deleteConfirm": "Вы уверены, что хотите удалить этот вариант стикера?"
+      }
+    },
+    "adminStickerTypes": {
+      "header": {
+        "back": "Назад к панели администратора",
+        "title": "Типы стикеров",
+        "description": "Управление доступными типами стикеров"
+      },
+      "loading": {
+        "message": "Загрузка типов стикеров..."
+      },
+      "search": {
+        "placeholder": "Поиск типов стикеров..."
+      },
+      "table": {
+        "title": "Типы стикеров ({count})",
+        "description": "Управление всеми доступными типами стикеров",
+        "headers": {
+          "name": "Название",
+          "displayName": "Отображаемое название",
+          "description": "Описание",
+          "status": "Статус",
+          "actions": "Действия"
+        },
+        "status": {
+          "active": "Активный",
+          "inactive": "Неактивный"
+        }
+      },
+      "createDialog": {
+        "title": "Создать новый тип стикера",
+        "description": "Добавить новый тип стикера со спецификациями.",
+        "form": {
+          "name": "Название",
+          "namePlaceholder": "vinyl",
+          "displayName": "Отображаемое название",
+          "displayNamePlaceholder": "Винил",
+          "description": "Описание",
+          "descriptionPlaceholder": "Высококачественный виниловый материал...",
+          "material": "Материал",
+          "materialPlaceholder": "Премиум винил",
+          "durability": "Долговечность",
+          "durabilityPlaceholder": "2-3 года на улице",
+          "weatherResistance": "Устойчивость к погоде",
+          "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ",
+          "specialFeatures": "Особые функции",
+          "specialFeaturesPlaceholder": "Доступны пользовательские цвета"
+        },
+        "buttons": {
+          "cancel": "Отмена",
+          "create": "Создать"
+        }
+      },
+      "editDialog": {
+        "title": "Редактировать тип стикера",
+        "description": "Обновить детали и спецификации типа стикера.",
+        "buttons": {
+          "cancel": "Отмена",
+          "update": "Обновить"
+        }
+      },
+      "messages": {
+        "loading": "Загрузка типов стикеров...",
+        "createSuccess": "Тип стикера успешно создан",
+        "updateSuccess": "Тип стикера успешно обновлен",
+        "deleteSuccess": "Тип стикера успешно удален",
+        "statusUpdateSuccess": "Статус успешно обновлен",
+        "createError": "Не удалось создать тип стикера",
+        "updateError": "Не удалось обновить тип стикера",
+        "deleteError": "Не удалось удалить тип стикера",
+        "statusUpdateError": "Не удалось обновить статус",
+        "loadError": "Не удалось загрузить типы стикеров",
+        "deleteConfirm": "Вы уверены, что хотите удалить этот тип стикера?"
       }
     },
     "adminOrders": {
@@ -1792,8 +1906,8 @@
           "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
           "size": "Размер",
           "sizePlaceholder": "3x3 дюйма",
-          "price": "Цена ($)",
-          "pricePlaceholder": "9.99",
+          "price": "Цена (₾)",
+          "pricePlaceholder": "25.00",
           "stock": "Склад",
           "stockPlaceholder": "100",
           "material": "Материал",

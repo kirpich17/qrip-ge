@@ -60,7 +60,12 @@ interface StickerOption {
   _id: string;
   name: string;
   description: string;
-  type: string;
+  type: {
+    _id: string;
+    name: string;
+    displayName: string;
+    description: string;
+  };
   size: string;
   price: number;
   isActive: boolean;
@@ -96,6 +101,7 @@ function AdminStickersPage() {
   
   const [loading, setLoading] = useState(true);
   const [stickerOptions, setStickerOptions] = useState<StickerOption[]>([]);
+  const [stickerTypes, setStickerTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -118,6 +124,7 @@ function AdminStickersPage() {
 
   useEffect(() => {
     fetchStickerOptions();
+    fetchStickerTypes();
   }, [searchQuery]);
 
   const fetchStickerOptions = async () => {
@@ -133,6 +140,15 @@ function AdminStickersPage() {
       toast.error(stickersTranslations?.messages?.loadError || "Failed to load sticker options");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStickerTypes = async () => {
+    try {
+      const response = await axiosInstance.get('/api/stickers/types');
+      setStickerTypes(response.data.data);
+    } catch (error) {
+      console.error("Error fetching sticker types:", error);
     }
   };
 
@@ -188,7 +204,7 @@ function AdminStickersPage() {
     setFormData({
       name: option.name,
       description: option.description,
-      type: option.type,
+      type: option.type?._id || option.type || "",
       size: option.size,
       price: option.price.toString(),
       stock: option.stock.toString(),
@@ -338,9 +354,11 @@ function AdminStickersPage() {
                           <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="vinyl">{stickersTranslations?.types?.vinyl || "Vinyl"}</SelectItem>
-                          {/* <SelectItem value="engraving">{stickersTranslations?.types?.engraving || "Engraving"}</SelectItem>
-                          <SelectItem value="premium">{stickersTranslations?.types?.premium || "Premium"}</SelectItem> */}
+                          {stickerTypes.map((type) => (
+                            <SelectItem key={type._id} value={type._id}>
+                              {type.displayName || type.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -365,14 +383,14 @@ function AdminStickersPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="price">{stickersTranslations?.createDialog?.form?.price || "Price ($)"}</Label>
+                      <Label htmlFor="price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"}</Label>
                       <Input
                         id="price"
                         type="number"
                         step="0.01"
                         value={formData.price}
                         onChange={(e) => handleInputChange("price", e.target.value)}
-                        placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "9.99"}
+                        placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "25.00"}
                       />
                     </div>
                     <div>
@@ -490,10 +508,10 @@ function AdminStickersPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{option.type}</Badge>
+                        <Badge variant="outline">{option.type?.displayName || option.type?.name || 'Unknown'}</Badge>
                       </TableCell>
                       <TableCell>{option.size}</TableCell>
-                      <TableCell className="font-semibold">${option.price}</TableCell>
+                      <TableCell className="font-semibold">₾{option.price}</TableCell>
                       <TableCell>
                         <span className={option.stock > 10 ? "text-green-600" : option.stock > 0 ? "text-yellow-600" : "text-red-600"}>
                           {option.stock}
@@ -578,7 +596,11 @@ function AdminStickersPage() {
                       <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="vinyl">{stickersTranslations?.types?.vinyl || "Vinyl"}</SelectItem>
+                      {stickerTypes.map((type) => (
+                        <SelectItem key={type._id} value={type._id}>
+                          {type.displayName || type.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -603,7 +625,7 @@ function AdminStickersPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-price">{stickersTranslations?.createDialog?.form?.price || "Price ($)"}</Label>
+                  <Label htmlFor="edit-price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"}</Label>
                   <Input
                     id="edit-price"
                     type="number"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -45,15 +45,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import { toast } from "react-toastify";
@@ -78,12 +69,19 @@ interface StickerOrder {
   stickerOption: {
     _id: string;
     name: string;
-    type: string;
+    type: {
+      _id: string;
+      name: string;
+      displayName: string;
+      description: string;
+    };
     size: string;
   };
   quantity: number;
   unitPrice: number;
   totalAmount: number;
+  duration: '1_month' | '3_months' | '6_months' | '1_year' | '2_years';
+  durationPrice: number;
   shippingAddress: {
     fullName: string;
     address: string;
@@ -129,9 +127,16 @@ function AdminOrdersPage() {
     main: { title: "QR Sticker Orders", description: "Manage all QR sticker orders and track their status" },
     stats: { totalOrders: "Total Orders", pending: "Pending", paid: "Paid", shipped: "Shipped", totalRevenue: "Total Revenue" },
     filters: { searchPlaceholder: "Search by name, email, or tracking number...", orderStatus: "Order Status", paymentStatus: "Payment Status", allStatuses: "All Statuses", allPayments: "All Payments" },
-    table: { title: "Orders", description: "Manage and track all QR sticker orders", headers: { orderId: "Order ID", customer: "Customer", memorial: "Memorial", sticker: "Sticker", quantity: "Quantity", total: "Total", payment: "Payment", status: "Status", date: "Date", actions: "Actions" }, actions: { ship: "Ship", markDelivered: "Mark Delivered", viewDetails: "View Details & Download QR", deleteOrder: "Delete Order" } },
+    table: { title: "Orders", description: "Manage and track all QR sticker orders", headers: { orderId: "Order ID", customer: "Customer", memorial: "Memorial", sticker: "Sticker", quantity: "Quantity", duration: "Duration", total: "Total", payment: "Payment", status: "Status", date: "Date", actions: "Actions" }, actions: { ship: "Ship", markDelivered: "Mark Delivered", viewDetails: "View Details & Download QR", deleteOrder: "Delete Order" } },
     status: { pending: "Pending", processing: "Processing", shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled" },
     paymentStatus: { pending: "Pending", paid: "Paid", failed: "Failed", refunded: "Refunded" },
+    duration: { 
+      "1_month": "1 Month", 
+      "3_months": "3 Months", 
+      "6_months": "6 Months", 
+      "1_year": "1 Year", 
+      "2_years": "2 Years" 
+    },
     messages: { loading: "Loading orders...", loadError: "Failed to load orders", updateSuccess: "Order status updated successfully", updateError: "Failed to update order status", deleteSuccess: "Order deleted successfully", deleteError: "Failed to delete order", deleteConfirm: "Are you sure you want to delete this order?", trackingPrompt: "Enter tracking number:" },
     pagination: { previous: "Previous", next: "Next", page: "Page", of: "of", showing: "Showing", to: "to", results: "results" }
   };
@@ -142,32 +147,73 @@ function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const limit = 4;
+  const limit = 50; // Increased limit for infinite scroll
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Infinite scroll callback
+  const loadMore = useCallback(() => {
+    if (hasMore && !loadingMore && !loading) {
+      fetchOrders(false);
+    }
+  }, [hasMore, loadingMore, loading, orders.length, searchQuery, statusFilter, paymentFilter]);
+
+  // Set up intersection observer
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [loadMore, hasMore, loadingMore, loading]);
 
   useEffect(() => {
-    fetchOrders();
+    // Reset orders and fetch new ones when filters change
+    setOrders([]);
+    setHasMore(true);
+    fetchOrders(true);
     fetchStats();
-  }, [currentPage, statusFilter, paymentFilter]);
+  }, [statusFilter, paymentFilter]);
 
   // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      fetchOrders();
+      // Reset orders and fetch new ones when search changes
+      setOrders([]);
+      setHasMore(true);
+      fetchOrders(true);
     }, 500); // 500ms debounce
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (reset = false) => {
     try {
-      setLoading(true);
+      if (reset) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
       const params = new URLSearchParams({
-        page: currentPage.toString(),
+        page: reset ? '1' : Math.ceil(orders.length / limit + 1).toString(),
         limit: limit.toString(),
       });
 
@@ -176,14 +222,22 @@ function AdminOrdersPage() {
       if (paymentFilter !== 'all') params.append('paymentStatus', paymentFilter);
 
       const response = await axiosInstance.get(`/api/stickers/admin/orders?${params}`);
-      setOrders(response.data.data);
-      setTotalPages(response.data.pagination.totalPages);
-      setTotalItems(response.data.pagination.totalItems || 0);
+      const newOrders = response.data.data;
+      
+      if (reset) {
+        setOrders(newOrders);
+      } else {
+        setOrders(prev => [...prev, ...newOrders]);
+      }
+      
+      // Check if there are more orders to load
+      setHasMore(newOrders.length === limit);
     } catch (error) {
       console.error("Error fetching orders:", error);
       toast.error(ordersTranslations.messages.loadError);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -231,86 +285,6 @@ function AdminOrdersPage() {
     }
   };
 
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key={1}>
-        <PaginationLink
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setCurrentPage(1);
-          }}
-          isActive={currentPage === 1}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-start">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
-    }
-
-    // Show pages around current page
-    const startPage = Math.max(2, currentPage - 1);
-    const endPage = Math.min(totalPages - 1, currentPage + 1);
-
-    for (let i = startPage; i <= endPage; i++) {
-      if (i !== 1 && i !== totalPages) {
-        items.push(
-          <PaginationItem key={i}>
-            <PaginationLink
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentPage(i);
-              }}
-              isActive={currentPage === i}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < totalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-end">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (totalPages > 1) {
-      items.push(
-        <PaginationItem key={totalPages}>
-          <PaginationLink
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setCurrentPage(totalPages);
-            }}
-            isActive={currentPage === totalPages}
-          >
-            {totalPages}
-          </PaginationLink>
-        </PaginationItem>
-      );
-    }
-
-    return items;
-  };
 
   const getStatusBadge = (status: string, type: 'payment' | 'order') => {
     const statusConfig = {
@@ -548,6 +522,7 @@ function AdminOrdersPage() {
                     <TableHead>{ordersTranslations.table.headers.memorial}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.sticker}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.quantity}</TableHead>
+                    <TableHead>{ordersTranslations.table.headers.duration}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.total}</TableHead>
                     <TableHead>{ordersTranslations.table.headers.payment}</TableHead>
                     {/* <TableHead>{ordersTranslations.table.headers.status}</TableHead> */}
@@ -603,15 +578,23 @@ function AdminOrdersPage() {
                           {order.stickerOption ? (
                             <>
                               <p className="font-medium">{order.stickerOption.name}</p>
-                              <p className="text-sm text-gray-500">{order.stickerOption.type} • {order.stickerOption.size}</p>
+                              <p className="text-sm text-gray-500">{order.stickerOption.type?.displayName || order.stickerOption.type?.name || 'Unknown'} • {order.stickerOption.size}</p>
                             </>
                           ) : (
                             <p className="text-sm text-gray-500 italic">Sticker option not found</p>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>{order.quantity}</TableCell>
-                      <TableCell className="font-semibold">${order.totalAmount}</TableCell>
+                        </TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{ordersTranslations.duration?.[order.duration] || order.duration}</p>
+                            {order.durationPrice > 0 && (
+                              <p className="text-sm text-gray-500">+${order.durationPrice}</p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-semibold">₾{order.totalAmount}</TableCell>
                       <TableCell>{getStatusBadge(order.paymentStatus, 'payment')}</TableCell>
                       {/* <TableCell>{getStatusBadge(order.orderStatus, 'order')}</TableCell> */}
                       <TableCell>
@@ -658,42 +641,25 @@ function AdminOrdersPage() {
               </Table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-gray-600">
-                    {ordersTranslations?.pagination?.showing || "Showing"} {((currentPage - 1) * limit) + 1} {ordersTranslations?.pagination?.to || "to"} {Math.min(currentPage * limit, totalItems)} {ordersTranslations?.pagination?.of || "of"} {totalItems} {ordersTranslations?.pagination?.results || "results"}
+            {/* Infinite Scroll Trigger */}
+            {hasMore && (
+              <div ref={loadMoreRef} className="mt-6 text-center">
+                {loadingMore ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#547455]"></div>
+                    <span className="ml-2 text-gray-600">Loading more orders...</span>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {ordersTranslations?.pagination?.page || "Page"} {currentPage} {ordersTranslations?.pagination?.of || "of"} {totalPages}
+                ) : (
+                  <div className="text-gray-500 text-sm">
+                    Scroll down to load more orders
                   </div>
-                </div>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (currentPage > 1) setCurrentPage(currentPage - 1);
-                        }}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                    {generatePaginationItems()}
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                        }}
-                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+                )}
+              </div>
+            )}
+            
+            {!hasMore && orders.length > 0 && (
+              <div className="mt-6 text-center text-gray-500 text-sm">
+                No more orders to load
               </div>
             )}
           </CardContent>

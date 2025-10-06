@@ -27,6 +27,20 @@ interface InteractiveMapProps {
   height?: string;
   showCoordinateInputs?: boolean;
   className?: string;
+  translations?: {
+    searchPlaceholder: string;
+    latitude: string;
+    longitude: string;
+    latitudePlaceholder: string;
+    longitudePlaceholder: string;
+    instructions: {
+      title: string;
+      clickMap: string;
+      searchLocation: string;
+      currentLocation: string;
+      manualCoordinates: string;
+    };
+  };
 }
 
 
@@ -36,7 +50,8 @@ export default function InteractiveMap({
   onLocationChange,
   height = "400px",
   showCoordinateInputs = true,
-  className = ""
+  className = "",
+  translations
 }: InteractiveMapProps) {
   const [position, setPosition] = useState<[number, number]>([initialLat, initialLng]);
   const [manualLat, setManualLat] = useState<string>(initialLat.toString());
@@ -150,7 +165,7 @@ export default function InteractiveMap({
       <div className="flex gap-2">
         <div className="flex-1">
           <Input
-            placeholder="Search for a location (e.g., Amsterdam, Netherlands)"
+            placeholder={translations?.searchPlaceholder || "Search for a location (e.g., Amsterdam, Netherlands)"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleGeocodeSearch()}
@@ -191,13 +206,13 @@ export default function InteractiveMap({
           <div className="space-y-2">
             <Label htmlFor="manual-lat" className="flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
-              Latitude
+              {translations?.latitude || "Latitude"}
             </Label>
             <Input
               id="manual-lat"
               type="number"
               step="any"
-              placeholder="e.g. 41.7151"
+              placeholder={translations?.latitudePlaceholder || "e.g. 41.7151"}
               value={manualLat}
               onChange={(e) => setManualLat(e.target.value)}
               onBlur={handleManualCoordinateChange}
@@ -209,13 +224,13 @@ export default function InteractiveMap({
           <div className="space-y-2">
             <Label htmlFor="manual-lng" className="flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
-              Longitude
+              {translations?.longitude || "Longitude"}
             </Label>
             <Input
               id="manual-lng"
               type="number"
               step="any"
-              placeholder="e.g. 44.8271"
+              placeholder={translations?.longitudePlaceholder || "e.g. 44.8271"}
               value={manualLng}
               onChange={(e) => setManualLng(e.target.value)}
               onBlur={handleManualCoordinateChange}
@@ -229,12 +244,12 @@ export default function InteractiveMap({
 
       {/* Instructions */}
       <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-        <p className="font-medium mb-1">How to set the precise location:</p>
+        <p className="font-medium mb-1">{translations?.instructions?.title || "How to set the precise location:"}</p>
         <ul className="list-disc list-inside space-y-1">
-          <li>Click anywhere on the map to place the memorial marker</li>
-          <li>Search for a location using the search bar</li>
-          <li>Use the navigation button to get your current location</li>
-          <li>Enter exact coordinates manually in the input fields</li>
+          <li>{translations?.instructions?.clickMap || "Click anywhere on the map to place the memorial marker"}</li>
+          <li>{translations?.instructions?.searchLocation || "Search for a location using the search bar"}</li>
+          <li>{translations?.instructions?.currentLocation || "Use the navigation button to get your current location"}</li>
+          <li>{translations?.instructions?.manualCoordinates || "Enter exact coordinates manually in the input fields"}</li>
         </ul>
       </div>
     </div>

@@ -416,15 +416,15 @@ function OrderDetailPage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span>{orderDetailTranslations.sections.orderSummary.sticker}:</span>
-                    <span className="font-semibold">{order.stickerOption.name}</span>
+                    <span className="font-semibold">{order.stickerOption?.name || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>{orderDetailTranslations.sections.orderSummary.type}:</span>
-                    <span>{order.stickerOption.type}</span>
+                    <span>{order.stickerOption?.type?.displayName || order.stickerOption?.type?.name || order.stickerOption?.type || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>{orderDetailTranslations.sections.orderSummary.size}:</span>
-                    <span>{order.stickerOption.size}</span>
+                    <span>{order.stickerOption?.size || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>{orderDetailTranslations.sections.orderSummary.quantity}:</span>

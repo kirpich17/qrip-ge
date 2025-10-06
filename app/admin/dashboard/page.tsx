@@ -400,6 +400,12 @@ function AdminDashboardPage() {
                         {dashboardTranslations?.orders?.manageStickers || "Manage Stickers"}
                       </Button>
                     </Link>
+                    <Link href="/admin/sticker-types">
+                      <Button variant="outline">
+                        <Package className="h-4 w-4 mr-2" />
+                        Manage Types
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </CardHeader>

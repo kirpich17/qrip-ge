@@ -40,7 +40,12 @@ interface StickerOption {
   _id: string;
   name: string;
   description: string;
-  type: string;
+  type: {
+    _id: string;
+    name: string;
+    displayName: string;
+    description: string;
+  };
   size: string;
   price: number;
   image?: string;
@@ -381,7 +386,7 @@ function StickerPurchasePage() {
                           </Label>
                           <p className="text-sm text-gray-600 mt-1">{option.description}</p>
                           <div className="flex items-center gap-4 mt-2">
-                            <Badge variant="outline">{option.type}</Badge>
+                            <Badge variant="outline">{option.type.name}</Badge>
                             <Badge variant="outline">{option.size}</Badge>
                             <span className="font-semibold text-[#547455]">
                               ${option.price}

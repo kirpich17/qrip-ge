@@ -809,24 +809,6 @@ export default function CreateMemorialPage() {
             </div>
             <div className="flex gap-3">
               <LanguageDropdown />
-              <div className="flex items-center space-x-3">
-                <Button
-                  className="bg-[#547455] hover:bg-white hover:text-[#547455]"
-                  onClick={(e) => handleSaveMemorial(e)}
-                  disabled={isSaving} // Disable button while saving
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      {isEditing ? "Update Memorial" : createMemorialTranslations.header.save}
-                    </>)}
-                </Button>
-              </div>
             </div>
 
           </div>
@@ -1000,10 +982,10 @@ export default function CreateMemorialPage() {
                   <div className="space-y-4">
                     <Label className="flex items-center text-lg font-semibold">
                       <MapPin className="h-5 w-5 mr-2" />
-                      {createMemorialTranslations.basicInfo.location} - Set Precise Location
+                      {createMemorialTranslations.basicInfo.location?.title || createMemorialTranslations.basicInfo.location} - Set Precise Location
                     </Label>
                     <p className="text-sm text-gray-600">
-                      Click on the map to set the exact GPS coordinates for the memorial location.
+                      {createMemorialTranslations?.basicInfo?.location?.description || "Click on the map to set the exact GPS coordinates for the memorial location."}
                     </p>
                     <InteractiveMap
                       initialLat={formData.gps?.lat || 41.7151}
@@ -1016,6 +998,7 @@ export default function CreateMemorialPage() {
                       }}
                       height="400px"
                       showCoordinateInputs={true}
+                      translations={createMemorialTranslations?.basicInfo?.location}
                     />
                   </div>
                   {/* --- END OF INTERACTIVE MAP --- */}
@@ -1379,6 +1362,27 @@ export default function CreateMemorialPage() {
               )}
             </TabsContent>
           </Tabs>
+
+          {/* Save Button at Bottom */}
+          <div className="mt-8 flex justify-center">
+            <Button
+              className="bg-[#547455] hover:bg-[#243b31] text-white px-8 py-3 text-lg"
+              onClick={(e) => handleSaveMemorial(e)}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  {isEditing ? "Update Memorial" : createMemorialTranslations.header.save}
+                </>
+              )}
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

@@ -307,7 +307,23 @@
       "deathDate": "Date of Passing",
       "location": "Memorial Location",
       "biography": "Life Story",
-      "biographyPlaceholder": "Share the beautiful story of your loved one's life..."
+      "biographyPlaceholder": "Share the beautiful story of your loved one's life...",
+      "location": {
+        "title": "Memorial Location",
+        "description": "Click on the map to set the exact GPS coordinates for the memorial location.",
+        "searchPlaceholder": "Search for a location (e.g., Amsterdam, Netherlands)",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "latitudePlaceholder": "e.g. 41.7151",
+        "longitudePlaceholder": "e.g. 44.8271",
+        "instructions": {
+          "title": "How to set the precise location:",
+          "clickMap": "Click anywhere on the map to place the memorial marker",
+          "searchLocation": "Search for a location using the search bar",
+          "currentLocation": "Use the navigation button to get your current location",
+          "manualCoordinates": "Enter exact coordinates manually in the input fields"
+        }
+      }
     },
     "media": {
       "title": "Photos & Videos",
@@ -572,9 +588,24 @@
       "lastName": "Last Name",
       "birthDate": "Birth Date",
       "deathDate": "Date of Passing",
-      "location": "Memorial Location",
       "biography": "Life Story",
       "biographyPlaceholder": "Share the beautiful story of your loved one's life...",
+      "location": {
+        "title": "Memorial Location",
+        "description": "Click on the map to set the exact GPS coordinates for the memorial location.",
+        "searchPlaceholder": "Search for a location (e.g., Amsterdam, Netherlands)",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "latitudePlaceholder": "e.g. 41.7151",
+        "longitudePlaceholder": "e.g. 44.8271",
+        "instructions": {
+          "title": "How to set the precise location:",
+          "clickMap": "Click anywhere on the map to place the memorial marker",
+          "searchLocation": "Search for a location using the search bar",
+          "currentLocation": "Use the navigation button to get your current location",
+          "manualCoordinates": "Enter exact coordinates manually in the input fields"
+        }
+      },
       "achievements":"Achievements",
       "awards":"Add notable achievements or awards",
       "nobelPrice":"Nobel Prize in Physics",
@@ -645,7 +676,17 @@
         "description": "Get notified when someone visits or comments"
       }
     },
-    "deleteConfirm": "Are you sure you want to delete this memorial? This action cannot be undone."
+    "deleteConfirm": "Are you sure you want to delete this memorial? This action cannot be undone.",
+    "subscriptionRestricted": {
+      "premiumFeature": "Premium Feature",
+      "upgradeRequired": "Upgrade Required",
+      "premiumDescription": "This feature is only available with a Premium subscription.",
+      "upgradeDescription": "Upgrade to Plus or Premium to access this feature.",
+      "upgradeButton": "Upgrade to"
+    },
+    "familyTree": {
+      "updateFamilyMember": "Update Family Member"
+    }
   },
   "directory": {
     "header": {
@@ -1169,7 +1210,7 @@
       "deactivatePlan": "Deactivate Plan",
       "planName": "Plan Name",
       "planDescription": "Description",
-      "price": "Price ($)",
+      "price": "Price (₾)",
       "oneTimePayment": "One-time Payment Plan",
       "markPopular": "Mark as Popular",
       "planActive": "Plan Active",
@@ -1573,8 +1614,8 @@
         "descriptionPlaceholder": "High-quality vinyl QR code sticker...",
         "size": "Size",
         "sizePlaceholder": "3x3 inches",
-        "price": "Price ($)",
-        "pricePlaceholder": "9.99",
+        "price": "Price (₾)",
+        "pricePlaceholder": "25.00",
         "stock": "Stock",
         "stockPlaceholder": "100",
         "material": "Material",
@@ -1616,6 +1657,79 @@
       "statusUpdateError": "Failed to update status",
       "loadError": "Failed to load sticker options",
       "deleteConfirm": "Are you sure you want to delete this sticker option?"
+    }
+  },
+  "adminStickerTypes": {
+    "header": {
+      "back": "Back to Admin Dashboard",
+      "title": "Sticker Types",
+      "description": "Manage available sticker types"
+    },
+    "loading": {
+      "message": "Loading sticker types..."
+    },
+    "search": {
+      "placeholder": "Search sticker types..."
+    },
+    "table": {
+      "title": "Sticker Types ({count})",
+      "description": "Manage all available sticker types",
+      "headers": {
+        "name": "Name",
+        "displayName": "Display Name",
+        "description": "Description",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "createDialog": {
+      "title": "Create New Sticker Type",
+      "description": "Add a new sticker type with specifications.",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "vinyl",
+        "displayName": "Display Name",
+        "displayNamePlaceholder": "Vinyl",
+        "description": "Description",
+        "descriptionPlaceholder": "High-quality vinyl material...",
+        "material": "Material",
+        "materialPlaceholder": "Premium Vinyl",
+        "durability": "Durability",
+        "durabilityPlaceholder": "2-3 years outdoor",
+        "weatherResistance": "Weather Resistance",
+        "weatherResistancePlaceholder": "Waterproof, UV resistant",
+        "specialFeatures": "Special Features",
+        "specialFeaturesPlaceholder": "Custom colors available"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create"
+      }
+    },
+    "editDialog": {
+      "title": "Edit Sticker Type",
+      "description": "Update the sticker type details and specifications.",
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update"
+      }
+    },
+    "messages": {
+      "loading": "Loading sticker types...",
+      "createSuccess": "Sticker type created successfully",
+      "updateSuccess": "Sticker type updated successfully",
+      "deleteSuccess": "Sticker type deleted successfully",
+      "statusUpdateSuccess": "Status updated successfully",
+      "createError": "Failed to create sticker type",
+      "updateError": "Failed to update sticker type",
+      "deleteError": "Failed to delete sticker type",
+      "statusUpdateError": "Failed to update status",
+      "loadError": "Failed to load sticker types",
+      "deleteConfirm": "Are you sure you want to delete this sticker type?"
     }
   },
   "adminOrders": {
@@ -1843,8 +1957,8 @@
         "descriptionPlaceholder": "High-quality vinyl QR code sticker...",
         "size": "Size",
         "sizePlaceholder": "3x3 inches",
-        "price": "Price ($)",
-        "pricePlaceholder": "9.99",
+        "price": "Price (₾)",
+        "pricePlaceholder": "25.00",
         "stock": "Stock",
         "stockPlaceholder": "100",
         "material": "Material",

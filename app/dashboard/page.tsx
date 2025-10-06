@@ -74,7 +74,7 @@ function Dashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [isCreatingDraft2, setIsCreatingDraft2] = useState(false);
-  const limit = 10;
+  const limit = 1000; // Set a very high limit to show all memorials (effectively removes pagination)
   const [profileData, setProfileData] = useState({});
   const [stats, setStats] = useState([
     {
@@ -504,7 +504,8 @@ function Dashboard() {
                     <p className="text-center text-gray-500 py-8">No Memorials Found</p>
                   )}
 
-                  {filteredMemorials.length > 0 && totalPages > 1 && (
+                  {/* Pagination controls hidden since we're showing all memorials */}
+                  {false && filteredMemorials.length > 0 && totalPages > 1 && (
                     <div className="flex justify-center items-center gap-4 mt-4">
                       <Button
                         variant="outline"

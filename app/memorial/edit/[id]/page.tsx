@@ -140,11 +140,7 @@ export default function EditMemorialPage() {
         setUserSubscription(userData.user.subscriptionPlan);
       } catch (error) {
         console.error("Error fetching user details:", error);
-        toast({
-          title: "Error",
-          description: "Could not fetch user subscription details",
-          variant: "destructive",
-        });
+        toast.error("Could not fetch user subscription details");
       } finally {
         setLoadingSubscription(false);
       }
@@ -447,11 +443,7 @@ export default function EditMemorialPage() {
 
       else {
         // Show generic error for other issues
-        toast.error({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to update memorial",
-          variant: "destructive",
-        });
+        toast.error(err instanceof Error ? err.message : "Failed to update memorial");
       }
     }
     finally {
@@ -528,16 +520,16 @@ export default function EditMemorialPage() {
           <Lock className="h-6 w-6 text-gray-500" />
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
+          {requiredPlan === "Premium" ? editMemorialTranslations.subscriptionRestricted?.premiumFeature || "Premium Feature" : editMemorialTranslations.subscriptionRestricted?.upgradeRequired || "Upgrade Required"}
         </h3>
         <p className="text-gray-500 mb-4">
           {requiredPlan === "Premium"
-            ? "This feature is only available with a Premium subscription."
-            : "Upgrade to Plus or Premium to access this feature."}
+            ? editMemorialTranslations.subscriptionRestricted?.premiumDescription || "This feature is only available with a Premium subscription."
+            : editMemorialTranslations.subscriptionRestricted?.upgradeDescription || "Upgrade to Plus or Premium to access this feature."}
         </p>
         <Link href="/subscription">
           <Button className="bg-[#547455] hover:bg-[#243b31]">
-            Upgrade to {requiredPlan}
+            {editMemorialTranslations.subscriptionRestricted?.upgradeButton || "Upgrade to"} {requiredPlan}
           </Button>
         </Link>
       </div>
@@ -573,26 +565,6 @@ export default function EditMemorialPage() {
             </div>
             <div className="flex gap-3">
               <LanguageDropdown />
-              <div className="flex items-center flex-wrap gap-2">
-                <Button
-                  className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"
-                  onClick={handleSubmit}
-                  disabled={updating}
-                >
-                  {updating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      {editMemorialTranslations.header.save}
-                    </>
-                  )}
-                </Button>
-
-              </div>
             </div>
 
           </div>
@@ -701,7 +673,7 @@ export default function EditMemorialPage() {
                       </Label>
                       <Input
                         id="firstName"
-                        placeholder="John"
+                        placeholder={editMemorialTranslations.basicInfo.firstName || "John"}
                         value={formData.firstName}
                         onChange={(e) =>
                           handleInputChange("firstName", e.target.value)
@@ -715,7 +687,7 @@ export default function EditMemorialPage() {
                       </Label>
                       <Input
                         id="lastName"
-                        placeholder="Smith"
+                        placeholder={editMemorialTranslations.basicInfo.lastName || "Smith"}
                         value={formData.lastName}
                         onChange={(e) =>
                           handleInputChange("lastName", e.target.value)
@@ -764,10 +736,10 @@ export default function EditMemorialPage() {
                   <div className="space-y-4">
                     <Label className="flex items-center text-lg font-semibold">
                       <MapPin className="h-5 w-5 mr-2" />
-                      {editMemorialTranslations.basicInfo.location} - Set Precise Location
+                      {editMemorialTranslations.basicInfo.location?.title || editMemorialTranslations.basicInfo.location} - Set Precise Location
                     </Label>
                     <p className="text-sm text-gray-600">
-                      Click on the map to set the exact GPS coordinates for the memorial location.
+                      {editMemorialTranslations?.basicInfo?.location?.description || "Click on the map to set the exact GPS coordinates for the memorial location."}
                     </p>
                     <InteractiveMap
                       initialLat={formData.gps?.lat || 41.7151}
@@ -780,6 +752,7 @@ export default function EditMemorialPage() {
                       }}
                       height="400px"
                       showCoordinateInputs={true}
+                      translations={editMemorialTranslations?.basicInfo?.location}
                     />
                   </div>
 
@@ -790,7 +763,7 @@ export default function EditMemorialPage() {
                     </Label>
                     <Textarea
                       id="biography"
-                      placeholder="Share the beautiful story of your loved one's life..."
+                      placeholder={editMemorialTranslations.basicInfo.biographyPlaceholder || "Share the beautiful story of your loved one's life..."}
                       value={formData.biography}
                       onChange={(e) =>
                         handleInputChange("biography", e.target.value)
@@ -1345,14 +1318,14 @@ export default function EditMemorialPage() {
                       >
                         <Users className="h-4 w-4 mr-2" />
                         {isEditingFamilyMember
-                          ? "Update Family Member"
-                          : editMemorialTranslations.familyTree.placeholder.button}
+                          ? editMemorialTranslations.familyTree?.updateFamilyMember || "Update Family Member"
+                          : editMemorialTranslations.familyTree?.placeholder?.button || "Add Family Member"}
                       </Button>
 
                       {formData.familyTree?.length > 0 && (
                         <div className="mt-6">
                           <h3 className="font-semibold text-gray-900 mb-4">
-                            {editMemorialTranslations.familyTree.placeholder.title}
+                            {editMemorialTranslations.familyTree?.placeholder?.title || "Family Members"}
                           </h3>
                           <div className="space-y-2">
                             {formData.familyTree.map((member, index) => (
@@ -1416,6 +1389,27 @@ export default function EditMemorialPage() {
 
             </TabsContent>
           </Tabs>
+
+          {/* Save Button at Bottom */}
+          <div className="mt-8 flex justify-center">
+            <Button
+              className="bg-[#547455] hover:bg-[#243b31] text-white px-8 py-3 text-lg"
+              onClick={handleSubmit}
+              disabled={updating}
+            >
+              {updating ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  {editMemorialTranslations.header.save}
+                </>
+              )}
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

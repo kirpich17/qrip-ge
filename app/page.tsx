@@ -50,7 +50,6 @@ export default function HomePage() {
     <Suspense fallback={<div>Loading...</div>}>
       <div className="min-h-screen bg-gradient-to-br from-[#e0f3cf] via-[#b1c99d] to-indigo-50">
         <Herobanner />
-
         <Plans />
         <Howitwork />
         <Features />

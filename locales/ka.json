@@ -301,7 +301,23 @@
       "deathDate": "გარდაცვალების თარიღი",
       "location": "მემორიალის ადგილმდებარეობა",
       "biography": "ბიოგრაფია",
-      "biographyPlaceholder": "მის შესახებ..."
+      "biographyPlaceholder": "მის შესახებ...",
+      "location": {
+        "title": "მემორიალის ადგილმდებარეობა",
+        "description": "დააწკაპუნეთ რუკაზე მემორიალის ზუსტი GPS კოორდინატების დასაყენებლად.",
+        "searchPlaceholder": "ძებნა ადგილმდებარეობისთვის (მაგ., თბილისი, საქართველო)",
+        "latitude": "გრძედი",
+        "longitude": "განედი",
+        "latitudePlaceholder": "მაგ. 41.7151",
+        "longitudePlaceholder": "მაგ. 44.8271",
+        "instructions": {
+          "title": "როგორ დავაყენოთ ზუსტი ადგილმდებარეობა:",
+          "clickMap": "დააწკაპუნეთ რუკის ნებისმიერ ადგილას მემორიალის მარკერის დასაყენებლად",
+          "searchLocation": "გამოიყენეთ ძებნის ზოლი ადგილმდებარეობის მოსაძებნად",
+          "currentLocation": "გამოიყენეთ ნავიგაციის ღილაკი თქვენი მიმდინარე ადგილმდებარეობის მისაღებად",
+          "manualCoordinates": "შეიყვანეთ ზუსტი კოორდინატები ხელით შეყვანის ველებში"
+        }
+      }
     },
     "media": {
       "title": "ფოტოები და ვიდეოები",
@@ -571,9 +587,24 @@
       "lastName": "გვარი",
       "birthDate": "დაბადების თარიღი",
       "deathDate": "გარდაცვალების თარიღი",
-      "location": "მემორიალის მდებარეობა",
       "biography": "ცხოვრების ისტორია",
       "biographyPlaceholder": "მის შესახებ...",
+      "location": {
+        "title": "მემორიალის ადგილმდებარეობა",
+        "description": "დააწკაპუნეთ რუკაზე მემორიალის ზუსტი GPS კოორდინატების დასაყენებლად.",
+        "searchPlaceholder": "ძებნა ადგილმდებარეობისთვის (მაგ., თბილისი, საქართველო)",
+        "latitude": "გრძედი",
+        "longitude": "განედი",
+        "latitudePlaceholder": "მაგ. 41.7151",
+        "longitudePlaceholder": "მაგ. 44.8271",
+        "instructions": {
+          "title": "როგორ დავაყენოთ ზუსტი ადგილმდებარეობა:",
+          "clickMap": "დააწკაპუნეთ რუკის ნებისმიერ ადგილას მემორიალის მარკერის დასაყენებლად",
+          "searchLocation": "გამოიყენეთ ძებნის ზოლი ადგილმდებარეობის მოსაძებნად",
+          "currentLocation": "გამოიყენეთ ნავიგაციის ღილაკი თქვენი მიმდინარე ადგილმდებარეობის მისაღებად",
+          "manualCoordinates": "შეიყვანეთ ზუსტი კოორდინატები ხელით შეყვანის ველებში"
+        }
+      },
             "achievements": "მიღწევები",
   "awards": "დაამატეთ მნიშვნელოვანი მიღწევები ან ჯილდოები",
   "nobelPrice": "ნობელის პრემია ფიზიკაში",
@@ -640,7 +671,17 @@
         "description": "მიიღეთ შეტყობინებები როცა ვინმე ეწვევა ან კომენტარს ტოვებს"
       }
     },
-    "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ მემორიალის წაშლა? ეს მოქმედება შეუქცევადია."
+    "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ მემორიალის წაშლა? ეს მოქმედება შეუქცევადია.",
+    "subscriptionRestricted": {
+      "premiumFeature": "პრემიუმ ფუნქცია",
+      "upgradeRequired": "განახლება საჭიროა",
+      "premiumDescription": "ეს ფუნქცია ხელმისაწვდომია მხოლოდ პრემიუმ გამოწერით.",
+      "upgradeDescription": "განაახლეთ Plus ან Premium-ზე ამ ფუნქციის გამოსაყენებლად.",
+      "upgradeButton": "განახლება"
+    },
+    "familyTree": {
+      "updateFamilyMember": "ოჯახის წევრის განახლება"
+    }
   },
   "directory": {
     "header": "საჯარო მემორიალები",
@@ -1567,8 +1608,8 @@
           "descriptionPlaceholder": "მაღალი ხარისხის ვინილის QR კოდის სტიკერი...",
           "size": "ზომა",
           "sizePlaceholder": "3x3 ინჩი",
-          "price": "ფასი ($)",
-          "pricePlaceholder": "9.99",
+          "price": "ფასი (₾)",
+          "pricePlaceholder": "25.00",
           "stock": "საწყობი",
           "stockPlaceholder": "100",
           "material": "მასალა",
@@ -1610,6 +1651,79 @@
         "statusUpdateError": "სტატუსის განახლება ვერ მოხერხდა",
         "loadError": "სტიკერების ვარიანტების ჩატვირთვა ვერ მოხერხდა",
         "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ სტიკერის ვარიანტის წაშლა?"
+      }
+    },
+    "adminStickerTypes": {
+      "header": {
+        "back": "დაბრუნება ადმინისტრატორის დაფაზე",
+        "title": "სტიკერების ტიპები",
+        "description": "მართეთ ხელმისაწვდომი სტიკერების ტიპები"
+      },
+      "loading": {
+        "message": "სტიკერების ტიპების ჩატვირთვა..."
+      },
+      "search": {
+        "placeholder": "სტიკერების ტიპების ძიება..."
+      },
+      "table": {
+        "title": "სტიკერების ტიპები ({count})",
+        "description": "მართეთ ყველა ხელმისაწვდომი სტიკერის ტიპი",
+        "headers": {
+          "name": "სახელი",
+          "displayName": "ჩვენების სახელი",
+          "description": "აღწერა",
+          "status": "სტატუსი",
+          "actions": "მოქმედებები"
+        },
+        "status": {
+          "active": "აქტიური",
+          "inactive": "არააქტიური"
+        }
+      },
+      "createDialog": {
+        "title": "ახალი სტიკერის ტიპის შექმნა",
+        "description": "დაამატეთ ახალი სტიკერის ტიპი სპეციფიკაციებით.",
+        "form": {
+          "name": "სახელი",
+          "namePlaceholder": "vinyl",
+          "displayName": "ჩვენების სახელი",
+          "displayNamePlaceholder": "ვინილი",
+          "description": "აღწერა",
+          "descriptionPlaceholder": "მაღალი ხარისხის ვინილის მასალა...",
+          "material": "მასალა",
+          "materialPlaceholder": "პრემიუმ ვინილი",
+          "durability": "გამძლეობა",
+          "durabilityPlaceholder": "2-3 წელი გარეთ",
+          "weatherResistance": "ამინდის წინააღმდეგობა",
+          "weatherResistancePlaceholder": "წყალგაუმტარი, UV-ს წინააღმდეგობა",
+          "specialFeatures": "განსაკუთრებული მახასიათებლები",
+          "specialFeaturesPlaceholder": "ხელმისაწვდომია მორგებული ფერები"
+        },
+        "buttons": {
+          "cancel": "გაუქმება",
+          "create": "შექმნა"
+        }
+      },
+      "editDialog": {
+        "title": "სტიკერის ტიპის რედაქტირება",
+        "description": "განაახლეთ სტიკერის ტიპის დეტალები და სპეციფიკაციები.",
+        "buttons": {
+          "cancel": "გაუქმება",
+          "update": "განახლება"
+        }
+      },
+      "messages": {
+        "loading": "სტიკერების ტიპების ჩატვირთვა...",
+        "createSuccess": "სტიკერის ტიპი წარმატებით შეიქმნა",
+        "updateSuccess": "სტიკერის ტიპი წარმატებით განახლდა",
+        "deleteSuccess": "სტიკერის ტიპი წარმატებით წაიშალა",
+        "statusUpdateSuccess": "სტატუსი წარმატებით განახლდა",
+        "createError": "სტიკერის ტიპის შექმნა ვერ მოხერხდა",
+        "updateError": "სტიკერის ტიპის განახლება ვერ მოხერხდა",
+        "deleteError": "სტიკერის ტიპის წაშლა ვერ მოხერხდა",
+        "statusUpdateError": "სტატუსის განახლება ვერ მოხერხდა",
+        "loadError": "სტიკერების ტიპების ჩატვირთვა ვერ მოხერხდა",
+        "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ სტიკერის ტიპის წაშლა?"
       }
     },
     "adminOrders": {
@@ -1837,8 +1951,8 @@
           "descriptionPlaceholder": "მაღალი ხარისხის ვინილის QR კოდის სტიკერი...",
           "size": "ზომა",
           "sizePlaceholder": "3x3 ინჩი",
-          "price": "ფასი ($)",
-          "pricePlaceholder": "9.99",
+          "price": "ფასი (₾)",
+          "pricePlaceholder": "25.00",
           "stock": "მარაგი",
           "stockPlaceholder": "100",
           "material": "მასალა",

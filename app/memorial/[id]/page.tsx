@@ -319,6 +319,7 @@ export default function MemorialPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
   const { t } = useTranslation();
   const memorialTranslations = t("memorial");
   const isScan = searchParams.get("isScan") === "true";
@@ -326,18 +327,27 @@ export default function MemorialPage() {
   useEffect(() => {
     const fetchMemorial = async () => {
       if (!params?.id) return;
+      
+      // Reset view recording flag when memorial ID changes
+      viewRecordedRef.current = false;
+      
       try {
         setLoading(true);
         const response = await getSingleMemorial(params.id as string);
         if (response?.status && response.data) {
           setApiMemorial(response.data);
-          try {
-            await recordMemorialView({
-              memorialId: params.id,
-              isScan
-            });
-          } catch (scanError) {
-            console.error("Failed to record scan view:", scanError);
+          
+          // Only record view once per memorial load
+          if (!viewRecordedRef.current) {
+            try {
+              await recordMemorialView({
+                memorialId: params.id,
+                isScan
+              });
+              viewRecordedRef.current = true; // Mark as recorded
+            } catch (scanError) {
+              console.error("Failed to record scan view:", scanError);
+            }
           }
         } else {
           throw new Error("Invalid response from server");
