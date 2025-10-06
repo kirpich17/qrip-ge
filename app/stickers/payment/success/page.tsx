@@ -30,10 +30,10 @@ function PaymentSuccessContent() {
     try {
       console.log(`🔍 Fetching order details (attempt ${retryCount + 1})...`);
       
-      // Try the direct endpoint first
+      // Try the public verification endpoint first
       try {
-        const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
-        console.log("🔍 Order data received from direct endpoint:", response.data);
+        const response = await axiosInstance.get(`/api/stickers/orders/verify/${orderId}`);
+        console.log("🔍 Order data received from verification endpoint:", response.data);
         if (response.data.status && response.data.data) {
           const orderData = response.data.data;
           console.log("📋 Order details:", {
@@ -64,33 +64,40 @@ function PaymentSuccessContent() {
         }
       }
 
-      // Fallback: Use the orders list method
-      console.log("🔄 Using fallback method (orders list)...");
-      const response = await axiosInstance.get(`/api/stickers/orders`);
-      console.log("🔍 Orders list received:", response.data);
-      if (response.data.status && response.data.data) {
-        const foundOrder = response.data.data.find((o: any) => o._id === orderId);
-        if (foundOrder) {
-          console.log("📋 Found order in list:", {
-            paymentStatus: foundOrder.paymentStatus,
-            orderStatus: foundOrder.orderStatus,
-            paymentId: foundOrder.paymentId
+      // Fallback: Try the authenticated endpoint (in case user is logged in)
+      console.log("🔄 Using fallback method (authenticated endpoint)...");
+      try {
+        const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
+        console.log("🔍 Order data received from authenticated endpoint:", response.data);
+        if (response.data.status && response.data.data) {
+          const orderData = response.data.data;
+          console.log("📋 Order details from authenticated endpoint:", {
+            paymentStatus: orderData.paymentStatus,
+            orderStatus: orderData.orderStatus,
+            paymentId: orderData.paymentId
           });
-          setOrder(foundOrder);
-        } else {
-          console.log("❌ Order not found in list");
-          // If order not found in list either, show a generic success message
-          setOrder({
-            _id: orderId,
-            paymentStatus: 'paid',
-            orderStatus: 'processing',
-            totalAmount: 'N/A',
-            quantity: 'N/A',
-            shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
-            memorial: { firstName: 'N/A', lastName: 'N/A' },
-            stickerOption: { name: 'N/A', type: 'N/A' }
-          });
+          setOrder(orderData);
+          setLoading(false);
+          return;
         }
+      } catch (authError: any) {
+        console.log("❌ Authenticated endpoint also failed:", {
+          status: authError.response?.status,
+          message: authError.response?.data?.message
+        });
+        
+        // If both endpoints fail, show a generic success message
+        console.log("❌ All endpoints failed, showing generic success message");
+        setOrder({
+          _id: orderId,
+          paymentStatus: 'paid',
+          orderStatus: 'processing',
+          totalAmount: 'N/A',
+          quantity: 'N/A',
+          shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
+          memorial: { firstName: 'N/A', lastName: 'N/A' },
+          stickerOption: { name: 'N/A', type: 'N/A' }
+        });
       }
       setLoading(false);
       
@@ -199,7 +206,7 @@ function PaymentSuccessContent() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Sticker</p>
-                    <p>{order.stickerOption?.name || 'N/A'} - {order.stickerOption?.type || 'N/A'}</p>
+                    <p>{order.stickerOption?.name || 'N/A'} - {order.stickerOption?.type?.name || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Quantity</p>

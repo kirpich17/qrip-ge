@@ -132,11 +132,9 @@ function AdminStickersPage() {
       setLoading(true);
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
-      
       const response = await axiosInstance.get(`/api/admin/sticker-options?${params}`);
       setStickerOptions(response.data.data);
     } catch (error) {
-      console.error("Error fetching sticker options:", error);
       toast.error(stickersTranslations?.messages?.loadError || "Failed to load sticker options");
     } finally {
       setLoading(false);
