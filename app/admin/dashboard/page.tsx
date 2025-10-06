@@ -255,7 +255,7 @@ function AdminDashboardPage() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
                       type='search'
-                      placeholder="Search users..."
+                      placeholder={admindashTranslations?.userManagement?.searchPlaceholder || "Search users..."}
                       value={searchQuery}
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
@@ -328,7 +328,7 @@ function AdminDashboardPage() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
                       type='search'
-                      placeholder="Search memorial..."
+                      placeholder={admindashTranslations?.recentMemorials?.searchPlaceholder || "Search memorials..."}
                       value={searchQueryMemorial}
                       onChange={(e) => {
                         setSearchQueryMemorial(e.target.value);
@@ -403,7 +403,7 @@ function AdminDashboardPage() {
                     <Link href="/admin/sticker-types">
                       <Button variant="outline">
                         <Package className="h-4 w-4 mr-2" />
-                        Manage Types
+                        {dashboardTranslations?.orders?.manageTypes || "Manage Types"}
                       </Button>
                     </Link>
                   </div>

@@ -175,6 +175,32 @@ function AdminStickersPage() {
   };
 
   const handleCreate = async () => {
+    // Client-side validation
+    if (!formData.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
+      return;
+    }
+    if (!formData.type) {
+      toast.error("Type is required");
+      return;
+    }
+    if (!formData.size.trim()) {
+      toast.error("Size is required");
+      return;
+    }
+    if (!formData.price || isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
+      toast.error("Valid price is required");
+      return;
+    }
+    if (!formData.stock || isNaN(parseInt(formData.stock)) || parseInt(formData.stock) < 0) {
+      toast.error("Valid stock quantity is required");
+      return;
+    }
+
     try {
       const optionData = {
         ...formData,
@@ -219,6 +245,32 @@ function AdminStickersPage() {
 
   const handleUpdate = async () => {
     if (!editingOption) return;
+
+    // Client-side validation
+    if (!formData.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
+      return;
+    }
+    if (!formData.type) {
+      toast.error("Type is required");
+      return;
+    }
+    if (!formData.size.trim()) {
+      toast.error("Size is required");
+      return;
+    }
+    if (!formData.price || isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
+      toast.error("Valid price is required");
+      return;
+    }
+    if (!formData.stock || isNaN(parseInt(formData.stock)) || parseInt(formData.stock) < 0) {
+      toast.error("Valid stock quantity is required");
+      return;
+    }
 
     try {
       const optionData = {
@@ -339,16 +391,17 @@ function AdminStickersPage() {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">{stickersTranslations?.createDialog?.form?.name || "Name"}</Label>
+                      <Label htmlFor="name">{stickersTranslations?.createDialog?.form?.name || "Name"} <span className="text-red-500">*</span></Label>
                       <Input
                         id="name"
                         value={formData.name}
                         onChange={(e) => handleInputChange("name", e.target.value)}
                         placeholder={stickersTranslations?.createDialog?.form?.namePlaceholder || "Standard Vinyl QR Sticker"}
+                        required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="type">{stickersTranslations?.createDialog?.form?.type || "Type"}</Label>
+                      <Label htmlFor="type">{stickersTranslations?.createDialog?.form?.type || "Type"} <span className="text-red-500">*</span></Label>
                       <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
@@ -364,26 +417,28 @@ function AdminStickersPage() {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="description">{stickersTranslations?.createDialog?.form?.description || "Description"}</Label>
+                    <Label htmlFor="description">{stickersTranslations?.createDialog?.form?.description || "Description"} <span className="text-red-500">*</span></Label>
                     <Textarea
                       id="description"
                       value={formData.description}
                       onChange={(e) => handleInputChange("description", e.target.value)}
                       placeholder={stickersTranslations?.createDialog?.form?.descriptionPlaceholder || "High-quality vinyl QR code sticker..."}
+                      required
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label htmlFor="size">{stickersTranslations?.createDialog?.form?.size || "Size"}</Label>
+                      <Label htmlFor="size">{stickersTranslations?.createDialog?.form?.size || "Size"} <span className="text-red-500">*</span></Label>
                       <Input
                         id="size"
                         value={formData.size}
                         onChange={(e) => handleInputChange("size", e.target.value)}
                         placeholder={stickersTranslations?.createDialog?.form?.sizePlaceholder || "3x3 inches"}
+                        required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"}</Label>
+                      <Label htmlFor="price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"} <span className="text-red-500">*</span></Label>
                       <Input
                         id="price"
                         type="number"
@@ -391,16 +446,18 @@ function AdminStickersPage() {
                         value={formData.price}
                         onChange={(e) => handleInputChange("price", e.target.value)}
                         placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "25.00"}
+                        required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"}</Label>
+                      <Label htmlFor="stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"} <span className="text-red-500">*</span></Label>
                       <Input
                         id="stock"
                         type="number"
                         value={formData.stock}
                         onChange={(e) => handleInputChange("stock", e.target.value)}
                         placeholder={stickersTranslations?.createDialog?.form?.stockPlaceholder || "100"}
+                        required
                       />
                     </div>
                   </div>

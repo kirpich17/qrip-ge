@@ -262,6 +262,7 @@
       "viewMemorial": "View Memorial",
       "edit": "Edit",
       "downloadQR": "Download QR",
+      "buyQrSticker": "Buy QR Sticker",
       "delete": "Delete",
       "deleteConfirm": "Are you sure you want to delete this memorial?",
       "active": "Active",
@@ -272,6 +273,7 @@
       "title": "Quick Actions",
       "createMemorial": "Create Memorial",
       "generateQR": "Generate QR Code",
+      "buyQrSticker": "Buy QR Sticker",
       "manageSubscription": "Manage Subscription",
       "managePlan": "Manage Plan"
     },
@@ -347,9 +349,11 @@
     "familyTree": {
       "title": "Family Tree",
       "description": "Build a family tree to show relationships and connections",
-        "familyMember":"Family Member Name",
-        "relationship":"Relationship",
+      "familyMember": "Family Member Name",
+      "relationship": "Relationship",
       "placeholder": {
+        "name": "e.g., John Doe",
+        "relationship": "e.g., Father",
         "title": "Family Tree Builder",
         "description": "Create connections between family members and show relationships",
         "button": "Start Building Family Tree"
@@ -1019,6 +1023,7 @@
     "recentMemorials": {
       "title": "Recent Memorials",
       "description": "Review and moderate memorial submissions",
+      "searchPlaceholder": "Search memorials...",
       "tableHeaders": {
         "memorial": "Memorial",
         "creator": "Creator",
@@ -1911,6 +1916,7 @@
       "description": "Manage and track all QR sticker orders",
       "viewAllOrders": "View All Orders",
       "manageStickers": "Manage Stickers",
+      "manageTypes": "Manage Types",
       "orderManagement": "Order Management",
       "orderManagementDescription": "View and manage all QR sticker orders in the dedicated orders page.",
       "goToOrders": "Go to Orders"

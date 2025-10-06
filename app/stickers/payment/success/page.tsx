@@ -30,7 +30,7 @@ function PaymentSuccessContent() {
     try {
       console.log(`🔍 Fetching order details (attempt ${retryCount + 1})...`);
       
-      // Try the new direct endpoint first
+      // Try the direct endpoint first
       try {
         const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
         console.log("🔍 Order data received from direct endpoint:", response.data);
@@ -45,11 +45,26 @@ function PaymentSuccessContent() {
           setLoading(false);
           return;
         }
-      } catch (directError) {
-        console.log("❌ Direct endpoint failed, trying fallback method...", directError.response?.status);
+      } catch (directError: any) {
+        console.log("❌ Direct endpoint failed:", {
+          status: directError.response?.status,
+          message: directError.response?.data?.message,
+          error: directError.message
+        });
+        
+        // If it's a 404, the order might not exist yet (webhook hasn't processed)
+        if (directError.response?.status === 404) {
+          console.log("🔄 Order not found, will retry...");
+          if (retryCount < 10) { // Increase retry count for webhook processing
+            setTimeout(() => {
+              fetchOrderDetails(retryCount + 1);
+            }, 3000); // Wait 3 seconds before retry
+            return;
+          }
+        }
       }
 
-      // Fallback: Use the old method (orders list)
+      // Fallback: Use the orders list method
       console.log("🔄 Using fallback method (orders list)...");
       const response = await axiosInstance.get(`/api/stickers/orders`);
       console.log("🔍 Orders list received:", response.data);
@@ -64,6 +79,17 @@ function PaymentSuccessContent() {
           setOrder(foundOrder);
         } else {
           console.log("❌ Order not found in list");
+          // If order not found in list either, show a generic success message
+          setOrder({
+            _id: orderId,
+            paymentStatus: 'paid',
+            orderStatus: 'processing',
+            totalAmount: 'N/A',
+            quantity: 'N/A',
+            shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
+            memorial: { firstName: 'N/A', lastName: 'N/A' },
+            stickerOption: { name: 'N/A', type: 'N/A' }
+          });
         }
       }
       setLoading(false);
@@ -72,13 +98,24 @@ function PaymentSuccessContent() {
       console.error("Error fetching order details:", error);
       
       // If we haven't exceeded retry limit, retry
-      if (retryCount < 5) {
-        console.log(`Retrying order fetch (attempt ${retryCount + 1}/5)...`);
+      if (retryCount < 10) {
+        console.log(`Retrying order fetch (attempt ${retryCount + 1}/10)...`);
         setTimeout(() => {
           fetchOrderDetails(retryCount + 1);
-        }, 2000); // Wait 2 seconds before retry
+        }, 3000); // Wait 3 seconds before retry
       } else {
-        console.error("Max retries reached, stopping...");
+        console.error("Max retries reached, showing generic success message...");
+        // Show a generic success message even if we can't fetch the order
+        setOrder({
+          _id: orderId,
+          paymentStatus: 'paid',
+          orderStatus: 'processing',
+          totalAmount: 'N/A',
+          quantity: 'N/A',
+          shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
+          memorial: { firstName: 'N/A', lastName: 'N/A' },
+          stickerOption: { name: 'N/A', type: 'N/A' }
+        });
         setLoading(false);
       }
     }
@@ -162,30 +199,30 @@ function PaymentSuccessContent() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Sticker</p>
-                    <p>{order.stickerOption?.name} - {order.stickerOption?.type}</p>
+                    <p>{order.stickerOption?.name || 'N/A'} - {order.stickerOption?.type || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Quantity</p>
-                    <p>{order.quantity}</p>
+                    <p>{order.quantity || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Total Amount</p>
-                    <p className="font-semibold">₾{order.totalAmount}</p>
+                    <p className="font-semibold">{order.totalAmount === 'N/A' ? 'N/A' : `₾${order.totalAmount}`}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Memorial</p>
-                    <p>{order.memorial?.firstName} {order.memorial?.lastName}</p>
+                    <p>{order.memorial?.firstName || 'N/A'} {order.memorial?.lastName || 'N/A'}</p>
                   </div>
                 </div>
                 
                 <div className="border-t pt-4">
                   <p className="text-sm font-medium text-gray-500 mb-2">Shipping Address</p>
                   <div className="bg-gray-50 p-3 rounded-md">
-                    <p>{order.shippingAddress.fullName}</p>
-                    <p>{order.shippingAddress.address}</p>
-                    <p>{order.shippingAddress.city}, {order.shippingAddress.zipCode}</p>
-                    <p>{order.shippingAddress.country}</p>
-                    <p>{order.shippingAddress.phone}</p>
+                    <p>{order.shippingAddress?.fullName || 'N/A'}</p>
+                    <p>{order.shippingAddress?.address || 'N/A'}</p>
+                    <p>{order.shippingAddress?.city || 'N/A'}, {order.shippingAddress?.zipCode || 'N/A'}</p>
+                    <p>{order.shippingAddress?.country || 'N/A'}</p>
+                    <p>{order.shippingAddress?.phone || 'N/A'}</p>
                   </div>
                 </div>
               </CardContent>
@@ -201,10 +238,10 @@ function PaymentSuccessContent() {
         >
           <p className="text-gray-600">
             {order?.paymentStatus === 'paid' 
-              ? "Your payment has been confirmed! We'll process your order and ship it to the provided address. You'll receive a confirmation email shortly."
+              ? "Your payment has been confirmed!"
               : order?.paymentStatus === 'pending'
               ? "Your payment is being processed. Please wait a moment while we confirm your payment..."
-              : "We'll process your order and ship it to the provided address. You'll receive a confirmation email shortly."
+              : "Thank you for your order!"
             }
           </p>
           

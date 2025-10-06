@@ -481,7 +481,7 @@ function Dashboard() {
                                     className="flex items-center"
                                   >
                                     <ShoppingCart className="h-4 w-4 mr-2" />
-                                    Buy QR Sticker
+                                    {dashboard.memorials.buyQrSticker}
                                   </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -563,7 +563,7 @@ function Dashboard() {
                     variant="outline"
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    Buy QR Sticker
+                    {dashboard.quickActions.buyQrSticker}
                   </Button>
                 </Link>
                 {/* <Link href="/subscription">

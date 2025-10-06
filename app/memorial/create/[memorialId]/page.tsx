@@ -1284,11 +1284,11 @@ export default function CreateMemorialPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            Family Member Name
+                            {createMemorialTranslations.familyTree.familyMember}
                           </Label>
                           <Input
                             id="familyMemberName"
-                            placeholder="John Doe"
+                            placeholder={createMemorialTranslations.familyTree.placeholder.name}
                             value={newFamilyMember.name}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1301,11 +1301,11 @@ export default function CreateMemorialPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            Relationship
+                            {createMemorialTranslations.familyTree.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                            placeholder="Father"
+                            placeholder={createMemorialTranslations.familyTree.placeholder.relationship}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({
