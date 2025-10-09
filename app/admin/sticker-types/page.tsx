@@ -321,7 +321,7 @@ function AdminStickerTypesPage() {
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="name">{stickerTypesTranslations?.createDialog?.form?.name || "Name"}</Label>
+                        <Label htmlFor="name">{stickerTypesTranslations?.createDialog?.form?.name || "Name"}<span className="text-red-500">*</span></Label>
                         <Input
                           id="name"
                           value={formData.name}
@@ -330,7 +330,7 @@ function AdminStickerTypesPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="displayName">{stickerTypesTranslations?.createDialog?.form?.displayName || "Display Name"}</Label>
+                        <Label htmlFor="displayName">{stickerTypesTranslations?.createDialog?.form?.displayName || "Display Name"}<span className="text-red-500">*</span></Label>
                         <Input
                           id="displayName"
                           value={formData.displayName}
@@ -340,7 +340,7 @@ function AdminStickerTypesPage() {
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="description">{stickerTypesTranslations?.createDialog?.form?.description || "Description"}</Label>
+                      <Label htmlFor="description">{stickerTypesTranslations?.createDialog?.form?.description || "Description"}<span className="text-red-500">*</span></Label>
                       <Textarea
                         id="description"
                         value={formData.description}
@@ -350,7 +350,7 @@ function AdminStickerTypesPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="material">{stickerTypesTranslations?.createDialog?.form?.material || "Material"}</Label>
+                        <Label htmlFor="material">{stickerTypesTranslations?.createDialog?.form?.material || "Material"} <span className="text-red-500">*</span></Label>
                         <Input
                           id="material"
                           value={formData.material}
@@ -359,7 +359,7 @@ function AdminStickerTypesPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="durability">{stickerTypesTranslations?.createDialog?.form?.durability || "Durability"}</Label>
+                        <Label htmlFor="durability">{stickerTypesTranslations?.createDialog?.form?.durability || "Durability"}<span className="text-red-500">*</span></Label>
                         <Input
                           id="durability"
                           value={formData.durability}
@@ -370,7 +370,7 @@ function AdminStickerTypesPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="weatherResistance">{stickerTypesTranslations?.createDialog?.form?.weatherResistance || "Weather Resistance"}</Label>
+                        <Label htmlFor="weatherResistance">{stickerTypesTranslations?.createDialog?.form?.weatherResistance || "Weather Resistance"}<span className="text-red-500">*</span></Label>
                         <Input
                           id="weatherResistance"
                           value={formData.weatherResistance}
@@ -379,7 +379,7 @@ function AdminStickerTypesPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="specialFeatures">{stickerTypesTranslations?.createDialog?.form?.specialFeatures || "Special Features"}</Label>
+                        <Label htmlFor="specialFeatures">{stickerTypesTranslations?.createDialog?.form?.specialFeatures || "Special Features"}<span className="text-red-500">*</span></Label>
                         <Input
                           id="specialFeatures"
                           value={formData.specialFeatures}

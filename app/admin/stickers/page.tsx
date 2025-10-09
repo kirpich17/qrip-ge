@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -55,6 +55,7 @@ import axiosInstance from "@/services/axiosInstance";
 import { toast } from "react-toastify";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import LanguageDropdown from "@/components/languageDropdown/page";
+import { debounce } from "lodash"; // Import lodash for debouncing
 
 interface StickerOption {
   _id: string;
@@ -96,9 +97,9 @@ function AdminStickersPage() {
     createDialog: { title: "Create New Sticker Option", description: "Add a new QR sticker option with pricing and specifications.", form: { name: "Name", namePlaceholder: "Standard Vinyl QR Sticker", type: "Type", typePlaceholder: "Select type", description: "Description", descriptionPlaceholder: "High-quality vinyl QR code sticker...", size: "Size", sizePlaceholder: "3x3 inches", price: "Price ($)", pricePlaceholder: "9.99", stock: "Stock", stockPlaceholder: "100", material: "Material", materialPlaceholder: "Premium Vinyl", dimensions: "Dimensions", dimensionsPlaceholder: "3\" x 3\" (76mm x 76mm)", durability: "Durability", durabilityPlaceholder: "2-3 years outdoor", weatherResistance: "Weather Resistance", weatherResistancePlaceholder: "Waterproof, UV resistant" }, buttons: { cancel: "Cancel", create: "Create" } },
     editDialog: { title: "Edit Sticker Option", description: "Update the sticker option details and specifications.", buttons: { cancel: "Cancel", update: "Update" } },
     types: { vinyl: "Vinyl", engraving: "Engraving", premium: "Premium" },
-    messages: { loading: "Loading sticker options...", createSuccess: "Sticker option created successfully", updateSuccess: "Sticker option updated successfully", deleteSuccess: "Sticker option deleted successfully", statusUpdateSuccess: "Status updated successfully", createError: "Failed to create sticker option", updateError: "Failed to update sticker option", deleteError: "Failed to delete sticker option", statusUpdateError: "Failed to update status", loadError: "Failed to load sticker options", deleteConfirm: "Are you sure you want to delete this sticker option?" }
+    messages: { loading: "Loading sticker options...", createSuccess: "Sticker option created successfully", updateSuccess: "Sticker option updated successfully", deleteSuccess: "Sticker option deleted successfully", statusUpdateSuccess: "Status updated successfully", createError: "Failed to create sticker option", updateError: "Failed to update sticker option", deleteError: "Failed to delete sticker option", statusUpdateError: "Failed to update status", loadError: "Failed to load sticker options. Please try again.", deleteConfirm: "Are you sure you want to delete this sticker option?" }
   };
-  
+
   const [loading, setLoading] = useState(true);
   const [stickerOptions, setStickerOptions] = useState<StickerOption[]>([]);
   const [stickerTypes, setStickerTypes] = useState([]);
@@ -107,6 +108,7 @@ function AdminStickersPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingOption, setEditingOption] = useState<StickerOption | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -122,38 +124,67 @@ function AdminStickersPage() {
     weatherResistance: "",
   });
 
-  useEffect(() => {
-    fetchStickerOptions();
-    fetchStickerTypes();
-  }, [searchQuery]);
-
-  const fetchStickerOptions = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (searchQuery) params.append('search', searchQuery);
-      const response = await axiosInstance.get(`/api/admin/sticker-options?${params}`);
-      setStickerOptions(response.data.data);
-    } catch (error) {
-      toast.error(stickersTranslations?.messages?.loadError || "Failed to load sticker options");
-    } finally {
-      setLoading(false);
+  // Retry mechanism for API calls
+  const retryRequest = async (fn: () => Promise<any>, retries = 3, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (i === retries - 1) throw error;
+        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i))); // Exponential backoff
+      }
     }
   };
+
+  // Debounced fetchStickerOptions to prevent excessive API calls
+  const fetchStickerOptions = useCallback(
+    debounce(async (query: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const params = new URLSearchParams();
+        if (query) {
+          // Sanitize search query to prevent invalid characters
+          const sanitizedQuery = query.replace(/[<>{}]/g, "");
+          params.append("search", sanitizedQuery);
+        }
+        const response = await retryRequest(() =>
+          axiosInstance.get(`/api/admin/sticker-options?${params}`, { timeout: 10000 })
+        );
+        setStickerOptions(response.data.data || []);
+      } catch (error: any) {
+        console.error("Error fetching sticker options:", error);
+        const errorMessage = error.response?.data?.message || stickersTranslations?.messages?.loadError || "Failed to load sticker options. Please try again.";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    }, 500),
+    []
+  );
 
   const fetchStickerTypes = async () => {
     try {
-      const response = await axiosInstance.get('/api/stickers/types');
-      setStickerTypes(response.data.data);
+      const response = await retryRequest(() =>
+        axiosInstance.get("/api/stickers/types", { timeout: 10000 })
+      );
+      setStickerTypes(response.data.data || []);
     } catch (error) {
       console.error("Error fetching sticker types:", error);
+      toast.error("Failed to load sticker types.");
     }
   };
+
+  useEffect(() => {
+    fetchStickerOptions(searchQuery);
+    fetchStickerTypes();
+  }, [searchQuery, fetchStickerOptions]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -216,7 +247,7 @@ function AdminStickersPage() {
       toast.success(stickersTranslations?.messages?.createSuccess || "Sticker option created successfully");
       setIsCreateDialogOpen(false);
       resetForm();
-      fetchStickerOptions();
+      fetchStickerOptions(searchQuery);
     } catch (error: any) {
       console.error("Error creating sticker option:", error);
       toast.error(error.response?.data?.message || stickersTranslations?.messages?.createError || "Failed to create sticker option");
@@ -237,7 +268,7 @@ function AdminStickersPage() {
       durability: option.specifications.durability,
       weatherResistance: option.specifications.weatherResistance,
     });
-    setIsCreateDialogOpen(false); // Close create dialog if open
+    setIsCreateDialogOpen(false);
     setIsEditDialogOpen(true);
   };
 
@@ -288,7 +319,7 @@ function AdminStickersPage() {
       setIsEditDialogOpen(false);
       setEditingOption(null);
       resetForm();
-      fetchStickerOptions();
+      fetchStickerOptions(searchQuery);
     } catch (error: any) {
       console.error("Error updating sticker option:", error);
       toast.error(error.response?.data?.message || stickersTranslations?.messages?.updateError || "Failed to update sticker option");
@@ -301,7 +332,7 @@ function AdminStickersPage() {
     try {
       await axiosInstance.delete(`/api/admin/sticker-options/${id}`);
       toast.success(stickersTranslations?.messages?.deleteSuccess || "Sticker option deleted successfully");
-      fetchStickerOptions();
+      fetchStickerOptions(searchQuery);
     } catch (error: any) {
       console.error("Error deleting sticker option:", error);
       toast.error(error.response?.data?.message || stickersTranslations?.messages?.deleteError || "Failed to delete sticker option");
@@ -313,10 +344,10 @@ function AdminStickersPage() {
       setUpdating(id);
       await axiosInstance.patch(`/api/admin/sticker-options/${id}/toggle`);
       toast.success(stickersTranslations?.messages?.statusUpdateSuccess || "Status updated successfully");
-      fetchStickerOptions();
+      fetchStickerOptions(searchQuery);
     } catch (error: any) {
       console.error("Error toggling status:", error);
-      toast.error(stickersTranslations?.messages?.statusUpdateError || "Failed to update status");
+      toast.error(error.response?.data?.message || stickersTranslations?.messages?.statusUpdateError || "Failed to update status");
     } finally {
       setUpdating(null);
     }
@@ -344,7 +375,7 @@ function AdminStickersPage() {
               className="flex items-center text-white hover:underline gap-2 text-base"
             >
               <ArrowLeft className="h-5 w-5" />
-{stickersTranslations?.header?.back || "Back to Admin Dashboard"}
+              {stickersTranslations?.header?.back || "Back to Admin Dashboard"}
             </Link>
             <LanguageDropdown />
           </div>
@@ -370,13 +401,13 @@ function AdminStickersPage() {
             <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
               setIsCreateDialogOpen(open);
               if (open) {
-                resetForm(); // Reset form when opening create dialog
+                resetForm();
               }
             }}>
               <DialogTrigger asChild>
                 <Button className="bg-[#547455] hover:bg-[#243b31]">
                   <Plus className="h-4 w-4 mr-2" />
-{stickersTranslations?.createDialog?.buttons?.create || "Add Sticker Option"}
+                  {stickersTranslations?.createDialog?.buttons?.create || "Add Sticker Option"}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
@@ -405,7 +436,7 @@ function AdminStickersPage() {
                           <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                         </SelectTrigger>
                         <SelectContent>
-                          {stickerTypes.map((type) => (
+                          {stickerTypes.map((type: any) => (
                             <SelectItem key={type._id} value={type._id}>
                               {type.displayName || type.name}
                             </SelectItem>
@@ -516,6 +547,22 @@ function AdminStickersPage() {
           </div>
         </motion.div>
 
+        {/* Error Message */}
+        {error && (
+          <Card className="mb-6 bg-red-50 border-red-200">
+            <CardContent className="p-4">
+              <p className="text-red-600">{error}</p>
+              <Button
+                variant="outline"
+                className="mt-2"
+                onClick={() => fetchStickerOptions(searchQuery)}
+              >
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Search */}
         <Card className="mb-6">
           <CardContent className="p-6">
@@ -554,64 +601,72 @@ function AdminStickersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {stickerOptions.map((option) => (
-                    <TableRow key={option._id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{option.name}</p>
-                          <p className="text-sm text-gray-500">{option.description}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{option.type?.displayName || option.type?.name || 'Unknown'}</Badge>
-                      </TableCell>
-                      <TableCell>{option.size}</TableCell>
-                      <TableCell className="font-semibold">₾{option.price}</TableCell>
-                      <TableCell>
-                        <span className={option.stock > 10 ? "text-green-600" : option.stock > 0 ? "text-yellow-600" : "text-red-600"}>
-                          {option.stock}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Badge className={option.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                            {option.isActive ? (stickersTranslations?.table?.status?.active || "Active") : (stickersTranslations?.table?.status?.inactive || "Inactive")}
-                          </Badge>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleToggleStatus(option._id)}
-                            disabled={updating === option._id}
-                          >
-                            {option.isActive ? (
-                              <ToggleRight className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <ToggleLeft className="h-4 w-4 text-gray-400" />
-                            )}
-                          </Button>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(option)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDelete(option._id)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                  {stickerOptions.length === 0 && !loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-gray-500">
+                        No sticker options found.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    stickerOptions.map((option) => (
+                      <TableRow key={option._id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{option.name}</p>
+                            <p className="text-sm text-gray-500">{option.description}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{option.type?.displayName || option.type?.name || "Unknown"}</Badge>
+                        </TableCell>
+                        <TableCell>{option.size}</TableCell>
+                        <TableCell className="font-semibold">₾{option.price}</TableCell>
+                        <TableCell>
+                          <span className={option.stock > 10 ? "text-green-600" : option.stock > 0 ? "text-yellow-600" : "text-red-600"}>
+                            {option.stock}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge className={option.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                              {option.isActive ? (stickersTranslations?.table?.status?.active || "Active") : (stickersTranslations?.table?.status?.inactive || "Inactive")}
+                            </Badge>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleToggleStatus(option._id)}
+                              disabled={updating === option._id}
+                            >
+                              {option.isActive ? (
+                                <ToggleRight className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <ToggleLeft className="h-4 w-4 text-gray-400" />
+                              )}
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(option)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(option._id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -622,8 +677,8 @@ function AdminStickersPage() {
         <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
           setIsEditDialogOpen(open);
           if (!open) {
-            setEditingOption(null); // Clear editing option when dialog closes
-            resetForm(); // Reset form when edit dialog closes
+            setEditingOption(null);
+            resetForm();
           }
         }}>
           <DialogContent className="max-w-2xl">
@@ -636,22 +691,23 @@ function AdminStickersPage() {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-name">{stickersTranslations?.createDialog?.form?.name || "Name"}</Label>
+                  <Label htmlFor="edit-name">{stickersTranslations?.createDialog?.form?.name || "Name"} <span className="text-red-500">*</span></Label>
                   <Input
                     id="edit-name"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     placeholder={stickersTranslations?.createDialog?.form?.namePlaceholder || "Standard Vinyl QR Sticker"}
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-type">{stickersTranslations?.createDialog?.form?.type || "Type"}</Label>
+                  <Label htmlFor="edit-type">{stickersTranslations?.createDialog?.form?.type || "Type"} <span className="text-red-500">*</span></Label>
                   <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder={stickersTranslations?.createDialog?.form?.typePlaceholder || "Select type"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {stickerTypes.map((type) => (
+                      {stickerTypes.map((type: any) => (
                         <SelectItem key={type._id} value={type._id}>
                           {type.displayName || type.name}
                         </SelectItem>
@@ -661,43 +717,47 @@ function AdminStickersPage() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-description">{stickersTranslations?.createDialog?.form?.description || "Description"}</Label>
+                <Label htmlFor="edit-description">{stickersTranslations?.createDialog?.form?.description || "Description"} <span className="text-red-500">*</span></Label>
                 <Textarea
                   id="edit-description"
                   value={formData.description}
                   onChange={(e) => handleInputChange("description", e.target.value)}
                   placeholder={stickersTranslations?.createDialog?.form?.descriptionPlaceholder || "High-quality vinyl QR code sticker..."}
+                  required
                 />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="edit-size">{stickersTranslations?.createDialog?.form?.size || "Size"}</Label>
+                  <Label htmlFor="edit-size">{stickersTranslations?.createDialog?.form?.size || "Size"} <span className="text-red-500">*</span></Label>
                   <Input
                     id="edit-size"
                     value={formData.size}
                     onChange={(e) => handleInputChange("size", e.target.value)}
                     placeholder={stickersTranslations?.createDialog?.form?.sizePlaceholder || "3x3 inches"}
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"}</Label>
+                  <Label htmlFor="edit-price">{stickersTranslations?.createDialog?.form?.price || "Price (₾)"} <span className="text-red-500">*</span></Label>
                   <Input
                     id="edit-price"
                     type="number"
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => handleInputChange("price", e.target.value)}
-                    placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "9.99"}
+                    placeholder={stickersTranslations?.createDialog?.form?.pricePlaceholder || "25.00"}
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"}</Label>
+                  <Label htmlFor="edit-stock">{stickersTranslations?.createDialog?.form?.stock || "Stock"} <span className="text-red-500">*</span></Label>
                   <Input
                     id="edit-stock"
                     type="number"
                     value={formData.stock}
                     onChange={(e) => handleInputChange("stock", e.target.value)}
                     placeholder={stickersTranslations?.createDialog?.form?.stockPlaceholder || "100"}
+                    required
                   />
                 </div>
               </div>

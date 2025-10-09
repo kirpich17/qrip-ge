@@ -459,7 +459,6 @@ export default function EditMemorialPage() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -1261,7 +1260,8 @@ export default function EditMemorialPage() {
                           </Label>
                           <Input
                             id="familyMemberName"
-                            placeholder={editMemorialTranslations.familyTree?.namePlaceholder}
+                            placeholder={editMemorialTranslations.familyTree?.updateFamilyMember
+}
                             value={newFamilyMember.name}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1278,7 +1278,7 @@ export default function EditMemorialPage() {
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                            placeholder={editMemorialTranslations.familyTree?.relationshipPlaceholder}
+                            placeholder={editMemorialTranslations.familyTree?.updateRelationship}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({

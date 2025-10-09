@@ -869,7 +869,7 @@ export default function CreateMemorialPage() {
                 <CardContent className="space-y-6">
                   <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
                     <div className="relative w-24 h-24 rounded-full overflow-hidden">
-                      <img
+                      {/* <img
                         src={
                           typeof formData.profileImage === "string"
                             ? formData.profileImage
@@ -879,7 +879,7 @@ export default function CreateMemorialPage() {
                         }
 
                         className="object-cover"
-                      />
+                      /> */}
                     </div>
                     <div className="flex md:justify-start justify-center flex-col">
                       <label htmlFor="profileImageUpload" className="w-fit">

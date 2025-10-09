@@ -41,6 +41,13 @@
       "scanCta": "Scan to Visit Memorial"
     }
   },
+
+
+  
+
+
+
+
   "features": {
     "title": "Everything You Need to Remember",
     "subtitle": "Comprehensive tools to create meaningful, lasting tributes that celebrate life and preserve memories",
@@ -352,8 +359,8 @@
       "familyMember": "Family Member Name",
       "relationship": "Relationship",
       "placeholder": {
-        "name": "e.g., John Doe",
-        "relationship": "e.g., Father",
+        "name": "Add Family Member Name",
+        "relationship": "Add Relationship",
         "title": "Family Tree Builder",
         "description": "Create connections between family members and show relationships",
         "button": "Start Building Family Tree"
@@ -689,7 +696,8 @@
       "upgradeButton": "Upgrade to"
     },
     "familyTree": {
-      "updateFamilyMember": "Update Family Member"
+      "updateFamilyMember":"Add Family Member Name",
+      "updateRelationship": "Add Relationship"
     }
   },
   "directory": {
@@ -1729,7 +1737,7 @@
       "updateSuccess": "Sticker type updated successfully",
       "deleteSuccess": "Sticker type deleted successfully",
       "statusUpdateSuccess": "Status updated successfully",
-      "createError": "Failed to create sticker type",
+      "createError": "All fields are required",
       "updateError": "Failed to update sticker type",
       "deleteError": "Failed to delete sticker type",
       "statusUpdateError": "Failed to update status",

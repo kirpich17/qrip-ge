@@ -282,9 +282,13 @@ function Dashboard() {
           transition={{ duration: 0.6 }}
           className="md:mb-8 mb-3"
         >
+         
           <h1 className="md:text-3xl text-xl font-bold text-gray-900 mb-2">
-            {dashboard.header.welcome}{profileData.firstname} {profileData.lastname}
-          </h1>
+   {dashboard.header.welcome}
+   <span className="ml-2">
+    {profileData.firstname} {profileData.lastname}
+   </span>
+ </h1>
           <p className="text-gray-600 text-base">{dashboard.header.subtitle}</p>
         </motion.div>
 
