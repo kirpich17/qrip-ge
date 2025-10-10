@@ -39,7 +39,6 @@ import L from 'leaflet';
 import Image from 'next/image';
 import LanguageDropdown from "@/components/languageDropdown/page";
 
-// Fix for Leaflet marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -73,7 +72,9 @@ interface Memorial {
   videoGallery: string[];
   status: string;
   plan: string;
+  planName?: string;
   views: number;
+  viewsCount?: number;
   slug: string;
   isPublic: boolean;
   allowComments: boolean;
@@ -106,6 +107,8 @@ function QRPageTransition({
   deathDate: string;
   photoGallery?: string[];
 }) {
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   const [isInitialView, setIsInitialView] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const router = useRouter();
@@ -138,16 +141,16 @@ function QRPageTransition({
     return slides;
   }, [profilePhoto, firstName, lastName, birthDate, deathDate, photoGallery]);
 
-  // Improved slideshow logic
+  // Improved slideshow logic - works for all users
   useEffect(() => {
-    if (!hasPremium || !isInitialView || premiumSlides.length <= 1) return;
+    if (!isInitialView || premiumSlides.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % premiumSlides.length);
-    }, 4000); // Increased duration to 4 seconds
+    }, 4000); // 4 seconds per slide
 
     return () => clearInterval(interval);
-  }, [hasPremium, isInitialView, premiumSlides.length]);
+  }, [isInitialView, premiumSlides.length]);
 
   const handleClick = () => {
     setIsInitialView(false);
@@ -201,7 +204,7 @@ function QRPageTransition({
             {/* Content */}
 
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
-              {hasPremium ? (
+              {premiumSlides.length > 1 ? (
                 <div className="max-w-2xl mx-auto">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -218,7 +221,7 @@ function QRPageTransition({
                       }}
                       className="space-y-6"
                     >
-                      <div className="relative h-64 w-64 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl">
+                      <div className="relative h-64 w-64 mx-auto rounded-lg overflow-hidden border-4 border-white shadow-xl">
                         <Image
                           src={premiumSlides[currentSlide].image}
                           alt="Memorial slide"
@@ -227,14 +230,13 @@ function QRPageTransition({
                           priority
                         />
                       </div>
-                      <h2 className="text-3xl font-bold">
-                        {premiumSlides[currentSlide].text}
+                      <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                      <h2 className="text-3xl font-semibold">
+                        {firstName} {lastName}
                       </h2>
-                      {premiumSlides[currentSlide].years && (
-                        <p className="text-xl">
-                          {premiumSlides[currentSlide].years}
-                        </p>
-                      )}
+                      <p className="text-xl mt-2">
+                        {new Date(birthDate).getFullYear()} - {new Date(deathDate).getFullYear()}
+                      </p>
                     </motion.div>
                   </AnimatePresence>
 
@@ -259,7 +261,7 @@ function QRPageTransition({
                         animate={{ opacity: [0.6, 1, 0.6] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        Tap to view full memorial
+                        {memorialTranslations?.premiumSlides?.tapToView || "Tap to view memorial"}
                       </motion.p>
                     </>
                   )}
@@ -275,7 +277,7 @@ function QRPageTransition({
                       priority
                     />
                   </div>
-                  <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                  <h1 className="mt-6 text-4xl font-bold">{memorialTranslations?.inLovingMemory || "In Loving Memory"}</h1>
                   <h2 className="text-3xl font-semibold">
                     {firstName} {lastName}
                   </h2>
@@ -287,7 +289,7 @@ function QRPageTransition({
                     animate={{ opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    Tap to view memorial
+                    {memorialTranslations?.tapToViewMemorial || "Tap to view memorial"}
                   </motion.p>
                 </>
               )}
@@ -311,6 +313,8 @@ function QRPageTransition({
 
 export default function MemorialPage() {
   const params = useParams();
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   const searchParams = useSearchParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -320,8 +324,6 @@ export default function MemorialPage() {
   const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
-  const { t } = useTranslation();
-  const memorialTranslations = t("memorial");
   const isScan = searchParams.get("isScan") === "true";
 
   useEffect(() => {
@@ -341,7 +343,7 @@ export default function MemorialPage() {
           if (!viewRecordedRef.current) {
             try {
               await recordMemorialView({
-                memorialId: params.id,
+                memorialId: params.id as string,
                 isScan
               });
               viewRecordedRef.current = true; // Mark as recorded
@@ -436,7 +438,7 @@ export default function MemorialPage() {
   if (!apiMemorial) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div>No memorial data found</div>
+        <div>{memorialTranslations?.noMemorialData || "No memorial data found"}</div>
       </div>
     );
   }
@@ -450,18 +452,18 @@ export default function MemorialPage() {
               <Lock className="h-8 w-8 text-gray-400" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Memorial Unavailable
+              {memorialTranslations?.memorialUnavailable || "Memorial Unavailable"}
             </h2>
             <p className="text-gray-600 mb-6">
-              This memorial profile is currently inactive.
+              {memorialTranslations?.memorialInactive || "This memorial profile is currently inactive."}
             </p>
             <div className="space-y-3">
               <Button variant="outline" className="w-full bg-transparent">
-                Contact Support
+                {memorialTranslations?.contactSupport || "Contact Support"}
               </Button>
               <Link href="/">
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
-                  Return Home
+                  {memorialTranslations?.returnHome || "Return Home"}
                 </Button>
               </Link>
             </div>
@@ -524,7 +526,7 @@ export default function MemorialPage() {
               <div className="flex items-center space-x-3">
                 <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
                   {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
-                  {memorialTranslations.header.views}
+                  {memorialTranslations?.header?.views || "Views"}
                 </Badge>
                 {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4" />
@@ -577,10 +579,10 @@ export default function MemorialPage() {
                           {"Tbilisi, Georgia"}
                         </p>
                         <p className="text-white/80 mt-2">
-                          {memorialTranslations.profile.age.replace(
+                          {memorialTranslations?.profile?.age?.replace(
                             "{age}",
                             age.toString()
-                          )}
+                          ) || `Age ${age}`}
                         </p>
                       </div>
                     </div>
@@ -599,22 +601,22 @@ export default function MemorialPage() {
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>{memorialTranslations.tabs.memories}</CardTitle>
+                    <CardTitle>{memorialTranslations?.tabs?.memories || "Memories"}</CardTitle>
                     <CardDescription>
-                      {memorialTranslations.tabs.description}
+                      {memorialTranslations?.tabs?.description || "View photos and videos"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="photos" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="photos">
-                          {memorialTranslations.tabs.photos}
+                          {memorialTranslations?.tabs?.photos || "Photos"}
                         </TabsTrigger>
                         <TabsTrigger
                           value="video"
                           disabled={!isPremium}
                         >
-                          {memorialTranslations.tabs.video}{" "}
+                          {memorialTranslations?.tabs?.video || "Video"}{" "}
                           {!isPremium && (
                             <Lock className="h-3 w-3 ml-1" />
                           )}
@@ -726,7 +728,7 @@ export default function MemorialPage() {
                                   Memorial Video
                                 </h3>
                                 <p className="text-sm text-gray-600">
-                                  {memorialTranslations.video.description}
+                                  {memorialTranslations?.video?.description || "Memorial video"}
                                 </p>
                               </div>
                             </div>
@@ -764,7 +766,7 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
-                      {memorialTranslations.tabs.lifeStory}
+                      {memorialTranslations?.tabs?.lifeStory || "Life Story"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -795,7 +797,7 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Users className="h-5 w-5 mr-2 text-green-500" />
-                      {memorialTranslations.sections.family.title}
+                      {memorialTranslations?.sections?.family?.title || "Family"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -818,7 +820,7 @@ export default function MemorialPage() {
                       ) : (
                         <div className="text-center py-6">
                           <p className="text-sm text-gray-600">
-                            {memorialTranslations.sections.family.noFamily}
+                            {memorialTranslations?.sections?.family?.noFamily || "No family members added yet"}
                           </p>
                         </div>
                       )
@@ -834,12 +836,10 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <MapPin className="h-5 w-5 mr-2 text-blue-500" />
-                      {memorialTranslations.sections.location.title}
+                      {memorialTranslations?.sections?.location?.title || "Location"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-
-
                     {
                       // isPremium ? (
                       apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
@@ -875,15 +875,15 @@ export default function MemorialPage() {
                               <div>
                                 <span className="font-medium text-gray-700">Precise Location:</span>
                                 <div className="text-gray-600">
-                                  <div>Lat: {apiMemorial.gps.lat.toFixed(6)}</div>
-                                  <div>Lng: {apiMemorial.gps.lng.toFixed(6)}</div>
+                                    <div>Lat: {apiMemorial.gps?.lat.toFixed(6)}</div>
+                                    <div>Lng: {apiMemorial.gps?.lng.toFixed(6)}</div>
                                 </div>
                               </div>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                  navigator.clipboard.writeText(`${apiMemorial.gps.lat}, ${apiMemorial.gps.lng}`);
+                                  navigator.clipboard.writeText(`${apiMemorial.gps?.lat}, ${apiMemorial.gps?.lng}`);
                                   // You could add a toast notification here
                                 }}
                               >
@@ -899,7 +899,7 @@ export default function MemorialPage() {
                               className="flex-1"
                               onClick={() => {
                                 window.open(
-                                  `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
+                                  `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
                                   '_blank'
                                 );
                               }}
@@ -912,7 +912,7 @@ export default function MemorialPage() {
                               className="flex-1"
                               onClick={() => {
                                 window.open(
-                                  `https://www.google.com/maps/search/?api=1&query=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
+                                  `https://www.google.com/maps/search/?api=1&query=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
                                   '_blank'
                                 );
                               }}
@@ -925,7 +925,7 @@ export default function MemorialPage() {
                         <div className="text-center py-6">
                           <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">
-                            {memorialTranslations.sections.location.noLocation}
+                            {memorialTranslations?.sections?.location?.noLocation || "No location specified"}
                           </p>
                         </div>
                       )
@@ -948,7 +948,7 @@ export default function MemorialPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {memorialTranslations.sections.achievements.title}
+                      {memorialTranslations?.sections?.achievements?.title || "Achievements"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -964,7 +964,7 @@ export default function MemorialPage() {
                     ) : (
                       <div className="text-center py-6">
                         <p className="text-sm text-gray-600">
-                          {memorialTranslations.sections.achievements.noAchievements}
+                          {memorialTranslations?.sections?.achievements?.noAchievements || "No achievements listed"}
                         </p>
                       </div>
                     )}
@@ -977,19 +977,19 @@ export default function MemorialPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {memorialTranslations.sections.info.title}
+                      {memorialTranslations?.sections?.info?.title || "Memorial Info"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.qrCode}
+                        {memorialTranslations?.sections?.info?.qrCode || "QR Code"}
                       </span>
                       <Badge variant="outline">{apiMemorial.slug}</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.plan}
+                        {memorialTranslations?.sections?.info?.plan || "Plan"}
                       </span>
                       <Badge variant={isPremium ? "default" : "secondary"}>
                         {apiMemorial.plan}
@@ -997,7 +997,7 @@ export default function MemorialPage() {
                     </div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.lastUpdated}
+                        {memorialTranslations?.sections?.info?.lastUpdated || "Last Updated"}
                       </span>
                       <span className="text-gray-900">
                         {formatDate(apiMemorial.updatedAt)}
@@ -1013,7 +1013,7 @@ export default function MemorialPage() {
                           size="sm"
                           className="w-full bg-transparent"
                         >
-                          {memorialTranslations.sections.info.createMemorial}
+                          {memorialTranslations?.sections?.info?.createMemorial || "Create Memorial"}
                         </Button>
                       </Link>
                     </div>

@@ -463,11 +463,63 @@ export interface HeroTranslations {
   };
 }
 
+export interface MemorialTranslations {
+  inLovingMemory: string;
+  tapToViewMemorial: string;
+  memorialUnavailable: string;
+  memorialInactive: string;
+  contactSupport: string;
+  returnHome: string;
+  noMemorialData: string;
+  loadingMemorial: string;
+  premiumSlides: {
+    tapToView: string;
+  };
+  header: {
+    views: string;
+  };
+  profile: {
+    age: string;
+  };
+  tabs: {
+    memories: string;
+    description: string;
+    photos: string;
+    video: string;
+    lifeStory: string;
+  };
+  video: {
+    description: string;
+  };
+  sections: {
+    location: {
+      title: string;
+      noLocation: string;
+    };
+    family: {
+      title: string;
+      noFamily: string;
+    };
+    achievements: {
+      title: string;
+      noAchievements: string;
+    };
+    info: {
+      title: string;
+      qrCode: string;
+      plan: string;
+      lastUpdated: string;
+      createMemorial: string;
+    };
+  };
+}
+
 export interface Translations {
   header: HeaderTranslations;
   common: CommonTranslations;
   home: HomeTranslations;
   hero: HeroTranslations;
+  memorial: MemorialTranslations;
   adminOrders: AdminOrdersTranslations;
   adminOrderDetail: AdminOrderDetailTranslations;
   adminStickers: AdminStickersTranslations;

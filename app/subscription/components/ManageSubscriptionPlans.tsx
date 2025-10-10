@@ -351,7 +351,9 @@ export default function PlanSelection() {
                   {/* Duration Selection */}
                   {plan.durationOptions && plan.durationOptions.length > 0 && (
                     <div className="mt-4">
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Select Duration:</label>
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        {translations.selectDuration || "Select Duration"}:
+                      </label>
                       <Select
                         value={promoState?.selectedDuration || plan.defaultDuration || '1_month'}
                         onValueChange={(value) => handleDurationChange(plan._id, value)}
@@ -375,7 +377,6 @@ export default function PlanSelection() {
                       </Select>
                     </div>
                   )}
-
                   <div className="mt-4">
                     {hasDiscount ? (
                       <div>

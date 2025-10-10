@@ -38,6 +38,7 @@ import { UserMenu } from "@/components/user-menu";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { getDeleteMemorial, getMemorials } from "@/services/memorialService";
+import { getUserRecentActivities, Activity } from "@/services/activityService";
 import { toast } from "react-toastify";
 import IsUserAuth from "@/lib/IsUserAuth/page";
 import { getUserDetails } from "@/services/userService";
@@ -76,6 +77,8 @@ function Dashboard() {
   const [isCreatingDraft2, setIsCreatingDraft2] = useState(false);
   const limit = 1000; // Set a very high limit to show all memorials (effectively removes pagination)
   const [profileData, setProfileData] = useState({});
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [stats, setStats] = useState([
     {
       label: dashboard.stats.totalMemorials,
@@ -113,6 +116,26 @@ function Dashboard() {
       }
     };
     fetchUserData();
+  }, []);
+
+  // Fetch recent activities
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        setActivitiesLoading(true);
+        const response = await getUserRecentActivities(5); // Get 5 most recent activities
+        if (response.status && response.data) {
+          setRecentActivities(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+        // Set empty array on error to show no activities
+        setRecentActivities([]);
+      } finally {
+        setActivitiesLoading(false);
+      }
+    };
+    fetchActivities();
   }, []);
 
   useEffect(() => {
@@ -588,35 +611,70 @@ function Dashboard() {
                 <CardTitle>{dashboard.recentActivity.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-sm">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-600">
-                      {dashboard.recentActivity.qrScanned.replace(
-                        "{name}",
-                        "John Smith"
-                      )}
-                    </span>
+                {activitiesLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center space-x-3 text-sm">
+                        <div className="w-2 h-2 bg-gray-300 rounded-full animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-center space-x-3 text-sm">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-600">
-                      {dashboard.recentActivity.memorialUpdated.replace(
-                        "{name}",
-                        "Mary Johnson"
-                      )}
-                    </span>
+                ) : recentActivities.length > 0 ? (
+                  <div className="space-y-3">
+                    {recentActivities.map((activity) => {
+                      // Get color based on activity type
+                      const getActivityColor = (type: string) => {
+                        switch (type) {
+                          case 'memorial_created':
+                            return 'bg-green-500';
+                          case 'memorial_viewed':
+                            return 'bg-blue-500';
+                          case 'memorial_scanned':
+                            return 'bg-green-500';
+                          default:
+                            return 'bg-gray-500';
+                        }
+                      };
+
+                      // Format time ago
+                      const formatTimeAgo = (dateString: string) => {
+                        const date = new Date(dateString);
+                        const now = new Date();
+                        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+                        
+                        if (diffInSeconds < 60) return 'Just now';
+                        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+                        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+                        return `${Math.floor(diffInSeconds / 86400)}d ago`;
+                      };
+
+                      return (
+                        <div key={activity.id} className="flex items-center space-x-3 text-sm">
+                          <div className={`w-2 h-2 ${getActivityColor(activity.type)} rounded-full`}></div>
+                          <div className="flex-1">
+                            <span className="text-gray-600">{activity.description}</span>
+                            <div className="text-xs text-gray-400 mt-1">
+                              {formatTimeAgo(activity.createdAt)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                  <div className="flex items-center space-x-3 text-sm">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-gray-600">
-                      {dashboard.recentActivity.photoAdded.replace(
-                        "{name}",
-                        "Robert Wilson"
-                      )}
-                    </span>
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="text-gray-400 mb-2">
+                      <Heart className="h-8 w-8 mx-auto" />
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      No recent activity yet
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Create a memorial to see activity here
+                    </p>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>

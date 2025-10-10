@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, DollarSign, Search, Bell, QrCode, Package } from "lucide-react";
+import { Users, Heart, DollarSign, Search, Bell, QrCode, Package, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -213,6 +213,42 @@ function AdminDashboardPage() {
 
         {/* Stats Cards */}
         <StatsCards stats={stats} />
+
+        {/* Quick Access */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Access</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Link href="/admin/testimonials">
+                  <Button variant="outline" className="w-full justify-start">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Manage Testimonials
+                  </Button>
+                </Link>
+                <Link href="/admin/adminsubscription">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Package className="h-4 w-4 mr-2" />
+                    Subscription Plans
+                  </Button>
+                </Link>
+                <Link href="/admin/stickers">
+                  <Button variant="outline" className="w-full justify-start">
+                    <QrCode className="h-4 w-4 mr-2" />
+                    QR StickersSelect Duration
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-6 w-full">
