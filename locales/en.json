@@ -711,6 +711,12 @@
     "familyTree": {
       "updateFamilyMember":"Add Family Member Name",
       "updateRelationship": "Add Relationship"
+    },
+    "displaySettings": {
+      "title": "Display Settings",
+      "description": "Control how your memorial is displayed to visitors",
+      "enableSlideshow": "Enable Photo Slideshow",
+      "slideshowDescription": "Allow visitors to see a slideshow of photos instead of a static cover image"
     }
   },
   "directory": {
@@ -1064,6 +1070,12 @@
       "thisMonth": "This Month",
       "analyticsText": "QR Code analytics and management tools"
     },
+    "quickAccess": {
+      "title": "Quick Access",
+      "manageTestimonials": "Manage Testimonials",
+      "subscriptionPlans": "Subscription Plans",
+      "qrStickers": "QR Stickers"
+    },
     "analytics": {
       "platformGrowth": "Platform Growth",
       "revenueTrends": "Revenue Trends"
@@ -1375,19 +1387,32 @@
 "photoUploads": "{count} Photo Uploads",
 "unlimitedPhotos": "Unlimited Photo Uploads",
 "slideshow": "Photo Slideshow",
-"videoUploads": "Video Uploads (Max {duration}s)"
+"videoUploads": "Video Uploads (Max {duration}s)",
+"documentUpload": "Document Upload",
+"familyTree": "Family Tree"
 },
 "cta": {
 "processing": "Processing...",
 "selectPlan": "Select Plan",
-
- "getStarted": "Get Started", 
-      "goPremium": "Go Premium" ,
-      "medium": "Select Plan" 
-
-
-      
-    },
+"getStarted": "Get Started", 
+"goPremium": "Go Premium",
+"medium": "Select Plan"
+},
+"preselected": {
+"title": "Plan Preselected",
+"description": "Your memorial has been created and a plan has been preselected. You can proceed with payment or choose a different plan below.",
+"badge": "Preselected"
+},
+"promoCode": {
+"title": "Promo Code",
+"applied": "Applied:",
+"placeholder": "Enter promo code",
+"applying": "Applying...",
+"apply": "Apply",
+"remove": "Remove",
+"getForFree": "Get For Free",
+"notApplicable": "This promo code doesn't apply to {planName} plan"
+},
 
       "promoCode": {
     "applyButton": "Apply",
@@ -1566,6 +1591,41 @@
 "homePagePlan":{
   "heading":"Choose Your Plan",
   "title":" Select the perfect plan to honor your loved ones"
+},
+"plansTranslations": {
+  "minimal": {
+    "name": "Minimal Plan",
+    "description": "1 photo + biography",
+    "features": {
+      "photoUploads": "1 Photo Uploads",
+      "slideshow": "Photo Slideshow",
+      "videoUploads": "Video Uploads (Max 0s)",
+      "documentUpload": "Document Upload",
+      "familyTree": "Family Tree"
+    }
+  },
+  "medium": {
+    "name": "Medium Plan",
+    "description": "Up to 10 photos per memorial with slideshow",
+    "features": {
+      "photoUploads": "10 Photo Uploads",
+      "slideshow": "Photo Slideshow",
+      "videoUploads": "Video Uploads (Max 0s)",
+      "documentUpload": "Document Upload",
+      "familyTree": "Family Tree"
+    }
+  },
+  "premium": {
+    "name": "Premium Plan",
+    "description": "Unlimited photos, slideshow, videos",
+    "features": {
+      "photoUploads": "Unlimited Photo Uploads",
+      "slideshow": "Photo Slideshow",
+      "videoUploads": "Video Uploads (Max 60s)",
+      "documentUpload": "Document Upload",
+      "familyTree": "Family Tree"
+    }
+  }
 },
 "help":{
 "helpButton":"help"
@@ -2030,6 +2090,42 @@
       "deleteConfirm": "Are you sure you want to delete this sticker option?"
     }
   },
+  "testimonialForm": {
+    "title": "Share Your Experience",
+    "description": "Help others by sharing your experience with our memorial services",
+    "form": {
+      "fullName": "Full Name *",
+      "fullNamePlaceholder": "Enter your full name",
+      "emailAddress": "Email Address *",
+      "emailPlaceholder": "Enter your email address",
+      "location": "Location *",
+      "locationPlaceholder": "City, Country",
+      "rating": "Rating *",
+      "testimonial": "Your Testimonial *",
+      "testimonialPlaceholder": "Share your experience with our memorial services...",
+      "characterCount": "characters",
+      "submitButton": "Submit Testimonial",
+      "submitting": "Submitting...",
+      "submitAnother": "Submit Another Testimonial"
+    },
+    "success": {
+      "title": "Thank You!",
+      "message": "Your testimonial has been submitted successfully. It will be reviewed before being published."
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "locationRequired": "Location is required",
+      "testimonialRequired": "Testimonial text is required",
+      "testimonialMinLength": "Testimonial must be at least 10 characters long"
+    },
+    "button": "Share Your Experience",
+    "noTestimonials": {
+      "title": "No Testimonials Yet",
+      "message": "Be the first to share your experience with our memorial services"
+    }
+  },
   "stickerPurchase": {
     "header": {
       "back": "Back to Dashboard",
@@ -2096,6 +2192,55 @@
       "orderCreated": "Order created successfully! Initiating payment...",
       "paymentInitiationFailed": "Payment initiation failed. Please try again.",
       "orderCreationFailed": "Failed to create order"
+    }
+  },
+  "adminTestimonials": {
+    "header": {
+      "title": "Testimonials Management"
+    },
+    "table": {
+      "headers": {
+        "testimonial": "Testimonials",
+        "submitted": "Submitted"
+      },
+      "status": {
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "pending": "Pending"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "markPending": "Mark as Pending",
+        "delete": "Delete"
+      }
+    },
+    "search": {
+      "placeholder": "Search testimonials...",
+      "filterByStatus": "Filter by status",
+      "allStatus": "All Status",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "empty": {
+      "title": "No Testimonials Found",
+      "description": "There are no testimonials to display at the moment."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {currentPage} of {totalPages}"
+    },
+    "settings": {
+      "title": "Testimonials Settings",
+      "enableSection": "Enable Testimonials Section",
+      "enableSectionDescription": "Allow users to submit testimonials on the website",
+      "autoApprove": "Auto-approve Testimonials",
+      "autoApproveDescription": "Automatically approve new testimonials without manual review",
+      "requireEmail": "Require Email Address",
+      "requireEmailDescription": "Make email address mandatory for testimonial submissions",
+      "maxDisplay": "Maximum Display Count"
     }
   }
 

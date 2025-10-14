@@ -12,6 +12,7 @@ import TestimonialForm from "../components/TestimonialForm";
 const Testimonials = () => {
   const { t } = useTranslation();
   const testimonialsTranslations = t("testimonials");
+  const testimonialFormTranslations = t("testimonialForm");
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,9 +169,11 @@ const Testimonials = () => {
             className="text-center py-12"
           >
             <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Testimonials Yet</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              {testimonialFormTranslations?.noTestimonials?.title || "No Testimonials Yet"}
+            </h3>
             <p className="text-gray-600 mb-6">
-              Be the first to share your experience with our memorial services
+              {testimonialFormTranslations?.noTestimonials?.message || "Be the first to share your experience with our memorial services"}
             </p>
           </motion.div>
         )}
@@ -189,7 +192,7 @@ const Testimonials = () => {
               className="bg-[#547455] hover:bg-[#243b31] text-white px-8 py-3 rounded-lg"
             >
               <MessageCircle className="h-5 w-5 mr-2" />
-              Share Your Experience
+              {testimonialFormTranslations?.button || "Share Your Experience"}
             </Button>
           </motion.div>
         )}

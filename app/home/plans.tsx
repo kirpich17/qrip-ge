@@ -39,61 +39,62 @@ type Plan = {
 const Plans = () => {
   const { t } = useTranslation();
   const plansTranslations = t("homePagePlan");
-    const router = useRouter();
+  const planSelectionTranslations = t("planSelection");
+  const plansTranslationsData = t("plansTranslations");
+  const router = useRouter();
 
-  // Sample plans data matching the image
   const plans: Plan[] = [
     {
       id: "1",
-      name: "Minimal Plan",
-      description: "1 photo + biography",
+      name: plansTranslationsData?.minimal.name || "Minimal Plan",
+      description: plansTranslationsData?.minimal.description || "1 photo + biography",
       price: 5,
       planType: "minimal",
       features: [
-        { text: "1 Photo Uploads", included: true },
-        { text: "Photo Slideshow", included: false },
-        { text: "Video Uploads (Max 0s)", included: false },
-        { text: "Document Upload", included: false },
-        { text: "Family Tree", included: true },
+        { text: plansTranslationsData?.minimal.features.photoUploads || "1 Photo Uploads", included: true },
+        { text: plansTranslationsData?.minimal.features.slideshow || "Photo Slideshow", included: false },
+        { text: plansTranslationsData?.minimal.features.videoUploads || "Video Uploads (Max 0s)", included: false },
+        { text: plansTranslationsData?.minimal.features.documentUpload || "Document Upload", included: false },
+        { text: plansTranslationsData?.minimal.features.familyTree || "Family Tree", included: true },
       ],
     },
     {
       id: "2",
-      name: "Medium Plan",
-      description: "Up to 10 photos per memorial with slideshow",
+      name: plansTranslationsData?.medium.name || "Medium Plan",
+      description: plansTranslationsData?.medium.description || "Up to 10 photos per memorial with slideshow",
       price: 15,
       planType: "medium",
       isPopular: true,
       features: [
-        { text: "10 Photo Uploads", included: true },
-        { text: "Photo Slideshow", included: true },
-        { text: "Video Uploads (Max 0s)", included: false },
-        { text: "Document Upload", included: false },
-        { text: "Family Tree", included: true },
+        { text: plansTranslationsData?.medium.features.photoUploads || "10 Photo Uploads", included: true },
+        { text: plansTranslationsData?.medium.features.slideshow || "Photo Slideshow", included: true },
+        { text: plansTranslationsData?.medium.features.videoUploads || "Video Uploads (Max 0s)", included: false },
+        { text: plansTranslationsData?.medium.features.documentUpload || "Document Upload", included: false },
+        { text: plansTranslationsData?.medium.features.familyTree || "Family Tree", included: true },
       ],
     },
     {
       id: "3",
-      name: "Premium Plan",
-      description: "Unlimited photos, slideshow, videos",
+      name: plansTranslationsData?.premium.name || "Premium Plan",
+      description: plansTranslationsData?.premium.description || "Unlimited photos, slideshow, videos",
       price: 30,
       planType: "premium",
       features: [
-        { text: "Unlimited Photo Uploads", included: true },
-        { text: "Photo Slideshow", included: true },
-        { text: "Video Uploads (Max 60s)", included: true },
-        { text: "Document Upload", included: true },
-        { text: "Family Tree", included: true },
+        { text: plansTranslationsData?.premium.features.photoUploads || "Unlimited Photo Uploads", included: true },
+        { text: plansTranslationsData?.premium.features.slideshow || "Photo Slideshow", included: true },
+        { text: plansTranslationsData?.premium.features.videoUploads || "Video Uploads (Max 60s)", included: true },
+        { text: plansTranslationsData?.premium.features.documentUpload || "Document Upload", included: true },
+        { text: plansTranslationsData?.premium.features.familyTree || "Family Tree", included: true },
       ],
     },
   ];
 
   const getButtonText = (planType: string) => {
     switch (planType) {
-      case "minimal": return "Get Started";
-      case "medium": return "Select Plan";
-      case "premium": return "Go Premium";
-      default: return "Choose Plan";
+      case "minimal": return planSelectionTranslations?.cta.getStarted || "Get Started";
+      case "medium": return planSelectionTranslations?.cta.medium || "Select Plan";
+      case "premium": return planSelectionTranslations?.cta.goPremium || "Go Premium";
+      default: return planSelectionTranslations?.cta.selectPlan || "Select Plan";
     }
   };
 
@@ -101,12 +102,11 @@ const Plans = () => {
     switch (planType) {
       case "premium": return Crown;
       case "medium": return Zap;
-      case "minimal": 
-      default: 
+      case "minimal":
+      default:
         return Star;
     }
   };
-
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
@@ -119,14 +119,14 @@ const Plans = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            {plansTranslations.heading}
+            {plansTranslations?.heading || "Choose Your Plan"}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-               {plansTranslations.title}
+            {plansTranslations?.title || "Select the perfect plan to honor your loved ones"}
           </p>
         </motion.div>
 
-       <ManageSubscriptionPlans />
+        <ManageSubscriptionPlans />
       </div>
     </section>
   );

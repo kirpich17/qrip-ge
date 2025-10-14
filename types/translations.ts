@@ -514,6 +514,88 @@ export interface MemorialTranslations {
   };
 }
 
+export interface PlansTranslations {
+  minimal: {
+    name: string;
+    description: string;
+    features: {
+      photoUploads: string;
+      slideshow: string;
+      videoUploads: string;
+      documentUpload: string;
+      familyTree: string;
+    };
+  };
+  medium: {
+    name: string;
+    description: string;
+    features: {
+      photoUploads: string;
+      slideshow: string;
+      videoUploads: string;
+      documentUpload: string;
+      familyTree: string;
+    };
+  };
+  premium: {
+    name: string;
+    description: string;
+    features: {
+      photoUploads: string;
+      slideshow: string;
+      videoUploads: string;
+      documentUpload: string;
+      familyTree: string;
+    };
+  };
+}
+
+export interface HomePagePlanTranslations {
+  heading: string;
+  title: string;
+}
+
+export interface PlanSelectionTranslations {
+  loading?: string;
+  error?: string;
+  paymentError?: {
+    initiate: string;
+    process: string;
+  };
+  badgePopular?: string;
+  selectDuration?: string;
+  features?: {
+    photoUploads: string;
+    unlimitedPhotos: string;
+    slideshow: string;
+    videoUploads: string;
+    documentUpload: string;
+    familyTree: string;
+  };
+  cta: {
+    processing?: string;
+    getStarted: string;
+    medium: string;
+    goPremium: string;
+    selectPlan: string;
+  };
+  preselected?: {
+    title: string;
+    description: string;
+    badge: string;
+  };
+  promoCode?: {
+    title: string;
+    applied: string;
+    placeholder: string;
+    applying: string;
+    apply: string;
+    remove: string;
+    getForFree: string;
+    notApplicable: string;
+  };
+}
+
 export interface Translations {
   header: HeaderTranslations;
   common: CommonTranslations;
@@ -528,4 +610,7 @@ export interface Translations {
   stickerPurchase: StickerPurchaseTranslations;
   createMemorial: any;
   editMemorial: any;
+  plansTranslations: PlansTranslations;
+  homePagePlan: HomePagePlanTranslations;
+  planSelection: PlanSelectionTranslations;
 }

@@ -878,19 +878,19 @@ export default function EditMemorialPage() {
                     <div className="space-y-4">
                       <Label className="text-lg font-semibold flex items-center">
                         <Eye className="h-5 w-5 mr-2" />
-                        Display Settings
+                        {editMemorialTranslations?.displaySettings?.title || "Display Settings"}
                       </Label>
                       <p className="text-sm text-gray-500">
-                        Control how your memorial is displayed to visitors
+                        {editMemorialTranslations?.displaySettings?.description || "Control how your memorial is displayed to visitors"}
                       </p>
                       
                       <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="space-y-1">
                           <Label htmlFor="slideshow-toggle" className="text-base font-medium">
-                            Enable Photo Slideshow
+                            {editMemorialTranslations?.displaySettings?.enableSlideshow || "Enable Photo Slideshow"}
                           </Label>
                           <p className="text-sm text-gray-500">
-                            Allow visitors to see a slideshow of photos instead of a static cover image
+                            {editMemorialTranslations?.displaySettings?.slideshowDescription || "Allow visitors to see a slideshow of photos instead of a static cover image"}
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">

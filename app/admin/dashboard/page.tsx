@@ -223,26 +223,26 @@ function AdminDashboardPage() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Quick Access</CardTitle>
+              <CardTitle>{admindashTranslations.quickAccess?.title || "Quick Access"}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Link href="/admin/testimonials">
                   <Button variant="outline" className="w-full justify-start">
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    Manage Testimonials
+                    {admindashTranslations.quickAccess?.manageTestimonials || "Manage Testimonials"}
                   </Button>
                 </Link>
                 <Link href="/admin/adminsubscription">
                   <Button variant="outline" className="w-full justify-start">
                     <Package className="h-4 w-4 mr-2" />
-                    Subscription Plans
+                    {admindashTranslations.quickAccess?.subscriptionPlans || "Subscription Plans"}
                   </Button>
                 </Link>
                 <Link href="/admin/stickers">
                   <Button variant="outline" className="w-full justify-start">
                     <QrCode className="h-4 w-4 mr-2" />
-                    QR StickersSelect Duration
+                    {admindashTranslations.quickAccess?.qrStickers || "QR Stickers"}
                   </Button>
                 </Link>
               </div>

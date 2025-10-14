@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-toastify";
 import { submitTestimonial, TestimonialSubmission } from "@/services/testimonialService";
+import { useTranslation } from "@/hooks/useTranslate";
 
 interface TestimonialFormProps {
   onSuccess?: () => void;
@@ -16,6 +17,9 @@ interface TestimonialFormProps {
 
 
 const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
+  const { t } = useTranslation();
+  const testimonialTranslations = t("testimonialForm");
+  
   const [formData, setFormData] = useState<TestimonialSubmission>({
     name: "",
     email: "",
@@ -54,23 +58,23 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
     const newErrors: Partial<TestimonialSubmission> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = testimonialTranslations?.errors?.nameRequired || "Name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = testimonialTranslations?.errors?.emailRequired || "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = testimonialTranslations?.errors?.emailInvalid || "Please enter a valid email";
     }
 
     if (!formData.location.trim()) {
-      newErrors.location = "Location is required";
+      newErrors.location = testimonialTranslations?.errors?.locationRequired || "Location is required";
     }
 
     if (!formData.text.trim()) {
-      newErrors.text = "Testimonial text is required";
+      newErrors.text = testimonialTranslations?.errors?.testimonialRequired || "Testimonial text is required";
     } else if (formData.text.trim().length < 10) {
-      newErrors.text = "Testimonial must be at least 10 characters long";
+      newErrors.text = testimonialTranslations?.errors?.testimonialMinLength || "Testimonial must be at least 10 characters long";
     }
 
     setErrors(newErrors);
@@ -120,16 +124,18 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
         className="text-center py-12"
       >
         <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          {testimonialTranslations?.success?.title || "Thank You!"}
+        </h3>
         <p className="text-gray-600 mb-6">
-          Your testimonial has been submitted successfully. It will be reviewed before being published.
+          {testimonialTranslations?.success?.message || "Your testimonial has been submitted successfully. It will be reviewed before being published."}
         </p>
         <Button
           onClick={() => setIsSubmitted(false)}
           variant="outline"
           className="bg-[#547455] text-white hover:bg-[#243b31]"
         >
-          Submit Another Testimonial
+          {testimonialTranslations?.form?.submitAnother || "Submit Another Testimonial"}
         </Button>
       </motion.div>
     );
@@ -144,10 +150,10 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center text-gray-900">
-            Share Your Experience
+            {testimonialTranslations?.title || "Share Your Experience"}
           </CardTitle>
           <p className="text-center text-gray-600">
-            Help others by sharing your experience with our memorial services
+            {testimonialTranslations?.description || "Help others by sharing your experience with our memorial services"}
           </p>
         </CardHeader>
         <CardContent>
@@ -155,7 +161,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
             {/* Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name *
+                {testimonialTranslations?.form?.fullName || "Full Name *"}
               </label>
               <Input
                 id="name"
@@ -164,7 +170,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
                 value={formData.name}
                 onChange={handleInputChange}
                 className={errors.name ? "border-red-500" : ""}
-                placeholder="Enter your full name"
+                placeholder={testimonialTranslations?.form?.fullNamePlaceholder || "Enter your full name"}
               />
               {errors.name && (
                 <p className="text-red-500 text-sm mt-1">{errors.name}</p>
@@ -174,7 +180,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address *
+                {testimonialTranslations?.form?.emailAddress || "Email Address *"}
               </label>
               <Input
                 id="email"
@@ -183,7 +189,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
                 value={formData.email}
                 onChange={handleInputChange}
                 className={errors.email ? "border-red-500" : ""}
-                placeholder="Enter your email address"
+                placeholder={testimonialTranslations?.form?.emailPlaceholder || "Enter your email address"}
               />
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -193,7 +199,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
             {/* Location */}
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                Location *
+                {testimonialTranslations?.form?.location || "Location *"}
               </label>
               <Input
                 id="location"
@@ -202,7 +208,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
                 value={formData.location}
                 onChange={handleInputChange}
                 className={errors.location ? "border-red-500" : ""}
-                placeholder="City, Country"
+                placeholder={testimonialTranslations?.form?.locationPlaceholder || "City, Country"}
               />
               {errors.location && (
                 <p className="text-red-500 text-sm mt-1">{errors.location}</p>
@@ -212,7 +218,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
             {/* Rating */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rating *
+                {testimonialTranslations?.form?.rating || "Rating *"}
               </label>
               <div className="flex space-x-1">
                 {[1, 2, 3, 4, 5].map((rating) => (
@@ -237,7 +243,7 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
             {/* Testimonial Text */}
             <div>
               <label htmlFor="text" className="block text-sm font-medium text-gray-700 mb-2">
-                Your Testimonial *
+                {testimonialTranslations?.form?.testimonial || "Your Testimonial *"}
               </label>
               <Textarea
                 id="text"
@@ -245,14 +251,14 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
                 value={formData.text}
                 onChange={handleInputChange}
                 className={errors.text ? "border-red-500" : ""}
-                placeholder="Share your experience with our memorial services..."
+                placeholder={testimonialTranslations?.form?.testimonialPlaceholder || "Share your experience with our memorial services..."}
                 rows={4}
               />
               {errors.text && (
                 <p className="text-red-500 text-sm mt-1">{errors.text}</p>
               )}
               <p className="text-gray-500 text-sm mt-1">
-                {formData.text.length}/500 characters
+                {formData.text.length}/500 {testimonialTranslations?.form?.characterCount || "characters"}
               </p>
             </div>
 
@@ -265,12 +271,12 @@ const TestimonialForm = ({ onSuccess }: TestimonialFormProps) => {
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Submitting...
+                  {testimonialTranslations?.form?.submitting || "Submitting..."}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Submit Testimonial
+                  {testimonialTranslations?.form?.submitButton || "Submit Testimonial"}
                 </>
               )}
             </Button>

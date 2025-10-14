@@ -698,6 +698,12 @@
     },
     "familyTree": {
       "updateFamilyMember": "ოჯახის წევრის განახლება"
+    },
+    "displaySettings": {
+      "title": "ჩვენების პარამეტრები",
+      "description": "აკონტროლეთ როგორ ჩნდება თქვენი მემორიალი სტუმრებისთვის",
+      "enableSlideshow": "ფოტოების სლაიდშოუს ჩართვა",
+      "slideshowDescription": "სტუმრებს შეუძლიათ ნახონ ფოტოების სლაიდშოუ სტატიკური საფარის ფოტოს ნაცვლად"
     }
   },
   "directory": {
@@ -1054,6 +1060,12 @@
       "thisMonth": "ამ თვეში",
       "analyticsText": "QR კოდების ანალიტიკა და მართვის ინსტრუმენტები"
     },
+    "quickAccess": {
+      "title": "სწრაფი წვდომა",
+      "manageTestimonials": "მიმოხილვების მართვა",
+      "subscriptionPlans": "გამოწერის გეგმები",
+      "qrStickers": "QR სტიკერები"
+    },
     "analytics": {
       "platformGrowth": "პლატფორმის ზრდა",
       "revenueTrends": "შემოსავლების ტენდენციები"
@@ -1367,18 +1379,35 @@
     },
     "badgePopular": "პოპულარული",
     "oneTimePayment": "/ ერთჯერადი",
-    "features": {
-      "photoUploads": "{count} ფოტოს ატვირთვა",
-      "unlimitedPhotos": "ულიმიტო ფოტოების ატვირთვა",
-      "slideshow": "ფოტო სლაიდშოუ",
-      "videoUploads": "ვიდეოს ატვირთვა (მაქს. {duration}წმ)"
-    },
+"features": {
+"photoUploads": "{count} ფოტოს ატვირთვა",
+"unlimitedPhotos": "ულიმიტო ფოტოების ატვირთვა",
+"slideshow": "ფოტო სლაიდშოუ",
+"videoUploads": "ვიდეოს ატვირთვა (მაქს. {duration}წმ)",
+"documentUpload": "დოკუმენტის ატვირთვა",
+"familyTree": "ოჯახის ხე"
+},
     "cta": {
       "processing": "მუშავდება...",
       "selectPlan": "პაკეტის არჩევა",
-       "getStarted": "დაწყება",
-  "goPremium": "პრემიუმზე გადასვლა",
-  "medium": "გეგმის არჩევა"
+      "getStarted": "დაწყება",
+      "goPremium": "პრემიუმზე გადასვლა",
+      "medium": "გეგმის არჩევა"
+    },
+    "preselected": {
+      "title": "პაკეტი წინასწარ არჩეულია",
+      "description": "თქვენი მემორიალი შეიქმნა და პაკეტი წინასწარ აირჩია. შეგიძლიათ გადახდის გაგრძელება ან სხვა პაკეტის არჩევა ქვემოთ.",
+      "badge": "წინასწარ არჩეული"
+    },
+    "promoCode": {
+      "title": "პრომო კოდი",
+      "applied": "გამოყენებული:",
+      "placeholder": "შეიყვანეთ პრომო კოდი",
+      "applying": "მუშავდება...",
+      "apply": "გამოყენება",
+      "remove": "წაშლა",
+      "getForFree": "უფასოდ მიღება",
+      "notApplicable": "ეს პრომო კოდი არ ვრცელდება {planName} პაკეტზე"
     },
 
       "promoCode": {
@@ -1551,7 +1580,42 @@
   "homePagePlan":{
     "heading": "აირჩიეთ თქვენი გეგმა",
       "title": "აირჩიეთ იდეალური გეგმა თქვენი საყვარელი ადამიანების პატივსაცემად"
-},
+  },
+  "plansTranslations": {
+    "minimal": {
+      "name": "მინიმალური გეგმა",
+      "description": "1 ფოტო + ბიოგრაფია",
+      "features": {
+        "photoUploads": "1 ფოტოს ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "videoUploads": "ვიდეოს ატვირთვა (მაქს. 0წმ)",
+        "documentUpload": "დოკუმენტის ატვირთვა",
+        "familyTree": "ოჯახის ხე"
+      }
+    },
+    "medium": {
+      "name": "საშუალო გეგმა",
+      "description": "10 ფოტომდე მემორიალზე სლაიდშოუთი",
+      "features": {
+        "photoUploads": "10 ფოტოს ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "videoUploads": "ვიდეოს ატვირთვა (მაქს. 0წმ)",
+        "documentUpload": "დოკუმენტის ატვირთვა",
+        "familyTree": "ოჯახის ხე"
+      }
+    },
+    "premium": {
+      "name": "პრემიუმ გეგმა",
+      "description": "ულიმიტო ფოტოები, სლაიდშოუ, ვიდეოები",
+      "features": {
+        "photoUploads": "ულიმიტო ფოტოების ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "videoUploads": "ვიდეოს ატვირთვა (მაქს. 60წმ)",
+        "documentUpload": "დოკუმენტის ატვირთვა",
+        "familyTree": "ოჯახის ხე"
+      }
+    }
+  },
 "help":{
    "helpButton": "დახმარება"
 }
@@ -2016,6 +2080,42 @@
         "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ სტიკერის ვარიანტის წაშლა?"
       }
     },
+    "testimonialForm": {
+      "title": "გაუზიარეთ თქვენი გამოცდილება",
+      "description": "დაეხმარეთ სხვებს თქვენი გამოცდილების გაზიარებით ჩვენი მემორიალური სერვისების შესახებ",
+      "form": {
+        "fullName": "სრული სახელი *",
+        "fullNamePlaceholder": "შეიყვანეთ თქვენი სრული სახელი",
+        "emailAddress": "ელ. ფოსტის მისამართი *",
+        "emailPlaceholder": "შეიყვანეთ თქვენი ელ. ფოსტის მისამართი",
+        "location": "მდებარეობა *",
+        "locationPlaceholder": "ქალაქი, ქვეყანა",
+        "rating": "რეიტინგი *",
+        "testimonial": "თქვენი მიმოხილვა *",
+        "testimonialPlaceholder": "გაუზიარეთ თქვენი გამოცდილება ჩვენი მემორიალური სერვისების შესახებ...",
+        "characterCount": "სიმბოლო",
+        "submitButton": "მიმოხილვის გაგზავნა",
+        "submitting": "გაგზავნა...",
+        "submitAnother": "კიდევ ერთი მიმოხილვის გაგზავნა"
+      },
+      "success": {
+        "title": "გმადლობთ!",
+        "message": "თქვენი მიმოხილვა წარმატებით გაიგზავნა. ის განხილვის შემდეგ გამოქვეყნდება."
+      },
+      "errors": {
+        "nameRequired": "სახელი აუცილებელია",
+        "emailRequired": "ელ. ფოსტა აუცილებელია",
+        "emailInvalid": "გთხოვთ შეიყვანოთ სწორი ელ. ფოსტის მისამართი",
+        "locationRequired": "მდებარეობა აუცილებელია",
+        "testimonialRequired": "მიმოხილვის ტექსტი აუცილებელია",
+        "testimonialMinLength": "მიმოხილვა უნდა იყოს მინიმუმ 10 სიმბოლო"
+      },
+      "button": "გაუზიარეთ თქვენი გამოცდილება",
+      "noTestimonials": {
+        "title": "ჯერ არ არის მიმოხილვები",
+        "message": "იყავით პირველი, ვინც გაუზიარებს თქვენს გამოცდილებას ჩვენი მემორიალური სერვისების შესახებ"
+      }
+    },
     "stickerPurchase": {
       "header": {
         "back": "დაშბორდზე დაბრუნება",
@@ -2081,7 +2181,56 @@
         "fillShippingDetails": "გთხოვთ, შეავსოთ ყველა საჭირო მიწოდების დეტალი",
         "orderCreated": "შეკვეთა წარმატებით შეიქმნა! გადახდის ინიციაცია...",
         "paymentInitiationFailed": "გადახდის ინიციაცია ვერ მოხერხდა. გთხოვთ, კვლავ სცადოთ.",
-        "orderCreationFailed": "შეკვეთის შექმნა ვერ მოხერხდა"
-      }
+      "orderCreationFailed": "შეკვეთის შექმნა ვერ მოხერხდა"
     }
+  },
+  "adminTestimonials": {
+    "header": {
+      "title": "მოწმობების მართვა"
+    },
+    "table": {
+      "headers": {
+        "testimonial": "მოწმობები",
+        "submitted": "წარდგენილი"
+      },
+      "status": {
+        "approved": "დამტკიცებული",
+        "rejected": "უარყოფილი",
+        "pending": "მოლოდინში"
+      },
+      "actions": {
+        "approve": "დამტკიცება",
+        "reject": "უარყოფა",
+        "markPending": "მოლოდინში მონიშვნა",
+        "delete": "წაშლა"
+      }
+    },
+    "search": {
+      "placeholder": "მოწმობების ძებნა...",
+      "filterByStatus": "სტატუსის მიხედვით ფილტრი",
+      "allStatus": "ყველა სტატუსი",
+      "pending": "მოლოდინში",
+      "approved": "დამტკიცებული",
+      "rejected": "უარყოფილი"
+    },
+    "empty": {
+      "title": "მოწმობები ვერ მოიძებნა",
+      "description": "ამჟამად არ არის მოწმობები ჩასანახად."
+    },
+    "pagination": {
+      "previous": "წინა",
+      "next": "შემდეგი",
+      "pageInfo": "გვერდი {currentPage} {totalPages}-დან"
+    },
+    "settings": {
+      "title": "მოწმობების პარამეტრები",
+      "enableSection": "მოწმობების სექციის ჩართვა",
+      "enableSectionDescription": "მომხმარებლებს ვებსაიტზე მოწმობების წარდგენის ნებართვა",
+      "autoApprove": "მოწმობების ავტომატური დამტკიცება",
+      "autoApproveDescription": "ახალი მოწმობების ხელით გადახედვის გარეშე ავტომატური დამტკიცება",
+      "requireEmail": "ელ.ფოსტის მოთხოვნა",
+      "requireEmailDescription": "მოწმობების წარდგენისთვის ელ.ფოსტის მისამართის სავალდებულო გახადვა",
+      "maxDisplay": "მაქსიმალური ჩვენების რაოდენობა"
+    }
+  }
 }

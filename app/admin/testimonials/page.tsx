@@ -32,6 +32,7 @@ import {
   SiteSettings
 } from "@/services/testimonialService";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -40,6 +41,8 @@ const fadeInUp = {
 };
 
 function TestimonialsAdmin() {
+  const { t } = useTranslation();
+  const adminTestimonialsTranslations = t("adminTestimonials");
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -142,11 +145,11 @@ function TestimonialsAdmin() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>;
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />{adminTestimonialsTranslations?.table?.status?.approved}</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
+        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />{adminTestimonialsTranslations?.table?.status?.rejected}</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />{adminTestimonialsTranslations?.table?.status?.pending}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -175,7 +178,7 @@ function TestimonialsAdmin() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
               <MessageCircle className="h-8 w-8 text-[#547455]" />
-              <h1 className="text-2xl font-bold text-gray-900">Testimonials Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{adminTestimonialsTranslations?.header?.title}</h1>
             </div>
           </div>
         </div>
@@ -184,8 +187,8 @@ function TestimonialsAdmin() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="testimonials" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="testimonials">{adminTestimonialsTranslations?.table?.headers?.testimonial}</TabsTrigger>
+            <TabsTrigger value="settings">{adminTestimonialsTranslations?.settings?.title}</TabsTrigger>
           </TabsList>
 
           {/* Testimonials Tab */}
@@ -197,23 +200,23 @@ function TestimonialsAdmin() {
                   <div className="flex-1">
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        placeholder="Search testimonials..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
+              <Input
+                placeholder={adminTestimonialsTranslations?.search?.placeholder}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
                     </div>
                   </div>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-full md:w-48">
-                      <SelectValue placeholder="Filter by status" />
+                      <SelectValue placeholder={adminTestimonialsTranslations?.search?.filterByStatus} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="all">{adminTestimonialsTranslations?.search?.allStatus}</SelectItem>
+                      <SelectItem value="pending">{adminTestimonialsTranslations?.search?.pending}</SelectItem>
+                      <SelectItem value="approved">{adminTestimonialsTranslations?.search?.approved}</SelectItem>
+                      <SelectItem value="rejected">{adminTestimonialsTranslations?.search?.rejected}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -241,8 +244,8 @@ function TestimonialsAdmin() {
                 <Card>
                   <CardContent className="p-12 text-center">
                     <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No testimonials found</h3>
-                    <p className="text-gray-600">No testimonials match your current filters.</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{adminTestimonialsTranslations?.empty?.title}</h3>
+                    <p className="text-gray-600">{adminTestimonialsTranslations?.empty?.description}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -267,9 +270,9 @@ function TestimonialsAdmin() {
                             
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               {renderStars(testimonial.rating)}
-                              <span>Submitted: {new Date(testimonial.submittedAt).toLocaleDateString()}</span>
+                              <span>{adminTestimonialsTranslations?.table?.headers?.submitted}: {new Date(testimonial.submittedAt).toLocaleDateString()}</span>
                               {testimonial.approvedAt && (
-                                <span>Approved: {new Date(testimonial.approvedAt).toLocaleDateString()}</span>
+                                <span>{adminTestimonialsTranslations?.table?.status?.approved}: {new Date(testimonial.approvedAt).toLocaleDateString()}</span>
                               )}
                             </div>
                           </div>
@@ -284,7 +287,7 @@ function TestimonialsAdmin() {
                                   className="bg-green-600 hover:bg-green-700"
                                 >
                                   <CheckCircle className="h-4 w-4 mr-1" />
-                                  Approve
+                                  {adminTestimonialsTranslations?.table?.actions?.approve}
                                 </Button>
                                 <Button
                                   size="sm"
@@ -293,7 +296,7 @@ function TestimonialsAdmin() {
                                   disabled={isUpdating}
                                 >
                                   <XCircle className="h-4 w-4 mr-1" />
-                                  Reject
+                                  {adminTestimonialsTranslations?.table?.actions?.reject}
                                 </Button>
                               </>
                             )}
@@ -305,7 +308,7 @@ function TestimonialsAdmin() {
                                 disabled={isUpdating}
                               >
                                 <Clock className="h-4 w-4 mr-1" />
-                                Mark Pending
+                                {adminTestimonialsTranslations?.table?.actions?.markPending}
                               </Button>
                             )}
                             <Button
@@ -316,7 +319,7 @@ function TestimonialsAdmin() {
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4 mr-1" />
-                              Delete
+                              {adminTestimonialsTranslations?.table?.actions?.delete}
                             </Button>
                           </div>
                         </div>
@@ -335,17 +338,17 @@ function TestimonialsAdmin() {
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
-                  Previous
+                  {adminTestimonialsTranslations?.pagination?.previous}
                 </Button>
                 <span className="flex items-center px-4 text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
+                  {adminTestimonialsTranslations?.pagination?.pageInfo?.replace('{currentPage}', currentPage.toString()).replace('{totalPages}', totalPages.toString())}
                 </span>
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Next
+                  {adminTestimonialsTranslations?.pagination?.next}
                 </Button>
               </div>
             )}
@@ -357,7 +360,7 @@ function TestimonialsAdmin() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
-                  Testimonials Settings
+                  {adminTestimonialsTranslations?.settings?.title}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -365,8 +368,8 @@ function TestimonialsAdmin() {
                   <>
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">Enable Testimonials Section</h3>
-                        <p className="text-sm text-gray-600">Show/hide the testimonials section on the homepage</p>
+                        <h3 className="font-medium text-gray-900">{adminTestimonialsTranslations?.settings?.enableSection}</h3>
+                        <p className="text-sm text-gray-600">{adminTestimonialsTranslations?.settings?.enableSectionDescription}</p>
                       </div>
                       <Switch
                         checked={settings.testimonialsEnabled}
@@ -377,8 +380,8 @@ function TestimonialsAdmin() {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">Auto-approve Testimonials</h3>
-                        <p className="text-sm text-gray-600">Automatically approve new testimonials without review</p>
+                        <h3 className="font-medium text-gray-900">{adminTestimonialsTranslations?.settings?.autoApprove}</h3>
+                        <p className="text-sm text-gray-600">{adminTestimonialsTranslations?.settings?.autoApproveDescription}</p>
                       </div>
                       <Switch
                         checked={settings.testimonialsAutoApprove}
@@ -389,8 +392,8 @@ function TestimonialsAdmin() {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">Require Email</h3>
-                        <p className="text-sm text-gray-600">Require email address for testimonial submissions</p>
+                        <h3 className="font-medium text-gray-900">{adminTestimonialsTranslations?.settings?.requireEmail}</h3>
+                        <p className="text-sm text-gray-600">{adminTestimonialsTranslations?.settings?.requireEmailDescription}</p>
                       </div>
                       <Switch
                         checked={settings.testimonialsRequireEmail}
@@ -401,7 +404,7 @@ function TestimonialsAdmin() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Maximum Testimonials to Display
+                        {adminTestimonialsTranslations?.settings?.maxDisplay}
                       </label>
                       <Select
                         value={settings.testimonialsMaxDisplay.toString()}

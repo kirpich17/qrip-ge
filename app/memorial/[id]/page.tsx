@@ -324,7 +324,11 @@ export default function MemorialPage() {
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSlideshowPlaying, setIsSlideshowPlaying] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const slideshowIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
   const isScan = searchParams.get("isScan") === "true";
 
@@ -374,6 +378,33 @@ export default function MemorialPage() {
       isVideoPlaying ? videoRef.current.play() : videoRef.current.pause();
     }
   }, [isVideoPlaying]);
+
+  // Slideshow functionality
+  useEffect(() => {
+    if (isSlideshowPlaying && apiMemorial?.photoGallery && apiMemorial.photoGallery.length > 1) {
+      slideshowIntervalRef.current = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % apiMemorial.photoGallery!.length);
+      }, 3000); // 3 seconds per slide
+    } else {
+      if (slideshowIntervalRef.current) {
+        clearInterval(slideshowIntervalRef.current);
+        slideshowIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (slideshowIntervalRef.current) {
+        clearInterval(slideshowIntervalRef.current);
+      }
+    };
+  }, [isSlideshowPlaying, apiMemorial?.photoGallery?.length]);
+
+  // Auto-start slideshow when there are multiple images
+  useEffect(() => {
+    if (apiMemorial?.photoGallery && apiMemorial.photoGallery.length > 1 && !isSlideshowPlaying) {
+      setIsSlideshowPlaying(true);
+    }
+  }, [apiMemorial?.photoGallery?.length, isSlideshowPlaying]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -518,6 +549,33 @@ export default function MemorialPage() {
     );
   };
 
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && apiMemorial.photoGallery?.length > 1) {
+      nextImage();
+      setIsSlideshowPlaying(false); // Pause slideshow on manual interaction
+    }
+    if (isRightSwipe && apiMemorial.photoGallery?.length > 1) {
+      prevImage();
+      setIsSlideshowPlaying(false); // Pause slideshow on manual interaction
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -638,18 +696,53 @@ export default function MemorialPage() {
 
                       <TabsContent value="photos" className="mt-6">
                         <div className="space-y-4">
+                          {/* Slideshow Controls */}
+                          {apiMemorial.photoGallery?.length > 1 && (
+                            <div className="flex items-center justify-center bg-gray-50 p-3 rounded-lg">
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={prevImage}
+                                  disabled={!apiMemorial.photoGallery?.length}
+                                  className="flex items-center space-x-1"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                  <span className="hidden sm:inline text-xs">Prev</span>
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={nextImage}
+                                  disabled={!apiMemorial.photoGallery?.length}
+                                  className="flex items-center space-x-1"
+                                >
+                                  <span className="hidden sm:inline text-xs">Next</span>
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Main Image */}
-                          <div className="relative">
+                          <div 
+                            className="relative group"
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
+                          >
                             <img
                               src={
                                 apiMemorial.photoGallery?.[currentImageIndex] ||
                                 "/placeholder.svg"
                               }
                               alt={`Memory ${currentImageIndex + 1}`}
-                              className="w-full h-96 object-cover rounded-lg"
+                              className="w-full h-96 object-cover rounded-lg transition-opacity duration-300"
                             />
-                            {apiMemorial.photoGallery?.length > 1 && apiMemorial?.allowSlideshow && (
-                              <div className="absolute inset-0 flex items-center justify-between p-4">
+                            
+                            {/* Navigation overlay - only show on hover for desktop */}
+                            {apiMemorial.photoGallery?.length > 1 && (
+                              <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Button
                                   variant="secondary"
                                   size="sm"
@@ -672,23 +765,48 @@ export default function MemorialPage() {
 
                           {/* Thumbnail Strip */}
                           {apiMemorial.photoGallery?.length > 1 && (
-                            <div className="flex space-x-2 overflow-x-auto">
-                              {apiMemorial.photoGallery.map((image, index) => (
-                                <button
-                                  key={index}
-                                  onClick={() => setCurrentImageIndex(index)}
-                                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${index === currentImageIndex
-                                    ? "border-[#547455]"
-                                    : "border-gray-200"
+                            <div className="space-y-3">
+                              <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+                                {apiMemorial.photoGallery.map((image, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setCurrentImageIndex(index);
+                                      setIsSlideshowPlaying(false); // Pause slideshow when manually selecting
+                                    }}
+                                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                                      index === currentImageIndex
+                                        ? "border-[#547455] ring-2 ring-[#547455]/20"
+                                        : "border-gray-200 hover:border-gray-300"
                                     }`}
-                                >
-                                  <img
-                                    src={image || "/placeholder.svg"}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    className="w-full h-full object-cover"
+                                  >
+                                    <img
+                                      src={image || "/placeholder.svg"}
+                                      alt={`Thumbnail ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </button>
+                                ))}
+                              </div>
+                              
+                              {/* Slideshow Progress Dots */}
+                              <div className="flex justify-center space-x-2">
+                                {apiMemorial.photoGallery.map((_, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setCurrentImageIndex(index);
+                                      setIsSlideshowPlaying(false);
+                                    }}
+                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                      index === currentImageIndex
+                                        ? "bg-[#547455] w-6"
+                                        : "bg-gray-300 hover:bg-gray-400"
+                                    }`}
+                                    aria-label={`Go to slide ${index + 1}`}
                                   />
-                                </button>
-                              ))}
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
