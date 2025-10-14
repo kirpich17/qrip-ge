@@ -55,9 +55,9 @@ const Herobanner = () => {
 
   return (
     <>
-      <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-no-repeat bg-center sm:py-20 py-10" style={{ backgroundImage: "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.png')" }}>
         {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* <div className="absolute inset-0 overflow-hidden">
           <motion.div
             animate="animate"
             className="absolute top-20 left-10 opacity-10"
@@ -78,10 +78,10 @@ const Herobanner = () => {
           >
             <FaTree className="h-28 w-28 text-green-300" />
           </motion.div>
-        </div>
+        </div> */}
 
         <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 md:gap-12 items-end">
+          <div className="grid sm:grid-cols-2 md:gap-12 items-end">
             {/* Left Side - Content */}
             <motion.div
               variants={staggerContainer}
@@ -98,14 +98,14 @@ const Herobanner = () => {
                   <span>{heroTranslations?.tagline}</span>
                 </div>
 
-                <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-gray-900">
+                <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-white">
                   {heroTranslations?.title1}
-                  <span className="block text-[#243b31]">
+                  <span className="block ">
                     {heroTranslations?.title2}
                   </span>
                 </h1>
 
-                <p className="text-base md:text-xl text-black leading-relaxed max-w-xl">
+                <p className="text-base md:text-xl text-white leading-relaxed max-w-xl">
                   {heroTranslations?.description}
                 </p>
               </motion.div>
@@ -162,7 +162,7 @@ const Herobanner = () => {
             </motion.div>
 
             {/* Right Side - Tudor-style Memorial Stone */}
-            <motion.div
+            {/* <motion.div
               variants={fadeInRight}
               className="relative flex lg:justify-end  justify-center items-end h-full"
             >
@@ -201,18 +201,18 @@ const Herobanner = () => {
                     <h3 className="text-4xl font-bold tracking-wider">
                         QRIP.GE
                       </h3>
-                      {/* <h3 className="text-3xl font-bold tracking-wider">
+                      <h3 className="text-3xl font-bold tracking-wider">
                         {heroTranslations.memorialExample.name}
-                      </h3> */}
-                      {/* <p className="text-xl mt-2">
+                      </h3>
+                      <p className="text-xl mt-2">
                         {heroTranslations.memorialExample.years}
                       </p>
                       <p className="text-lg italic mt-4">
                         "{heroTranslations.memorialExample.quote}"
-                      </p> */}
+                      </p>
                     </div>
 
-                    {/* <div className="flex justify-center space-x-8 pt-4">
+                    <div className="flex justify-center space-x-8 pt-4">
                       <div className="flex flex-col items-center text-sm text-white">
                         <FaCamera className="h-5 w-5 text-gray-300" />
                         <span>
@@ -229,9 +229,9 @@ const Herobanner = () => {
                           12 {heroTranslations.memorialExample.family}
                         </span>
                       </div>
-                    </div> */}
+                    </div>
 
-                    {/* <div className="absolute bottom-0 left-4 text-2xl">🌹</div>
+                    <div className="absolute bottom-0 left-4 text-2xl">🌹</div>
                     <div className="absolute bottom-0  right-4 text-2xl">
                       🌹
                     </div>
@@ -243,11 +243,11 @@ const Herobanner = () => {
                           {heroTranslations.memorialExample.scanCta}
                         </span>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </motion.div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </div>
       </section>

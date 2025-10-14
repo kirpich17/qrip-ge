@@ -141,7 +141,6 @@ function QRPageTransition({
     return slides;
   }, [profilePhoto, firstName, lastName, birthDate, deathDate, photoGallery]);
 
-  // Improved slideshow logic - works for all users
   useEffect(() => {
     if (!isInitialView || premiumSlides.length <= 1) return;
 
@@ -319,6 +318,8 @@ export default function MemorialPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -491,7 +492,17 @@ export default function MemorialPage() {
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
-  const isPremium = apiMemorial.planName == "Premium Plan"
+  const isPremium = apiMemorial.planName === "Premium" || apiMemorial.planName === "Premium Plan"
+  
+  // Helper function to format video URLs
+  const formatVideoUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+  
 
   const nextImage = () => {
     if (!apiMemorial.photoGallery?.length) return;
@@ -686,28 +697,68 @@ export default function MemorialPage() {
                           apiMemorial.videoGallery?.length > 0 ? (
                             <div className="space-y-4">
                               <div className="relative bg-black rounded-lg overflow-hidden">
+                                {/* Video Error Fallback */}
+                                <div id="video-error-fallback" className="hidden absolute inset-0 flex items-center justify-center bg-red-100 text-red-800 p-4">
+                                  <div className="text-center">
+                                    <p className="font-semibold">Video failed to load</p>
+                                    <p className="text-sm">Please check the video URL or try refreshing the page</p>
+                                  </div>
+                                </div>
                                 <video
                                   ref={videoRef}
-                                  src={apiMemorial.videoGallery[0]}
+                                  src={formatVideoUrl(apiMemorial.videoGallery[0])}
                                   className="w-full h-64 object-cover"
-                                  controls
                                   muted={isVideoMuted}
                                   poster="/placeholder.svg?height=300&width=500"
-                                  onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+                                  onPlay={() => setIsVideoPlaying(true)}
+                                  onPause={() => setIsVideoPlaying(false)}
+                                  onLoadStart={() => {
+                                    setVideoLoading(true);
+                                    setVideoError(null);
+                                  }}
+                                  onCanPlay={() => {
+                                    setVideoLoading(false);
+                                  }}
+                                  onError={(e) => {
+                                    setVideoLoading(false);
+                                    setVideoError('Video failed to load');
+                                    const fallback = document.getElementById('video-error-fallback');
+                                    if (fallback) {
+                                      fallback.classList.remove('hidden');
+                                    }
+                                  }}
                                 />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <Button
-                                    size="lg"
-                                    onClick={() => setIsVideoPlaying(!isVideoPlaying)}
-                                    className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-                                  >
-                                    {isVideoPlaying ? (
-                                      <Pause className="h-8 w-8" />
-                                    ) : (
-                                      <Play className="h-8 w-8 ml-1" />
-                                    )}
-                                  </Button>
-                                </div>
+                                {/* Loading indicator */}
+                                {videoLoading && (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                  </div>
+                                )}
+                                
+                                {/* Play/Pause button */}
+                                {!videoLoading && !videoError && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <Button
+                                      size="lg"
+                                      onClick={() => {
+                                        if (videoRef.current) {
+                                          if (isVideoPlaying) {
+                                            videoRef.current.pause();
+                                          } else {
+                                            videoRef.current.play();
+                                          }
+                                        }
+                                      }}
+                                      className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+                                    >
+                                      {isVideoPlaying ? (
+                                        <Pause className="h-8 w-8" />
+                                      ) : (
+                                        <Play className="h-8 w-8 ml-1" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                )}
                                 <div className="absolute bottom-4 right-4">
                                   <Button
                                     variant="secondary"

@@ -160,6 +160,9 @@ interface VideoItem {
   title: string;
   file: File;
   duration?: number;
+  startTime?: number;
+  endTime?: number;
+  url?: string;
 }
 
 interface DocumentItem {
@@ -247,6 +250,7 @@ export default function CreateMemorialPage() {
   const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState<string>("");
+  
 
   // Function to handle geocoding from location text
   const handleGeocodeLocation = async () => {
@@ -298,13 +302,33 @@ export default function CreateMemorialPage() {
   };
 
   const getVideoDuration = (file: File): Promise<number> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       video.preload = 'metadata';
-      video.onloadedmetadata = () => {
+      
+      const timeout = setTimeout(() => {
         window.URL.revokeObjectURL(video.src);
-        resolve(video.duration);
+        reject(new Error('Video duration timeout'));
+      }, 10000); // 10 second timeout
+      
+      video.onloadedmetadata = () => {
+        clearTimeout(timeout);
+        window.URL.revokeObjectURL(video.src);
+        
+        // Check if duration is valid
+        if (isNaN(video.duration) || !isFinite(video.duration) || video.duration <= 0) {
+          reject(new Error('Invalid video duration'));
+        } else {
+          resolve(video.duration);
+        }
       };
+      
+      video.onerror = () => {
+        clearTimeout(timeout);
+        window.URL.revokeObjectURL(video.src);
+        reject(new Error('Video load error'));
+      };
+      
       video.src = URL.createObjectURL(file);
     });
   };
@@ -457,7 +481,18 @@ export default function CreateMemorialPage() {
         MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
 
     const videoItems = await Promise.all(Array.from(files).map(async (file) => {
-      const duration = await getVideoDuration(file);
+      let duration;
+      try {
+        duration = await getVideoDuration(file);
+        
+        // If duration is NaN, Infinity, or invalid, use a default
+        if (isNaN(duration) || duration <= 0 || !isFinite(duration)) {
+          duration = 30; // Default to 30 seconds for Free plan
+        }
+      } catch (error) {
+        duration = 30; // Fallback duration
+      }
+      
       if (duration > maxDuration) {
         toast({
           title: "Video Too Long",
@@ -469,7 +504,10 @@ export default function CreateMemorialPage() {
       return {
         title: file.name.split('.')[0],
         file,
-        duration
+        duration,
+        startTime: 0,
+        endTime: duration,
+        url: URL.createObjectURL(file)
       };
     }));
 
@@ -541,11 +579,18 @@ export default function CreateMemorialPage() {
   };
 
   const removeVideo = (index: number) => {
+    // Clean up object URL to prevent memory leaks
+    const video = mediaFiles.videos[index];
+    if (video.url) {
+      URL.revokeObjectURL(video.url);
+    }
+    
     setMediaFiles(prev => ({
       ...prev,
       videos: prev.videos.filter((_, i) => i !== index)
     }));
   };
+
 
   const removeDocument = (index: number) => {
     setMediaFiles(prev => ({
@@ -601,6 +646,17 @@ export default function CreateMemorialPage() {
       setIsEditing(false);
     }
   }, [memorialId, isEdit, isCreate]);
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      mediaFiles.videos.forEach(video => {
+        if (video.url) {
+          URL.revokeObjectURL(video.url);
+        }
+      });
+    };
+  }, []);
 
   const fetchMemorialData = async (id: string) => {
     setIsLoadingMemorial(true);
@@ -1175,33 +1231,36 @@ export default function CreateMemorialPage() {
                           <p className="text-xs text-gray-500 mt-2">
                             Supported: MP4, MOV • Max {'1min'}
                           </p>
-                          {mediaFiles.videos.length > 0 && (
-                            <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">
-                                Selected Videos
-                              </p>
-                              <div className="space-y-1">
-                                {mediaFiles.videos.map((video, index) => (
-                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                    <div>
-                                      <span className="text-xs truncate">{video.title}</span>
-                                      {video.duration && (
-                                        <span className="text-xs text-gray-500 block">{Math.round(video.duration)}s</span>
-                                      )}
+                            {mediaFiles.videos.length > 0 && (
+                              <div className="mt-4 w-full">
+                                <p className="text-xs font-medium mb-2">
+                                  Selected Videos ({mediaFiles.videos.length})
+                                </p>
+                                <div className="space-y-2">
+                                  {mediaFiles.videos.map((video, index) => (
+                                    <div key={index} className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <Video className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                        <span className="text-sm font-medium text-gray-900 truncate" title={video.title}>
+                                          {video.title}
+                                        </span>
+                                      </div>
+                                      <div className="ml-2">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => removeVideo(index)}
+                                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          title="Remove video"
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
                                     </div>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-4 w-4"
-                                      onClick={() => removeVideo(index)}
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </CardContent>
                       </Card>
 
@@ -1385,6 +1444,7 @@ export default function CreateMemorialPage() {
           </div>
         </motion.div>
       </div>
+
     </div>
   );
 }
