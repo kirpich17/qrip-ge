@@ -84,10 +84,15 @@ type PlanPromoState = {
 export default function PlanSelection() {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [planPromoStates, setPlanPromoStates] = useState<Record<string, PlanPromoState>>({});
+  const [memorialHasVideos, setMemorialHasVideos] = useState<boolean>(false);
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const memorialId = searchParams.get("memorialId");
+  
+  // Debug memorialId
+  console.log('MemorialId from URL:', memorialId);
+  console.log('Search params:', searchParams.toString());
 
   // Get translations
   const translations = t("planSelection");
@@ -120,6 +125,36 @@ export default function PlanSelection() {
       setPlanPromoStates(initialStates);
     }
   }, [plans, planPromoStates]);
+
+  // Check if memorial has videos
+  useEffect(() => {
+    const checkMemorialVideos = async () => {
+      if (memorialId) {
+        console.log('Checking memorial videos for ID:', memorialId);
+        try {
+          const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
+          console.log('Full API response:', memorialResponse);
+          const memorial = memorialResponse.data.data;
+          console.log('Memorial data:', memorial);
+          console.log('Video gallery:', memorial.videoGallery);
+          console.log('Video gallery type:', typeof memorial.videoGallery);
+          console.log('Video gallery length:', memorial.videoGallery?.length);
+          console.log('Video gallery is array:', Array.isArray(memorial.videoGallery));
+          
+          const hasVideos = memorial.videoGallery && memorial.videoGallery.length > 0;
+          console.log('Has videos:', hasVideos);
+          setMemorialHasVideos(hasVideos);
+        } catch (error) {
+          console.error('Error checking memorial videos:', error);
+          console.error('Error details:', error.response?.data);
+        }
+      } else {
+        console.log('No memorialId found');
+      }
+    };
+    
+    checkMemorialVideos();
+  }, [memorialId]);
 
   // Function to apply promo code to a specific plan
   const handleApplyPromoCode = async (planId: string) => {
@@ -262,6 +297,38 @@ export default function PlanSelection() {
     try {
       const state = planPromoStates[planId];
       const plan = plans?.find(p => p._id === planId);
+      
+      // First check using the state we already have
+      if (memorialHasVideos && plan && plan.planType !== 'premium') {
+        console.log('Blocking payment - videos detected with non-premium plan (using state)');
+        toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+        setIsProcessing(null);
+        return;
+      }
+      
+      // Double check by fetching memorial data if we don't have the state yet
+      if (memorialId && plan && !memorialHasVideos) {
+        try {
+          // Fetch memorial data to check for videos
+          const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
+          const memorial = memorialResponse.data.data;
+          console.log('Payment handler - Memorial data:', memorial);
+          console.log('Payment handler - Video gallery:', memorial.videoGallery);
+          console.log('Payment handler - Plan type:', plan.planType);
+          
+          // Check if memorial has videos and plan is not premium
+          if (memorial.videoGallery && memorial.videoGallery.length > 0 && plan.planType !== 'premium') {
+            console.log('Blocking payment - videos detected with non-premium plan (from API)');
+            toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+            setIsProcessing(null);
+            return;
+          }
+        } catch (memorialError) {
+          console.error('Error fetching memorial data:', memorialError);
+          // Continue with payment if we can't fetch memorial data
+        }
+      }
+      
       const requestBody: any = { 
         planId, 
         memorialId,
@@ -311,6 +378,26 @@ export default function PlanSelection() {
 
   return (
     <div className="max-w-6xl mx-auto px-4">
+      {/* Global warning if memorial has videos */}
+      {memorialHasVideos && (
+        <div className="mb-8">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <Info className="h-6 w-6 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-semibold text-yellow-800 mb-2">
+                  Video Uploads Detected
+                </h3>
+                <p className="text-yellow-700">
+                  Your memorial contains uploaded videos. Only Premium plans support video uploads. 
+                  If you select a Basic or Standard plan, your videos will be hidden.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Plans Grid */}
       <div className="grid lg:grid-cols-3 md:gap-8 gap-6">
         {plans?.map((plan, index) => {
@@ -480,6 +567,23 @@ export default function PlanSelection() {
                 </CardContent>
 
                 <CardFooter className="pt-0">
+                  {/* Warning for videos with non-premium plans */}
+                  {console.log('Debug warning check:', { memorialHasVideos, planType: plan.planType, shouldShow: memorialHasVideos && plan.planType !== 'premium' })}
+                  {memorialHasVideos && plan.planType !== 'premium' && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-start">
+                        <Info className="h-5 w-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
+                        <div className="text-sm">
+                          <p className="font-medium text-yellow-800">Video Uploads Require Premium</p>
+                          <p className="text-yellow-700 mt-1">
+                            Your memorial contains uploaded videos. Only Premium plans support video uploads. 
+                            Selecting this plan will hide your videos.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   <Button
                     className="w-full bg-[#243b31] hover:bg-green-700 text-white py-3 text-lg"
                     onClick={() => memorialId ? handleSelectPlan(plan._id) : clickHandler()}

@@ -775,9 +775,36 @@ export default function CreateMemorialPage() {
         variant: "default",
       });
       
+      console.log('Debug info:', {
+        isCreate,
+        isEditing,
+        memorialId,
+        responseData: response.data,
+        pathName
+      });
+      
       // If creating a new memorial, redirect to subscription page
       if (isCreate) {
-        router.push(`/subscription?memorialId=${memorialId}`);
+        // Use the memorial ID from the response if available, otherwise use the URL param
+        const redirectMemorialId = response.data?.data?._id || memorialId;
+        console.log('Redirecting to subscription with memorialId:', redirectMemorialId);
+        
+        if (!redirectMemorialId) {
+          console.error('No memorialId available for redirect');
+          toast({
+            title: "Error",
+            description: "No memorial ID available for redirect",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        try {
+          router.push(`/subscription?memorialId=${redirectMemorialId}`);
+        } catch (routerError) {
+          console.error('Router push failed, using window.location:', routerError);
+          window.location.href = `/subscription?memorialId=${redirectMemorialId}`;
+        }
       } else {
         router.push("/dashboard");
       }

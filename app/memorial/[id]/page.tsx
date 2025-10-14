@@ -121,7 +121,6 @@ function QRPageTransition({
         years: `${new Date(birthDate).getFullYear()} - ${new Date(deathDate).getFullYear()}`
       }
     ];
-
     // Add up to 2 gallery images if they exist
     if (photoGallery.length > 0) {
       slides.push({
@@ -798,10 +797,13 @@ export default function MemorialPage() {
                           <div className="text-center py-12 bg-gray-50 rounded-lg">
                             <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                              Premium Feature
+                              {apiMemorial.videoGallery?.length > 0 ? "Video Uploads Available Only for Premium Subscribers" : "Premium Feature"}
                             </h3>
                             <p className="text-gray-600 mb-4">
-                              Video content is available with premium memorials
+                              {apiMemorial.videoGallery?.length > 0 
+                                ? "Video uploads are available only for Premium subscribers. Upgrade to Premium to view and manage your uploaded videos."
+                                : "Video content is available with premium memorials"
+                              }
                             </p>
                             <Button variant="outline">Learn More</Button>
                           </div>
