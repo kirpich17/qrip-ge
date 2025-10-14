@@ -250,7 +250,16 @@ export default function CreateMemorialPage() {
   const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState<string>("");
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   
+  // Load selected plan from localStorage on component mount
+  useEffect(() => {
+    const storedPlanId = localStorage.getItem('selectedPlanId');
+    if (storedPlanId) {
+      setSelectedPlanId(storedPlanId);
+      console.log('Selected plan from localStorage:', storedPlanId);
+    }
+  }, []);
 
   // Function to handle geocoding from location text
   const handleGeocodeLocation = async () => {
@@ -783,11 +792,12 @@ export default function CreateMemorialPage() {
         pathName
       });
       
-      // If creating a new memorial, redirect to subscription page
+      // If creating a new memorial, handle the flow based on preselected plan
       if (isCreate) {
         // Use the memorial ID from the response if available, otherwise use the URL param
         const redirectMemorialId = response.data?.data?._id || memorialId;
         console.log('Redirecting to subscription with memorialId:', redirectMemorialId);
+        console.log('Selected plan ID:', selectedPlanId);
         
         if (!redirectMemorialId) {
           console.error('No memorialId available for redirect');
@@ -799,11 +809,22 @@ export default function CreateMemorialPage() {
           return;
         }
         
-        try {
-          router.push(`/subscription?memorialId=${redirectMemorialId}`);
-        } catch (routerError) {
-          console.error('Router push failed, using window.location:', routerError);
-          window.location.href = `/subscription?memorialId=${redirectMemorialId}`;
+        // If a plan was preselected, redirect to subscription page with the plan preselected
+        if (selectedPlanId) {
+          try {
+            router.push(`/subscription?memorialId=${redirectMemorialId}&preselectedPlan=${selectedPlanId}`);
+          } catch (routerError) {
+            console.error('Router push failed, using window.location:', routerError);
+            window.location.href = `/subscription?memorialId=${redirectMemorialId}&preselectedPlan=${selectedPlanId}`;
+          }
+        } else {
+          // No preselected plan, go to regular subscription page
+          try {
+            router.push(`/subscription?memorialId=${redirectMemorialId}`);
+          } catch (routerError) {
+            console.error('Router push failed, using window.location:', routerError);
+            window.location.href = `/subscription?memorialId=${redirectMemorialId}`;
+          }
         }
       } else {
         router.push("/dashboard");

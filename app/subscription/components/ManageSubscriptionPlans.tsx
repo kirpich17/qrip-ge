@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Check, Crown, Star, Zap, X, Tag, Info, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,13 +85,16 @@ export default function PlanSelection() {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [planPromoStates, setPlanPromoStates] = useState<Record<string, PlanPromoState>>({});
   const [memorialHasVideos, setMemorialHasVideos] = useState<boolean>(false);
+  const toastShownRef = useRef(false);
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const memorialId = searchParams.get("memorialId");
+  const preselectedPlanId = searchParams.get("preselectedPlan");
   
-  // Debug memorialId
+  // Debug memorialId and preselected plan
   console.log('MemorialId from URL:', memorialId);
+  console.log('Preselected plan ID:', preselectedPlanId);
   console.log('Search params:', searchParams.toString());
 
   // Get translations
@@ -155,6 +158,19 @@ export default function PlanSelection() {
     
     checkMemorialVideos();
   }, [memorialId]);
+
+  // Handle preselected plan
+  useEffect(() => {
+    if (preselectedPlanId && plans && !toastShownRef.current) {
+      console.log('Preselected plan detected:', preselectedPlanId);
+      // Clear the selectedPlanId from localStorage since we're using it
+      localStorage.removeItem('selectedPlanId');
+      
+      // Show a message about the preselected plan only once
+      toast.success(`Plan preselected! You can proceed with payment or choose a different plan.`);
+      toastShownRef.current = true;
+    }
+  }, [preselectedPlanId, plans]);
 
   // Function to apply promo code to a specific plan
   const handleApplyPromoCode = async (planId: string) => {
@@ -357,11 +373,27 @@ export default function PlanSelection() {
     }
   };
 
-  const clickHandler = () => {
+  const clickHandler = async (planId?: string) => {
     if (typeof window !== "undefined") {
       const loginData = localStorage.getItem("loginData");
       if (loginData) {
-        router.push("/dashboard");
+        try {
+          // Create a draft memorial first
+          const response = await axiosInstance.post('/api/memorials/create-draft');
+          const memorialId = response.data.memorialId;
+          
+          // Store the selected plan in localStorage for the memorial creation form
+          if (planId) {
+            localStorage.setItem('selectedPlanId', planId);
+          }
+          
+          // Redirect to memorial creation with the plan preselected
+          router.push(`/memorial/create/${memorialId}`);
+        } catch (error) {
+          console.error('Error creating draft memorial:', error);
+          // Fallback to dashboard if draft creation fails
+          router.push("/dashboard");
+        }
       } else {
         router.push("/login");
       }
@@ -378,19 +410,20 @@ export default function PlanSelection() {
 
   return (
     <div className="max-w-6xl mx-auto px-4">
-      {/* Global warning if memorial has videos */}
-      {memorialHasVideos && (
+      
+      {/* Preselected plan notification */}
+      {preselectedPlanId && (
         <div className="mb-8">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-start">
-              <Info className="h-6 w-6 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
+              <Check className="h-6 w-6 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold text-yellow-800 mb-2">
-                  Video Uploads Detected
+                <h3 className="text-lg font-semibold text-green-800 mb-2">
+                  Plan Preselected
                 </h3>
-                <p className="text-yellow-700">
-                  Your memorial contains uploaded videos. Only Premium plans support video uploads. 
-                  If you select a Basic or Standard plan, your videos will be hidden.
+                <p className="text-green-700">
+                  Your memorial has been created and a plan has been preselected. 
+                  You can proceed with payment or choose a different plan below.
                 </p>
               </div>
             </div>
@@ -419,10 +452,15 @@ export default function PlanSelection() {
           
           return (
             <motion.div key={plan._id} {...fadeInUp} transition={{ delay: index * 0.1 }}>
-              <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border-gray-200 hover:shadow-md"} transition-all duration-300`}>
+              <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border-gray-200 hover:shadow-md"} ${preselectedPlanId === plan._id ? "border-2 border-blue-500 shadow-xl bg-blue-50" : ""} transition-all duration-300`}>
                 {plan.isPopular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10">
                     {translations.badgePopular || "Popular"}
+                  </Badge>
+                )}
+                {preselectedPlanId === plan._id && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 z-10">
+                    Preselected
                   </Badge>
                 )}
 
@@ -567,26 +605,10 @@ export default function PlanSelection() {
                 </CardContent>
 
                 <CardFooter className="pt-0">
-                  {/* Warning for videos with non-premium plans */}
-                  {console.log('Debug warning check:', { memorialHasVideos, planType: plan.planType, shouldShow: memorialHasVideos && plan.planType !== 'premium' })}
-                  {memorialHasVideos && plan.planType !== 'premium' && (
-                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <div className="flex items-start">
-                        <Info className="h-5 w-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
-                        <div className="text-sm">
-                          <p className="font-medium text-yellow-800">Video Uploads Require Premium</p>
-                          <p className="text-yellow-700 mt-1">
-                            Your memorial contains uploaded videos. Only Premium plans support video uploads. 
-                            Selecting this plan will hide your videos.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                   
                   <Button
                     className="w-full bg-[#243b31] hover:bg-green-700 text-white py-3 text-lg"
-                    onClick={() => memorialId ? handleSelectPlan(plan._id) : clickHandler()}
+                    onClick={() => memorialId ? handleSelectPlan(plan._id) : clickHandler(plan._id)}
                     disabled={isProcessing === plan._id || (promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id)}
                   >
                     {isProcessing === plan._id

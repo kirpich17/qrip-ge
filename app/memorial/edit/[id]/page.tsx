@@ -58,12 +58,14 @@ interface Memorial {
   isPublic: boolean;
   allowComments: boolean;
   enableEmailNotifications: boolean;
+  allowSlideshow: boolean;
   photoGallery: string[];
   videoGallery: string[];
   documents: string[];
   familyTree: any[];
   status: string;
   plan: string;
+  planType?: string;
   views: number;
   slug: string;
   createdAt: string;
@@ -180,6 +182,46 @@ export default function EditMemorialPage() {
   const handleInputChange = (field: string, value: any) => {
     if (!formData) return;
     setFormData((prev) => ({ ...prev!, [field]: value }));
+  };
+
+  const handleSlideshowToggle = async (allowSlideshow: boolean) => {
+    if (!formData) return;
+
+    try {
+      // Check if user has active subscription (Medium or Premium)
+      if (userSubscription === "Free") {
+        toast.error("This feature requires a Medium or Premium subscription.");
+        return;
+      }
+
+      const response = await axiosInstance.put(
+        `/api/memorials/${formData._id}/toggle-slideshow`,
+        { allowSlideshow }
+      );
+
+      if (response.data.status) {
+        setFormData(prev => ({ ...prev!, allowSlideshow }));
+        toast.success(`Slideshow ${allowSlideshow ? 'enabled' : 'disabled'} successfully`);
+      }
+    } catch (error: any) {
+      console.error("Error toggling slideshow:", error);
+      const errorMessage = error.response?.data?.message || "Failed to update slideshow setting";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Helper function to check if slideshow is allowed based on plan type
+  const isSlideshowAllowed = () => {
+    if (!formData) return false;
+    // Check if user has Medium or Premium plan (hide for minimal plan)
+    return formData.planType === 'medium' || formData.planType === 'premium';
+  };
+
+  // Helper function to check if slideshow toggle should be shown
+  const shouldShowSlideshowToggle = () => {
+    if (!formData) return false;
+    // Show toggle only for Medium and Premium plans, hide for minimal and free plans
+    return formData.planType === 'medium' || formData.planType === 'premium';
   };
 
   const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -830,6 +872,57 @@ export default function EditMemorialPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Slideshow Settings - Only show for Medium and Premium plans */}
+                  {shouldShowSlideshowToggle() && (
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold flex items-center">
+                        <Eye className="h-5 w-5 mr-2" />
+                        Display Settings
+                      </Label>
+                      <p className="text-sm text-gray-500">
+                        Control how your memorial is displayed to visitors
+                      </p>
+                      
+                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="space-y-1">
+                          <Label htmlFor="slideshow-toggle" className="text-base font-medium">
+                            Enable Photo Slideshow
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            Allow visitors to see a slideshow of photos instead of a static cover image
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleSlideshowToggle(!formData.allowSlideshow);
+                              }}
+                              className={`
+                                relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer hover:bg-opacity-80
+                                ${formData.allowSlideshow 
+                                  ? 'bg-green-600' 
+                                  : 'bg-gray-200'
+                                }
+                              `}
+                            >
+                              <span
+                                className={`
+                                  inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                                  ${formData.allowSlideshow ? 'translate-x-6' : 'translate-x-1'}
+                                `}
+                              />
+                            </button>
+                            <span className="text-sm text-gray-600">
+                              {formData.allowSlideshow ? 'Enabled' : 'Disabled'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                 </CardContent>
               </Card>

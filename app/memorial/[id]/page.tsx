@@ -96,7 +96,8 @@ function QRPageTransition({
   hasPremium,
   birthDate,
   deathDate,
-  photoGallery = []
+  photoGallery = [],
+  allowSlideshow = false
 }: {
   profilePhoto: string;
   memorialId: string;
@@ -106,6 +107,7 @@ function QRPageTransition({
   birthDate: string;
   deathDate: string;
   photoGallery?: string[];
+  allowSlideshow?: boolean;
 }) {
   const { t } = useTranslation();
   const memorialTranslations = t("memorial");
@@ -141,14 +143,14 @@ function QRPageTransition({
   }, [profilePhoto, firstName, lastName, birthDate, deathDate, photoGallery]);
 
   useEffect(() => {
-    if (!isInitialView || premiumSlides.length <= 1) return;
+    if (!isInitialView || premiumSlides.length <= 1 || !allowSlideshow) return;
 
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % premiumSlides.length);
     }, 4000); // 4 seconds per slide
 
     return () => clearInterval(interval);
-  }, [isInitialView, premiumSlides.length]);
+  }, [isInitialView, premiumSlides.length, allowSlideshow]);
 
   const handleClick = () => {
     setIsInitialView(false);
@@ -202,7 +204,7 @@ function QRPageTransition({
             {/* Content */}
 
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
-              {premiumSlides.length > 1 ? (
+              {premiumSlides.length > 1 && allowSlideshow ? (
                 <div className="max-w-2xl mx-auto">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -484,6 +486,7 @@ export default function MemorialPage() {
         birthDate={apiMemorial.birthDate}
         deathDate={apiMemorial.deathDate}
         photoGallery={apiMemorial.photoGallery}
+        allowSlideshow={apiMemorial.allowSlideshow}
       />
     );
   }
