@@ -17,6 +17,7 @@ import {
   Crown,
   Lock,
 } from "lucide-react";
+import { Lightbox } from "@/components/ui/lightbox";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -327,6 +328,8 @@ export default function MemorialPage() {
   const [isSlideshowPlaying, setIsSlideshowPlaying] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const slideshowIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
@@ -726,10 +729,16 @@ export default function MemorialPage() {
 
                           {/* Main Image */}
                           <div 
-                            className="relative group"
+                            className="relative group cursor-pointer"
                             onTouchStart={handleTouchStart}
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
+                            onClick={() => {
+                              if (apiMemorial.photoGallery?.length) {
+                                setLightboxIndex(currentImageIndex);
+                                setIsLightboxOpen(true);
+                              }
+                            }}
                           >
                             <img
                               src={
@@ -737,7 +746,7 @@ export default function MemorialPage() {
                                 "/placeholder.svg"
                               }
                               alt={`Memory ${currentImageIndex + 1}`}
-                              className="w-full h-96 object-cover rounded-lg transition-opacity duration-300"
+                              className="w-full h-96 object-cover rounded-lg transition-opacity duration-300 hover:opacity-90"
                             />
                             
                             {/* Navigation overlay - only show on hover for desktop */}
@@ -774,7 +783,11 @@ export default function MemorialPage() {
                                       setCurrentImageIndex(index);
                                       setIsSlideshowPlaying(false); // Pause slideshow when manually selecting
                                     }}
-                                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                                    onDoubleClick={() => {
+                                      setLightboxIndex(index);
+                                      setIsLightboxOpen(true);
+                                    }}
+                                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
                                       index === currentImageIndex
                                         ? "border-[#547455] ring-2 ring-[#547455]/20"
                                         : "border-gray-200 hover:border-gray-300"
@@ -1198,6 +1211,21 @@ export default function MemorialPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Lightbox */}
+      {apiMemorial.photoGallery && apiMemorial.photoGallery.length > 0 && (
+        <Lightbox
+          isOpen={isLightboxOpen}
+          onClose={() => setIsLightboxOpen(false)}
+          images={apiMemorial.photoGallery}
+          currentIndex={lightboxIndex}
+          onIndexChange={(index) => {
+            setLightboxIndex(index);
+            setCurrentImageIndex(index);
+          }}
+          title={`${apiMemorial.firstName} ${apiMemorial.lastName} - Memory ${lightboxIndex + 1}`}
+        />
+      )}
     </div>
   );
 }
