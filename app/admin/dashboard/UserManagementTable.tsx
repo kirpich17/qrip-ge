@@ -126,7 +126,10 @@ export function UserManagementTable({
                       user.accountStatus === "active" ? "bg-green-600" : ""
                     }
                   >
-                    {user.accountStatus}
+                    {user.accountStatus === "active" 
+                      ? (admindashTranslations.userManagement?.status?.active || "active")
+                      : (admindashTranslations.userManagement?.status?.suspended || "suspended")
+                    }
                   </Badge>
                 </TableCell>
                 <TableCell className="">
@@ -159,7 +162,7 @@ export function UserManagementTable({
                         onClick={() => {
                           if (
                             confirm(
-                              `Are you sure you want to suspend ?`
+                              admindashTranslations.userManagement?.confirmSuspend || "Are you sure you want to suspend this user?"
                             )
                           ) {
                             console.log("Suspend user:", user._id);
@@ -170,7 +173,7 @@ export function UserManagementTable({
                         <Ban className="h-4 w-4 mr-2" />
                         {user.accountStatus === "active"
                           ? translations.actionsMenu.suspend
-                          : "active"}
+                          : (admindashTranslations.userManagement?.actionsMenu?.activate || "Activate")}
                       </DropdownMenuItem>
 
                       <DropdownMenuItem
@@ -178,7 +181,7 @@ export function UserManagementTable({
                         onClick={() => {
                           if (
                             confirm(
-                              `Are you sure you want to delete ${user.name}? This action cannot be undone.`
+                              (admindashTranslations.userManagement?.confirmDelete || "Are you sure you want to delete {name}? This action cannot be undone.").replace("{name}", user.name)
                             )
                           ) {
                             axiosInstance

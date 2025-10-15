@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Lock,
   Search, // Added import for the Search icon
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -440,6 +441,22 @@ export default function CreateMemorialPage() {
       }
       handleInputChange("profileImage", file);
     }
+  };
+
+  const removeProfileImage = () => {
+    handleInputChange("profileImage", null);
+  };
+
+  // Function to check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.firstName.trim() !== "" &&
+      formData.lastName.trim() !== "" &&
+      formData.birthDate !== "" &&
+      formData.deathDate !== "" &&
+      formData.biography.trim() !== "" &&
+      formData.biography.trim().length >= 10 // Minimum biography length
+    );
   };
 
   const handlePhotosUpload = (files: FileList | null) => {
@@ -972,18 +989,23 @@ export default function CreateMemorialPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden">
-                      {/* <img
-                        src={
-                          typeof formData.profileImage === "string"
-                            ? formData.profileImage
-                            : formData.profileImage
-                              ? URL.createObjectURL(formData.profileImage) // File → string URL
-                              : "/default-avatar.png"
-                        }
-
-                        className="object-cover"
-                      /> */}
+                    <div className="relative w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      {formData.profileImage ? (
+                        <img
+                          src={
+                            typeof formData.profileImage === "string"
+                              ? formData.profileImage
+                              : URL.createObjectURL(formData.profileImage)
+                          }
+                          alt="Profile preview"
+                          className="object-cover w-full h-full rounded-lg"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-400">
+                          <ImageIcon className="h-8 w-8 mb-2" />
+                          <span className="text-xs text-center">No image</span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex md:justify-start justify-center flex-col">
                       <label htmlFor="profileImageUpload" className="w-fit">
@@ -1002,6 +1024,17 @@ export default function CreateMemorialPage() {
                           />
                         </Button>
                       </label>
+                      
+                      {formData.profileImage && (
+                        <Button
+                          variant="outline"
+                          className="bg-transparent text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={removeProfileImage}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remove Image
+                        </Button>
+                      )}
 
                       {!formData.profileImage &&
                         <p className="text-sm text-gray-500 md:text-left text-center">
@@ -1473,9 +1506,13 @@ export default function CreateMemorialPage() {
           {/* Save Button at Bottom */}
           <div className="mt-8 flex justify-center">
             <Button
-              className="bg-[#547455] hover:bg-[#243b31] text-white px-8 py-3 text-lg"
+              className={`px-8 py-3 text-lg ${
+                isFormValid() 
+                  ? "bg-[#547455] hover:bg-[#243b31] text-white" 
+                  : "bg-gray-400 text-gray-600 cursor-not-allowed"
+              }`}
               onClick={(e) => handleSaveMemorial(e)}
-              disabled={isSaving}
+              disabled={isSaving || !isFormValid()}
             >
               {isSaving ? (
                 <>
@@ -1490,6 +1527,20 @@ export default function CreateMemorialPage() {
               )}
             </Button>
           </div>
+          
+          {/* Form validation message */}
+          {!isFormValid() && (
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-500">
+                Please fill in all required fields to save the memorial
+                {formData.biography.trim() !== "" && formData.biography.trim().length < 10 && (
+                  <span className="block mt-1 text-red-500">
+                    Biography must be at least 10 characters long
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
         </motion.div>
       </div>
 

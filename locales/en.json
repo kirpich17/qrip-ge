@@ -1033,6 +1033,7 @@
       "title": "User Management",
       "description": "Manage user accounts and subscriptions",
       "searchPlaceholder": "Search users...",
+      "noResults": "No users found",
       "tableHeaders": {
         "user": "User",
         "plan": "Plan",
@@ -1041,11 +1042,18 @@
         "joined": "Joined",
         "actions": "Actions"
       },
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended"
+      },
       "actionsMenu": {
         "viewProfile": "View Profile",
         "suspend": "Suspend",
+        "activate": "Activate",
         "delete": "Delete"
-      }
+      },
+      "confirmSuspend": "Are you sure you want to suspend this user?",
+      "confirmDelete": "Are you sure you want to delete {name}? This action cannot be undone."
     },
     "recentMemorials": {
       "title": "Recent Memorials",
@@ -1054,6 +1062,7 @@
       "tableHeaders": {
         "memorial": "Memorial",
         "creator": "Creator",
+        "subscriptionPlan": "Subscription Plan",
         "status": "Status",
         "views": "Views",
         "created": "Created",

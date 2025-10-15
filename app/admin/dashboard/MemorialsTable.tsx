@@ -43,7 +43,7 @@ export function MemorialsTable({
                 {admindashTranslations.recentMemorials.tableHeaders.creator}
               </TableHead>
               <TableHead className="min-w-[120px]">
-                Subscription Plan
+                {admindashTranslations.recentMemorials?.tableHeaders?.subscriptionPlan || "Subscription Plan"}
               </TableHead>
               <TableHead className="min-w-[100px]">
                 {admindashTranslations.recentMemorials.tableHeaders.status}
@@ -63,18 +63,18 @@ export function MemorialsTable({
             {memorials.map((memorial) => (
               <TableRow key={memorial._id} className="hover:bg-gray-50">
                 <TableCell className="font-medium min-w-[150px]">
-                  <Link 
-                    href={`/memorial/${memorial._id}`} 
-                    target="_blank" 
+                  <Link
+                    href={`/memorial/${memorial._id}`}
+                    target="_blank"
                     className="block w-full h-full hover:text-blue-600"
                   >
                     {memorial.firstName + " " + memorial.lastName}
                   </Link>
                 </TableCell>
                 <TableCell className="min-w-[150px]">
-                  <Link 
-                    href={`/memorial/${memorial._id}`} 
-                    target="_blank" 
+                  <Link
+                    href={`/memorial/${memorial._id}`}
+                    target="_blank"
                     className="block w-full h-full hover:text-blue-600"
                   >
                     {memorial?.createdBy?.firstname +
@@ -96,20 +96,19 @@ export function MemorialsTable({
                           <span className="capitalize">{memorial.purchase.planId.planType}</span>
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-600">
-                          <DollarSign className="h-3 w-3" />
+                          ₾
                           <span>{memorial.purchase.finalPricePaid} GEL</span>
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <Calendar className="h-3 w-3" />
                           <span className="capitalize">{memorial.purchase.duration?.replace('_', ' ')}</span>
                         </div>
-                        <Badge 
+                        <Badge
                           variant={memorial.purchase.status === 'completed' ? 'default' : 'secondary'}
-                          className={`text-xs ${
-                            memorial.purchase.status === 'completed' 
-                              ? 'bg-green-100 text-green-800' 
+                          className={`text-xs ${memorial.purchase.status === 'completed'
+                              ? 'bg-green-100 text-green-800'
                               : 'bg-yellow-100 text-yellow-800'
-                          }`}
+                            }`}
                         >
                           {memorial.purchase.status}
                         </Badge>

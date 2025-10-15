@@ -84,7 +84,7 @@ function AdminDashboardPage() {
         },
         {
           label: admindashTranslations.stats.monthlyRevenue,
-          value: "$12,450",
+          value: "₾12,450",
           change: "+15%",
           icon: DollarSign,
           color: "text-green-600",
