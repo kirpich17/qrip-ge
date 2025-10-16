@@ -463,6 +463,7 @@ export interface HeroTranslations {
   };
 }
 
+// Updated MemorialTranslations interface with location button translations
 export interface MemorialTranslations {
   inLovingMemory: string;
   tapToViewMemorial: string;
@@ -495,6 +496,10 @@ export interface MemorialTranslations {
     location: {
       title: string;
       noLocation: string;
+      getDirections: string;
+      viewOnGoogleMaps: string;
+      copyCoordinates: string;
+      preciseLocation: string;
     };
     family: {
       title: string;

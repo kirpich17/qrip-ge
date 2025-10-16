@@ -604,7 +604,7 @@ function AdminStickersPage() {
                   {stickerOptions.length === 0 && !loading ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center text-gray-500">
-                        No sticker options found.
+                        {stickersTranslations.messages.noStickerOptionsFound}
                       </TableCell>
                     </TableRow>
                   ) : (

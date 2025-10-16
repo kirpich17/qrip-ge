@@ -287,7 +287,8 @@
       "deleteConfirm": "Are you sure you want to delete this memorial?",
       "active": "Active",
       "draft": "Draft",
-      "managePlan": "Manage Plan" 
+      "managePlan": "Manage Plan",
+      "noMemorialsFound": "No Memorials Found"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -850,6 +851,9 @@
         "title": "Memorial Location",
         "mapPlaceholder": "Interactive Map",
         "getDirections": "Get Directions",
+        "viewOnGoogleMaps": "View on Google Maps",
+        "copyCoordinates": "Copy Coordinates",
+        "preciseLocation": "Precise Location:",
         "locked": "GPS location available with premium",
        "noLocation": "No location data available for this memorial"
       },
@@ -2096,7 +2100,8 @@
       "deleteError": "Failed to delete sticker option",
       "statusUpdateError": "Failed to update status",
       "loadError": "Failed to load sticker options",
-      "deleteConfirm": "Are you sure you want to delete this sticker option?"
+      "deleteConfirm": "Are you sure you want to delete this sticker option?",
+      "noStickerOptionsFound": "No sticker options found"
     }
   },
   "testimonialForm": {
@@ -2205,7 +2210,8 @@
   },
   "adminTestimonials": {
     "header": {
-      "title": "Testimonials Management"
+      "title": "Testimonials Management",
+      "back": "Back"
     },
     "table": {
       "headers": {

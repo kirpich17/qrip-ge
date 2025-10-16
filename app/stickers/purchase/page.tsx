@@ -389,7 +389,7 @@ function StickerPurchasePage() {
                             <Badge variant="outline">{option.type.name}</Badge>
                             <Badge variant="outline">{option.size}</Badge>
                             <span className="font-semibold text-[#547455]">
-                              ${option.price}
+                            ₾{option.price}
                             </span>
                           </div>
                           {option.specifications && (
@@ -539,7 +539,7 @@ function StickerPurchasePage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>{selectedStickerOption.name}</span>
-                      <span>${selectedStickerOption.price}</span>
+                      <span>₾{selectedStickerOption.price}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>{purchaseTranslations?.sections?.orderSummary?.quantity || "Quantity:"} {quantity}</span>
@@ -548,7 +548,7 @@ function StickerPurchasePage() {
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                       <span>{purchaseTranslations?.sections?.orderSummary?.total || "Total"}</span>
-                      <span>${totalPrice}</span>
+                      <span>₾{totalPrice}</span>
                     </div>
                   </div>
                 )}

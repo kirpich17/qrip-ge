@@ -72,7 +72,7 @@ export default function PublicMemorials() {
         const response = await axios.get(apiUrl);
         
         if (response.data && response.data.status) {
-          let fetchedMemorials = response.data.memorials;
+          let fetchedMemorials = response.data.memorials || [];
 
           if (sortBy === 'a-z') {
             fetchedMemorials.sort((a, b) => 
@@ -82,22 +82,37 @@ export default function PublicMemorials() {
             fetchedMemorials.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           }
 
-              const filteredMemorials = response.data.memorials.filter(
-      (memorial: any) => memorial.firstName !== "Untitled"
-    );
+          const filteredMemorials = fetchedMemorials.filter(
+            (memorial: any) => memorial.firstName !== "Untitled"
+          );
 
           setMemorials(filteredMemorials);
+          setError(null); // Clear any previous errors
 
           if (response.data.pagination) {
             setTotalPages(response.data.pagination.totalPages);
             setCurrentPage(response.data.pagination.currentPage);
           }
+        } else if (response.data && response.data.status === false && response.data.message === "No memorials found") {
+          // API returned "No memorials found" - this is normal, not an error
+          setMemorials([]);
+          setError(null);
         } else {
-          setError(publicMemorialsManage.error);
+          // If no data returned, show no memorials message instead of error
+          setMemorials([]);
+          setError(null);
         }
       } catch (err) {
-        setError(publicMemorialsManage.error);
-        console.error(err);
+        console.error("Error fetching memorials:", err);
+        
+        // Check if it's a 404 with "No memorials found" message (normal case)
+        if (err.response?.status === 404 && err.response?.data?.message === "No memorials found") {
+          setMemorials([]);
+          setError(null);
+        } else {
+          // Real error (network, server error, etc.)
+          setError(publicMemorialsManage.error);
+        }
       } finally {
         setLoading(false);
       }

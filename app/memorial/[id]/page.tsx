@@ -32,8 +32,9 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
-import { getSingleMemorial, recordMemorialView } from "@/services/memorialService";
+import { getSingleMemorial, getMyMemorialById, recordMemorialView } from "@/services/memorialService";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -317,6 +318,7 @@ export default function MemorialPage() {
   const { t } = useTranslation();
   const memorialTranslations = t("memorial");
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
@@ -344,7 +346,16 @@ export default function MemorialPage() {
       
       try {
         setLoading(true);
-        const response = await getSingleMemorial(params.id as string);
+        // First try to get the memorial using the private endpoint (for user's own memorials)
+        // This allows viewing private memorials that the user owns
+        let response;
+        try {
+          response = await getMyMemorialById(params.id as string);
+        } catch (privateError) {
+          // If private endpoint fails, try the public endpoint
+          response = await getSingleMemorial(params.id as string);
+        }
+        
         if (response?.status && response.data) {
           setApiMemorial(response.data);
           
@@ -688,7 +699,17 @@ export default function MemorialPage() {
                         </TabsTrigger>
                         <TabsTrigger
                           value="video"
-                          disabled={!isPremium}
+                          onClick={(e) => {
+                            if (!isPremium) {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toast({
+                                title: "Premium Feature",
+                                description: "Video uploads are available only for Premium subscribers.",
+                                variant: "default",
+                              });
+                            }
+                          }}
                         >
                           {memorialTranslations?.tabs?.video || "Video"}{" "}
                           {!isPremium && (
@@ -1060,7 +1081,7 @@ export default function MemorialPage() {
                           <div className="bg-gray-50 p-3 rounded-lg">
                             <div className="flex items-center justify-between text-sm">
                               <div>
-                                <span className="font-medium text-gray-700">Precise Location:</span>
+                                <span className="font-medium text-gray-700">{memorialTranslations?.sections?.location?.preciseLocation || "Precise Location:"}</span>
                                 <div className="text-gray-600">
                                     <div>Lat: {apiMemorial.gps?.lat.toFixed(6)}</div>
                                     <div>Lng: {apiMemorial.gps?.lng.toFixed(6)}</div>
@@ -1074,16 +1095,16 @@ export default function MemorialPage() {
                                   // You could add a toast notification here
                                 }}
                               >
-                                Copy Coordinates
+                                {memorialTranslations?.sections?.location?.copyCoordinates || "Copy Coordinates"}
                               </Button>
                             </div>
                           </div>
 
-                          <div className="flex gap-2">
+                          <div className="flex flex-col sm:flex-row gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex-1"
+                              className="flex-1 text-center"
                               onClick={() => {
                                 window.open(
                                   `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
@@ -1091,12 +1112,12 @@ export default function MemorialPage() {
                                 );
                               }}
                             >
-                              Get Directions
+                              {memorialTranslations?.sections?.location?.getDirections || "Get Directions"}
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex-1"
+                              className="flex-1 text-center "
                               onClick={() => {
                                 window.open(
                                   `https://www.google.com/maps/search/?api=1&query=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
@@ -1104,7 +1125,7 @@ export default function MemorialPage() {
                                 );
                               }}
                             >
-                              View on Google Maps
+                              {memorialTranslations?.sections?.location?.viewOnGoogleMaps || "View on Google Maps"}
                             </Button>
                           </div>
                         </div>

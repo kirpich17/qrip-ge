@@ -528,7 +528,7 @@ function Dashboard() {
 
                   {/* FIX: New robust logic for pagination and "No Memorials Found" message */}
                   {!loading && filteredMemorials.length === 0 && (
-                    <p className="text-center text-gray-500 py-8">No Memorials Found</p>
+                    <p className="text-center text-gray-500 py-8">{dashboard.memorials.noMemorialsFound}</p>
                   )}
 
                   {/* Pagination controls hidden since we're showing all memorials */}

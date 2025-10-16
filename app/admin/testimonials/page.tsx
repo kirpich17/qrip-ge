@@ -188,7 +188,7 @@ function TestimonialsAdmin() {
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
+                <span>{adminTestimonialsTranslations?.header?.back || "Back"}</span>
               </Button>
               <div className="flex items-center space-x-3">
                 <MessageCircle className="h-8 w-8 text-[#547455]" />
