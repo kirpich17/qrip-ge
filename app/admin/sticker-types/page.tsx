@@ -113,9 +113,10 @@ function AdminStickerTypesPage() {
       
       const response = await axiosInstance.get(`/api/admin/sticker-types?${params}`);
       setStickerTypes(response.data.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching sticker types:", error);
-      toast.error(stickerTypesTranslations?.messages?.loadError || "Failed to load sticker types");
+      const errorMessage = error.response?.data?.message || error.message || stickerTypesTranslations?.messages?.loadError || "Failed to load sticker types";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -161,9 +162,16 @@ function AdminStickerTypesPage() {
       setIsCreateDialogOpen(false);
       resetForm();
       fetchStickerTypes();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating sticker type:", error);
-      toast.error(stickerTypesTranslations?.messages?.createError || "Failed to create sticker type");
+      let errorMessage = error.response?.data?.message || error.message || stickerTypesTranslations?.messages?.createError || "Failed to create sticker type";
+      
+      // Check if it's a validation error and show user-friendly message
+      if (errorMessage.includes("validation failed") || errorMessage.includes("is required")) {
+        errorMessage = "All fields are required";
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -205,9 +213,16 @@ function AdminStickerTypesPage() {
       setEditingType(null);
       resetForm();
       fetchStickerTypes();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating sticker type:", error);
-      toast.error(stickerTypesTranslations?.messages?.updateError || "Failed to update sticker type");
+      let errorMessage = error.response?.data?.message || error.message || stickerTypesTranslations?.messages?.updateError || "Failed to update sticker type";
+      
+      // Check if it's a validation error and show user-friendly message
+      if (errorMessage.includes("validation failed") || errorMessage.includes("is required")) {
+        errorMessage = "All fields are required";
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -221,9 +236,10 @@ function AdminStickerTypesPage() {
       await axiosInstance.delete(`/api/admin/sticker-types/${id}`);
       toast.success(stickerTypesTranslations?.messages?.deleteSuccess || "Sticker type deleted successfully");
       fetchStickerTypes();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting sticker type:", error);
-      toast.error(stickerTypesTranslations?.messages?.deleteError || "Failed to delete sticker type");
+      const errorMessage = error.response?.data?.message || error.message || stickerTypesTranslations?.messages?.deleteError || "Failed to delete sticker type";
+      toast.error(errorMessage);
     } finally {
       setUpdating(null);
     }
@@ -235,9 +251,10 @@ function AdminStickerTypesPage() {
       await axiosInstance.patch(`/api/admin/sticker-types/${id}/toggle`);
       toast.success(stickerTypesTranslations?.messages?.statusUpdateSuccess || "Status updated successfully");
       fetchStickerTypes();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating status:", error);
-      toast.error(stickerTypesTranslations?.messages?.statusUpdateError || "Failed to update status");
+      const errorMessage = error.response?.data?.message || error.message || stickerTypesTranslations?.messages?.statusUpdateError || "Failed to update status";
+      toast.error(errorMessage);
     } finally {
       setUpdating(null);
     }

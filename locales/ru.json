@@ -1054,6 +1054,12 @@
         "description": "Общие системные настройки уведомлений"
       },
       "configure": "Настроить"
+    },
+    "quickAccess": {
+      "title": "Быстрый доступ",
+      "manageTestimonials": "Управление отзывами",
+      "subscriptionPlans": "Тарифные планы",
+      "qrStickers": "QR стикеры"
     }
   },
   "adminlogin": {
