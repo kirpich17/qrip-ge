@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, DollarSign, Search, Bell, QrCode, Package, MessageCircle } from "lucide-react";
+import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -86,7 +86,7 @@ function AdminDashboardPage() {
           label: admindashTranslations.stats.monthlyRevenue,
           value: "₾12,450",
           change: "+15%",
-          icon: DollarSign,
+          icon: Banknote,
           color: "text-green-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
         },

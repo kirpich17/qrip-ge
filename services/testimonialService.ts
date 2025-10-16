@@ -32,7 +32,6 @@ export interface SiteSettings {
   testimonialsEnabled: boolean;
   testimonialsMaxDisplay: number;
   testimonialsAutoApprove: boolean;
-  testimonialsRequireEmail: boolean;
   lastUpdated: string;
   updatedBy: string;
 }

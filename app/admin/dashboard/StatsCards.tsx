@@ -3,7 +3,7 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Heart, DollarSign, TrendingUp } from "lucide-react";
+import { Users, Heart, Banknote, TrendingUp } from "lucide-react";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },

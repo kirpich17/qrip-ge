@@ -36,7 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
-import { getSingleMemorial } from "@/services/memorialService";
+import { getMyMemorialById } from "@/services/memorialService";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import axiosInstance from "@/services/axiosInstance";
@@ -70,6 +70,10 @@ interface Memorial {
   slug: string;
   createdAt: string;
   updatedAt: string;
+  gps?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 interface VideoItem {
@@ -157,7 +161,7 @@ export default function EditMemorialPage() {
     const fetchMemorial = async () => {
       try {
         setLoading(true);
-        const response = await getSingleMemorial(params.id as string);
+        const response = await getMyMemorialById(params.id as string);
         if (response?.status && response.data) {
           setFormData(response.data);
           if (response.data.achievements) {
@@ -435,7 +439,7 @@ export default function EditMemorialPage() {
 
       if (response?.status) {
         toast.success("Memorial updated successfully");
-        const updatedResponse = await getSingleMemorial(params.id as string);
+        const updatedResponse = await getMyMemorialById(params.id as string);
         if (updatedResponse?.status && updatedResponse.data) {
           setFormData(updatedResponse.data);
           setSelectedProfileImage(null);
@@ -871,6 +875,18 @@ export default function EditMemorialPage() {
                         ))}
                       </div>
                     )}
+                  </div>
+
+                  {/* Public Memorial Toggle */}
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isPublic"
+                      checked={formData.isPublic}
+                      onCheckedChange={(value) => handleInputChange("isPublic", value)}
+                    />
+                    <Label htmlFor="isPublic">
+                      {editMemorialTranslations?.settings?.publicMemorial?.label || "Make memorial public"}
+                    </Label>
                   </div>
 
                   {/* Slideshow Settings - Only show for Medium and Premium plans */}

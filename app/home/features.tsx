@@ -1,9 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield } from "lucide-react";
-import { FaQrcode, FaGlobe } from "react-icons/fa";
-import { MdFamilyRestroom, MdLocationOn, MdPhotoLibrary } from "react-icons/md";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "@/hooks/useTranslate";
@@ -54,16 +51,6 @@ const Features = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-4"
           >
             {featuresTranslations.items.map((feature, index) => {
-              const icons = [
-                MdPhotoLibrary,
-                MdFamilyRestroom,
-                MdLocationOn,
-                FaQrcode,
-                FaGlobe,
-                Shield,
-              ];
-              const IconComponent = icons[index];
-
               return (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group hover:-translate-y-2">
@@ -71,7 +58,7 @@ const Features = () => {
                       <div
                         className={`w-16 h-16 bg-gradient-to-br from-${colors[index]}-400 to-${colors[index]}-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}
                       >
-                        <IconComponent className="h-8 w-8 text-[#243b31]" />
+                        <span className="text-2xl font-bold text-[#243b31]">{index + 1}</span>
                       </div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-3">
                         {feature.title}

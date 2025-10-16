@@ -12,7 +12,8 @@ import {
   Filter,
   Trash2,
   Eye,
-  Star
+  Star,
+  ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,8 @@ import {
 } from "@/services/testimonialService";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import { useTranslation } from "@/hooks/useTranslate";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -42,6 +45,7 @@ const fadeInUp = {
 
 function TestimonialsAdmin() {
   const { t } = useTranslation();
+  const router = useRouter();
   const adminTestimonialsTranslations = t("adminTestimonials");
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -177,8 +181,19 @@ function TestimonialsAdmin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <MessageCircle className="h-8 w-8 text-[#547455]" />
-              <h1 className="text-2xl font-bold text-gray-900">{adminTestimonialsTranslations?.header?.title}</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.back()}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back</span>
+              </Button>
+              <div className="flex items-center space-x-3">
+                <MessageCircle className="h-8 w-8 text-[#547455]" />
+                <h1 className="text-2xl font-bold text-gray-900">{adminTestimonialsTranslations?.header?.title}</h1>
+              </div>
             </div>
           </div>
         </div>
@@ -390,32 +405,21 @@ function TestimonialsAdmin() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-gray-900">{adminTestimonialsTranslations?.settings?.requireEmail}</h3>
-                        <p className="text-sm text-gray-600">{adminTestimonialsTranslations?.settings?.requireEmailDescription}</p>
-                      </div>
-                      <Switch
-                        checked={settings.testimonialsRequireEmail}
-                        onCheckedChange={(checked) => handleSettingsUpdate({ testimonialsRequireEmail: checked })}
-                        disabled={isUpdating}
-                      />
-                    </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         {adminTestimonialsTranslations?.settings?.maxDisplay}
                       </label>
                       <Select
-                        value={settings.testimonialsMaxDisplay.toString()}
+                        value={settings.testimonialsMaxDisplay?.toString() || "5"}
                         onValueChange={(value) => handleSettingsUpdate({ testimonialsMaxDisplay: parseInt(value) })}
                         disabled={isUpdating}
                       >
                         <SelectTrigger className="w-32">
-                          <SelectValue />
+                          <SelectValue placeholder="Select count" />
                         </SelectTrigger>
                         <SelectContent>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
                               {num}
                             </SelectItem>

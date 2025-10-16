@@ -20,6 +20,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
+import { toast } from "react-toastify";
 
 export default function AdminLoginPage() {
   const { t } = useTranslation();
@@ -33,14 +34,35 @@ export default function AdminLoginPage() {
   const BASE_URL=process.env.NEXT_PUBLIC_BASE_URL
 
   useEffect(() => {
-    const loginData = localStorage.getItem("loginData");
-    if (loginData) {
-      // router.push("/admin/dashboard"); // typo? maybe /admin/dashboard?
+    // Check if user is already logged in as a regular user
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    const userRole = localStorage.getItem("userRole");
+    
+    if (isAuthenticated === "true" && userRole && userRole !== "admin") {
+      toast.error("You need to logout first to login as admin");
+      router.push("/");
+      return;
     }
-  }, []);
+    
+    // If already logged in as admin, redirect to dashboard
+    if (isAuthenticated === "true" && userRole === "admin") {
+      router.push("/admin/dashboard");
+    }
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check for existing user session
+    const existingAuth = localStorage.getItem("isAuthenticated");
+    const existingRole = localStorage.getItem("userRole");
+    
+    if (existingAuth === "true" && existingRole && existingRole !== "admin") {
+      toast.error("You need to logout first to login as admin");
+      router.push("/");
+      return;
+    }
+    
     setIsLoading(true);
     setError("");
 
@@ -56,8 +78,14 @@ export default function AdminLoginPage() {
       );
 
       if (response.data.status) {
-        // Save the response data to localStorage
-        localStorage.setItem("loginData", JSON.stringify(response.data));
+        const { token, user } = response.data;
+        
+        // Save the authentication data to localStorage (same as user login)
+        localStorage.setItem("loginData", JSON.stringify(user));
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", user?.userType || "");
+        localStorage.setItem("isAuthenticated", "true");
+        
         // Redirect to admin dashboard
         router.push("/admin/dashboard");
       } else {
@@ -184,6 +212,23 @@ export default function AdminLoginPage() {
                   : adminloginTranslations.login.logButton}
               </Button>
             </form>
+            
+            {/* Logout link for existing sessions */}
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Already logged in as user?{" "}
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    toast.success("Logged out successfully");
+                    window.location.reload();
+                  }}
+                  className="text-[#243b31] hover:underline font-medium cursor-pointer"
+                >
+                  Logout first
+                </button>
+              </p>
+            </div>
           </CardContent>
         </Card>
       </motion.div>

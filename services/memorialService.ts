@@ -16,10 +16,20 @@ export const getMemorials = async (page = 1, limit = 5, search = "") => {
 
 export const getSingleMemorial = async (id: string) => {
   try {
-    const response = await axiosInstance.get(`/api/memorials/my-memorial/${id}`);
+    const response = await axiosInstance.get(`/api/memorials/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching memorial with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+export const getMyMemorialById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/memorials/my-memorial/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching my memorial with ID ${id}:`, error);
     throw error;
   }
 };

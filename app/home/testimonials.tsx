@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Star, MessageCircle } from "lucide-react";
+import { Star, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslate";
@@ -18,24 +18,24 @@ const Testimonials = () => {
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [settings, setSettings] = useState<{ testimonialsEnabled: boolean; testimonialsMaxDisplay: number } | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Fetch both testimonials and settings
-        const [testimonialsResponse, settingsResponse] = await Promise.all([
-          getPublicTestimonials(3),
-          getPublicSiteSettings()
-        ]);
-
-        // Check if testimonials are enabled
+        // First fetch settings to get the max display count
+        const settingsResponse = await getPublicSiteSettings();
+        
         if (settingsResponse.status && settingsResponse.data) {
           setSettings(settingsResponse.data);
           
           // Only fetch testimonials if enabled
           if (settingsResponse.data.testimonialsEnabled) {
+            // Use the max display count from settings
+            const testimonialsResponse = await getPublicTestimonials(settingsResponse.data.testimonialsMaxDisplay);
+            
             if (testimonialsResponse.status && testimonialsResponse.data) {
               setTestimonials(testimonialsResponse.data);
             } else {
@@ -46,7 +46,8 @@ const Testimonials = () => {
             setTestimonials([]);
           }
         } else {
-          // If settings fetch fails, still try to fetch testimonials
+          // If settings fetch fails, fetch testimonials with default limit
+          const testimonialsResponse = await getPublicTestimonials(3);
           if (testimonialsResponse.status && testimonialsResponse.data) {
             setTestimonials(testimonialsResponse.data);
           } else {
@@ -64,6 +65,30 @@ const Testimonials = () => {
 
     fetchData();
   }, []);
+
+  // Slider navigation functions
+  const nextSlide = () => {
+    if (settings && testimonials.length > 3) {
+      setCurrentSlide((prev) => (prev + 1) % Math.ceil(testimonials.length / 3));
+    }
+  };
+
+  const prevSlide = () => {
+    if (settings && testimonials.length > 3) {
+      setCurrentSlide((prev) => (prev - 1 + Math.ceil(testimonials.length / 3)) % Math.ceil(testimonials.length / 3));
+    }
+  };
+
+  // Auto-slide functionality
+  useEffect(() => {
+    if (settings && testimonials.length > 3) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % Math.ceil(testimonials.length / 3));
+      }, 5000); // Change slide every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [testimonials.length, settings]);
 
   // Don't render the section if there are no testimonials or if there's an error
   if (loading) {
@@ -116,49 +141,150 @@ const Testimonials = () => {
         </motion.div>
 
         {testimonials.length > 0 ? (
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial._id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-              >
-                <Card className="h-full bg-white shadow-lg hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-8">
-                    <div className="flex items-center space-x-4 mb-6">
-                      <div className="w-12 h-12 bg-[#547455] rounded-full flex items-center justify-center text-white font-bold">
-                        {testimonial.avatar || testimonial.name.charAt(0).toUpperCase()}
+          <div className="relative">
+            {/* Slider for more than 3 testimonials */}
+            {testimonials.length > 3 ? (
+              <div className="overflow-hidden">
+                <motion.div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentSlide * 100}%)`,
+                  }}
+                >
+                  {Array.from({ length: Math.ceil(testimonials.length / 3) }).map((_, slideIndex) => (
+                    <div key={slideIndex} className="w-full flex-shrink-0">
+                      <div className="grid md:grid-cols-3 gap-8">
+                        {testimonials
+                          .slice(slideIndex * 3, (slideIndex + 1) * 3)
+                          .map((testimonial, index) => (
+                            <motion.div
+                              key={testimonial._id}
+                              initial={{ opacity: 0, y: 40 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.6, delay: index * 0.2 }}
+                              viewport={{ once: true }}
+                            >
+                              <Card className="h-full bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                                <CardContent className="p-8">
+                                  <div className="flex items-center space-x-4 mb-6">
+                                    <div className="w-12 h-12 bg-[#547455] rounded-full flex items-center justify-center text-white font-bold">
+                                      {testimonial.avatar || testimonial.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <h4 className="font-semibold text-gray-900">
+                                        {testimonial.name}
+                                      </h4>
+                                      <p className="text-sm text-gray-600">
+                                        {testimonial.location}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <p className="text-gray-700 leading-relaxed italic">
+                                    "{testimonial.text}"
+                                  </p>
+                                  <div className="flex text-yellow-400 mt-4">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <Star
+                                        key={star}
+                                        className={`h-4 w-4 ${
+                                          star <= (testimonial.rating || 5)
+                                            ? "fill-current"
+                                            : "text-gray-300"
+                                        }`}
+                                      />
+                                    ))}
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          ))}
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          {testimonial.location}
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+            ) : (
+              /* Static grid for 3 or fewer testimonials */
+              <div className="grid md:grid-cols-3 gap-8">
+                {testimonials.map((testimonial, index) => (
+                  <motion.div
+                    key={testimonial._id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="h-full bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+                      <CardContent className="p-8">
+                        <div className="flex items-center space-x-4 mb-6">
+                          <div className="w-12 h-12 bg-[#547455] rounded-full flex items-center justify-center text-white font-bold">
+                            {testimonial.avatar || testimonial.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              {testimonial.name}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {testimonial.location}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-gray-700 leading-relaxed italic">
+                          "{testimonial.text}"
                         </p>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 leading-relaxed italic">
-                      "{testimonial.text}"
-                    </p>
-                    <div className="flex text-yellow-400 mt-4">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`h-4 w-4 ${
-                            star <= (testimonial.rating || 5)
-                              ? "fill-current"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                        <div className="flex text-yellow-400 mt-4">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-4 w-4 ${
+                                star <= (testimonial.rating || 5)
+                                  ? "fill-current"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* Slider Navigation for more than 3 testimonials */}
+            {testimonials.length > 3 && (
+              <div className="flex items-center justify-center mt-8 space-x-4">
+                <Button
+                  onClick={prevSlide}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full p-2 hover:bg-[#547455] hover:text-white transition-colors"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <div className="flex space-x-2">
+                  {Array.from({ length: Math.ceil(testimonials.length / 3) }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        index === currentSlide ? 'bg-[#547455]' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                <Button
+                  onClick={nextSlide}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full p-2 hover:bg-[#547455] hover:text-white transition-colors"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <motion.div

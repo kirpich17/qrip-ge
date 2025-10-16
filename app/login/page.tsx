@@ -36,16 +36,37 @@ export default function LoginPage() {
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuthenticated");
-    if (authStatus === "true") {
+    const userRole = localStorage.getItem("userRole");
+    
+    // Check if user is already logged in as admin
+    if (authStatus === "true" && userRole === "admin") {
+      toast.error("You need to logout first to login as user");
+      router.push("/admin/dashboard");
+      return;
+    }
+    
+    // If already logged in as regular user, redirect to dashboard
+    if (authStatus === "true" && userRole && userRole !== "admin") {
       setIsAuthenticated(true);
       router.replace("/dashboard");
     }
-  }, []);
+  }, [router]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
     console.log(process.env.NEXT_PUBLIC_BASE_URL,"process.env.NEXT_PUBLIC_BASE_URL")
     e.preventDefault();
+    
+    // Check for existing admin session
+    const existingAuth = localStorage.getItem("isAuthenticated");
+    const existingRole = localStorage.getItem("userRole");
+    
+    if (existingAuth === "true" && existingRole === "admin") {
+      toast.error("You need to logout first to login as user");
+      router.push("/admin/dashboard");
+      return;
+    }
+    
     setIsLoading(true);
     const body = {
       email,
@@ -210,6 +231,23 @@ export default function LoginPage() {
                 >
                   {authTranslations.login.signUp}
                 </Link>
+              </p>
+            </div>
+            
+            {/* Logout link for existing admin sessions */}
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Already logged in as admin?{" "}
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    toast.success("Logged out successfully");
+                    window.location.reload();
+                  }}
+                  className="text-[#243b31] hover:underline font-medium cursor-pointer"
+                >
+                  Logout first
+                </button>
               </p>
             </div>
           </CardContent>

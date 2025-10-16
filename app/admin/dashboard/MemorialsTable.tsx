@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, CircleMinus, Trash2, CreditCard, DollarSign, Calendar } from "lucide-react";
+import { CheckCircle, CircleMinus, Trash2, CreditCard, Calendar } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import Link from "next/link";

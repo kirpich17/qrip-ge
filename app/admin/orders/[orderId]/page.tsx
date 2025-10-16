@@ -39,10 +39,10 @@ import { useTranslation } from "@/hooks/useTranslate";
 
 // Helper function to get authentication token
 const getAuthToken = () => {
-  // Try to get token from authToken (regular user login)
+  // Try to get token from authToken (both user and admin login now use this)
   let token = localStorage.getItem("authToken");
   
-  // If no authToken, try to get it from loginData (admin login)
+  // If no authToken, try to get it from loginData (legacy support)
   if (!token) {
     const loginData = localStorage.getItem("loginData");
     if (loginData) {
