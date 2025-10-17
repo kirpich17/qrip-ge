@@ -1,9 +1,9 @@
 // @ts-nocheck
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle } from "lucide-react";
+import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -51,6 +51,8 @@ function AdminDashboardPage() {
   const [stats, setStats] = useState([]);
   const [recentMemorials, setRecentMemorials] = useState([]);
   const [users, setUsers] = useState([]);
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState(new Date());
 
   // User Pagination
   const [userPage, setUserPage] = useState(1);
@@ -64,12 +66,22 @@ function AdminDashboardPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const fetchStats = async () => {
     try {
+      setIsLoadingStats(true);
       const res = await axiosInstance.get("/api/admin/stats");
+      
+      // Format revenue with number formatting (no currency text)
+      const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(amount);
+      };
+
       setStats([
         {
           label: admindashTranslations.stats.totalUsers,
           value: res.data.users.total,
-          change: "+" + res.data.users.percentageChange + "%",
+          change: (res.data.users.percentageChange >= 0 ? "+" : "") + res.data.users.percentageChange + "%",
           icon: Users,
           color: "text-blue-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
@@ -77,22 +89,27 @@ function AdminDashboardPage() {
         {
           label: admindashTranslations.stats.activeMemorials,
           value: res.data.activeMemorials.total,
-          change: "+" + res.data.activeMemorials.percentageChange + "%",
+          change: (res.data.activeMemorials.percentageChange >= 0 ? "+" : "") + res.data.activeMemorials.percentageChange + "%",
           icon: Heart,
           color: "text-red-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
         },
         {
           label: admindashTranslations.stats.monthlyRevenue,
-          value: "₾12,450",
-          change: "+15%",
+          value: formatCurrency(res.data.revenue.total),
+          change: (res.data.revenue.percentageChange >= 0 ? "+" : "") + res.data.revenue.percentageChange + "%",
           icon: Banknote,
           color: "text-green-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
+          showCurrencyIcon: true,
         },
       ]);
+      setLastRefreshTime(new Date());
     } catch (error) {
       console.log(error);
+      toast.error("Failed to fetch statistics");
+    } finally {
+      setIsLoadingStats(false);
     }
   };
 
@@ -144,6 +161,10 @@ function AdminDashboardPage() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleManualRefresh = () => {
+    fetchStats();
   };
 
   useEffect(() => {
@@ -212,7 +233,13 @@ function AdminDashboardPage() {
         </motion.div>
 
         {/* Stats Cards */}
-        <StatsCards stats={stats} />
+        <StatsCards 
+          stats={stats} 
+          isLoading={isLoadingStats} 
+          lastRefreshTime={lastRefreshTime}
+          onRefresh={handleManualRefresh}
+          translations={admindashTranslations.stats}
+        />
 
         {/* Quick Access */}
         <motion.div

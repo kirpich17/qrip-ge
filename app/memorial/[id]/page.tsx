@@ -270,7 +270,7 @@ function QRPageTransition({
                 </div>
               ) : (
                 <>
-                  <div className="relative  lg:w-[22%] lg:h-[350px] h-[400px] w-[75%] rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
+                  <div className="relative h-64 w-64 rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
                     <Image
                       src={profilePhoto || '/default-profile.jpg'}
                       alt={`${firstName} ${lastName}`}
@@ -639,14 +639,26 @@ export default function MemorialPage() {
                   <div className="absolute inset-0 bg-black/20"></div>
                   <div className="relative p-8 md:p-12">
                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                      <Avatar className="h-32 w-32 md:h-40 md:w-40 ring-4 ring-white/20">
-                        <AvatarImage
-                          src={apiMemorial.profileImage || "/placeholder.svg"}
-                        />
-                        <AvatarFallback className="text-4xl">
-                          {name.split(" ").map(n => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div 
+                        className="cursor-pointer group"
+                        onClick={() => {
+                          // Create a combined array with profile image first, then gallery images
+                          const allImages = [apiMemorial.profileImage, ...(apiMemorial.photoGallery || [])].filter(Boolean);
+                          if (allImages.length > 0) {
+                            setLightboxIndex(0); // Profile image is always first
+                            setIsLightboxOpen(true);
+                          }
+                        }}
+                      >
+                        <Avatar className="h-32 w-32 md:h-40 md:w-40 ring-4 ring-white/20 group-hover:ring-white/40 transition-all duration-300">
+                          <AvatarImage
+                            src={apiMemorial.profileImage || "/placeholder.svg"}
+                          />
+                          <AvatarFallback className="text-4xl">
+                            {name.split(" ").map(n => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                       <div className="text-center md:text-left flex-1">
                         <div className="flex items-center justify-center md:justify-start space-x-2 mb-2">
                           <h1 className="text-3xl md:text-4xl font-bold">
@@ -704,7 +716,7 @@ export default function MemorialPage() {
                               e.preventDefault();
                               e.stopPropagation();
                               toast({
-                                title: "Premium Feature",
+                                title: memorialTranslations?.premium?.feature || "Premium Feature",
                                 description: "Video uploads are available only for Premium subscribers.",
                                 variant: "default",
                               });
@@ -732,7 +744,7 @@ export default function MemorialPage() {
                                   className="flex items-center space-x-1"
                                 >
                                   <ChevronLeft className="h-4 w-4" />
-                                  <span className="hidden sm:inline text-xs">Prev</span>
+                                  <span className="hidden sm:inline text-xs">{memorialTranslations?.navigation?.prev || "Prev"}</span>
                                 </Button>
                                 <Button
                                   variant="outline"
@@ -741,7 +753,7 @@ export default function MemorialPage() {
                                   disabled={!apiMemorial.photoGallery?.length}
                                   className="flex items-center space-x-1"
                                 >
-                                  <span className="hidden sm:inline text-xs">Next</span>
+                                  <span className="hidden sm:inline text-xs">{memorialTranslations?.navigation?.next || "Next"}</span>
                                   <ChevronRight className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -952,15 +964,15 @@ export default function MemorialPage() {
                           <div className="text-center py-12 bg-gray-50 rounded-lg">
                             <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                              {apiMemorial.videoGallery?.length > 0 ? "Video Uploads Available Only for Premium Subscribers" : "Premium Feature"}
+                              {apiMemorial.videoGallery?.length > 0 ? "Video Uploads Available Only for Premium Subscribers" : memorialTranslations?.premium?.feature || "Premium Feature"}
                             </h3>
                             <p className="text-gray-600 mb-4">
                               {apiMemorial.videoGallery?.length > 0 
                                 ? "Video uploads are available only for Premium subscribers. Upgrade to Premium to view and manage your uploaded videos."
-                                : "Video content is available with premium memorials"
+                                : memorialTranslations?.premium?.videoContent || "Video content is available with premium memorials"
                               }
                             </p>
-                            <Button variant="outline">Learn More</Button>
+                            <Button variant="outline">{memorialTranslations?.premium?.learnMore || "Learn More"}</Button>
                           </div>
                         )}
                       </TabsContent>
@@ -1234,19 +1246,26 @@ export default function MemorialPage() {
       </div>
 
       {/* Lightbox */}
-      {apiMemorial.photoGallery && apiMemorial.photoGallery.length > 0 && (
-        <Lightbox
-          isOpen={isLightboxOpen}
-          onClose={() => setIsLightboxOpen(false)}
-          images={apiMemorial.photoGallery}
-          currentIndex={lightboxIndex}
-          onIndexChange={(index) => {
-            setLightboxIndex(index);
-            setCurrentImageIndex(index);
-          }}
-          title={`${apiMemorial.firstName} ${apiMemorial.lastName} - Memory ${lightboxIndex + 1}`}
-        />
-      )}
+      {(() => {
+        // Create combined images array with profile image first, then gallery images
+        const allImages = [apiMemorial.profileImage, ...(apiMemorial.photoGallery || [])].filter(Boolean);
+        return allImages.length > 0 && (
+          <Lightbox
+            isOpen={isLightboxOpen}
+            onClose={() => setIsLightboxOpen(false)}
+            images={allImages}
+            currentIndex={lightboxIndex}
+            onIndexChange={(index) => {
+              setLightboxIndex(index);
+              // Update currentImageIndex only if we're viewing gallery images (not profile image)
+              if (index > 0) {
+                setCurrentImageIndex(index - 1);
+              }
+            }}
+            title={`${apiMemorial.firstName} ${apiMemorial.lastName} - ${lightboxIndex === 0 ? 'Profile Photo' : `Memory ${lightboxIndex}`}`}
+          />
+        );
+      })()}
     </div>
   );
 }

@@ -492,6 +492,15 @@ export interface MemorialTranslations {
   video: {
     description: string;
   };
+  premium: {
+    feature: string;
+    videoContent: string;
+    learnMore: string;
+  };
+  navigation: {
+    prev: string;
+    next: string;
+  };
   sections: {
     location: {
       title: string;

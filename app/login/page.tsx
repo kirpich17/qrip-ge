@@ -233,23 +233,6 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
-            
-            {/* Logout link for existing admin sessions */}
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
-                Already logged in as admin?{" "}
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    toast.success("Logged out successfully");
-                    window.location.reload();
-                  }}
-                  className="text-[#243b31] hover:underline font-medium cursor-pointer"
-                >
-                  Logout first
-                </button>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </motion.div>

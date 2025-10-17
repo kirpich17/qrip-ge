@@ -383,6 +383,23 @@
         "description": "მიიღეთ შეტყობინებები როცა ვინმე სტუმრობს ან კომენტარს ტოვებს"
       }
     },
+    "buttons": {
+      "removeImage": "გამოსახულების წაშლა",
+      "add": "დამატება",
+      "saving": "შენახვა...",
+      "updateMemorial": "მემორიალის განახლება"
+    },
+    "location": {
+      "setPreciseLocation": "ზუსტი მდებარეობის დაყენება"
+    },
+    "mediaSupport": {
+      "photos": "მხარდაჭერილი: JPEG, PNG, WebP",
+      "videos": "მხარდაჭერილი: MP4, MOV • მაქს. 1 წუთი",
+      "documents": "მხარდაჭერილი: PDF, DOC, DOCX, TXT"
+    },
+    "validation": {
+      "fillRequiredFields": "გთხოვთ შეავსოთ ყველა სავალდებულო ველი მემორიალის შესანახად"
+    },
    
   "latitude": "განედი",
   "longitude": "გრძედი",
@@ -861,6 +878,15 @@
       "pause": "პაუზა",
       "mute": "დადუმება",
       "unmute": "ხმის ჩართვა"
+    },
+    "premium": {
+      "feature": "პრემიუმ ფუნქცია",
+      "videoContent": "ვიდეო კონტენტი ხელმისაწვდომია პრემიუმ მემორიალებთან",
+      "learnMore": "მეტი ინფორმაცია"
+    },
+    "navigation": {
+      "prev": "წინა",
+      "next": "შემდეგი"
     }
   },
   "demomemorial": {
@@ -1014,6 +1040,9 @@
       "revenue": "შემოსავალი",
       "newUsers": "ახალი მომხმარებლები",
       "newMemorials": "ახალი მემორიალები",
+      "lastUpdated": "ბოლო განახლება",
+      "refresh": "განახლება",
+      "refreshing": "განახლება...",
       "subscriptionsExpiring": "პაკეტები, რომელთა ვადაც მალე იწურება"
     },
     "tabs": {

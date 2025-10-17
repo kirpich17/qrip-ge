@@ -396,6 +396,23 @@
         "description": "Get notified when someone visits or comments"
       }
     },
+    "buttons": {
+      "removeImage": "Remove Image",
+      "add": "Add",
+      "saving": "Saving...",
+      "updateMemorial": "Update Memorial"
+    },
+    "location": {
+      "setPreciseLocation": "Set Precise Location"
+    },
+    "mediaSupport": {
+      "photos": "Supported: JPEG, PNG, WebP",
+      "videos": "Supported: MP4, MOV • Max 1min",
+      "documents": "Supported: PDF, DOC, DOCX, TXT"
+    },
+    "validation": {
+      "fillRequiredFields": "Please fill in all required fields to save the memorial"
+    },
       "latitude":"Latitude",
       "longitude":"Longitude",
 "autoFillGPS":"Auto-fill GPS"
@@ -875,6 +892,15 @@
       "pause": "Pause",
       "mute": "Mute",
       "unmute": "Unmute"
+    },
+    "premium": {
+      "feature": "Premium Feature",
+      "videoContent": "Video content is available with premium memorials",
+      "learnMore": "Learn More"
+    },
+    "navigation": {
+      "prev": "Prev",
+      "next": "Next"
     }
   },
   "demomemorial": {
@@ -1024,7 +1050,10 @@
       "activeMemorials": "Active Memorials",
       "monthlyRevenue": "Monthly Revenue",
       "qrScans": "QR Scans",
-      "changeFromLastMonth": "from last month"
+      "changeFromLastMonth": "from last month",
+      "lastUpdated": "Last updated",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing..."
     },
     "tabs": {
       "users": "Users",

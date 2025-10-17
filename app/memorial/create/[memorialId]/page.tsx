@@ -1032,7 +1032,7 @@ export default function CreateMemorialPage() {
                           onClick={removeProfileImage}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Remove Image
+{createMemorialTranslations?.buttons?.removeImage || "Remove Image"}
                         </Button>
                       )}
 
@@ -1119,7 +1119,7 @@ export default function CreateMemorialPage() {
                   <div className="space-y-4">
                     <Label className="flex items-center text-lg font-semibold">
                       <MapPin className="h-5 w-5 mr-2" />
-                      {createMemorialTranslations.basicInfo.location?.title || createMemorialTranslations.basicInfo.location} - Set Precise Location
+{createMemorialTranslations.basicInfo.location?.title || createMemorialTranslations.basicInfo.location} - {createMemorialTranslations?.location?.setPreciseLocation || "Set Precise Location"}
                     </Label>
                     <p className="text-sm text-gray-600">
                       {createMemorialTranslations?.basicInfo?.location?.description || "Click on the map to set the exact GPS coordinates for the memorial location."}
@@ -1171,7 +1171,7 @@ export default function CreateMemorialPage() {
                         onClick={addAchievement}
                         disabled={!newAchievement.trim()}
                       >
-                        Add
+{createMemorialTranslations?.buttons?.add || "Add"}
                       </Button>
                     </div>
 
@@ -1256,7 +1256,7 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.photos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: JPEG, PNG, WebP
+                            {createMemorialTranslations?.mediaSupport?.photos || "Supported: JPEG, PNG, WebP"}
                           </p>
                           {mediaFiles.photos.length > 0 && (
                             <div className="mt-4 w-full">
@@ -1310,7 +1310,7 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.videos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: MP4, MOV • Max {'1min'}
+                            {createMemorialTranslations?.mediaSupport?.videos || "Supported: MP4, MOV • Max 1min"}
                           </p>
                             {mediaFiles.videos.length > 0 && (
                               <div className="mt-4 w-full">
@@ -1373,7 +1373,7 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.documents.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: PDF, DOC, DOCX, TXT
+                            {createMemorialTranslations?.mediaSupport?.documents || "Supported: PDF, DOC, DOCX, TXT"}
                           </p>
                           {mediaFiles.documents.length > 0 && (
                             <div className="mt-4 w-full">
@@ -1517,12 +1517,12 @@ export default function CreateMemorialPage() {
               {isSaving ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Saving...
+{createMemorialTranslations?.buttons?.saving || "Saving..."}
                 </>
               ) : (
                 <>
                   <Save className="h-5 w-5 mr-2" />
-                  {isEditing ? "Update Memorial" : createMemorialTranslations.header.save}
+{isEditing ? (createMemorialTranslations?.buttons?.updateMemorial || "Update Memorial") : createMemorialTranslations.header.save}
                 </>
               )}
             </Button>
@@ -1532,7 +1532,7 @@ export default function CreateMemorialPage() {
           {!isFormValid() && (
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-500">
-                Please fill in all required fields to save the memorial
+                {createMemorialTranslations?.validation?.fillRequiredFields || "Please fill in all required fields to save the memorial"}
                 {formData.biography.trim() !== "" && formData.biography.trim().length < 10 && (
                   <span className="block mt-1 text-red-500">
                     Biography must be at least 10 characters long
