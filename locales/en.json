@@ -42,25 +42,72 @@
     }
   },
   "memorial": {
-    "inLovingMemory": "In Loving Memory",
-    "tapToViewMemorial": "Tap to view memorial",
-    "memorialUnavailable": "Memorial Unavailable",
-    "memorialInactive": "This memorial profile is currently inactive.",
-    "contactSupport": "Contact Support",
-    "returnHome": "Return Home",
-    "noMemorialData": "No memorial data found",
-    "loadingMemorial": "Loading memorial...",
-    "premiumSlides": {
-      "tapToView": "Tap to view memorial"
+    "header": {
+      "views": " views",
+      "share": "Share"
+    },
+    "inactive": {
+      "title": "Memorial Unavailable",
+      "message": "This memorial profile is currently inactive. Please contact support or the family for more information.",
+      "contact": "Contact Support",
+      "return": "Return Home"
+    },
+    "profile": {
+      "age": "Age {age} years"
+    },
+    "tabs": {
+      "lifeStory": "Life Story",
+      "memories": "Memories",
+      "photos": "Photos",
+      "video": "Video",
+      "locked": "Premium Feature",
+      "description": "Photos and videos celebrating a life well-lived"
+    },
+    "sections": {
+      "family": {
+        "title": "Family",
+        "locked": "Family tree available with premium",
+        "noFamily": "No family members added yet"
+      },
+      "location": {
+        "title": "Memorial Location",
+        "mapPlaceholder": "Interactive Map",
+        "getDirections": "Get Directions",
+        "viewOnGoogleMaps": "View on Google Maps",
+        "copyCoordinates": "Copy Coordinates",
+        "preciseLocation": "Precise Location:",
+        "locked": "GPS location available with premium",
+        "noLocation": "No location data available for this memorial"
+      },
+      "achievements": {
+        "title": "Achievements & Legacy",
+        "noAchievements": "No achievements added yet"
+      },
+      "info": {
+        "title": "Memorial Information",
+        "qrCode": "QR Code:",
+        "plan": "Plan:",
+        "lastUpdated": "Last Updated:",
+        "createMemorial": "Create Your Own Memorial"
+      }
+    },
+    "video": {
+      "description": "A personal message and memories shared",
+      "play": "Play",
+      "pause": "Pause",
+      "mute": "Mute",
+      "unmute": "Unmute"
+    },
+    "premium": {
+      "feature": "Premium Feature",
+      "videoContent": "Video content is available with premium memorials",
+      "learnMore": "Learn More"
+    },
+    "navigation": {
+      "prev": "Prev",
+      "next": "Next"
     }
   },
-
-
-  
-
-
-
-
   "features": {
     "title": "How QR Memorial Works",
     "subtitle": "Comprehensive tools to create meaningful, lasting tributes that celebrate life and preserve memories",
@@ -328,9 +375,6 @@
       "lastName": "Last Name",
       "birthDate": "Birth Date",
       "deathDate": "Date of Passing",
-      "location": "Memorial Location",
-      "biography": "Life Story",
-      "biographyPlaceholder": "Share the beautiful story of your loved one's life...",
       "location": {
         "title": "Memorial Location",
         "description": "Click on the map to set the exact GPS coordinates for the memorial location.",
@@ -346,7 +390,9 @@
           "currentLocation": "Use the navigation button to get your current location",
           "manualCoordinates": "Enter exact coordinates manually in the input fields"
         }
-      }
+      },
+      "biography": "Life Story",
+      "biographyPlaceholder": "Share the beautiful story of your loved one's life..."
     },
     "media": {
       "title": "Photos & Videos",
@@ -413,10 +459,9 @@
     "validation": {
       "fillRequiredFields": "Please fill in all required fields to save the memorial"
     },
-      "latitude":"Latitude",
-      "longitude":"Longitude",
-"autoFillGPS":"Auto-fill GPS"
-    
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "autoFillGPS": "Auto-fill GPS"
   },
   "qrGenerator": {
     "header": {
@@ -648,11 +693,10 @@
           "manualCoordinates": "Enter exact coordinates manually in the input fields"
         }
       },
-      "achievements":"Achievements",
-      "awards":"Add notable achievements or awards",
-      "nobelPrice":"Nobel Prize in Physics",
+      "achievements": "Achievements",
+      "awards": "Add notable achievements or awards",
+      "nobelPrice": "Nobel Prize in Physics",
       "achievement": "Add notable achievements or awards (e.g., \"Nobel Prize\", \"Olympic Gold Medal\")"
-    
     },
     "media": {
       "title": "Photos & Videos",
@@ -671,36 +715,24 @@
         "title": "Documents",
         "description": "Manage documents",
         "button": "Manage Files"
-      }
-      ,
-      "videosCard":{
-        "videos":"Videos",
-        "upload":"Upload video memories",
-        "uploadVideo": "Upload Videos",
-        "existingVideos":"Existing Videos",
-        "newVideos":"New Videos"
       },
-        "documentCard":{
-        "document":"Documents",
-        "upload":"Upload important documents",
+      "videosCard": {
+        "videos": "Videos",
+        "upload": "Upload video memories",
+        "uploadVideo": "Upload Videos",
+        "existingVideos": "Existing Videos",
+        "newVideos": "New Videos"
+      },
+      "documentCard": {
+        "document": "Documents",
+        "upload": "Upload important documents",
         "uploadDocument": "Upload Documents",
-        "existingDocument":"Existing Documents"
+        "existingDocument": "Existing Documents"
       }
     },
     "familyTree": {
-      "title": "Family Tree",
-      "description": "Edit family relationships and connections",
-          "familyMember":"Family Member Name",
-        "relationship":"Relationship",
-
-
-         "namePlaceholder": "e.g., John Doe",
-    "relationshipPlaceholder": "e.g., Father",
-      "placeholder": {
-        "title": "Family Tree Editor",
-        "description": "Edit connections between family members and relationships",
-        "button": "Edit Family Tree"
-      }
+      "updateFamilyMember": "Add Family Member Name",
+      "updateRelationship": "Add Relationship"
     },
     "settings": {
       "title": "Privacy & Settings",
@@ -725,10 +757,6 @@
       "premiumDescription": "This feature is only available with a Premium subscription.",
       "upgradeDescription": "Upgrade to Plus or Premium to access this feature.",
       "upgradeButton": "Upgrade to"
-    },
-    "familyTree": {
-      "updateFamilyMember":"Add Family Member Name",
-      "updateRelationship": "Add Relationship"
     },
     "displaySettings": {
       "title": "Display Settings",
@@ -758,10 +786,10 @@
       "yearFilter": {
         "label": "Year",
         "options": {
-          "all": "All Years",
-          "2024": "2024",
+          "2022": "2022",
           "2023": "2023",
-          "2022": "2022"
+          "2024": "2024",
+          "all": "All Years"
         }
       }
     },
@@ -836,73 +864,6 @@
     },
     "loadMore": "Load More Memorials"
   },
-  "memorial": {
-    "header": {
-      "views": " views",
-      "share": "Share"
-    },
-    "inactive": {
-      "title": "Memorial Unavailable",
-      "message": "This memorial profile is currently inactive. Please contact support or the family for more information.",
-      "contact": "Contact Support",
-      "return": "Return Home"
-    },
-    "profile": {
-      "age": "Age {age} years"
-    },
-    "tabs": {
-      "lifeStory": "Life Story",
-      "memories": "Memories",
-      "photos": "Photos",
-      "video": "Video",
-      "locked": "Premium Feature",
-      "description": "Photos and videos celebrating a life well-lived"
-    },
-    "sections": {
-      "family": {
-        "title": "Family",
-        "locked": "Family tree available with premium",
-        "noFamily":"No family members added yet"
-      },
-      "location": {
-        "title": "Memorial Location",
-        "mapPlaceholder": "Interactive Map",
-        "getDirections": "Get Directions",
-        "viewOnGoogleMaps": "View on Google Maps",
-        "copyCoordinates": "Copy Coordinates",
-        "preciseLocation": "Precise Location:",
-        "locked": "GPS location available with premium",
-       "noLocation": "No location data available for this memorial"
-      },
-      "achievements": {
-        "title": "Achievements & Legacy",
-        "noAchievements": "No achievements added yet"
-      },
-      "info": {
-        "title": "Memorial Information",
-        "qrCode": "QR Code:",
-        "plan": "Plan:",
-        "lastUpdated": "Last Updated:",
-        "createMemorial": "Create Your Own Memorial"
-      }
-    },
-    "video": {
-      "description": "A personal message and memories shared",
-      "play": "Play",
-      "pause": "Pause",
-      "mute": "Mute",
-      "unmute": "Unmute"
-    },
-    "premium": {
-      "feature": "Premium Feature",
-      "videoContent": "Video content is available with premium memorials",
-      "learnMore": "Learn More"
-    },
-    "navigation": {
-      "prev": "Prev",
-      "next": "Next"
-    }
-  },
   "demomemorial": {
     "demoBanner": {
       "title": "This is how your memorial will look to visitors",
@@ -976,8 +937,7 @@
       "bioPlaceholder": "Tell us a bit about yourself...",
       "saveChanges": "Save Changes"
     },
-
-       "shippingInfo": {
+    "shippingInfo": {
       "title": "Shipping Address",
       "description": "Update your shipping address for physical deliveries.",
       "fullName": "Full Name",
@@ -987,7 +947,6 @@
       "city": "City",
       "country": "Country"
     }
-
   },
   "setting": {
     "header": {
@@ -1371,34 +1330,27 @@
     "termsAndCondition": "Terms And Condition",
     "logout": "Logout"
   },
-
-
   "subscription_management": {
-  "my_subscription_tab": "My Subscription",
-  "manage_plans_tab": "Manage Plans",
-   "payment_success":"Payment Successful!",
-   "thank_you":"Thank you for your purchase. You can now create a beautiful memorial for your loved one",
-  "create_memorial": "Create Your Memorial",
-  "loading": "Loading...",
-  "paymentFailed":{
-
-    "payment_failed":"Payment Failed",
-     "msg": "Unfortunately, we couldn't process your payment. This can happen for a few reasons.",
-     "troubleshooting_title": "Please check the following:",
+    "my_subscription_tab": "My Subscription",
+    "manage_plans_tab": "Manage Plans",
+    "payment_success": "Payment Successful!",
+    "thank_you": "Thank you for your purchase. You can now create a beautiful memorial for your loved one",
+    "create_memorial": "Create Your Memorial",
+    "loading": "Loading...",
+    "paymentFailed": {
+      "payment_failed": "Payment Failed",
+      "msg": "Unfortunately, we couldn't process your payment. This can happen for a few reasons.",
+      "troubleshooting_title": "Please check the following:",
       "check_card_details": "Your card details (number, expiry date, CVC) are correct.",
       "check_sufficient_funds": "You have sufficient funds in your account.",
       "check_card_expiry": "Your card has not expired.",
       "check_bank_block": "Your bank has not blocked the transaction.",
       "try_again_button": "Try Again"
-     
-
+    },
+    "plan_updated_success": "Plan Updated Successfully!",
+    "plan_updated_msg": "Your subscription plan has been successfully updated.",
+    "go_to_dashboard": "Go to Dashboard"
   },
-  "plan_updated_success": "Plan Updated Successfully!",
-"plan_updated_msg": "Your subscription plan has been successfully updated.",
-"go_to_dashboard": "Go to Dashboard"
-},
-
-
   "selectPlanPage": {
     "header": {
       "back": "Back to Dashboard",
@@ -1412,73 +1364,56 @@
       "text": "Loading Plans..."
     }
   },
-
-
-  
-"planSelection": {
-"loading": "Loading Plans...",
-"error": "Failed to load plans. Please try again later.",
-"selectDuration": "Select Duration",
-"paymentError": {
-"initiate": "Could not initiate payment. Please try again.",
-"process": "Failed to start payment process."
-},
-"badgePopular": "Popular",
-"oneTimePayment": "/ one-time",
-"features": {
-"photoUploads": "{count} Photo Uploads",
-"unlimitedPhotos": "Unlimited Photo Uploads",
-"slideshow": "Photo Slideshow",
-"videoUploads": "Video Uploads (Max {duration}s)",
-"documentUpload": "Document Upload",
-"familyTree": "Family Tree"
-},
-"cta": {
-"processing": "Processing...",
-"selectPlan": "Select Plan",
-"getStarted": "Get Started", 
-"goPremium": "Go Premium",
-"medium": "Select Plan"
-},
-"preselected": {
-"title": "Plan Preselected",
-"description": "Your memorial has been created and a plan has been preselected. You can proceed with payment or choose a different plan below.",
-"badge": "Preselected"
-},
-"promoCode": {
-"title": "Promo Code",
-"applied": "Applied:",
-"placeholder": "Enter promo code",
-"applying": "Applying...",
-"apply": "Apply",
-"remove": "Remove",
-"getForFree": "Get For Free",
-"notApplicable": "This promo code doesn't apply to {planName} plan"
-},
-
-      "promoCode": {
-    "applyButton": "Apply",
-    "applying": "Applying...",
-    "placeholder": "Enter promo code",
-    "success": "Promo code applied successfully!",
-    "invalid": "Invalid promo code",
-    "failed": "Failed to apply promo code",
-    "tooltip": "Enter a promo code to get discounts on this plan.",
-    "sectionTitle": "Apply Promo Code",
-    "applied": "Promo code applied: {code}",
-    "discountPercentage": "{value}% off",
-    "discountFixed": "{value} GEL off",
-    "discountFree": "100% off - FREE",
-    "removeButton": "Remove",
-    "youSave": "You save",
-    "getForFree": "Get For Free",
-    "memorialIdRequired": "Memorial ID is required to apply promo code",
-    "enterCode": "Please enter a promo code"
-  }
-},
-
-
-
+  "planSelection": {
+    "loading": "Loading Plans...",
+    "error": "Failed to load plans. Please try again later.",
+    "selectDuration": "Select Duration",
+    "paymentError": {
+      "initiate": "Could not initiate payment. Please try again.",
+      "process": "Failed to start payment process."
+    },
+    "badgePopular": "Popular",
+    "oneTimePayment": "/ one-time",
+    "features": {
+      "photoUploads": "{count} Photo Uploads",
+      "unlimitedPhotos": "Unlimited Photo Uploads",
+      "slideshow": "Photo Slideshow",
+      "videoUploads": "Video Uploads (Max {duration}s)",
+      "documentUpload": "Document Upload",
+      "familyTree": "Family Tree"
+    },
+    "cta": {
+      "processing": "Processing...",
+      "selectPlan": "Select Plan",
+      "getStarted": "Get Started",
+      "goPremium": "Go Premium",
+      "medium": "Select Plan"
+    },
+    "preselected": {
+      "title": "Plan Preselected",
+      "description": "Your memorial has been created and a plan has been preselected. You can proceed with payment or choose a different plan below.",
+      "badge": "Preselected"
+    },
+    "promoCode": {
+      "applyButton": "Apply",
+      "applying": "Applying...",
+      "placeholder": "Enter promo code",
+      "success": "Promo code applied successfully!",
+      "invalid": "Invalid promo code",
+      "failed": "Failed to apply promo code",
+      "tooltip": "Enter a promo code to get discounts on this plan.",
+      "sectionTitle": "Apply Promo Code",
+      "applied": "Promo code applied: {code}",
+      "discountPercentage": "{value}% off",
+      "discountFixed": "{value} GEL off",
+      "discountFree": "100% off - FREE",
+      "removeButton": "Remove",
+      "youSave": "You save",
+      "getForFree": "Get For Free",
+      "memorialIdRequired": "Memorial ID is required to apply promo code",
+      "enterCode": "Please enter a promo code"
+    }
+  },
   "adminSubscriptionPage": {
     "header": {
       "back": "Back",
@@ -1545,9 +1480,7 @@
         "videoUploads": "Video Uploads (Max {duration}s)"
       }
     }
-  }
-,
-
+  },
   "userMenu": {
     "logoutConfirm": "Are you sure you want to sign out?",
     "planSuffix": " Plan",
@@ -1555,9 +1488,7 @@
     "subscription": "Subscription",
     "settings": "Settings",
     "signOut": "Sign out"
-  }
-,
-
+  },
   "publicMemorials": {
     "title": "Shared Library",
     "description": "Browse and discover the stories of lives celebrated on our platform.",
@@ -1577,129 +1508,129 @@
     }
   },
   "promoCodeManagement": {
-  "title": "Promo Code Management",
-  "description": "Create and manage promotional codes for discounts or free plans.",
-  "addNewButton": "Add New Promo Code",
-  "tableHeaders": {
-    "code": "Code",
-    "discount": "Discount",
-    "expires": "Expires",
-    "usage": "Usage",
-    "status": "Status",
-    "actions": "Actions"
-  },
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive"
-  },
-  "modal": {
-    "addTitle": "Add New Promo Code",
-    "editTitle": "Edit Promo Code",
-    "codeLabel": "Promo Code",
-    "codePlaceholder": "SUMMER20",
-    "discountTypeLabel": "Discount Type",
-    "discountTypeOptions": {
-      "percentage": "Percentage Discount (%)",
-      "fixed": "Fixed Amount Discount ({currency})",
-      "free": "100% Off (Free Plan)"
+    "title": "Promo Code Management",
+    "description": "Create and manage promotional codes for discounts or free plans.",
+    "addNewButton": "Add New Promo Code",
+    "tableHeaders": {
+      "code": "Code",
+      "discount": "Discount",
+      "expires": "Expires",
+      "usage": "Usage",
+      "status": "Status",
+      "actions": "Actions"
     },
-    "selectPlanLabel": "Select Plan",
-    "selectPlanPlaceholder": "Select Plan",
-    "discountValueLabel": "Discount Value ({symbol})",
-    "discountValuePlaceholderPercentage": "e.g., 20",
-    "discountValuePlaceholderFixed": "e.g., 10",
-    "expiryDateLabel": "Expiry Date",
-    "maxUsageLabel": "Max Usage (Optional)",
-    "maxUsagePlaceholder": "e.g., 100 (leave empty for unlimited)",
-    "activeLabel": "Set Active",
-    "saveButtonAdd": "Save Promo Code",
-    "saveButtonEdit": "Update Promo Code",
-    "quickExpiryOptions": {
-      "1day": "1 Day",
-      "1week": "1 Week",
-      "1month": "1 Month"
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "modal": {
+      "addTitle": "Add New Promo Code",
+      "editTitle": "Edit Promo Code",
+      "codeLabel": "Promo Code",
+      "codePlaceholder": "SUMMER20",
+      "discountTypeLabel": "Discount Type",
+      "discountTypeOptions": {
+        "percentage": "Percentage Discount (%)",
+        "fixed": "Fixed Amount Discount ({currency})",
+        "free": "100% Off (Free Plan)"
+      },
+      "selectPlanLabel": "Select Plan",
+      "selectPlanPlaceholder": "Select Plan",
+      "discountValueLabel": "Discount Value ({symbol})",
+      "discountValuePlaceholderPercentage": "e.g., 20",
+      "discountValuePlaceholderFixed": "e.g., 10",
+      "expiryDateLabel": "Expiry Date",
+      "maxUsageLabel": "Max Usage (Optional)",
+      "maxUsagePlaceholder": "e.g., 100 (leave empty for unlimited)",
+      "activeLabel": "Set Active",
+      "saveButtonAdd": "Save Promo Code",
+      "saveButtonEdit": "Update Promo Code",
+      "quickExpiryOptions": {
+        "1day": "1 Day",
+        "1week": "1 Week",
+        "1month": "1 Month"
+      }
+    },
+    "errors": {
+      "selectPlanFirst": "Please select plan first.",
+      "failedCreate": "Failed to create promo code",
+      "failedUpdate": "Failed to update promo code",
+      "failedDelete": "Failed to delete promo code",
+      "failedFetch": "Failed to fetch promo codes"
+    },
+    "deleteConfirm": "Are you sure you want to delete this promo code?",
+    "noPromoCodes": "No promo codes found."
+  },
+  "homePagePlan": {
+    "heading": "Choose Your Plan",
+    "title": " Select the perfect plan to honor your loved ones"
+  },
+  "plansTranslations": {
+    "minimal": {
+      "name": "Minimal Plan",
+      "description": "1 photo + biography",
+      "features": {
+        "photoUploads": "1 Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max 0s)",
+        "documentUpload": "Document Upload",
+        "familyTree": "Family Tree"
+      }
+    },
+    "medium": {
+      "name": "Medium Plan",
+      "description": "Up to 10 photos per memorial with slideshow",
+      "features": {
+        "photoUploads": "10 Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max 0s)",
+        "documentUpload": "Document Upload",
+        "familyTree": "Family Tree"
+      }
+    },
+    "premium": {
+      "name": "Premium Plan",
+      "description": "Unlimited photos, slideshow, videos",
+      "features": {
+        "photoUploads": "Unlimited Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max 60s)",
+        "documentUpload": "Document Upload",
+        "familyTree": "Family Tree"
+      }
     }
   },
-  "errors": {
-    "selectPlanFirst": "Please select plan first.",
-    "failedCreate": "Failed to create promo code",
-    "failedUpdate": "Failed to update promo code",
-    "failedDelete": "Failed to delete promo code",
-    "failedFetch": "Failed to fetch promo codes"
+  "help": {
+    "helpButton": "help"
   },
-  "deleteConfirm": "Are you sure you want to delete this promo code?",
-  "noPromoCodes": "No promo codes found."
-},
-"homePagePlan":{
-  "heading":"Choose Your Plan",
-  "title":" Select the perfect plan to honor your loved ones"
-},
-"plansTranslations": {
-  "minimal": {
-    "name": "Minimal Plan",
-    "description": "1 photo + biography",
-    "features": {
-      "photoUploads": "1 Photo Uploads",
-      "slideshow": "Photo Slideshow",
-      "videoUploads": "Video Uploads (Max 0s)",
-      "documentUpload": "Document Upload",
-      "familyTree": "Family Tree"
-    }
-  },
-  "medium": {
-    "name": "Medium Plan",
-    "description": "Up to 10 photos per memorial with slideshow",
-    "features": {
-      "photoUploads": "10 Photo Uploads",
-      "slideshow": "Photo Slideshow",
-      "videoUploads": "Video Uploads (Max 0s)",
-      "documentUpload": "Document Upload",
-      "familyTree": "Family Tree"
-    }
-  },
-  "premium": {
-    "name": "Premium Plan",
-    "description": "Unlimited photos, slideshow, videos",
-    "features": {
-      "photoUploads": "Unlimited Photo Uploads",
-      "slideshow": "Photo Slideshow",
-      "videoUploads": "Video Uploads (Max 60s)",
-      "documentUpload": "Document Upload",
-      "familyTree": "Family Tree"
-    }
-  }
-},
-"help":{
-"helpButton":"help"
-},
-  "TermsPage":{
-    "manage":"Manage Terms And Conditions",
-    "termAndCondition":"Terms And Conditions",
-   "heading":"Terms & Conditions Editor",
-   "Preview":"Preview",
-   "ExitPreview":"Exit Preview",
-   "NoteSection":"Note Section",
-   "NoteTitle":"Note Title",
-   "NoteContent":"Note Content",
-   "Sections":"Sections",
-   "AddSections":"Add New Sections",
-   "TermsConditions":"Terms & Conditions",
-   "SectionTitle":"Section Title",
-   "SectionType":"Section Type",
-   "Content":"Content",
-    "characters":"characters",
-   "Introduction":"Introduction (Optional)",
-   "EnterTitle":"Enter title",
-   "Entercontent":"Enter content...",
-   "EnterIntroduction": "Enter introduction text (optional)",
-   "EnterListItem":"Enter list item",
-   "ListItems":"List Items",
-   "AddItam":"Add Item",
-   "List":"List",
-   "Text":"Text",
-   "Saving":"Saving",
-   "Save":"Save",
-   "ResetAll":"Reset All"
+  "TermsPage": {
+    "manage": "Manage Terms And Conditions",
+    "termAndCondition": "Terms And Conditions",
+    "heading": "Terms & Conditions Editor",
+    "Preview": "Preview",
+    "ExitPreview": "Exit Preview",
+    "NoteSection": "Note Section",
+    "NoteTitle": "Note Title",
+    "NoteContent": "Note Content",
+    "Sections": "Sections",
+    "AddSections": "Add New Sections",
+    "TermsConditions": "Terms & Conditions",
+    "SectionTitle": "Section Title",
+    "SectionType": "Section Type",
+    "Content": "Content",
+    "characters": "characters",
+    "Introduction": "Introduction (Optional)",
+    "EnterTitle": "Enter title",
+    "Entercontent": "Enter content...",
+    "EnterIntroduction": "Enter introduction text (optional)",
+    "EnterListItem": "Enter list item",
+    "ListItems": "List Items",
+    "AddItam": "Add Item",
+    "List": "List",
+    "Text": "Text",
+    "Saving": "Saving",
+    "Save": "Save",
+    "ResetAll": "Reset All"
   },
   "adminStickers": {
     "header": {
@@ -1920,9 +1851,13 @@
       }
     },
     "pagination": {
-      "pageInfo": "Page {currentPage} of {totalPages}",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "showing": "Showing",
+      "to": "to",
+      "results": "results"
     },
     "messages": {
       "loading": "Loading orders...",
@@ -1933,15 +1868,6 @@
       "deleteError": "Failed to delete order",
       "deleteConfirm": "Are you sure you want to delete this order?\n\nThis action cannot be undone and will permanently remove:\n• Order details\n• Payment information\n• Shipping address\n• All associated data\n\nClick OK to confirm deletion.",
       "trackingPrompt": "Enter tracking number:"
-    },
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "page": "Page",
-      "of": "of",
-      "showing": "Showing",
-      "to": "to",
-      "results": "results"
     }
   },
   "adminOrderDetail": {
@@ -2287,5 +2213,4 @@
       "maxDisplay": "Maximum Display Count"
     }
   }
-
 }
