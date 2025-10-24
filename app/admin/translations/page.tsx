@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Upload, Download, FileText, AlertCircle, CheckCircle, Languages, ArrowLeft } from "lucide-react";
+import { Upload, Download, FileText, AlertCircle, CheckCircle, Languages, ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +29,7 @@ interface UploadProgress {
 }
 
 function TranslationManagementPage() {
-  const { t } = useTranslation();
+  const { t, refreshTranslations } = useTranslation();
   const [languageFiles, setLanguageFiles] = useState<LanguageFile[]>([]);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +152,16 @@ function TranslationManagementPage() {
       ));
 
       toast.success(translations.messages.uploadSuccess.replace('{language}', language));
+      toast.info("Page will reload in 2 seconds to apply changes...");
       fetchLanguageFiles();
+      
+      // Refresh translations to show updated content immediately
+      refreshTranslations();
+      
+      // Force page reload to ensure all components get updated translations
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       
       // Clear progress after 3 seconds
       setTimeout(() => {
@@ -248,6 +257,20 @@ function TranslationManagementPage() {
               <span className="text-2xl font-bold text-white">
                 {translations.title}
               </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  refreshTranslations();
+                  toast.success("Translations refreshed successfully!");
+                }}
+                className="text-white hover:bg-white/10"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh Translations
+              </Button>
             </div>
           </div>
         </div>
