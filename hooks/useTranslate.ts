@@ -1,88 +1,31 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import enTranslations from "@/locales/en.json";
+import kaTranslations from "@/locales/ka.json";
+import ruTranslations from "@/locales/ru.json"; // ✅ Add Russian translations
 import { Translations } from "@/types/translations";
-import { useState, useEffect } from "react";
-import axiosInstance from "@/services/axiosInstance";
 
-type TranslationKey = keyof Translations;
+type TranslationKey = keyof typeof enTranslations;
 
 export const useTranslation = () => {
   const { language } = useLanguage();
-  const [translations, setTranslations] = useState<{
-    en: any;
-    ka: any;
-    ru: any;
-  }>({
-    en: {},
-    ka: {},
-    ru: {}
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadTranslations = async () => {
-      try {
-        // Fetch translations from server instead of static imports
-        const [enRes, kaRes, ruRes] = await Promise.allSettled([
-          axiosInstance.get('/api/translations/en'),
-          axiosInstance.get('/api/translations/ka'),
-          axiosInstance.get('/api/translations/ru')
-        ]);
-
-        setTranslations({
-          en: enRes.status === "fulfilled" ? enRes.value.data : {},
-          ka: kaRes.status === "fulfilled" ? kaRes.value.data : {},
-          ru: ruRes.status === "fulfilled" ? ruRes.value.data : {}
-        });
-      } catch (error) {
-        console.error("Error loading translations:", error);
-        // Fallback to static imports if server fails
-        try {
-          const [enRes, kaRes, ruRes] = await Promise.allSettled([
-            import("@/locales/en.json"),
-            import("@/locales/ka.json"),
-            import("@/locales/ru.json")
-          ]);
-
-          setTranslations({
-            en: enRes.status === "fulfilled" ? enRes.value.default || enRes.value : {},
-            ka: kaRes.status === "fulfilled" ? kaRes.value.default || kaRes.value : {},
-            ru: ruRes.status === "fulfilled" ? ruRes.value.default || ruRes.value : {}
-          });
-        } catch (fallbackError) {
-          console.error("Error loading fallback translations:", fallbackError);
-          setTranslations({
-            en: {},
-            ka: {},
-            ru: {}
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTranslations();
-  }, []);
 
   const t = <K extends keyof Translations>(namespace: K): Translations[K] | undefined => {
-    if (loading) return undefined;
-
-    let currentTranslations;
+    let translations;
 
     if (language === "English") {
-      currentTranslations = translations.en;
+      translations = enTranslations;
     } else if (language === "Georgian") {
-      currentTranslations = translations.ka;
+      translations = kaTranslations;
     } else if (language === "Russian") {
-      currentTranslations = translations.ru;
+      translations = ruTranslations;
     } else {
-      currentTranslations = translations.en; // fallback
+      translations = enTranslations; // fallback
     }
 
-    return currentTranslations[namespace as keyof typeof currentTranslations] as Translations[K] | undefined;
+    return translations[namespace as keyof typeof translations] as Translations[K] | undefined;
   };
 
-  return { t, loading };
+  return { t };
 };

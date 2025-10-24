@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle, RefreshCw, Globe } from "lucide-react";
+import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -253,7 +253,7 @@ function AdminDashboardPage() {
               <CardTitle>{admindashTranslations.quickAccess?.title || "Quick Access"}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Link href="/admin/testimonials">
                   <Button variant="outline" className="w-full justify-start">
                     <MessageCircle className="h-4 w-4 mr-2" />
@@ -270,12 +270,6 @@ function AdminDashboardPage() {
                   <Button variant="outline" className="w-full justify-start">
                     <QrCode className="h-4 w-4 mr-2" />
                     {admindashTranslations.quickAccess?.qrStickers || "QR Stickers"}
-                  </Button>
-                </Link>
-                <Link href="/admin/languages">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Globe className="h-4 w-4 mr-2" />
-                    {admindashTranslations.quickAccess?.languageFiles || "Language Files"}
                   </Button>
                 </Link>
               </div>
