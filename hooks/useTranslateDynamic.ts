@@ -3,8 +3,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Translations } from "@/types/translations";
 import { useState, useEffect } from "react";
+import axiosInstance from "@/services/axiosInstance";
 
-type TranslationKey = keyof typeof Translations;
+type TranslationKey = keyof Translations;
 
 export const useTranslationDynamic = () => {
   const { language } = useLanguage();
@@ -22,25 +23,41 @@ export const useTranslationDynamic = () => {
   useEffect(() => {
     const loadTranslations = async () => {
       try {
+        // Fetch translations from server instead of static imports
         const [enRes, kaRes, ruRes] = await Promise.allSettled([
-          import("@/locales/en.json"),
-          import("@/locales/ka.json"),
-          import("@/locales/ru.json")
+          axiosInstance.get('/api/translations/en'),
+          axiosInstance.get('/api/translations/ka'),
+          axiosInstance.get('/api/translations/ru')
         ]);
 
         setTranslations({
-          en: enRes.status === "fulfilled" ? enRes.value.default || enRes.value : {},
-          ka: kaRes.status === "fulfilled" ? kaRes.value.default || kaRes.value : {},
-          ru: ruRes.status === "fulfilled" ? ruRes.value.default || ruRes.value : {}
+          en: enRes.status === "fulfilled" ? enRes.value.data : {},
+          ka: kaRes.status === "fulfilled" ? kaRes.value.data : {},
+          ru: ruRes.status === "fulfilled" ? ruRes.value.data : {}
         });
       } catch (error) {
         console.error("Error loading translations:", error);
-        // Fallback to empty objects
-        setTranslations({
-          en: {},
-          ka: {},
-          ru: {}
-        });
+        // Fallback to static imports if server fails
+        try {
+          const [enRes, kaRes, ruRes] = await Promise.allSettled([
+            import("@/locales/en.json"),
+            import("@/locales/ka.json"),
+            import("@/locales/ru.json")
+          ]);
+
+          setTranslations({
+            en: enRes.status === "fulfilled" ? enRes.value.default || enRes.value : {},
+            ka: kaRes.status === "fulfilled" ? kaRes.value.default || kaRes.value : {},
+            ru: ruRes.status === "fulfilled" ? ruRes.value.default || ruRes.value : {}
+          });
+        } catch (fallbackError) {
+          console.error("Error loading fallback translations:", fallbackError);
+          setTranslations({
+            en: {},
+            ka: {},
+            ru: {}
+          });
+        }
       } finally {
         setLoading(false);
       }

@@ -14,7 +14,7 @@ import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import LanguageDropdown from "@/components/languageDropdown/page";
 import axiosInstance from "@/services/axiosInstance";
 import Link from "next/link";
-import { useTranslation } from "@/hooks/useTranslate";
+import { useTranslationDynamic } from "@/hooks/useTranslateDynamic";
 
 interface LanguageFile {
   name: string;
@@ -25,7 +25,7 @@ interface LanguageFile {
 }
 
 const LanguageUploadPage = () => {
-  const { t } = useTranslation();
+  const { t, loading: translationsLoading } = useTranslationDynamic();
   const languageManagementTranslations = t("languageManagement") || {
     title: "Language Management",
     description: "Upload and manage translation files for your application",
@@ -240,6 +240,20 @@ const LanguageUploadPage = () => {
   };
 
   // Delete functionality removed - files are replaced on upload instead
+
+  // Show loading state while translations are being fetched
+  if (translationsLoading) {
+    return (
+      <IsAdminAuth>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#243b31] mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading translations...</p>
+          </div>
+        </div>
+      </IsAdminAuth>
+    );
+  }
 
   return (
     <IsAdminAuth>
