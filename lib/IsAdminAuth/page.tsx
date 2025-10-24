@@ -12,16 +12,20 @@ export default function IsAdminAuth({
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    const data = localStorage.getItem("loginData");
+    const loginData = localStorage.getItem("loginData");
+    const authToken = localStorage.getItem("authToken");
+    const userRole = localStorage.getItem("userRole");
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-    if (!data) {
+    if (!loginData || !authToken || !isAuthenticated) {
       router.replace("/admin/login");
       return;
     }
 
     try {
-      const parsed = JSON.parse(data);
-      if (parsed?.token) {
+      const parsed = JSON.parse(loginData);
+      // Check if user is admin and token exists
+      if (parsed?.userType === "admin" && authToken) {
         setIsValid(true);
       } else {
         router.replace("/admin/login");

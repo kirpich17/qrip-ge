@@ -33,6 +33,7 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
+
 export default function AdminProfile() {
   const { t } = useTranslation();
   const adminprofileTranslations = t("adminprofile");

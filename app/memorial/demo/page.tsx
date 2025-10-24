@@ -273,7 +273,7 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {demomemorialTranslations.mediaGallery.title}
+                      {demomemorialTranslations.mediaGallery.title}23233
                     </CardTitle>
                     <CardDescription>
                       {demomemorialTranslations.mediaGallery.description}
@@ -328,11 +328,10 @@ In her later years, Eleanor became passionate about preserving Georgian cultural
                               <button
                                 key={index}
                                 onClick={() => setCurrentImageIndex(index)}
-                                className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                                  index === currentImageIndex
-                                    ? "border-[#547455] "
-                                    : "border-gray-200"
-                                }`}
+                                className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${index === currentImageIndex
+                                  ? "border-[#547455] "
+                                  : "border-gray-200"
+                                  }`}
                               >
                                 <img
                                   src={image || "/placeholder.svg"}

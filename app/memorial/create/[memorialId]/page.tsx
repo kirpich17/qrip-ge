@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Swal from 'sweetalert2'
-;
+import Swal from 'sweetalert2';
 import {
   ArrowLeft,
   Upload,
@@ -19,6 +18,8 @@ import {
   X,
   AlertCircle,
   Lock,
+  Search, // Added import for the Search icon
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,16 +38,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
-import { ADD_MEMORIAL } from "@/services/apiEndPoint";
+import { ADD_MEMORIAL, GET_MEMORIAL, GET_MY_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import LanguageDropdown from "@/components/languageDropdown/page";
+import InteractiveMap from "@/components/InteractiveMap";
 
 // Media limits configuration
 const MEDIA_LIMITS = {
   PHOTO: {
     MAX_SIZE_FREE: 5 * 1024 * 1024, // 5MB
-    MAX_SIZE_PAID: 10 * 1024 * 1024, // 10MB
+    MAX_SIZE_PLUS: 10 * 1024 * 1024, // 10MB
+    MAX_SIZE_PREMIUM: 10 * 1024 * 1024, // 10MB
     ACCEPTED_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
     MAX_COUNT_FREE: 10,
     MAX_COUNT_PLUS: 50,
@@ -56,7 +60,7 @@ const MEDIA_LIMITS = {
     MAX_SIZE_FREE: 50 * 1024 * 1024, // 50MB
     MAX_SIZE_PLUS: 200 * 1024 * 1024, // 200MB
     MAX_SIZE_PREMIUM: 500 * 1024 * 1024, // 500MB
-    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo'],
+    ACCEPTED_TYPES: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/avi', 'video/x-msvideo'],
     MAX_DURATION_FREE: 30, // seconds
     MAX_DURATION_PLUS: 120, // seconds
     MAX_DURATION_PREMIUM: 300, // seconds
@@ -65,8 +69,12 @@ const MEDIA_LIMITS = {
     MAX_COUNT_PREMIUM: Infinity,
   },
   DOCUMENT: {
+    MAX_SIZE_FREE: 0, // No documents for free
+    MAX_SIZE_PLUS: 0, // No documents for plus
     MAX_SIZE_PREMIUM: 10 * 1024 * 1024, // 10MB
     ACCEPTED_TYPES: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'],
+    MAX_COUNT_FREE: 0,
+    MAX_COUNT_PLUS: 0,
     MAX_COUNT_PREMIUM: 20,
   }
 };
@@ -153,6 +161,9 @@ interface VideoItem {
   title: string;
   file: File;
   duration?: number;
+  startTime?: number;
+  endTime?: number;
+  url?: string;
 }
 
 interface DocumentItem {
@@ -172,13 +183,42 @@ interface UserDetails {
   subscriptionPlan: "Free" | "Plus" | "Premium";
 }
 
+const LoadingOverlay = () => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 flex flex-col items-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mb-4"></div>
+      <p className="text-gray-700 font-medium">Saving memorial...</p>
+      <p className="text-gray-500 text-sm mt-1">This may take a few moments</p>
+    </div>
+  </div>
+);
+
 export default function CreateMemorialPage() {
   const router = useRouter();
+
+  const params = useParams();
+
+  const pathName = usePathname()
+  const isCreate = pathName.includes("/memorial/create");
+  const isEdit = pathName.includes("/memorial/edit");
+
+  const memorialId = params.memorialId as string;
+
   const { t } = useTranslation();
   const { toast } = useToast();
-  const createMemorialTranslations = t("createMemorial") as CreateMemorialTranslations;
+  const createMemorialTranslations = (t as any)("createMemorial");
+  const editMemorialTranslations = (t as any)("editMemorial");
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingMemorial, setIsLoadingMemorial] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // States for the geocoding feature
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [geocodingError, setGeocodingError] = useState("");
 
   const [formData, setFormData] = useState({
+    _id: "",
     firstName: "",
     lastName: "",
     birthDate: "",
@@ -211,16 +251,94 @@ export default function CreateMemorialPage() {
   const [userSubscription, setUserSubscription] = useState<"Free" | "Plus" | "Premium">("Free");
   const [achievements, setAchievements] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState<string>("");
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  
+  // Load selected plan from localStorage on component mount
+  useEffect(() => {
+    const storedPlanId = localStorage.getItem('selectedPlanId');
+    if (storedPlanId) {
+      setSelectedPlanId(storedPlanId);
+      console.log('Selected plan from localStorage:', storedPlanId);
+    }
+  }, []);
 
-  // Helper function to get video duration
+  // Function to handle geocoding from location text
+  const handleGeocodeLocation = async () => {
+    if (!formData.location) {
+      setGeocodingError("Please enter a location first");
+      return;
+    }
+
+    setIsGeocoding(true);
+    setGeocodingError("");
+
+    try {
+      // Using OpenStreetMap's Nominatim API (free, no API key required)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          formData.location
+        )}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Geocoding service unavailable");
+      }
+
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        const firstResult = data[0];
+        setFormData(prev => ({
+          ...prev,
+          gps: {
+            lat: parseFloat(firstResult.lat),
+            lng: parseFloat(firstResult.lon)
+          }
+        }));
+        toast({
+          title: "Location found",
+          description: "GPS coordinates have been auto-filled",
+          variant: "default",
+        });
+      } else {
+        setGeocodingError("No location found. Please try a more specific location.");
+      }
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      setGeocodingError("Failed to fetch location data. Please enter coordinates manually.");
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
   const getVideoDuration = (file: File): Promise<number> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       video.preload = 'metadata';
-      video.onloadedmetadata = () => {
+      
+      const timeout = setTimeout(() => {
         window.URL.revokeObjectURL(video.src);
-        resolve(video.duration);
+        reject(new Error('Video duration timeout'));
+      }, 10000); // 10 second timeout
+      
+      video.onloadedmetadata = () => {
+        clearTimeout(timeout);
+        window.URL.revokeObjectURL(video.src);
+        
+        // Check if duration is valid
+        if (isNaN(video.duration) || !isFinite(video.duration) || video.duration <= 0) {
+          reject(new Error('Invalid video duration'));
+        } else {
+          resolve(video.duration);
+        }
       };
+      
+      video.onerror = () => {
+        clearTimeout(timeout);
+        window.URL.revokeObjectURL(video.src);
+        reject(new Error('Video load error'));
+      };
+      
       video.src = URL.createObjectURL(file);
     });
   };
@@ -228,50 +346,50 @@ export default function CreateMemorialPage() {
   // File validation function
   const validateFiles = (files: FileList, type: 'photo' | 'video' | 'document') => {
     const errors: string[] = [];
-    const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO : 
-                  type === 'video' ? MEDIA_LIMITS.VIDEO : 
-                  MEDIA_LIMITS.DOCUMENT;
+    const limits = type === 'photo' ? MEDIA_LIMITS.PHOTO :
+      type === 'video' ? MEDIA_LIMITS.VIDEO :
+        MEDIA_LIMITS.DOCUMENT;
 
-    // Check if user can upload this type
+    // This check is correct as is
     if (type === 'document' && userSubscription !== 'Premium') {
-      errors.push('Documents require Premium subscription');
+      errors.push('Documents require a Premium plan');
       return { valid: false, errors };
     }
 
-    // Check file count limits
-    const currentCount = type === 'photo' ? mediaFiles.photos.length : 
-                        type === 'video' ? mediaFiles.videos.length : 
-                        mediaFiles.documents.length;
-    const maxCount = type === 'photo' ? 
-      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
-       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+    // Check file count limits using the correct plan names
+    const currentCount = type === 'photo' ? mediaFiles.photos.length :
+      type === 'video' ? mediaFiles.videos.length :
+        mediaFiles.documents.length;
+
+    const maxCount = type === 'photo' ?
+      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE :
+        userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
       type === 'video' ?
-      (userSubscription === 'Free' ? limits.MAX_COUNT_FREE : 
-       userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
-      limits.MAX_COUNT_PREMIUM;
+        (userSubscription === 'Free' ? limits.MAX_COUNT_FREE :
+          userSubscription === 'Plus' ? limits.MAX_COUNT_PLUS : limits.MAX_COUNT_PREMIUM) :
+        limits.MAX_COUNT_PREMIUM;
 
     if (currentCount + files.length > maxCount) {
-      errors.push(`You can only upload ${maxCount} ${type}s with your current plan`);
+      errors.push(`You can only upload up to ${maxCount} ${type}s with your current plan.`);
     }
 
-    // Validate each file
     Array.from(files).forEach(file => {
-      // Check file type
       if (!limits.ACCEPTED_TYPES.includes(file.type)) {
         errors.push(`Unsupported file type: ${file.name}`);
         return;
       }
 
-      // Check file size
-      const maxSize = type === 'photo' ? 
-        (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : limits.MAX_SIZE_PAID) :
-        type === 'video' ?
+      // Check file size using the correct plan names
+      const maxSize = type === 'photo' ?
         (userSubscription === 'Free' ? limits.MAX_SIZE_FREE : 
-         userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
-        limits.MAX_SIZE_PREMIUM;
+          userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
+        type === 'video' ?
+          (userSubscription === 'Free' ? limits.MAX_SIZE_FREE :
+            userSubscription === 'Plus' ? limits.MAX_SIZE_PLUS : limits.MAX_SIZE_PREMIUM) :
+          limits.MAX_SIZE_PREMIUM;
 
       if (file.size > maxSize) {
-        errors.push(`${file.name} exceeds maximum size of ${maxSize / (1024 * 1024)}MB`);
+        errors.push(`${file.name} exceeds the maximum size of ${maxSize / (1024 * 1024)}MB.`);
       }
     });
 
@@ -280,7 +398,6 @@ export default function CreateMemorialPage() {
       errors
     };
   };
-
   // Subscription check functions
   const canUploadMedia = () => userSubscription !== "Free";
   const canUploadDocuments = () => userSubscription === "Premium";
@@ -314,16 +431,32 @@ export default function CreateMemorialPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID) {
+      if (file.size > MEDIA_LIMITS.PHOTO.MAX_SIZE_PLUS) {
         toast({
           title: "File Too Large",
-          description: `Profile image must be less than ${MEDIA_LIMITS.PHOTO.MAX_SIZE_PAID / (1024 * 1024)}MB`,
+          description: `Profile image must be less than ${MEDIA_LIMITS.PHOTO.MAX_SIZE_PLUS / (1024 * 1024)}MB`,
           variant: "destructive",
         });
         return;
       }
       handleInputChange("profileImage", file);
     }
+  };
+
+  const removeProfileImage = () => {
+    handleInputChange("profileImage", null);
+  };
+
+  // Function to check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.firstName.trim() !== "" &&
+      formData.lastName.trim() !== "" &&
+      formData.birthDate !== "" &&
+      formData.deathDate !== "" &&
+      formData.biography.trim() !== "" &&
+      formData.biography.trim().length >= 10 // Minimum biography length
+    );
   };
 
   const handlePhotosUpload = (files: FileList | null) => {
@@ -369,13 +502,23 @@ export default function CreateMemorialPage() {
       return;
     }
 
-    // Additional video duration validation
-    const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE : 
-                       userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS : 
-                       MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
+    const maxDuration = userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_FREE :
+      userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_DURATION_PLUS :
+        MEDIA_LIMITS.VIDEO.MAX_DURATION_PREMIUM;
 
     const videoItems = await Promise.all(Array.from(files).map(async (file) => {
-      const duration = await getVideoDuration(file);
+      let duration;
+      try {
+        duration = await getVideoDuration(file);
+        
+        // If duration is NaN, Infinity, or invalid, use a default
+        if (isNaN(duration) || duration <= 0 || !isFinite(duration)) {
+          duration = 30; // Default to 30 seconds for Free plan
+        }
+      } catch (error) {
+        duration = 30; // Fallback duration
+      }
+      
       if (duration > maxDuration) {
         toast({
           title: "Video Too Long",
@@ -387,7 +530,10 @@ export default function CreateMemorialPage() {
       return {
         title: file.name.split('.')[0],
         file,
-        duration
+        duration,
+        startTime: 0,
+        endTime: duration,
+        url: URL.createObjectURL(file)
       };
     }));
 
@@ -410,20 +556,23 @@ export default function CreateMemorialPage() {
       return;
     }
 
-    if (!canUploadDocuments()) {
-      showUpgradeToast("Premium");
-      return;
-    }
+    // if (!canUploadDocuments()) {
+    //   showUpgradeToast("Premium");
+    //   return;
+    // }
 
     const newDocuments = Array.from(files).map(file => ({
       fileName: file.name,
       file
     }));
 
-    setMediaFiles(prev => ({
-      ...prev,
-      documents: [...prev.documents, ...newDocuments]
-    }));
+    setMediaFiles(prev => {
+      const updatedDocuments = [...prev.documents, ...newDocuments];
+      return {
+        ...prev,
+        documents: updatedDocuments
+      };
+    });
   };
 
   const handleAddFamilyMember = () => {
@@ -456,11 +605,18 @@ export default function CreateMemorialPage() {
   };
 
   const removeVideo = (index: number) => {
+    // Clean up object URL to prevent memory leaks
+    const video = mediaFiles.videos[index];
+    if (video.url) {
+      URL.revokeObjectURL(video.url);
+    }
+    
     setMediaFiles(prev => ({
       ...prev,
       videos: prev.videos.filter((_, i) => i !== index)
     }));
   };
+
 
   const removeDocument = (index: number) => {
     setMediaFiles(prev => ({
@@ -507,8 +663,84 @@ export default function CreateMemorialPage() {
     fetchUserData();
   }, [toast]);
 
+  useEffect(() => {
+    if (memorialId && isEdit) {
+      setIsEditing(true);
+      fetchMemorialData(memorialId);
+    } else if (memorialId && isCreate) {
+      // For create operations, we don't need to fetch existing data
+      setIsEditing(false);
+    }
+  }, [memorialId, isEdit, isCreate]);
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      mediaFiles.videos.forEach(video => {
+        if (video.url) {
+          URL.revokeObjectURL(video.url);
+        }
+      });
+    };
+  }, []);
+
+  const fetchMemorialData = async (id: string) => {
+    setIsLoadingMemorial(true);
+    try {
+      const response = await axiosInstance.get(GET_MY_MEMORIAL(id));
+      const memorial = response.data.data;
+
+      setFormData({
+        _id: memorial._id,
+        firstName: memorial.firstName || "",
+        lastName: memorial.lastName || "",
+        birthDate: memorial.birthDate ? new Date(memorial.birthDate).toISOString().split('T')[0] : "",
+        deathDate: memorial.deathDate ? new Date(memorial.deathDate).toISOString().split('T')[0] : "",
+        biography: memorial.biography || "",
+        epitaph: memorial.epitaph || "",
+        location: memorial.location || "",
+        isPublic: memorial.isPublic !== undefined ? memorial.isPublic : true,
+        profileImage: memorial.profileImage || null,
+        gps: memorial.gps || { lat: null, lng: null }
+      });
+
+      if (memorial.achievements) {
+        setAchievements(memorial.achievements);
+      }
+
+      if (memorial.familyTree) {
+        setMediaFiles(prev => ({
+          ...prev,
+          familyTree: memorial.familyTree
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching memorial data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load memorial data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingMemorial(false);
+    }
+  };
+
   const prepareFormData = () => {
     const formDataToSend = new FormData();
+
+    if (memorialId) {
+      formDataToSend.append("_id", memorialId);
+    }
+
+    if (isCreate) {
+      formDataToSend.append("createReq", "true");
+    }
+
+    if (isEdit) {
+      formDataToSend.append("editReq", "true");
+    }
+
     formDataToSend.append("firstName", formData.firstName);
     formDataToSend.append("lastName", formData.lastName);
     formDataToSend.append("birthDate", formData.birthDate);
@@ -519,17 +751,19 @@ export default function CreateMemorialPage() {
     formDataToSend.append("location", formData.location)
 
     if (formData.gps?.lat && formData.gps?.lng) {
-      formDataToSend.append('gps[lat]', formData.gps.lat.toString());
-      formDataToSend.append('gps[lng]', formData.gps.lng.toString());
+      formDataToSend.append('gps', JSON.stringify(formData.gps));
     }
 
     achievements.forEach((achievement, index) => {
       formDataToSend.append(`achievements[${index}]`, achievement);
     });
 
-    if (formData.profileImage) {
+    if (formData.profileImage instanceof File) {
       formDataToSend.append("profileImage", formData.profileImage);
+    } else if (typeof formData.profileImage === 'string') {
+      formDataToSend.append("profileImageUrl", formData.profileImage);
     }
+
     mediaFiles.photos.forEach((photo) => {
       formDataToSend.append("photoGallery", photo);
     });
@@ -552,46 +786,99 @@ export default function CreateMemorialPage() {
 
   const handleSaveMemorial = async (e?: React.FormEvent) => {
     e?.preventDefault();
+    setIsSaving(true);
     try {
       const formDataToSend = prepareFormData();
-      const response = await axiosInstance.post(ADD_MEMORIAL, formDataToSend, {
+      const response = await axiosInstance.post('/api/memorials/create-update', formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
-      console.log("Memorial created:", response.data);
+
       toast({
         title: "Success",
-        description: "Memorial created successfully!",
+        description: `Memorial ${isEditing ? 'updated' : 'created'} successfully!`,
         variant: "default",
       });
-      router.push("/dashboard");
-    } catch (error: any) {
       
-    // Check if it's a subscription-related error
-    if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Upgrade Required',
-        text: error.response?.data?.message || "You need a premium subscription to use this feature",
-        showCancelButton: true,
-        confirmButtonText: 'View Plans',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#E53935',
-        cancelButtonColor: '#6e7881',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/subscription');
+      console.log('Debug info:', {
+        isCreate,
+        isEditing,
+        memorialId,
+        responseData: response.data,
+        pathName
+      });
+      
+      // If creating a new memorial, handle the flow based on preselected plan
+      if (isCreate) {
+        // Use the memorial ID from the response if available, otherwise use the URL param
+        const redirectMemorialId = response.data?.data?._id || memorialId;
+        console.log('Redirecting to subscription with memorialId:', redirectMemorialId);
+        console.log('Selected plan ID:', selectedPlanId);
+        
+        if (!redirectMemorialId) {
+          console.error('No memorialId available for redirect');
+          toast({
+            title: "Error",
+            description: "No memorial ID available for redirect",
+            variant: "destructive",
+          });
+          return;
         }
-      });
-    } else {
-      // Show generic error for other issues
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to create memorial. Please try again.",
-        variant: "destructive",
-      });
-    }
+        
+        // If a plan was preselected, redirect to subscription page with the plan preselected
+        if (selectedPlanId) {
+          try {
+            router.push(`/subscription?memorialId=${redirectMemorialId}&preselectedPlan=${selectedPlanId}`);
+          } catch (routerError) {
+            console.error('Router push failed, using window.location:', routerError);
+            window.location.href = `/subscription?memorialId=${redirectMemorialId}&preselectedPlan=${selectedPlanId}`;
+          }
+        } else {
+          // No preselected plan, go to regular subscription page
+          try {
+            router.push(`/subscription?memorialId=${redirectMemorialId}`);
+          } catch (routerError) {
+            console.error('Router push failed, using window.location:', routerError);
+            window.location.href = `/subscription?memorialId=${redirectMemorialId}`;
+          }
+        }
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      if (error.response?.data?.actionCode === "UPGRADE_REQUIRED") {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Upgrade Required',
+          text: error.response?.data?.message || "You need a premium subscription to use this feature",
+          showCancelButton: true,
+          confirmButtonText: 'View Plans',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#E53935',
+          cancelButtonColor: '#6e7881',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/dashboard');
+          }
+        });
+      } else if (error.response?.data?.actionCode === "VIDEO_TOO_LONG") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Video Too Long',
+          text: error.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#E53935',
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.response?.data?.message || "Failed to create memorial. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -615,20 +902,20 @@ export default function CreateMemorialPage() {
       </Link>
     </div>
   );
-
-  if (loadingSubscription) {
+  if (loadingSubscription || (isEdit && isLoadingMemorial)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your subscription details...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
+      {isSaving && <LoadingOverlay />}
       <header className="bg-[#243b31] py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -641,15 +928,10 @@ export default function CreateMemorialPage() {
                 {createMemorialTranslations.header.back}
               </Link>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button
-                className="bg-[#547455] hover:bg-white hover:text-[#547455]"
-                onClick={handleSaveMemorial}
-              >
-                <Save className="h-4 w-4" />
-                {createMemorialTranslations.header.save}
-              </Button>
+            <div className="flex gap-3">
+              <LanguageDropdown />
             </div>
+
           </div>
         </div>
       </header>
@@ -665,7 +947,7 @@ export default function CreateMemorialPage() {
               {createMemorialTranslations.title}
             </h1>
             <p className="text-gray-600 text-base">
-              {createMemorialTranslations.subtitle}
+              {isEditing ? "Update the memorial for your loved one" : createMemorialTranslations.subtitle}
             </p>
           </div>
 
@@ -707,17 +989,24 @@ export default function CreateMemorialPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center md:space-x-6 md:flex-row flex-col md:justify-start justify-center gap-3">
-                    <Avatar className="md:h-24 md:w-24 h-12 w-12">
-                      <AvatarImage
-                        src={formData.profileImage ?
-                          URL.createObjectURL(formData.profileImage) :
-                          "/placeholder.svg?height=96&width=96"}
-                      />
-                      <AvatarFallback className="text-2xl">
-                        {formData.firstName[0]}
-                        {formData.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      {formData.profileImage ? (
+                        <img
+                          src={
+                            typeof formData.profileImage === "string"
+                              ? formData.profileImage
+                              : URL.createObjectURL(formData.profileImage)
+                          }
+                          alt="Profile preview"
+                          className="object-cover w-full h-full rounded-lg"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-400">
+                          <ImageIcon className="h-8 w-8 mb-2" />
+                          <span className="text-xs text-center">No image</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex md:justify-start justify-center flex-col">
                       <label htmlFor="profileImageUpload" className="w-fit">
                         <Button
@@ -735,11 +1024,24 @@ export default function CreateMemorialPage() {
                           />
                         </Button>
                       </label>
-                      <p className="text-sm text-gray-500 md:text-left text-center">
-                        {createMemorialTranslations.basicInfo.photoDescription}
-                        <br />
-                        Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
-                      </p>
+                      
+                      {formData.profileImage && (
+                        <Button
+                          variant="outline"
+                          className="bg-transparent text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={removeProfileImage}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+{createMemorialTranslations?.buttons?.removeImage || "Remove Image"}
+                        </Button>
+                      )}
+
+                      {!formData.profileImage &&
+                        <p className="text-sm text-gray-500 md:text-left text-center">
+                          {createMemorialTranslations.basicInfo.photoDescription}
+                          <br />
+                          Max {userSubscription === 'Free' ? '5MB' : '10MB'} • JPEG, PNG, WebP
+                        </p>}
                     </div>
                   </div>
 
@@ -813,19 +1115,30 @@ export default function CreateMemorialPage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {createMemorialTranslations.basicInfo.location}
+                  {/* --- INTERACTIVE MAP FOR PRECISE LOCATION --- */}
+                  <div className="space-y-4">
+                    <Label className="flex items-center text-lg font-semibold">
+                      <MapPin className="h-5 w-5 mr-2" />
+{createMemorialTranslations.basicInfo.location?.title || createMemorialTranslations.basicInfo.location} - {createMemorialTranslations?.location?.setPreciseLocation || "Set Precise Location"}
                     </Label>
-                    <Input
-                      id="location"
-                      placeholder="Tbilisi, Georgia"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
-                      className="h-12"
+                    <p className="text-sm text-gray-600">
+                      {createMemorialTranslations?.basicInfo?.location?.description || "Click on the map to set the exact GPS coordinates for the memorial location."}
+                    </p>
+                    <InteractiveMap
+                      initialLat={formData.gps?.lat || 41.7151}
+                      initialLng={formData.gps?.lng || 44.8271}
+                      onLocationChange={(lat, lng) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gps: { lat, lng }
+                        }));
+                      }}
+                      height="400px"
+                      showCoordinateInputs={true}
+                      translations={createMemorialTranslations?.basicInfo?.location}
                     />
                   </div>
+                  {/* --- END OF INTERACTIVE MAP --- */}
 
                   <div className="space-y-2">
                     <Label htmlFor="biography">
@@ -839,18 +1152,18 @@ export default function CreateMemorialPage() {
                       className="min-h-[120px]"
                     />
                   </div>
-                  
+
                   <div className="space-y-4">
-                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <Label className="text-lg font-semibold">{editMemorialTranslations.basicInfo.achievements}</Label>
                     <p className="text-sm text-gray-500">
-                      Add notable achievements or awards (e.g., "Nobel Prize", "Olympic Gold Medal")
+                      {editMemorialTranslations.basicInfo.achievement}
                     </p>
 
                     <div className="flex gap-2">
                       <Input
                         value={newAchievement}
                         onChange={(e) => setNewAchievement(e.target.value)}
-                        placeholder="e.g. Nobel Prize in Physics"
+                        placeholder={editMemorialTranslations.basicInfo.nobelPrice}
                         className="flex-1"
                       />
                       <Button
@@ -858,7 +1171,7 @@ export default function CreateMemorialPage() {
                         onClick={addAchievement}
                         disabled={!newAchievement.trim()}
                       >
-                        Add
+{createMemorialTranslations?.buttons?.add || "Add"}
                       </Button>
                     </div>
 
@@ -885,66 +1198,6 @@ export default function CreateMemorialPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="latitude" className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        Latitude
-                      </Label>
-                      <Input
-                        id="latitude"
-                        type="number"
-                        step="any"
-                        placeholder="e.g. 41.7151"
-                        value={formData.gps?.lat ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setFormData(prev => ({
-                            ...prev,
-                            gps: {
-                              ...prev.gps,
-                              lat: value ? parseFloat(value) : null
-                            }
-                          }));
-                        }}
-                        className="h-12"
-                        min="-90"
-                        max="90"
-                      />
-                      {formData.gps?.lat && (formData.gps.lat < -90 || formData.gps.lat > 90) && (
-                        <p className="text-sm text-red-500">Latitude must be between -90 and 90</p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="longitude" className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        Longitude
-                      </Label>
-                      <Input
-                        id="longitude"
-                        type="number"
-                        step="any"
-                        placeholder="e.g. 44.8271"
-                        value={formData.gps?.lng ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setFormData(prev => ({
-                            ...prev,
-                            gps: {
-                              ...prev.gps,
-                              lng: value ? parseFloat(value) : null
-                            }
-                          }));
-                        }}
-                        className="h-12"
-                        min="-180"
-                        max="180"
-                      />
-                      {formData.gps?.lng && (formData.gps.lng < -180 || formData.gps.lng > 180) && (
-                        <p className="text-sm text-red-500">Longitude must be between -180 and 180</p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -1003,12 +1256,12 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.photos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: JPEG, PNG, WebP • Max {userSubscription === 'Free' ? '5MB' : '10MB'} per photo
+                            {createMemorialTranslations?.mediaSupport?.photos || "Supported: JPEG, PNG, WebP"}
                           </p>
                           {mediaFiles.photos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Photos ({mediaFiles.photos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.PHOTO.MAX_COUNT_PLUS : 'Unlimited'}):
+                                Selected Photos
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.photos.map((photo, index) => (
@@ -1057,35 +1310,38 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.videos.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: MP4, MOV, AVI • Max {userSubscription === 'Free' ? '30s, 50MB' : userSubscription === 'Plus' ? '2min, 200MB' : '5min, 500MB'}
+                            {createMemorialTranslations?.mediaSupport?.videos || "Supported: MP4, MOV • Max 1min"}
                           </p>
-                          {mediaFiles.videos.length > 0 && (
-                            <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">
-                                Selected Videos ({mediaFiles.videos.length}/{userSubscription === 'Free' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_FREE : userSubscription === 'Plus' ? MEDIA_LIMITS.VIDEO.MAX_COUNT_PLUS : 'Unlimited'}):
-                              </p>
-                              <div className="space-y-1">
-                                {mediaFiles.videos.map((video, index) => (
-                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                                    <div>
-                                      <span className="text-xs truncate">{video.title}</span>
-                                      {video.duration && (
-                                        <span className="text-xs text-gray-500 block">{Math.round(video.duration)}s</span>
-                                      )}
+                            {mediaFiles.videos.length > 0 && (
+                              <div className="mt-4 w-full">
+                                <p className="text-xs font-medium mb-2">
+                                  Selected Videos ({mediaFiles.videos.length})
+                                </p>
+                                <div className="space-y-2">
+                                  {mediaFiles.videos.map((video, index) => (
+                                    <div key={index} className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <Video className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                        <span className="text-sm font-medium text-gray-900 truncate" title={video.title}>
+                                          {video.title}
+                                        </span>
+                                      </div>
+                                      <div className="ml-2">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => removeVideo(index)}
+                                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          title="Remove video"
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
                                     </div>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-4 w-4"
-                                      onClick={() => removeVideo(index)}
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </CardContent>
                       </Card>
 
@@ -1117,16 +1373,16 @@ export default function CreateMemorialPage() {
                             {createMemorialTranslations.media.documents.button}
                           </Button>
                           <p className="text-xs text-gray-500 mt-2">
-                            Supported: PDF, DOC, DOCX, TXT • Max 10MB • Premium only
+                            {createMemorialTranslations?.mediaSupport?.documents || "Supported: PDF, DOC, DOCX, TXT"}
                           </p>
                           {mediaFiles.documents.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="text-xs font-medium mb-2">
-                                Selected Documents ({mediaFiles.documents.length}/{MEDIA_LIMITS.DOCUMENT.MAX_COUNT_PREMIUM}):
+                                Selected Documents
                               </p>
                               <div className="space-y-1">
                                 {mediaFiles.documents.map((doc, index) => (
-                                  <div key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                                  <div key={`doc-${index}-${doc.fileName}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
                                     <span className="text-xs truncate">{doc.fileName}</span>
                                     <Button
                                       variant="ghost"
@@ -1168,11 +1424,11 @@ export default function CreateMemorialPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            {createMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                            {createMemorialTranslations.familyTree.familyMember}
                           </Label>
                           <Input
                             id="familyMemberName"
-                            placeholder="John Doe"
+                            placeholder={createMemorialTranslations.familyTree.placeholder.name}
                             value={newFamilyMember.name}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1185,11 +1441,11 @@ export default function CreateMemorialPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            {createMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                            {createMemorialTranslations.familyTree.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                            placeholder="Father"
+                            placeholder={createMemorialTranslations.familyTree.placeholder.relationship}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1246,8 +1502,48 @@ export default function CreateMemorialPage() {
               )}
             </TabsContent>
           </Tabs>
+
+          {/* Save Button at Bottom */}
+          <div className="mt-8 flex justify-center">
+            <Button
+              className={`px-8 py-3 text-lg ${
+                isFormValid() 
+                  ? "bg-[#547455] hover:bg-[#243b31] text-white" 
+                  : "bg-gray-400 text-gray-600 cursor-not-allowed"
+              }`}
+              onClick={(e) => handleSaveMemorial(e)}
+              disabled={isSaving || !isFormValid()}
+            >
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+{createMemorialTranslations?.buttons?.saving || "Saving..."}
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+{isEditing ? (createMemorialTranslations?.buttons?.updateMemorial || "Update Memorial") : createMemorialTranslations.header.save}
+                </>
+              )}
+            </Button>
+          </div>
+          
+          {/* Form validation message */}
+          {!isFormValid() && (
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-500">
+                {createMemorialTranslations?.validation?.fillRequiredFields || "Please fill in all required fields to save the memorial"}
+                {formData.biography.trim() !== "" && formData.biography.trim().length < 10 && (
+                  <span className="block mt-1 text-red-500">
+                    Biography must be at least 10 characters long
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
         </motion.div>
       </div>
+
     </div>
   );
 }

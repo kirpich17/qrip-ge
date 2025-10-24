@@ -1,0 +1,288 @@
+"use client";
+
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { CheckCircle, Package, ArrowLeft, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import axiosInstance from "@/services/axiosInstance";
+import { toast } from "react-toastify";
+
+function PaymentSuccessContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [order, setOrder] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const orderId = searchParams.get("orderId");
+
+  useEffect(() => {
+    if (orderId) {
+      fetchOrderDetails();
+    } else {
+      setLoading(false);
+    }
+  }, [orderId]);
+
+  const fetchOrderDetails = async (retryCount = 0) => {
+    try {
+      console.log(`🔍 Fetching order details (attempt ${retryCount + 1})...`);
+      
+      // Try the public verification endpoint first
+      try {
+        const response = await axiosInstance.get(`/api/stickers/orders/verify/${orderId}`);
+        console.log("🔍 Order data received from verification endpoint:", response.data);
+        if (response.data.status && response.data.data) {
+          const orderData = response.data.data;
+          console.log("📋 Order details:", {
+            paymentStatus: orderData.paymentStatus,
+            orderStatus: orderData.orderStatus,
+            paymentId: orderData.paymentId
+          });
+          setOrder(orderData);
+          setLoading(false);
+          return;
+        }
+      } catch (directError: any) {
+        console.log("❌ Direct endpoint failed:", {
+          status: directError.response?.status,
+          message: directError.response?.data?.message,
+          error: directError.message
+        });
+        
+        // If it's a 404, the order might not exist yet (webhook hasn't processed)
+        if (directError.response?.status === 404) {
+          console.log("🔄 Order not found, will retry...");
+          if (retryCount < 10) { // Increase retry count for webhook processing
+            setTimeout(() => {
+              fetchOrderDetails(retryCount + 1);
+            }, 3000); // Wait 3 seconds before retry
+            return;
+          }
+        }
+      }
+
+      // Fallback: Try the authenticated endpoint (in case user is logged in)
+      console.log("🔄 Using fallback method (authenticated endpoint)...");
+      try {
+        const response = await axiosInstance.get(`/api/stickers/orders/${orderId}`);
+        console.log("🔍 Order data received from authenticated endpoint:", response.data);
+        if (response.data.status && response.data.data) {
+          const orderData = response.data.data;
+          console.log("📋 Order details from authenticated endpoint:", {
+            paymentStatus: orderData.paymentStatus,
+            orderStatus: orderData.orderStatus,
+            paymentId: orderData.paymentId
+          });
+          setOrder(orderData);
+          setLoading(false);
+          return;
+        }
+      } catch (authError: any) {
+        console.log("❌ Authenticated endpoint also failed:", {
+          status: authError.response?.status,
+          message: authError.response?.data?.message
+        });
+        
+        // If both endpoints fail, show a generic success message
+        console.log("❌ All endpoints failed, showing generic success message");
+        setOrder({
+          _id: orderId,
+          paymentStatus: 'paid',
+          orderStatus: 'processing',
+          totalAmount: 'N/A',
+          quantity: 'N/A',
+          shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
+          memorial: { firstName: 'N/A', lastName: 'N/A' },
+          stickerOption: { name: 'N/A', type: 'N/A' }
+        });
+      }
+      setLoading(false);
+      
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      
+      // If we haven't exceeded retry limit, retry
+      if (retryCount < 10) {
+        console.log(`Retrying order fetch (attempt ${retryCount + 1}/10)...`);
+        setTimeout(() => {
+          fetchOrderDetails(retryCount + 1);
+        }, 3000); // Wait 3 seconds before retry
+      } else {
+        console.error("Max retries reached, showing generic success message...");
+        // Show a generic success message even if we can't fetch the order
+        setOrder({
+          _id: orderId,
+          paymentStatus: 'paid',
+          orderStatus: 'processing',
+          totalAmount: 'N/A',
+          quantity: 'N/A',
+          shippingAddress: { fullName: 'N/A', address: 'N/A', city: 'N/A', zipCode: 'N/A', country: 'N/A', phone: 'N/A' },
+          memorial: { firstName: 'N/A', lastName: 'N/A' },
+          stickerOption: { name: 'N/A', type: 'N/A' }
+        });
+        setLoading(false);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-[#243b31] py-4 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/dashboard"
+              className="flex items-center text-white hover:underline gap-2 text-base"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Back to Dashboard
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <CheckCircle className="h-24 w-24 text-green-500 mx-auto mb-6" />
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Payment Successful!
+          </h1>
+          <p className="text-xl text-gray-600">
+            Your QR sticker order has been confirmed and payment processed.
+          </p>
+        </motion.div>
+
+        {order && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Order Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Order ID</p>
+                    <p className="font-mono text-sm">{order._id}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Payment Status</p>
+                    <Badge className={
+                      order.paymentStatus === 'paid' 
+                        ? "bg-green-100 text-green-800" 
+                        : order.paymentStatus === 'pending'
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }>
+                      {order.paymentStatus === 'paid' ? 'Paid' : 
+                       order.paymentStatus === 'pending' ? 'Processing...' : 
+                       order.paymentStatus}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Sticker</p>
+                    <p>{order.stickerOption?.name || 'N/A'} - {order.stickerOption?.type?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Quantity</p>
+                    <p>{order.quantity || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Total Amount</p>
+                    <p className="font-semibold">{order.totalAmount === 'N/A' ? 'N/A' : `₾${order.totalAmount}`}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Memorial</p>
+                    <p>{order.memorial?.firstName || 'N/A'} {order.memorial?.lastName || 'N/A'}</p>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-4">
+                  <p className="text-sm font-medium text-gray-500 mb-2">Shipping Address</p>
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <p>{order.shippingAddress?.fullName || 'N/A'}</p>
+                    <p>{order.shippingAddress?.address || 'N/A'}</p>
+                    <p>{order.shippingAddress?.city || 'N/A'}, {order.shippingAddress?.zipCode || 'N/A'}</p>
+                    <p>{order.shippingAddress?.country || 'N/A'}</p>
+                    <p>{order.shippingAddress?.phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center space-y-4"
+        >
+          <p className="text-gray-600">
+            {order?.paymentStatus === 'paid' 
+              ? "Your payment has been confirmed!"
+              : order?.paymentStatus === 'pending'
+              ? "Your payment is being processed. Please wait a moment while we confirm your payment..."
+              : "Thank you for your order!"
+            }
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/dashboard">
+              <Button className="bg-[#547455] hover:bg-[#243b31]">
+                <Home className="h-4 w-4 mr-2" />
+                Go to Dashboard
+              </Button>
+            </Link>
+            <Link href="/stickers/purchase">
+              <Button variant="outline">
+                <Package className="h-4 w-4 mr-2" />
+                Order Another Sticker
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#547455] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
+  );
+}

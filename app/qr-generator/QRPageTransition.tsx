@@ -24,6 +24,8 @@ export default function QRPageTransition({
   birthDate,
   deathDate
 }: QRPageTransitionProps) {
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   const [isInitialView, setIsInitialView] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const router = useRouter();
@@ -141,7 +143,7 @@ export default function QRPageTransition({
                       priority
                     />
                   </div>
-                  <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                  <h1 className="mt-6 text-4xl font-bold">{memorialTranslations?.inLovingMemory || "In Loving Memory"}</h1>
                   <h2 className="text-3xl font-semibold">
                     {firstName} {lastName}
                   </h2>
@@ -153,7 +155,7 @@ export default function QRPageTransition({
                     animate={{ opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    Tap to view memorial
+                    {memorialTranslations?.tapToViewMemorial || "Tap to view memorial"}
                   </motion.p>
                 </>
               )}

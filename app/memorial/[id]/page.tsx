@@ -17,6 +17,7 @@ import {
   Crown,
   Lock,
 } from "lucide-react";
+import { Lightbox } from "@/components/ui/lightbox";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,15 +32,16 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
-import { getSingleMemorial, recordMemorialView } from "@/services/memorialService";
+import { getSingleMemorial, getMyMemorialById, recordMemorialView } from "@/services/memorialService";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Image from 'next/image';
+import LanguageDropdown from "@/components/languageDropdown/page";
 
-// Fix for Leaflet marker icons
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -72,7 +74,9 @@ interface Memorial {
   videoGallery: string[];
   status: string;
   plan: string;
+  planName?: string;
   views: number;
+  viewsCount?: number;
   slug: string;
   isPublic: boolean;
   allowComments: boolean;
@@ -83,6 +87,7 @@ interface Memorial {
   location?: string;
   createdAt: string;
   updatedAt: string;
+  allowSlideshow: boolean
 }
 
 function QRPageTransition({
@@ -93,7 +98,8 @@ function QRPageTransition({
   hasPremium,
   birthDate,
   deathDate,
-  photoGallery = []
+  photoGallery = [],
+  allowSlideshow = false
 }: {
   profilePhoto: string;
   memorialId: string;
@@ -103,7 +109,10 @@ function QRPageTransition({
   birthDate: string;
   deathDate: string;
   photoGallery?: string[];
+  allowSlideshow?: boolean;
 }) {
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   const [isInitialView, setIsInitialView] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const router = useRouter();
@@ -116,7 +125,6 @@ function QRPageTransition({
         years: `${new Date(birthDate).getFullYear()} - ${new Date(deathDate).getFullYear()}`
       }
     ];
-
     // Add up to 2 gallery images if they exist
     if (photoGallery.length > 0) {
       slides.push({
@@ -136,16 +144,15 @@ function QRPageTransition({
     return slides;
   }, [profilePhoto, firstName, lastName, birthDate, deathDate, photoGallery]);
 
-  // Improved slideshow logic
   useEffect(() => {
-    if (!hasPremium || !isInitialView || premiumSlides.length <= 1) return;
+    if (!isInitialView || premiumSlides.length <= 1 || !allowSlideshow) return;
 
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % premiumSlides.length);
-    },4000); // Increased duration to 4 seconds
+    }, 4000); // 4 seconds per slide
 
     return () => clearInterval(interval);
-  }, [hasPremium, isInitialView, premiumSlides.length]);
+  }, [isInitialView, premiumSlides.length, allowSlideshow]);
 
   const handleClick = () => {
     setIsInitialView(false);
@@ -197,8 +204,9 @@ function QRPageTransition({
             </div>
 
             {/* Content */}
+
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center text-white">
-              {hasPremium ? (
+              {premiumSlides.length > 1 && allowSlideshow ? (
                 <div className="max-w-2xl mx-auto">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -215,7 +223,7 @@ function QRPageTransition({
                       }}
                       className="space-y-6"
                     >
-                      <div className="relative h-64 w-64 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl">
+                      <div className="relative h-64 w-64 mx-auto rounded-lg overflow-hidden border-4 border-white shadow-xl">
                         <Image
                           src={premiumSlides[currentSlide].image}
                           alt="Memorial slide"
@@ -224,14 +232,13 @@ function QRPageTransition({
                           priority
                         />
                       </div>
-                      <h2 className="text-3xl font-bold">
-                        {premiumSlides[currentSlide].text}
+                      <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                      <h2 className="text-3xl font-semibold">
+                        {firstName} {lastName}
                       </h2>
-                      {premiumSlides[currentSlide].years && (
-                        <p className="text-xl">
-                          {premiumSlides[currentSlide].years}
-                        </p>
-                      )}
+                      <p className="text-xl mt-2">
+                        {new Date(birthDate).getFullYear()} - {new Date(deathDate).getFullYear()}
+                      </p>
                     </motion.div>
                   </AnimatePresence>
 
@@ -256,14 +263,14 @@ function QRPageTransition({
                         animate={{ opacity: [0.6, 1, 0.6] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        Tap to view full memorial
+                        {memorialTranslations?.premiumSlides?.tapToView || "Tap to view memorial"}
                       </motion.p>
                     </>
                   )}
                 </div>
               ) : (
                 <>
-                  <div className="relative h-64 w-64 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                  <div className="relative h-64 w-64 rounded-[10px] overflow-hidden border-4 border-white shadow-xl bg-white">
                     <Image
                       src={profilePhoto || '/default-profile.jpg'}
                       alt={`${firstName} ${lastName}`}
@@ -272,7 +279,7 @@ function QRPageTransition({
                       priority
                     />
                   </div>
-                  <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                  <h1 className="mt-6 text-4xl font-bold">{memorialTranslations?.inLovingMemory || "In Loving Memory"}</h1>
                   <h2 className="text-3xl font-semibold">
                     {firstName} {lastName}
                   </h2>
@@ -284,7 +291,7 @@ function QRPageTransition({
                     animate={{ opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    Tap to view memorial
+                    {memorialTranslations?.tapToViewMemorial || "Tap to view memorial"}
                   </motion.p>
                 </>
               )}
@@ -308,41 +315,70 @@ function QRPageTransition({
 
 export default function MemorialPage() {
   const params = useParams();
+  const { t } = useTranslation();
+  const memorialTranslations = t("memorial");
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const [apiMemorial, setApiMemorial] = useState<Memorial | null>(null);
-  console.log("🚀 ~ MemorialPage ~ apiMemorial:", apiMemorial)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSlideshowPlaying, setIsSlideshowPlaying] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { t } = useTranslation();
-  const memorialTranslations = t("memorial");
+  const slideshowIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
   const isScan = searchParams.get("isScan") === "true";
 
   useEffect(() => {
     const fetchMemorial = async () => {
       if (!params?.id) return;
+      
+      // Reset view recording flag when memorial ID changes
+      viewRecordedRef.current = false;
+      
       try {
         setLoading(true);
-        const response = await getSingleMemorial(params.id as string);
+        // First try to get the memorial using the private endpoint (for user's own memorials)
+        // This allows viewing private memorials that the user owns
+        let response;
+        try {
+          response = await getMyMemorialById(params.id as string);
+        } catch (privateError) {
+          // If private endpoint fails, try the public endpoint
+          response = await getSingleMemorial(params.id as string);
+        }
+        
         if (response?.status && response.data) {
           setApiMemorial(response.data);
-          try {
-            await recordMemorialView({
-              memorialId: params.id,
-              isScan
-            });
-          } catch (scanError) {
-            console.error("Failed to record scan view:", scanError);
+          
+          // Only record view once per memorial load
+          if (!viewRecordedRef.current) {
+            try {
+              await recordMemorialView({
+                memorialId: params.id as string,
+                isScan
+              });
+              viewRecordedRef.current = true; // Mark as recorded
+            } catch (scanError) {
+              console.error("Failed to record scan view:", scanError);
+            }
           }
         } else {
           throw new Error("Invalid response from server");
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching memorial:", err);
-        setError("Failed to load memorial data");
+        // Use the specific error message from the API response
+        const errorMessage = err.response?.data?.message || "Failed to load memorial data";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -356,6 +392,33 @@ export default function MemorialPage() {
       isVideoPlaying ? videoRef.current.play() : videoRef.current.pause();
     }
   }, [isVideoPlaying]);
+
+  // Slideshow functionality
+  useEffect(() => {
+    if (isSlideshowPlaying && apiMemorial?.photoGallery && apiMemorial.photoGallery.length > 1) {
+      slideshowIntervalRef.current = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % apiMemorial.photoGallery!.length);
+      }, 3000); // 3 seconds per slide
+    } else {
+      if (slideshowIntervalRef.current) {
+        clearInterval(slideshowIntervalRef.current);
+        slideshowIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (slideshowIntervalRef.current) {
+        clearInterval(slideshowIntervalRef.current);
+      }
+    };
+  }, [isSlideshowPlaying, apiMemorial?.photoGallery?.length]);
+
+  // Auto-start slideshow when there are multiple images
+  useEffect(() => {
+    if (apiMemorial?.photoGallery && apiMemorial.photoGallery.length > 1 && !isSlideshowPlaying) {
+      setIsSlideshowPlaying(true);
+    }
+  }, [apiMemorial?.photoGallery?.length, isSlideshowPlaying]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -382,21 +445,31 @@ export default function MemorialPage() {
   }
 
   if (error) {
+    // Determine if it's a deactivation error
+    const isDeactivated = error.includes("deactivated by the administrator");
+    const isNotPublic = error.includes("not publicly accessible");
+    
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-8">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="h-8 w-8 text-gray-400" />
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+              isDeactivated ? 'bg-orange-100' : isNotPublic ? 'bg-yellow-100' : 'bg-gray-200'
+            }`}>
+              <Lock className={`h-8 w-8 ${
+                isDeactivated ? 'text-orange-600' : isNotPublic ? 'text-yellow-600' : 'text-gray-400'
+              }`} />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Error Loading Memorial
+              {isDeactivated ? 'Memorial Deactivated' : isNotPublic ? 'Memorial Not Public' : 'Error Loading Memorial'}
             </h2>
             <p className="text-gray-600 mb-6">{error}</p>
             <div className="space-y-3">
-              <Button variant="outline" className="w-full bg-transparent">
-                Contact Support
-              </Button>
+              {isDeactivated && (
+                <Button variant="outline" className="w-full bg-transparent">
+                  Contact Support
+                </Button>
+              )}
               <Link href="/">
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
                   Return Home
@@ -412,7 +485,7 @@ export default function MemorialPage() {
   if (!apiMemorial) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div>No memorial data found</div>
+        <div>{memorialTranslations?.noMemorialData || "No memorial data found"}</div>
       </div>
     );
   }
@@ -426,18 +499,18 @@ export default function MemorialPage() {
               <Lock className="h-8 w-8 text-gray-400" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Memorial Unavailable
+              {memorialTranslations?.memorialUnavailable || "Memorial Unavailable"}
             </h2>
             <p className="text-gray-600 mb-6">
-              This memorial profile is currently inactive.
+              {memorialTranslations?.memorialInactive || "This memorial profile is currently inactive."}
             </p>
             <div className="space-y-3">
               <Button variant="outline" className="w-full bg-transparent">
-                Contact Support
+                {memorialTranslations?.contactSupport || "Contact Support"}
               </Button>
               <Link href="/">
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
-                  Return Home
+                  {memorialTranslations?.returnHome || "Return Home"}
                 </Button>
               </Link>
             </div>
@@ -458,6 +531,7 @@ export default function MemorialPage() {
         birthDate={apiMemorial.birthDate}
         deathDate={apiMemorial.deathDate}
         photoGallery={apiMemorial.photoGallery}
+        allowSlideshow={apiMemorial.allowSlideshow}
       />
     );
   }
@@ -465,7 +539,17 @@ export default function MemorialPage() {
   const age = calculateAge(apiMemorial.birthDate, apiMemorial.deathDate);
   const formattedDates = `${formatDate(apiMemorial.birthDate)} - ${formatDate(apiMemorial.deathDate)}`;
   const name = `${apiMemorial.firstName} ${apiMemorial.lastName}`;
-  const isPremium = apiMemorial.plan === "Life Time" || apiMemorial.plan === "Monthly Premium" ;
+  const isPremium = apiMemorial.planName === "Premium" || apiMemorial.planName === "Premium Plan"
+  
+  // Helper function to format video URLs
+  const formatVideoUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+  
 
   const nextImage = () => {
     if (!apiMemorial.photoGallery?.length) return;
@@ -477,6 +561,33 @@ export default function MemorialPage() {
     setCurrentImageIndex(
       (prev) => (prev - 1 + apiMemorial.photoGallery.length) % apiMemorial.photoGallery.length
     );
+  };
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && apiMemorial.photoGallery?.length > 1) {
+      nextImage();
+      setIsSlideshowPlaying(false); // Pause slideshow on manual interaction
+    }
+    if (isRightSwipe && apiMemorial.photoGallery?.length > 1) {
+      prevImage();
+      setIsSlideshowPlaying(false); // Pause slideshow on manual interaction
+    }
   };
 
   return (
@@ -495,16 +606,20 @@ export default function MemorialPage() {
               </motion.div>
               <span className="text-2xl font-bold text-white">QRIP.ge</span>
             </Link>
-            <div className="flex items-center space-x-3">
-              <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
-                {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
-                {memorialTranslations.header.views}
-              </Badge>
-              {/* <Button variant="outline" size="sm">
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center space-x-3">
+                <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
+                  {apiMemorial.viewsCount?.toLocaleString() || 0}{" "}
+                  {memorialTranslations?.header?.views || "Views"}
+                </Badge>
+                {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4" />
                 {memorialTranslations.header.share}
               </Button> */}
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -524,14 +639,26 @@ export default function MemorialPage() {
                   <div className="absolute inset-0 bg-black/20"></div>
                   <div className="relative p-8 md:p-12">
                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                      <Avatar className="h-32 w-32 md:h-40 md:w-40 ring-4 ring-white/20">
-                        <AvatarImage
-                          src={apiMemorial.profileImage || "/placeholder.svg"}
-                        />
-                        <AvatarFallback className="text-4xl">
-                          {name.split(" ").map(n => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div 
+                        className="cursor-pointer group"
+                        onClick={() => {
+                          // Create a combined array with profile image first, then gallery images
+                          const allImages = [apiMemorial.profileImage, ...(apiMemorial.photoGallery || [])].filter(Boolean);
+                          if (allImages.length > 0) {
+                            setLightboxIndex(0); // Profile image is always first
+                            setIsLightboxOpen(true);
+                          }
+                        }}
+                      >
+                        <Avatar className="h-32 w-32 md:h-40 md:w-40 ring-4 ring-white/20 group-hover:ring-white/40 transition-all duration-300">
+                          <AvatarImage
+                            src={apiMemorial.profileImage || "/placeholder.svg"}
+                          />
+                          <AvatarFallback className="text-4xl">
+                            {name.split(" ").map(n => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                       <div className="text-center md:text-left flex-1">
                         <div className="flex items-center justify-center md:justify-start space-x-2 mb-2">
                           <h1 className="text-3xl md:text-4xl font-bold">
@@ -549,10 +676,10 @@ export default function MemorialPage() {
                           {"Tbilisi, Georgia"}
                         </p>
                         <p className="text-white/80 mt-2">
-                          {memorialTranslations.profile.age.replace(
+                          {memorialTranslations?.profile?.age?.replace(
                             "{age}",
                             age.toString()
-                          )}
+                          ) || `Age ${age}`}
                         </p>
                       </div>
                     </div>
@@ -571,22 +698,32 @@ export default function MemorialPage() {
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
-                    <CardTitle>{memorialTranslations.tabs.memories}</CardTitle>
+                    <CardTitle>{memorialTranslations?.tabs?.memories || "Memories"}</CardTitle>
                     <CardDescription>
-                      {memorialTranslations.tabs.description}
+                      {memorialTranslations?.tabs?.description || "View photos and videos"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="photos" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="photos">
-                          {memorialTranslations.tabs.photos}
+                          {memorialTranslations?.tabs?.photos || "Photos"}
                         </TabsTrigger>
                         <TabsTrigger
                           value="video"
-                          disabled={!isPremium}
+                          onClick={(e) => {
+                            if (!isPremium) {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toast({
+                                title: memorialTranslations?.premium?.feature || "Premium Feature",
+                                description: "Video uploads are available only for Premium subscribers.",
+                                variant: "default",
+                              });
+                            }
+                          }}
                         >
-                          {memorialTranslations.tabs.video}{" "}
+                          {memorialTranslations?.tabs?.video || "Video"}{" "}
                           {!isPremium && (
                             <Lock className="h-3 w-3 ml-1" />
                           )}
@@ -595,18 +732,59 @@ export default function MemorialPage() {
 
                       <TabsContent value="photos" className="mt-6">
                         <div className="space-y-4">
+                          {/* Slideshow Controls */}
+                          {apiMemorial.photoGallery?.length > 1 && (
+                            <div className="flex items-center justify-center bg-gray-50 p-3 rounded-lg">
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={prevImage}
+                                  disabled={!apiMemorial.photoGallery?.length}
+                                  className="flex items-center space-x-1"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                  <span className="hidden sm:inline text-xs">{memorialTranslations?.navigation?.prev || "Prev"}</span>
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={nextImage}
+                                  disabled={!apiMemorial.photoGallery?.length}
+                                  className="flex items-center space-x-1"
+                                >
+                                  <span className="hidden sm:inline text-xs">{memorialTranslations?.navigation?.next || "Next"}</span>
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Main Image */}
-                          <div className="relative">
+                          <div 
+                            className="relative group cursor-pointer"
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
+                            onClick={() => {
+                              if (apiMemorial.photoGallery?.length) {
+                                setLightboxIndex(currentImageIndex);
+                                setIsLightboxOpen(true);
+                              }
+                            }}
+                          >
                             <img
                               src={
                                 apiMemorial.photoGallery?.[currentImageIndex] ||
                                 "/placeholder.svg"
                               }
                               alt={`Memory ${currentImageIndex + 1}`}
-                              className="w-full h-96 object-cover rounded-lg"
+                              className="w-full h-96 object-cover rounded-lg transition-opacity duration-300 hover:opacity-90"
                             />
+                            
+                            {/* Navigation overlay - only show on hover for desktop */}
                             {apiMemorial.photoGallery?.length > 1 && (
-                              <div className="absolute inset-0 flex items-center justify-between p-4">
+                              <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Button
                                   variant="secondary"
                                   size="sm"
@@ -629,23 +807,52 @@ export default function MemorialPage() {
 
                           {/* Thumbnail Strip */}
                           {apiMemorial.photoGallery?.length > 1 && (
-                            <div className="flex space-x-2 overflow-x-auto">
-                              {apiMemorial.photoGallery.map((image, index) => (
-                                <button
-                                  key={index}
-                                  onClick={() => setCurrentImageIndex(index)}
-                                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${index === currentImageIndex
-                                    ? "border-[#547455]"
-                                    : "border-gray-200"
+                            <div className="space-y-3">
+                              <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+                                {apiMemorial.photoGallery.map((image, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setCurrentImageIndex(index);
+                                      setIsSlideshowPlaying(false); // Pause slideshow when manually selecting
+                                    }}
+                                    onDoubleClick={() => {
+                                      setLightboxIndex(index);
+                                      setIsLightboxOpen(true);
+                                    }}
+                                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
+                                      index === currentImageIndex
+                                        ? "border-[#547455] ring-2 ring-[#547455]/20"
+                                        : "border-gray-200 hover:border-gray-300"
                                     }`}
-                                >
-                                  <img
-                                    src={image || "/placeholder.svg"}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    className="w-full h-full object-cover"
+                                  >
+                                    <img
+                                      src={image || "/placeholder.svg"}
+                                      alt={`Thumbnail ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </button>
+                                ))}
+                              </div>
+                              
+                              {/* Slideshow Progress Dots */}
+                              <div className="flex justify-center space-x-2">
+                                {apiMemorial.photoGallery.map((_, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setCurrentImageIndex(index);
+                                      setIsSlideshowPlaying(false);
+                                    }}
+                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                      index === currentImageIndex
+                                        ? "bg-[#547455] w-6"
+                                        : "bg-gray-300 hover:bg-gray-400"
+                                    }`}
+                                    aria-label={`Go to slide ${index + 1}`}
                                   />
-                                </button>
-                              ))}
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -656,28 +863,68 @@ export default function MemorialPage() {
                           apiMemorial.videoGallery?.length > 0 ? (
                             <div className="space-y-4">
                               <div className="relative bg-black rounded-lg overflow-hidden">
+                                {/* Video Error Fallback */}
+                                <div id="video-error-fallback" className="hidden absolute inset-0 flex items-center justify-center bg-red-100 text-red-800 p-4">
+                                  <div className="text-center">
+                                    <p className="font-semibold">Video failed to load</p>
+                                    <p className="text-sm">Please check the video URL or try refreshing the page</p>
+                                  </div>
+                                </div>
                                 <video
                                   ref={videoRef}
-                                  src={apiMemorial.videoGallery[0]}
+                                  src={formatVideoUrl(apiMemorial.videoGallery[0])}
                                   className="w-full h-64 object-cover"
-                                  controls
                                   muted={isVideoMuted}
                                   poster="/placeholder.svg?height=300&width=500"
-                                  onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+                                  onPlay={() => setIsVideoPlaying(true)}
+                                  onPause={() => setIsVideoPlaying(false)}
+                                  onLoadStart={() => {
+                                    setVideoLoading(true);
+                                    setVideoError(null);
+                                  }}
+                                  onCanPlay={() => {
+                                    setVideoLoading(false);
+                                  }}
+                                  onError={(e) => {
+                                    setVideoLoading(false);
+                                    setVideoError('Video failed to load');
+                                    const fallback = document.getElementById('video-error-fallback');
+                                    if (fallback) {
+                                      fallback.classList.remove('hidden');
+                                    }
+                                  }}
                                 />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <Button
-                                    size="lg"
-                                    onClick={() => setIsVideoPlaying(!isVideoPlaying)}
-                                    className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-                                  >
-                                    {isVideoPlaying ? (
-                                      <Pause className="h-8 w-8" />
-                                    ) : (
-                                      <Play className="h-8 w-8 ml-1" />
-                                    )}
-                                  </Button>
-                                </div>
+                                {/* Loading indicator */}
+                                {videoLoading && (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                  </div>
+                                )}
+                                
+                                {/* Play/Pause button */}
+                                {!videoLoading && !videoError && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <Button
+                                      size="lg"
+                                      onClick={() => {
+                                        if (videoRef.current) {
+                                          if (isVideoPlaying) {
+                                            videoRef.current.pause();
+                                          } else {
+                                            videoRef.current.play();
+                                          }
+                                        }
+                                      }}
+                                      className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+                                    >
+                                      {isVideoPlaying ? (
+                                        <Pause className="h-8 w-8" />
+                                      ) : (
+                                        <Play className="h-8 w-8 ml-1" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                )}
                                 <div className="absolute bottom-4 right-4">
                                   <Button
                                     variant="secondary"
@@ -698,7 +945,7 @@ export default function MemorialPage() {
                                   Memorial Video
                                 </h3>
                                 <p className="text-sm text-gray-600">
-                                  {memorialTranslations.video.description}
+                                  {memorialTranslations?.video?.description || "Memorial video"}
                                 </p>
                               </div>
                             </div>
@@ -717,12 +964,15 @@ export default function MemorialPage() {
                           <div className="text-center py-12 bg-gray-50 rounded-lg">
                             <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                              Premium Feature
+                              {apiMemorial.videoGallery?.length > 0 ? "Video Uploads Available Only for Premium Subscribers" : memorialTranslations?.premium?.feature || "Premium Feature"}
                             </h3>
                             <p className="text-gray-600 mb-4">
-                              Video content is available with premium memorials
+                              {apiMemorial.videoGallery?.length > 0 
+                                ? "Video uploads are available only for Premium subscribers. Upgrade to Premium to view and manage your uploaded videos."
+                                : memorialTranslations?.premium?.videoContent || "Video content is available with premium memorials"
+                              }
                             </p>
-                            <Button variant="outline">Learn More</Button>
+                            <Button variant="outline">{memorialTranslations?.premium?.learnMore || "Learn More"}</Button>
                           </div>
                         )}
                       </TabsContent>
@@ -736,7 +986,7 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Heart className="h-5 w-5 mr-2 text-[#243b31]" />
-                      {memorialTranslations.tabs.lifeStory}
+                      {memorialTranslations?.tabs?.lifeStory || "Life Story"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -767,11 +1017,11 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Users className="h-5 w-5 mr-2 text-green-500" />
-                      {memorialTranslations.sections.family.title}
+                      {memorialTranslations?.sections?.family?.title || "Family"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isPremium ? (
+                    {
                       apiMemorial.familyTree?.length > 0 ? (
                         <div className="space-y-3">
                           {apiMemorial.familyTree.map((member, index) => (
@@ -790,18 +1040,12 @@ export default function MemorialPage() {
                       ) : (
                         <div className="text-center py-6">
                           <p className="text-sm text-gray-600">
-                            No family members added yet
+                            {memorialTranslations?.sections?.family?.noFamily || "No family members added yet"}
                           </p>
                         </div>
                       )
-                    ) : (
-                      <div className="text-center py-6">
-                        <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">
-                          Family tree available with premium
-                        </p>
-                      </div>
-                    )}
+
+                    }
                   </CardContent>
                 </Card>
               </motion.div>
@@ -812,60 +1056,108 @@ export default function MemorialPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <MapPin className="h-5 w-5 mr-2 text-blue-500" />
-                      {memorialTranslations.sections.location.title}
+                      {memorialTranslations?.sections?.location?.title || "Location"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-
-
-                    {isPremium ? (
+                    {
+                      // isPremium ? (
                       apiMemorial?.gps?.lat && apiMemorial?.gps?.lng ? (
-                        <div className="space-y-4 z-0">
-                          <div className="h-64 rounded-lg overflow-hidden">
+                        <div className="space-y-4">
+                          <div className="h-64 rounded-lg overflow-hidden border map-container">
                             <MapContainer
                               center={[apiMemorial.gps.lat, apiMemorial.gps.lng]}
-                              zoom={13}
+                              zoom={15}
                               style={{ height: '100%', width: '100%' }}
+                              className="map-container"
                             >
                               <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                               />
                               <Marker position={[apiMemorial.gps.lat, apiMemorial.gps.lng]}>
-                                <Popup>{apiMemorial.location || 'Memorial Location'}</Popup>
+                                <Popup>
+                                  <div className="text-center">
+                                    <strong>{apiMemorial.location || 'Memorial Location'}</strong>
+                                    <br />
+                                    <small className="text-gray-600">
+                                      {apiMemorial.gps.lat.toFixed(6)}, {apiMemorial.gps.lng.toFixed(6)}
+                                    </small>
+                                  </div>
+                                </Popup>
                               </Marker>
                             </MapContainer>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            onClick={() => {
-                              window.open(
-                                `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps.lat},${apiMemorial.gps.lng}`,
-                                '_blank'
-                              );
-                            }}
-                          >
-                            Get Directions
-                          </Button>
+                          
+                          {/* Coordinate Display */}
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="flex items-center justify-between text-sm">
+                              <div>
+                                <span className="font-medium text-gray-700">{memorialTranslations?.sections?.location?.preciseLocation || "Precise Location:"}</span>
+                                <div className="text-gray-600">
+                                    <div>Lat: {apiMemorial.gps?.lat.toFixed(6)}</div>
+                                    <div>Lng: {apiMemorial.gps?.lng.toFixed(6)}</div>
+                                </div>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(`${apiMemorial.gps?.lat}, ${apiMemorial.gps?.lng}`);
+                                  // You could add a toast notification here
+                                }}
+                              >
+                                {memorialTranslations?.sections?.location?.copyCoordinates || "Copy Coordinates"}
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 text-center"
+                              onClick={() => {
+                                window.open(
+                                  `https://www.google.com/maps/dir/?api=1&destination=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
+                                  '_blank'
+                                );
+                              }}
+                            >
+                              {memorialTranslations?.sections?.location?.getDirections || "Get Directions"}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 text-center "
+                              onClick={() => {
+                                window.open(
+                                  `https://www.google.com/maps/search/?api=1&query=${apiMemorial.gps?.lat},${apiMemorial.gps?.lng}`,
+                                  '_blank'
+                                );
+                              }}
+                            >
+                              {memorialTranslations?.sections?.location?.viewOnGoogleMaps || "View on Google Maps"}
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="text-center py-6">
                           <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">
-                            No location data available for this memorial
+                            {memorialTranslations?.sections?.location?.noLocation || "No location specified"}
                           </p>
                         </div>
                       )
-                    ) : (
-                      <div className="text-center py-6">
-                        <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">
-                          GPS location available with premium 
-                        </p>
-                      </div>
-                    )}
+                      // ) : (
+                      //   <div className="text-center py-6">
+                      //     <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                      //     <p className="text-sm text-gray-600">
+                      //       GPS location available with premium 
+                      //     </p>
+                      //   </div>
+                      // )
+                    }
 
                   </CardContent>
                 </Card>
@@ -876,7 +1168,7 @@ export default function MemorialPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {memorialTranslations.sections.achievements.title}
+                      {memorialTranslations?.sections?.achievements?.title || "Achievements"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -892,7 +1184,7 @@ export default function MemorialPage() {
                     ) : (
                       <div className="text-center py-6">
                         <p className="text-sm text-gray-600">
-                          No achievements added yet
+                          {memorialTranslations?.sections?.achievements?.noAchievements || "No achievements listed"}
                         </p>
                       </div>
                     )}
@@ -905,19 +1197,19 @@ export default function MemorialPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {memorialTranslations.sections.info.title}
+                      {memorialTranslations?.sections?.info?.title || "Memorial Info"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.qrCode}
+                        {memorialTranslations?.sections?.info?.qrCode || "QR Code"}
                       </span>
                       <Badge variant="outline">{apiMemorial.slug}</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.plan}
+                        {memorialTranslations?.sections?.info?.plan || "Plan"}
                       </span>
                       <Badge variant={isPremium ? "default" : "secondary"}>
                         {apiMemorial.plan}
@@ -925,7 +1217,7 @@ export default function MemorialPage() {
                     </div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {memorialTranslations.sections.info.lastUpdated}
+                        {memorialTranslations?.sections?.info?.lastUpdated || "Last Updated"}
                       </span>
                       <span className="text-gray-900">
                         {formatDate(apiMemorial.updatedAt)}
@@ -941,7 +1233,7 @@ export default function MemorialPage() {
                           size="sm"
                           className="w-full bg-transparent"
                         >
-                          {memorialTranslations.sections.info.createMemorial}
+                          {memorialTranslations?.sections?.info?.createMemorial || "Create Memorial"}
                         </Button>
                       </Link>
                     </div>
@@ -952,6 +1244,28 @@ export default function MemorialPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Lightbox */}
+      {(() => {
+        // Create combined images array with profile image first, then gallery images
+        const allImages = [apiMemorial.profileImage, ...(apiMemorial.photoGallery || [])].filter(Boolean);
+        return allImages.length > 0 && (
+          <Lightbox
+            isOpen={isLightboxOpen}
+            onClose={() => setIsLightboxOpen(false)}
+            images={allImages}
+            currentIndex={lightboxIndex}
+            onIndexChange={(index) => {
+              setLightboxIndex(index);
+              // Update currentImageIndex only if we're viewing gallery images (not profile image)
+              if (index > 0) {
+                setCurrentImageIndex(index - 1);
+              }
+            }}
+            title={`${apiMemorial.firstName} ${apiMemorial.lastName} - ${lightboxIndex === 0 ? 'Profile Photo' : `Memory ${lightboxIndex}`}`}
+          />
+        );
+      })()}
     </div>
   );
 }

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, CircleMinus, Trash2 } from "lucide-react";
+import { CheckCircle, CircleMinus, Trash2, CreditCard, Calendar } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslate";
 import axiosInstance from "@/services/axiosInstance";
 import Link from "next/link";
@@ -42,6 +42,9 @@ export function MemorialsTable({
               <TableHead className="min-w-[150px]">
                 {admindashTranslations.recentMemorials.tableHeaders.creator}
               </TableHead>
+              <TableHead className="min-w-[120px]">
+                {admindashTranslations.recentMemorials?.tableHeaders?.subscriptionPlan || "Subscription Plan"}
+              </TableHead>
               <TableHead className="min-w-[100px]">
                 {admindashTranslations.recentMemorials.tableHeaders.status}
               </TableHead>
@@ -60,24 +63,63 @@ export function MemorialsTable({
             {memorials.map((memorial) => (
               <TableRow key={memorial._id} className="hover:bg-gray-50">
                 <TableCell className="font-medium min-w-[150px]">
-                  <Link 
-                    href={`/memorial/${memorial._id}`} 
-                    target="_blank" 
+                  <Link
+                    href={`/memorial/${memorial._id}`}
+                    target="_blank"
                     className="block w-full h-full hover:text-blue-600"
                   >
                     {memorial.firstName + " " + memorial.lastName}
                   </Link>
                 </TableCell>
                 <TableCell className="min-w-[150px]">
-                  <Link 
-                    href={`/memorial/${memorial._id}`} 
-                    target="_blank" 
+                  <Link
+                    href={`/memorial/${memorial._id}`}
+                    target="_blank"
                     className="block w-full h-full hover:text-blue-600"
                   >
                     {memorial?.createdBy?.firstname +
                       " " +
                       memorial?.createdBy?.lastname}
                   </Link>
+                </TableCell>
+                <TableCell className="min-w-[120px]">
+                  <div className="space-y-2">
+                    {memorial?.purchase?.planId ? (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="h-4 w-4 text-blue-600" />
+                          <div className="text-sm font-medium text-gray-900">
+                            {memorial.purchase.planId.name}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <span className="capitalize">{memorial.purchase.planId.planType}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-600">
+                          ₾
+                          <span>{memorial.purchase.finalPricePaid} GEL</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <Calendar className="h-3 w-3" />
+                          <span className="capitalize">{memorial.purchase.duration?.replace('_', ' ')}</span>
+                        </div>
+                        <Badge
+                          variant={memorial.purchase.status === 'completed' ? 'default' : 'secondary'}
+                          className={`text-xs ${memorial.purchase.status === 'completed'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                        >
+                          {memorial.purchase.status}
+                        </Badge>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <CreditCard className="h-4 w-4" />
+                        <span>No subscription</span>
+                      </div>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <Badge
@@ -110,7 +152,7 @@ export function MemorialsTable({
                       variant="outline"
                       className={`${memorial.status === "active"
                         ? " border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
-                        : "border-blue-600 hover:bg-blue-600 text-blue-600 hover:text-white"
+                        : "border-red-600 hover:bg-red-600 text-red-600 hover:text-white"
                         } bg-transparent`}
                       onClick={() => {
                         memorailStatusToggle(memorial._id);

@@ -11,6 +11,7 @@ import {
   Save,
   Upload,
   Crown,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,32 +31,64 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
 import { getUserDetails, updateUserDetails, uploadProfileImage } from "@/services/userService";
 import { toast } from "react-toastify";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const profileTranslations = t("profile");
-  const [profileData, setProfileData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
+  const [profileData, setProfileData] = useState({
+    _id: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    location: "",
+    bio: "",
+    profileImage: "",
+    plan: "",
+    shippingDetails: {
+      fullName: "",
+      address: "",
+      phone: "",
+      zipCode: "",
+      city: "",
+      country: "",
+    },
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchUserData = async () => {
     try {
       const userData = await getUserDetails();
-      setProfileData(userData.user)
+      // Ensure shippingDetails is at least an empty object if null/undefined
+      setProfileData({ ...userData.user, shippingDetails: userData.user.shippingDetails || {} });
     } catch (error) {
       console.error("Error fetching user details:", error);
+      toast.error("Failed to fetch user details.");
     }
   };
+
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field, value) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleShippingInputChange = (field, value) => {
+    setProfileData((prev) => ({
+      ...prev,
+      shippingDetails: {
+        ...prev.shippingDetails,
+        [field]: value,
+      },
+    }));
+  };
 
-  const handleAvatarUpload = async (file: File) => {
+  const handleAvatarUpload = async (file) => {
     if (!profileData._id) {
       console.error("User ID is missing");
       return;
@@ -63,11 +96,11 @@ export default function ProfilePage() {
     setIsLoading(true);
     try {
       const updatedUser = await uploadProfileImage(profileData._id, file);
-      setProfileData(prev => ({
+      setProfileData((prev) => ({
         ...prev,
-        profileImage: updatedUser.data.profileImage 
+        profileImage: updatedUser.data.profileImage,
       }));
-      fetchUserData()
+      fetchUserData();
       toast.success("Profile image updated successfully!");
     } catch (error) {
       console.error("Error uploading profile image:", error);
@@ -76,7 +109,6 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
-
 
   const handleSaveProfile = async () => {
     if (!profileData._id) {
@@ -96,8 +128,6 @@ export default function ProfilePage() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -113,12 +143,16 @@ export default function ProfilePage() {
                 {profileTranslations.header.backButton}
               </Link>
             </div>
-            <div className="flex items-center gap-1">
-              <User className="h-5 w-5 text-white" />
-              <span className="text-xs sm:text-lg font-bold text-white">
-                {profileTranslations.header.title}
-              </span>
+            <div className="flex gap-3">
+              <LanguageDropdown />
+              <div className="flex items-center gap-1">
+                <User className="h-5 w-5 text-white" />
+                <span className="text-xs sm:text-lg font-bold text-white">
+                  {profileTranslations.header.title}
+                </span>
+              </div>
             </div>
+
           </div>
         </div>
       </header>
@@ -149,10 +183,15 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
-                    <AvatarImage src={profileData.profileImage || "/placeholder.svg?height=96&width=96"} />
+                    <AvatarImage
+                      src={
+                        profileData.profileImage ||
+                        "/placeholder.svg?height=96&width=96"
+                      }
+                    />
                     <AvatarFallback className="text-2xl">
-                      {profileData.firstname}
-                      {profileData.lastname}
+                      {profileData.firstname?.[0]}
+                      {profileData.lastname?.[0]}
                     </AvatarFallback>
                   </Avatar>
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -177,7 +216,7 @@ export default function ProfilePage() {
                       input.type = "file";
                       input.accept = "image/*";
                       input.onchange = (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0];
+                        const file = (e.target).files?.[0];
                         if (file) {
                           handleAvatarUpload(file);
                         }
@@ -190,51 +229,11 @@ export default function ProfilePage() {
                   </Button>
                 </CardContent>
               </Card>
-
-              {/* <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>
-                    {profileTranslations.accountStats.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">
-                      {profileTranslations.accountStats.memberSince}
-                    </span>
-                    <span className="font-medium">
-                      {new Date(profileData.joinDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">
-                      {profileTranslations.accountStats.memorialsCreated}
-                    </span>
-                    <span className="font-medium">3</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">
-                      {profileTranslations.accountStats.totalViews}
-                    </span>
-                    <span className="font-medium">1,247</span>
-                  </div>
-                  <Separator />
-                  <Link href="/subscription">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full bg-transparent"
-                    >
-                      <Crown className="h-4 w-4 mr-2" />
-                      {profileTranslations.accountStats.manageSubscription}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card> */}
             </div>
 
-            {/* Profile Form */}
-            <div className="lg:col-span-2">
+            {/* Profile & Shipping Forms */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Personal Info Form */}
               <Card>
                 <CardHeader>
                   <CardTitle>
@@ -245,7 +244,6 @@ export default function ProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Name Fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstname">
@@ -253,7 +251,7 @@ export default function ProfilePage() {
                       </Label>
                       <Input
                         id="firstname"
-                        value={profileData.firstname}
+                        value={profileData.firstname || ""}
                         onChange={(e) =>
                           handleInputChange("firstname", e.target.value)
                         }
@@ -266,7 +264,7 @@ export default function ProfilePage() {
                       </Label>
                       <Input
                         id="lastname"
-                        value={profileData.lastname}
+                        value={profileData.lastname || ""}
                         onChange={(e) =>
                           handleInputChange("lastname", e.target.value)
                         }
@@ -274,8 +272,6 @@ export default function ProfilePage() {
                       />
                     </div>
                   </div>
-
-                  {/* Contact Fields */}
                   <div className="space-y-2">
                     <Label htmlFor="email" className="flex items-center">
                       <Mail className="h-4 w-4 mr-2" />
@@ -284,14 +280,13 @@ export default function ProfilePage() {
                     <Input
                       id="email"
                       type="email"
-                      value={profileData.email}
+                      value={profileData.email || ""}
                       onChange={(e) =>
                         handleInputChange("email", e.target.value)
                       }
                       className="h-12"
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center">
                       <Phone className="h-4 w-4 mr-2" />
@@ -300,14 +295,13 @@ export default function ProfilePage() {
                     <Input
                       id="phone"
                       type="tel"
-                      value={profileData.phone}
+                      value={profileData.phone || ""}
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
                       className="h-12"
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
@@ -315,15 +309,13 @@ export default function ProfilePage() {
                     </Label>
                     <Input
                       id="location"
-                      value={profileData.location}
+                      value={profileData.location || ""}
                       onChange={(e) =>
                         handleInputChange("location", e.target.value)
                       }
                       className="h-12"
                     />
                   </div>
-
-                  {/* Bio */}
                   <div className="space-y-2">
                     <Label htmlFor="bio">
                       {profileTranslations.personalInfo.bio}
@@ -331,27 +323,125 @@ export default function ProfilePage() {
                     <Textarea
                       id="bio"
                       placeholder="Tell us a bit about yourself..."
-                      value={profileData.bio}
+                      value={profileData.bio || ""}
                       onChange={(e) => handleInputChange("bio", e.target.value)}
                       className="min-h-[100px]"
                     />
                   </div>
+                </CardContent>
+              </Card>
 
-                  <Separator />
-
-                  {/* Save Button */}
-                  <div className="flex justify-end">
-                    <Button
-                      className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
-                      onClick={handleSaveProfile}
-                      disabled={isLoading}
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      {isLoading ? profileTranslations.personalInfo.saving : profileTranslations.personalInfo.saveChanges}
-                    </Button>
+              {/* Shipping Address Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Home className="h-5 w-5 mr-2" />
+                    {profileTranslations.shippingInfo.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {profileTranslations.shippingInfo.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">
+                      {profileTranslations.shippingInfo.fullName}
+                    </Label>
+                    <Input
+                      id="fullName"
+                      value={profileData.shippingDetails.fullName || ""}
+                      onChange={(e) =>
+                        handleShippingInputChange("fullName", e.target.value)
+                      }
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">
+                      {profileTranslations.shippingInfo.address}
+                    </Label>
+                    <Input
+                      id="address"
+                      value={profileData.shippingDetails.address || ""}
+                      onChange={(e) =>
+                        handleShippingInputChange("address", e.target.value)
+                      }
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="shipping-phone">
+                        {profileTranslations.shippingInfo.phone}
+                      </Label>
+                      <Input
+                        id="shipping-phone"
+                        type="tel"
+                        value={profileData.shippingDetails.phone || ""}
+                        onChange={(e) =>
+                          handleShippingInputChange("phone", e.target.value)
+                        }
+                        className="h-12"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="zipCode">
+                        {profileTranslations.shippingInfo.zipCode}
+                      </Label>
+                      <Input
+                        id="zipCode"
+                        value={profileData.shippingDetails.zipCode || ""}
+                        onChange={(e) =>
+                          handleShippingInputChange("zipCode", e.target.value)
+                        }
+                        className="h-12"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="city">
+                        {profileTranslations.shippingInfo.city}
+                      </Label>
+                      <Input
+                        id="city"
+                        value={profileData.shippingDetails.city || ""}
+                        onChange={(e) =>
+                          handleShippingInputChange("city", e.target.value)
+                        }
+                        className="h-12"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="country">
+                        {profileTranslations.shippingInfo.country}
+                      </Label>
+                      <Input
+                        id="country"
+                        value={profileData.shippingDetails.country || ""}
+                        onChange={(e) =>
+                          handleShippingInputChange("country", e.target.value)
+                        }
+                        className="h-12"
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <Button
+                  className="bg-[#547455] hover:bg-white hover:text-[#547455] border border-[#547455]"
+                  onClick={handleSaveProfile}
+                  disabled={isLoading}
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {isLoading
+                    ? profileTranslations.personalInfo.saving
+                    : profileTranslations.personalInfo.saveChanges}
+                </Button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -359,37 +449,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-//  "profilepage": {
-//     "header": {
-//       "backButton":
-//       "title":
-//     },
-//     "page": {
-//       "title":
-//       "description":
-//     },
-//     "profileOverview": {
-//       "title":
-//       "changeAvatar":
-//     },
-//     "accountStats": {
-//       "title":
-//       "memberSince":
-//       "memorialsCreated":
-//       "totalViews":
-//       "manageSubscription":
-//     },
-//     "personalInfo": {
-//       "title":
-//       "description":
-//       "firstname":
-//       "lastname":
-//       "email":
-//       "phone":
-//       "location":
-//       "bio":
-//       "bioPlaceholder":
-//       "saveChanges":
-//     }
-//   }

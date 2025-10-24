@@ -36,12 +36,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslate";
-import { getSingleMemorial } from "@/services/memorialService";
+import { getMyMemorialById } from "@/services/memorialService";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import axiosInstance from "@/services/axiosInstance";
 import { ADD_MEMORIAL } from "@/services/apiEndPoint";
 import { getUserDetails } from "@/services/userService";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import LanguageDropdown from "@/components/languageDropdown/page";
+import InteractiveMap from "@/components/InteractiveMap";
 
 interface Memorial {
   _id: string;
@@ -54,16 +58,22 @@ interface Memorial {
   isPublic: boolean;
   allowComments: boolean;
   enableEmailNotifications: boolean;
+  allowSlideshow: boolean;
   photoGallery: string[];
   videoGallery: string[];
   documents: string[];
   familyTree: any[];
   status: string;
   plan: string;
+  planType?: string;
   views: number;
   slug: string;
   createdAt: string;
   updatedAt: string;
+  gps?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 interface VideoItem {
@@ -90,6 +100,7 @@ interface UserDetails {
 }
 
 export default function EditMemorialPage() {
+  const router = useRouter();
   const params = useParams();
   const [formData, setFormData] = useState<Memorial | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +111,6 @@ export default function EditMemorialPage() {
   });
   const { t } = useTranslation();
   const editMemorialTranslations = t("editMemorial");
-
   const [mediaFiles, setMediaFiles] = useState({
     photos: [] as File[],
     videos: [] as VideoItem[],
@@ -136,11 +146,7 @@ export default function EditMemorialPage() {
         setUserSubscription(userData.user.subscriptionPlan);
       } catch (error) {
         console.error("Error fetching user details:", error);
-        toast({
-          title: "Error",
-          description: "Could not fetch user subscription details",
-          variant: "destructive",
-        });
+        toast.error("Could not fetch user subscription details");
       } finally {
         setLoadingSubscription(false);
       }
@@ -155,7 +161,7 @@ export default function EditMemorialPage() {
     const fetchMemorial = async () => {
       try {
         setLoading(true);
-        const response = await getSingleMemorial(params.id as string);
+        const response = await getMyMemorialById(params.id as string);
         if (response?.status && response.data) {
           setFormData(response.data);
           if (response.data.achievements) {
@@ -180,6 +186,46 @@ export default function EditMemorialPage() {
   const handleInputChange = (field: string, value: any) => {
     if (!formData) return;
     setFormData((prev) => ({ ...prev!, [field]: value }));
+  };
+
+  const handleSlideshowToggle = async (allowSlideshow: boolean) => {
+    if (!formData) return;
+
+    try {
+      // Check if user has active subscription (Medium or Premium)
+      if (userSubscription === "Free") {
+        toast.error("This feature requires a Medium or Premium subscription.");
+        return;
+      }
+
+      const response = await axiosInstance.put(
+        `/api/memorials/${formData._id}/toggle-slideshow`,
+        { allowSlideshow }
+      );
+
+      if (response.data.status) {
+        setFormData(prev => ({ ...prev!, allowSlideshow }));
+        toast.success(`Slideshow ${allowSlideshow ? 'enabled' : 'disabled'} successfully`);
+      }
+    } catch (error: any) {
+      console.error("Error toggling slideshow:", error);
+      const errorMessage = error.response?.data?.message || "Failed to update slideshow setting";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Helper function to check if slideshow is allowed based on plan type
+  const isSlideshowAllowed = () => {
+    if (!formData) return false;
+    // Check if user has Medium or Premium plan (hide for minimal plan)
+    return formData.planType === 'medium' || formData.planType === 'premium';
+  };
+
+  // Helper function to check if slideshow toggle should be shown
+  const shouldShowSlideshowToggle = () => {
+    if (!formData) return false;
+    // Show toggle only for Medium and Premium plans, hide for minimal and free plans
+    return formData.planType === 'medium' || formData.planType === 'premium';
   };
 
   const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -335,6 +381,11 @@ export default function EditMemorialPage() {
       formDataToSend.append('biography', formData.biography);
       formDataToSend.append('location', formData.location);
       formDataToSend.append('isPublic', String(formData.isPublic));
+      
+      // Append GPS coordinates
+      if (formData.gps && formData.gps.lat && formData.gps.lng) {
+        formDataToSend.append('gps', JSON.stringify(formData.gps));
+      }
 
       // Append achievements
       achievements.forEach((achievement) => {
@@ -362,8 +413,12 @@ export default function EditMemorialPage() {
       });
 
       // Append family tree members
-      formData.familyTree.forEach((member) => {
-        formDataToSend.append('familyTree', JSON.stringify(member));
+      formData.familyTree.forEach((member, index) => {
+        formDataToSend.append(`familyTree[${index}][name]`, member.name);
+        formDataToSend.append(`familyTree[${index}][relationship]`, member.relationship);
+        if (member._id) {
+          formDataToSend.append(`familyTree[${index}][_id]`, member._id);
+        }
       });
 
       // Append deleted files information
@@ -371,10 +426,6 @@ export default function EditMemorialPage() {
       formDataToSend.append('deletedVideos', JSON.stringify(deletedFiles.videos));
       formDataToSend.append('deletedDocuments', JSON.stringify(deletedFiles.documents));
 
-      // Log FormData contents for debugging
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
 
       const response = await axiosInstance.post(
         `${ADD_MEMORIAL}`,
@@ -388,7 +439,7 @@ export default function EditMemorialPage() {
 
       if (response?.status) {
         toast.success("Memorial updated successfully");
-        const updatedResponse = await getSingleMemorial(params.id as string);
+        const updatedResponse = await getMyMemorialById(params.id as string);
         if (updatedResponse?.status && updatedResponse.data) {
           setFormData(updatedResponse.data);
           setSelectedProfileImage(null);
@@ -408,14 +459,40 @@ export default function EditMemorialPage() {
       } else {
         throw new Error(response?.message || "Failed to update memorial");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to update memorial:", err);
-      toast.error({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Failed to update memorial",
-        variant: "destructive",
-      });
-    } finally {
+      if (err.response?.data?.actionCode === "UPGRADE_REQUIRED") {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Upgrade Required',
+          text: err.response?.data?.message || "You need to upgrade your plan to use this feature",
+          showCancelButton: true,
+          confirmButtonText: 'View Plans',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#E53935',
+          cancelButtonColor: '#6e7881',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/dashboard'); // Redirect to pricing page
+          }
+        });
+      }
+      else if (err.response?.data?.actionCode === "VIDEO_TOO_LONG") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Video Too Long',
+          text: err.response?.data?.message || "Video exceeds the maximum allowed duration of 1 minute",
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#E53935',
+        });
+      }
+
+      else {
+        // Show generic error for other issues
+        toast.error(err instanceof Error ? err.message : "Failed to update memorial");
+      }
+    }
+    finally {
       setUpdating(false);
     }
   };
@@ -428,7 +505,6 @@ export default function EditMemorialPage() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -489,16 +565,16 @@ export default function EditMemorialPage() {
           <Lock className="h-6 w-6 text-gray-500" />
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          {requiredPlan === "Premium" ? "Premium Feature" : "Upgrade Required"}
+          {requiredPlan === "Premium" ? editMemorialTranslations.subscriptionRestricted?.premiumFeature || "Premium Feature" : editMemorialTranslations.subscriptionRestricted?.upgradeRequired || "Upgrade Required"}
         </h3>
         <p className="text-gray-500 mb-4">
           {requiredPlan === "Premium"
-            ? "This feature is only available with a Premium subscription."
-            : "Upgrade to Plus or Premium to access this feature."}
+            ? editMemorialTranslations.subscriptionRestricted?.premiumDescription || "This feature is only available with a Premium subscription."
+            : editMemorialTranslations.subscriptionRestricted?.upgradeDescription || "Upgrade to Plus or Premium to access this feature."}
         </p>
         <Link href="/subscription">
           <Button className="bg-[#547455] hover:bg-[#243b31]">
-            Upgrade to {requiredPlan}
+            {editMemorialTranslations.subscriptionRestricted?.upgradeButton || "Upgrade to"} {requiredPlan}
           </Button>
         </Link>
       </div>
@@ -532,26 +608,10 @@ export default function EditMemorialPage() {
                 {editMemorialTranslations.header.back}
               </Link>
             </div>
-            <div className="flex items-center flex-wrap gap-2">
-              <Button
-                className="bg-white text-black border border-white hover:hover:bg-transparent hover:text-white  p-2"
-                onClick={handleSubmit}
-                disabled={updating}
-              >
-                {updating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    {editMemorialTranslations.header.save}
-                  </>
-                )}
-              </Button>
-
+            <div className="flex gap-3">
+              <LanguageDropdown />
             </div>
+
           </div>
         </div>
       </header>
@@ -641,12 +701,12 @@ export default function EditMemorialPage() {
                           </Button>
                         )} */}
                       </div>
-                      <p className="text-sm text-gray-500 text-center md:text-left">
+                      {!profileImagePreview && <p className="text-sm text-gray-500 text-center md:text-left">
                         {
                           editMemorialTranslations.basicInfo.profileImage
                             .description
                         }
-                      </p>
+                      </p>}
                     </div>
                   </div>
 
@@ -658,7 +718,7 @@ export default function EditMemorialPage() {
                       </Label>
                       <Input
                         id="firstName"
-                        placeholder="John"
+                        placeholder={editMemorialTranslations.basicInfo.firstName || "John"}
                         value={formData.firstName}
                         onChange={(e) =>
                           handleInputChange("firstName", e.target.value)
@@ -672,7 +732,7 @@ export default function EditMemorialPage() {
                       </Label>
                       <Input
                         id="lastName"
-                        placeholder="Smith"
+                        placeholder={editMemorialTranslations.basicInfo.lastName || "Smith"}
                         value={formData.lastName}
                         onChange={(e) =>
                           handleInputChange("lastName", e.target.value)
@@ -717,20 +777,27 @@ export default function EditMemorialPage() {
                     </div>
                   </div>
 
-                  {/* Location */}
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {editMemorialTranslations.basicInfo.location}
+                  {/* Interactive Map for Precise Location */}
+                  <div className="space-y-4">
+                    <Label className="flex items-center text-lg font-semibold">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      {editMemorialTranslations.basicInfo.location?.title || editMemorialTranslations.basicInfo.location} - Set Precise Location
                     </Label>
-                    <Input
-                      id="location"
-                      placeholder="Tbilisi, Georgia"
-                      value={formData.location}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
-                      className="h-12"
+                    <p className="text-sm text-gray-600">
+                      {editMemorialTranslations?.basicInfo?.location?.description || "Click on the map to set the exact GPS coordinates for the memorial location."}
+                    </p>
+                    <InteractiveMap
+                      initialLat={formData.gps?.lat || 41.7151}
+                      initialLng={formData.gps?.lng || 44.8271}
+                      onLocationChange={(lat, lng) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gps: { lat, lng }
+                        }));
+                      }}
+                      height="400px"
+                      showCoordinateInputs={true}
+                      translations={editMemorialTranslations?.basicInfo?.location}
                     />
                   </div>
 
@@ -741,7 +808,7 @@ export default function EditMemorialPage() {
                     </Label>
                     <Textarea
                       id="biography"
-                      placeholder="Share the beautiful story of your loved one's life..."
+                      placeholder={editMemorialTranslations.basicInfo.biographyPlaceholder || "Share the beautiful story of your loved one's life..."}
                       value={formData.biography}
                       onChange={(e) =>
                         handleInputChange("biography", e.target.value)
@@ -752,9 +819,9 @@ export default function EditMemorialPage() {
 
 
                   <div className="space-y-4">
-                    <Label className="text-lg font-semibold">Achievements</Label>
+                    <Label className="text-lg font-semibold">{editMemorialTranslations.basicInfo.achievements}</Label>
                     <p className="text-sm text-gray-500">
-                      Add notable achievements or awards
+                      {editMemorialTranslations.basicInfo.awards}
                     </p>
 
                     {/* Add new achievement */}
@@ -762,7 +829,7 @@ export default function EditMemorialPage() {
                       <Input
                         value={newAchievement}
                         onChange={(e) => setNewAchievement(e.target.value)}
-                        placeholder="e.g. Nobel Prize in Physics"
+                        placeholder={editMemorialTranslations.basicInfo.nobelPrice}
                         className="flex-1"
                       />
                       <Button
@@ -809,6 +876,69 @@ export default function EditMemorialPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Public Memorial Toggle */}
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isPublic"
+                      checked={formData.isPublic}
+                      onCheckedChange={(value) => handleInputChange("isPublic", value)}
+                    />
+                    <Label htmlFor="isPublic">
+                      {editMemorialTranslations?.settings?.publicMemorial?.label || "Make memorial public"}
+                    </Label>
+                  </div>
+
+                  {/* Slideshow Settings - Only show for Medium and Premium plans */}
+                  {shouldShowSlideshowToggle() && (
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold flex items-center">
+                        <Eye className="h-5 w-5 mr-2" />
+                        {editMemorialTranslations?.displaySettings?.title || "Display Settings"}
+                      </Label>
+                      <p className="text-sm text-gray-500">
+                        {editMemorialTranslations?.displaySettings?.description || "Control how your memorial is displayed to visitors"}
+                      </p>
+                      
+                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="space-y-1">
+                          <Label htmlFor="slideshow-toggle" className="text-base font-medium">
+                            {editMemorialTranslations?.displaySettings?.enableSlideshow || "Enable Photo Slideshow"}
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            {editMemorialTranslations?.displaySettings?.slideshowDescription || "Allow visitors to see a slideshow of photos instead of a static cover image"}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleSlideshowToggle(!formData.allowSlideshow);
+                              }}
+                              className={`
+                                relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer hover:bg-opacity-80
+                                ${formData.allowSlideshow 
+                                  ? 'bg-green-600' 
+                                  : 'bg-gray-200'
+                                }
+                              `}
+                            >
+                              <span
+                                className={`
+                                  inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                                  ${formData.allowSlideshow ? 'translate-x-6' : 'translate-x-1'}
+                                `}
+                              />
+                            </button>
+                            <span className="text-sm text-gray-600">
+                              {formData.allowSlideshow ? 'Enabled' : 'Disabled'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                 </CardContent>
               </Card>
@@ -979,8 +1109,8 @@ export default function EditMemorialPage() {
                       <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <Video className="h-12 w-12 text-gray-400 mb-4" />
-                          <h3 className="font-semibold text-gray-900 mb-2">Videos</h3>
-                          <p className="text-sm text-gray-500 mb-4">Upload video memories</p>
+                          <h3 className="font-semibold text-gray-900 mb-2">  {editMemorialTranslations.media.videosCard.videos}</h3>
+                          <p className="text-sm text-gray-500 mb-4">{editMemorialTranslations.media.videosCard.upload}</p>
 
                           <Button
                             variant="outline"
@@ -994,13 +1124,13 @@ export default function EditMemorialPage() {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            Upload Videos
+                            {editMemorialTranslations.media.videosCard.uploadVideo}
                           </Button>
 
                           {/* Existing Videos */}
                           {formData.videoGallery?.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">Existing Videos</p>
+                              <p className="text-xs font-medium mb-2"> {editMemorialTranslations.media.videosCard.existingVideos}</p>
                               <div className="space-y-1 mb-4">
                                 {formData.videoGallery.map((videoUrl, index) => (
                                   <div key={`existing-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1027,7 +1157,7 @@ export default function EditMemorialPage() {
                           {/* New Videos */}
                           {mediaFiles.videos.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">New Videos</p>
+                              <p className="text-xs font-medium mb-2">{editMemorialTranslations.media.videosCard.newVideos}</p>
                               <div className="space-y-1">
                                 {mediaFiles.videos.map((video, index) => (
                                   <div key={`new-video-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1139,11 +1269,12 @@ export default function EditMemorialPage() {
                       <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                           <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                          <h3 className="font-semibold text-gray-900 mb-2">Documents</h3>
-                          <p className="text-sm text-gray-500 mb-4">Upload important documents</p>
+                          <h3 className="font-semibold text-gray-900 mb-2">{editMemorialTranslations.media.documentCard.document}</h3>
+                          <p className="text-sm text-gray-500 mb-4">{editMemorialTranslations.media.documentCard.upload}</p>
 
                           <Button
                             variant="outline"
+                            disabled={userSubscription !== 'premium'}
                             onClick={() => {
                               const input = document.createElement("input");
                               input.type = "file";
@@ -1154,13 +1285,13 @@ export default function EditMemorialPage() {
                             }}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            Upload Documents
+                            {editMemorialTranslations.media.documentCard.uploadDocument}
                           </Button>
 
                           {/* Existing Documents */}
                           {formData.documents?.length > 0 && (
                             <div className="mt-4 w-full">
-                              <p className="text-xs font-medium mb-2">Existing Documents</p>
+                              <p className="text-xs font-medium mb-2">{editMemorialTranslations.media.documentCard.existingDocument}</p>
                               <div className="space-y-1 mb-4">
                                 {formData.documents.map((docUrl, index) => (
                                   <div key={`existing-doc-${index}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
@@ -1234,11 +1365,12 @@ export default function EditMemorialPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberName">
-                            {editMemorialTranslations.familyTree?.placeholder?.name || "Family Member Name"}
+                            {editMemorialTranslations.familyTree?.familyMember}
                           </Label>
                           <Input
                             id="familyMemberName"
-                            placeholder="John Doe"
+                            placeholder={editMemorialTranslations.familyTree?.updateFamilyMember
+}
                             value={newFamilyMember.name}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1251,11 +1383,11 @@ export default function EditMemorialPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="familyMemberRelationship">
-                            {editMemorialTranslations.familyTree?.placeholder?.relationship || "Relationship"}
+                            {editMemorialTranslations.familyTree?.relationship}
                           </Label>
                           <Input
                             id="familyMemberRelationship"
-                            placeholder="Father"
+                            placeholder={editMemorialTranslations.familyTree?.updateRelationship}
                             value={newFamilyMember.relationship}
                             onChange={(e) =>
                               setNewFamilyMember({
@@ -1286,7 +1418,7 @@ export default function EditMemorialPage() {
                               ...prev!,
                               familyTree: [...prev!.familyTree, {
                                 ...newFamilyMember,
-                                _id: `temp-${Date.now()}`
+                                // _id: `temp-${Date.now()}`
                               }]
                             }));
                           }
@@ -1295,14 +1427,14 @@ export default function EditMemorialPage() {
                       >
                         <Users className="h-4 w-4 mr-2" />
                         {isEditingFamilyMember
-                          ? "Update Family Member"
-                          : editMemorialTranslations.familyTree.placeholder.button}
+                          ? editMemorialTranslations.familyTree?.updateFamilyMember || "Update Family Member"
+                          : editMemorialTranslations.familyTree?.placeholder?.button || "Add Family Member"}
                       </Button>
 
                       {formData.familyTree?.length > 0 && (
                         <div className="mt-6">
                           <h3 className="font-semibold text-gray-900 mb-4">
-                            {editMemorialTranslations.familyTree.placeholder.title}
+                            {editMemorialTranslations.familyTree?.placeholder?.title || "Family Members"}
                           </h3>
                           <div className="space-y-2">
                             {formData.familyTree.map((member, index) => (
@@ -1366,6 +1498,27 @@ export default function EditMemorialPage() {
 
             </TabsContent>
           </Tabs>
+
+          {/* Save Button at Bottom */}
+          <div className="mt-8 flex justify-center">
+            <Button
+              className="bg-[#547455] hover:bg-[#243b31] text-white px-8 py-3 text-lg"
+              onClick={handleSubmit}
+              disabled={updating}
+            >
+              {updating ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  {editMemorialTranslations.header.save}
+                </>
+              )}
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

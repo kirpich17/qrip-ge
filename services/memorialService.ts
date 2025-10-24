@@ -24,6 +24,16 @@ export const getSingleMemorial = async (id: string) => {
   }
 };
 
+export const getMyMemorialById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/memorials/my-memorial/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching my memorial with ID ${id}:`, error);
+    throw error;
+  }
+};
+
 export const getDeleteMemorial = async (id: string) => {
   try {
     const response = await axiosInstance.delete(`/api/memorials/${id}`);

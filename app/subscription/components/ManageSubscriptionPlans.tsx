@@ -1,24 +1,32 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Crown, Star, Zap, X } from "lucide-react";
+import { Check, Crown, Star, Zap, X, Tag, Info, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { useTranslation } from "@/hooks/useTranslate";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import axiosInstance from "@/services/axiosInstance";
-import { useSubscriptionMutations } from "@/app/hooks/useSubscriptionMutations";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslate";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -26,10 +34,18 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
+// --- Type Definitions ---
 type Feature = {
   text: string;
   included: boolean;
   _id?: string;
+};
+
+type DurationOption = {
+  duration: string;
+  price: number;
+  discountPercentage: number;
+  isActive: boolean;
 };
 
 type Plan = {
@@ -37,497 +53,600 @@ type Plan = {
   name: string;
   description: string;
   price: number;
-  billingPeriod: "free" | "monthly" | "one_time";
+  planType: "minimal" | "medium" | "premium";
   ctaButtonText: string;
   features: Feature[];
   isActive: boolean;
   isPopular?: boolean;
-  color?: string;
-  bgColor?: string;
-  borderColor?: string;
+  maxPhotos: number;
+  allowSlideshow: boolean;
+  allowVideos: boolean;
+  maxVideoDuration: number;
+  durationOptions?: DurationOption[];
+  defaultDuration?: string;
 };
 
-interface PlanDetails {
-  name: string;
-  price: number;
-  billingPeriod: string;
-  description: string;
-  _id: string; // Added for better type safety
-}
+type AppliedPromoCode = {
+  code: string;
+  discountType: "percentage" | "fixed" | "free";
+  discountValue: number;
+  appliesToPlan: string | null;
+};
 
-interface Transaction {
-  _id: string;
-  bogTransactionId: string;
-  bogOrderId: string;
-  amount: number;
-  status: string;
-  date: string;
-}
+type PlanPromoState = {
+  input: string;
+  appliedPromo: AppliedPromoCode | null;
+  error: string;
+  isValidating: boolean;
+  selectedDuration: string;
+};
 
-interface UserSubscription {
-  planId: PlanDetails;
-  status: string;
-  startDate?: string;
-  lastPaymentDate?: string;
-  nextBillingDate?: string;
-  _id: string;
-  bogInitialOrderId?: string;
-  endDate?: string;
-  gracePeriodEnd?: string;
-}
-
-interface PlanStatus {
-  planId: string;
-  subscriptionId: string;
-  planName: string;
-  status: string;
-  startDate?: string;
-  endDate?: string;
-  lastPaymentDate?: string;
-  canResume: boolean;
-}
-
-interface ApiResponse {
-  currentSubscription: UserSubscription | null;
-  transactions: Transaction[];
-  otherPlanCurrentStatus?: {
-    monthly?: PlanStatus;
-    one_time?: PlanStatus;
-  };
-}
-
-export default function SubscriptionPage() {
-  const { t } = useTranslation();
-  const subscriptionTranslations = t("subscription");
+export default function PlanSelection() {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [planPromoStates, setPlanPromoStates] = useState<Record<string, PlanPromoState>>({});
+  const [memorialHasVideos, setMemorialHasVideos] = useState<boolean>(false);
+  const toastShownRef = useRef(false);
+  const { t } = useTranslation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const memorialId = searchParams.get("memorialId");
+  const preselectedPlanId = searchParams.get("preselectedPlan");
   
-  // Track client-side status to prevent hydration errors
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  // Debug memorialId and preselected plan
+  console.log('MemorialId from URL:', memorialId);
+  console.log('Preselected plan ID:', preselectedPlanId);
+  console.log('Search params:', searchParams.toString());
 
-  const { cancelSubscription, resumeSubscription, retryPayment, isRetrying } = useSubscriptionMutations();
-  const isCanceling = cancelSubscription?.isPending;
-  const isResuming = resumeSubscription?.isPending;
+  // Get translations
+  const translations = t("planSelection");
+  const commonTranslations = t("common");
+  const promoTranslations = t("promoCodeManagement");
 
-  // Check if user is in grace period (can resume subscription)
-  const isInGracePeriod = (subscription: UserSubscription | null) => {
-    if (!subscription?.gracePeriodEnd || !isClient) return false;
-    return new Date(subscription.gracePeriodEnd) > new Date();
-  };
-
-  // Fetch data using React Query
-  const { 
-    data: subscriptionData, 
-    isLoading: isSubscriptionLoading,
-    error: subscriptionError,
-    refetch: refetchSubscription  
-  } = useQuery<ApiResponse>({
-    queryKey: ['userSubscriptionDetails'],
-    queryFn: async () => {
-      const response = await axiosInstance.get('/api/user/subscription-details');
-      return response.data;
-    },
-  });
-
-  const { 
-    data: plans, 
-    isLoading: isPlansLoading,
-    error: plansError 
-  } = useQuery<Plan[]>({
-    queryKey: ['plans'],
+  // Fetch all active plans using React Query
+  const { data: plans, isLoading, error } = useQuery<Plan[]>({
+    queryKey: ['allActivePlans'],
     queryFn: async () => {
       const response = await axiosInstance.get("/api/admin/subscription");
+      // We only want to show active plans to the user
       return response.data.filter((plan: Plan) => plan.isActive);
     },
   });
 
-  // Compute grace period status
-  const hasActiveGracePeriod = isClient && subscriptionData ? (
-    (subscriptionData.currentSubscription?.status === 'canceled' && 
-     isInGracePeriod(subscriptionData.currentSubscription)) ||
-    (subscriptionData.otherPlanCurrentStatus?.monthly?.status === 'canceled' && 
-     subscriptionData.otherPlanCurrentStatus?.monthly?.canResume) ||
-    (subscriptionData.otherPlanCurrentStatus?.one_time?.status === 'canceled' && 
-     subscriptionData.otherPlanCurrentStatus?.one_time?.canResume)
-  ) : false;
-
-  const handleCancelSubscription = (subscriptionId: string) => {
-    if (window.confirm("Are you sure you want to cancel your subscription?")) {
-      cancelSubscription(subscriptionId);
+  // Initialize promo states when plans are loaded
+  useEffect(() => {
+    if (plans && !Object.keys(planPromoStates).length) {
+      const initialStates: Record<string, PlanPromoState> = {};
+      plans.forEach(plan => {
+        initialStates[plan._id] = {
+          input: "",
+          appliedPromo: null,
+          error: "",
+          isValidating: false,
+          selectedDuration: plan.defaultDuration || '1_month'
+        };
+      });
+      setPlanPromoStates(initialStates);
     }
-  };
+  }, [plans, planPromoStates]);
 
-  const handleResumeSubscription = (subscriptionId: string) => {
-    resumeSubscription(subscriptionId);
-  };
-
-  const handleRetryPayment = (subscriptionId: string) => {
-    retryPayment(subscriptionId);
-  };
-  
-  if (isSubscriptionLoading || isPlansLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p>Loading Plans...</p>
-      </div>
-    );
-  }
-
-  if (subscriptionError || plansError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-red-500">
-          {subscriptionError?.message || plansError?.message || "Failed to load data"}
-        </p>
-      </div>
-    );
-  }
-
-  const handlePayment = async (planId: string, planName: string) => {
-    setIsProcessing(planId);
-    try {
-      const response = await axiosInstance.post('/api/payments/initiate', { planId });
-      if (response.data.redirectUrl) {
-        window.location.href = response.data.redirectUrl;
+  // Check if memorial has videos
+  useEffect(() => {
+    const checkMemorialVideos = async () => {
+      if (memorialId) {
+        console.log('Checking memorial videos for ID:', memorialId);
+        try {
+          const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
+          console.log('Full API response:', memorialResponse);
+          const memorial = memorialResponse.data.data;
+          console.log('Memorial data:', memorial);
+          console.log('Video gallery:', memorial.videoGallery);
+          console.log('Video gallery type:', typeof memorial.videoGallery);
+          console.log('Video gallery length:', memorial.videoGallery?.length);
+          console.log('Video gallery is array:', Array.isArray(memorial.videoGallery));
+          
+          const hasVideos = memorial.videoGallery && memorial.videoGallery.length > 0;
+          console.log('Has videos:', hasVideos);
+          setMemorialHasVideos(hasVideos);
+        } catch (error) {
+          console.error('Error checking memorial videos:', error);
+          console.error('Error details:', error.response?.data);
+        }
       } else {
-        toast.error("Could not get payment URL. Please try again.");
+        console.log('No memorialId found');
+      }
+    };
+    
+    checkMemorialVideos();
+  }, [memorialId]);
+
+  // Handle preselected plan
+  useEffect(() => {
+    if (preselectedPlanId && plans && !toastShownRef.current) {
+      console.log('Preselected plan detected:', preselectedPlanId);
+      // Clear the selectedPlanId from localStorage since we're using it
+      localStorage.removeItem('selectedPlanId');
+      
+      // Show a message about the preselected plan only once
+      toast.success(`Plan preselected! You can proceed with payment or choose a different plan.`);
+      toastShownRef.current = true;
+    }
+  }, [preselectedPlanId, plans]);
+
+  // Function to apply promo code to a specific plan
+  const handleApplyPromoCode = async (planId: string) => {
+    const state = planPromoStates[planId];
+    if (!state.input.trim()) {
+      setPlanPromoStates(prev => ({
+        ...prev,
+        [planId]: { ...state, error: "Please enter a promo code" }
+      }));
+      return;
+    }
+
+    if (!memorialId) {
+      setPlanPromoStates(prev => ({
+        ...prev,
+        [planId]: { ...state, error: "Memorial ID is required to apply promo code" }
+      }));
+      return;
+    }
+
+    setPlanPromoStates(prev => ({
+      ...prev,
+      [planId]: { ...state, isValidating: true, error: "" }
+    }));
+
+    try {
+      const response = await axiosInstance.post('/api/admin/validate-promo', {
+        promoCode: state.input,
+        memorialId,
+        planId
+      });
+
+      if (response.data.isValid) {
+        setPlanPromoStates(prev => ({
+          ...prev,
+          [planId]: {
+            ...state,
+            appliedPromo: {
+              code: state.input,
+              discountType: response.data.discountType,
+              discountValue: response.data.discountValue,
+              appliesToPlan: response.data.appliesToPlan
+            },
+            error: "",
+            isValidating: false
+          }
+        }));
+        toast.success("Promo code applied successfully!");
+      } else {
+        setPlanPromoStates(prev => ({
+          ...prev,
+          [planId]: {
+            ...state,
+            error: response.data.message || "Invalid promo code",
+            appliedPromo: null,
+            isValidating: false
+          }
+        }));
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || `Failed to start payment for ${planName}.`);
-    } finally {
-      setIsProcessing(null);
+      setPlanPromoStates(prev => ({
+        ...prev,
+        [planId]: {
+          ...state,
+          error: err.response?.data?.message || "Failed to apply promo code",
+          appliedPromo: null,
+          isValidating: false
+        }
+      }));
     }
   };
 
-  const handleLifeTimePayment = async (planId: string, planName: string) => {
+  // Function to remove applied promo code
+  const handleRemovePromoCode = (planId: string) => {
+    const state = planPromoStates[planId];
+    setPlanPromoStates(prev => ({
+      ...prev,
+      [planId]: {
+        ...state,
+        appliedPromo: null,
+        input: "",
+        error: ""
+      }
+    }));
+  };
+
+  // Check if promo code applies to a specific plan
+  const doesPromoApplyToPlan = (planId: string, appliedPromo: AppliedPromoCode | null) => {
+    if (!appliedPromo) return true;
+    if (!appliedPromo.appliesToPlan) return true; // Global code
+    return appliedPromo.appliesToPlan === planId;
+  };
+
+  // Calculate discounted price for a plan
+  const calculateDiscountedPrice = (plan: Plan) => {
+    const state = planPromoStates[plan._id];
+    if (!state || !state.appliedPromo || !doesPromoApplyToPlan(plan._id, state.appliedPromo)) {
+      const selectedDurationOption = plan.durationOptions?.find(opt => 
+        opt.duration === (state?.selectedDuration || plan.defaultDuration || '1_month') && opt.isActive
+      );
+      return selectedDurationOption?.price || plan.price;
+    }
+
+    const selectedDurationOption = plan.durationOptions?.find(opt => 
+      opt.duration === state.selectedDuration && opt.isActive
+    );
+    const basePrice = selectedDurationOption?.price || plan.price;
+
+    switch (state.appliedPromo.discountType) {
+      case "percentage":
+        return basePrice * (1 - state.appliedPromo.discountValue / 100);
+      case "fixed":
+        return Math.max(0, basePrice - state.appliedPromo.discountValue);
+      case "free":
+        return 0;
+      default:
+        return basePrice;
+    }
+  };
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return `${amount.toFixed(2)} GEL`;
+  };
+
+  // Handle duration selection
+  const handleDurationChange = (planId: string, duration: string) => {
+    setPlanPromoStates(prev => ({
+      ...prev,
+      [planId]: {
+        ...prev[planId],
+        selectedDuration: duration
+      }
+    }));
+  };
+
+  // --- Payment Handler ---
+  const handleSelectPlan = async (planId: string) => {
     setIsProcessing(planId);
     try {
-      const response = await axiosInstance.post('/api/payments/initiate-one-time-payment', { planId });
+      const state = planPromoStates[planId];
+      const plan = plans?.find(p => p._id === planId);
+      
+      // First check using the state we already have
+      if (memorialHasVideos && plan && plan.planType !== 'premium') {
+        console.log('Blocking payment - videos detected with non-premium plan (using state)');
+        toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+        setIsProcessing(null);
+        return;
+      }
+      
+      // Double check by fetching memorial data if we don't have the state yet
+      if (memorialId && plan && !memorialHasVideos) {
+        try {
+          // Fetch memorial data to check for videos
+          const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
+          const memorial = memorialResponse.data.data;
+          console.log('Payment handler - Memorial data:', memorial);
+          console.log('Payment handler - Video gallery:', memorial.videoGallery);
+          console.log('Payment handler - Plan type:', plan.planType);
+          
+          // Check if memorial has videos and plan is not premium
+          if (memorial.videoGallery && memorial.videoGallery.length > 0 && plan.planType !== 'premium') {
+            console.log('Blocking payment - videos detected with non-premium plan (from API)');
+            toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+            setIsProcessing(null);
+            return;
+          }
+        } catch (memorialError) {
+          console.error('Error fetching memorial data:', memorialError);
+          // Continue with payment if we can't fetch memorial data
+        }
+      }
+      
+      const requestBody: any = { 
+        planId, 
+        memorialId,
+        duration: state?.selectedDuration || plan?.defaultDuration || '1_month'
+      };
+      
+      if (state?.appliedPromo) {
+        requestBody.promoCode = state.appliedPromo.code;
+      }
+
+      const response = await axiosInstance.post(
+        '/api/payments/initiate-memorial-payment', 
+        requestBody
+      );
+
       if (response.data.redirectUrl) {
+        // Redirect the user to the payment gateway
         window.location.href = response.data.redirectUrl;
       } else {
-        toast.error("Could not get payment URL. Please try again.");
+        toast.error(translations.paymentError?.initiate || "Failed to initiate payment");
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || `Failed to start payment for ${planName}.`);
+      toast.error(err.response?.data?.message || translations.paymentError?.process || "Payment processing failed");
     } finally {
       setIsProcessing(null);
     }
   };
 
-  const handleRestartFreePlan = async () => {
-    setIsProcessing('free');
-    try {
-      await axiosInstance.post('/api/payments/restart-free');
-      toast.success("Free plan restarted successfully!");
-      refetchSubscription();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to restart free plan.");
-    } finally {
-      setIsProcessing(null);
+  const clickHandler = async (planId?: string) => {
+    if (typeof window !== "undefined") {
+      const loginData = localStorage.getItem("loginData");
+      if (loginData) {
+        try {
+          // Create a draft memorial first
+          const response = await axiosInstance.post('/api/memorials/create-draft');
+          const memorialId = response.data.memorialId;
+          
+          // Store the selected plan in localStorage for the memorial creation form
+          if (planId) {
+            localStorage.setItem('selectedPlanId', planId);
+          }
+          
+          // Redirect to memorial creation with the plan preselected
+          router.push(`/memorial/create/${memorialId}`);
+        } catch (error) {
+          console.error('Error creating draft memorial:', error);
+          // Fallback to dashboard if draft creation fails
+          router.push("/dashboard");
+        }
+      } else {
+        router.push("/login");
+      }
     }
   };
 
-  const currentSubscription = subscriptionData?.currentSubscription;
-  const currentPlanName = currentSubscription?.planId.name || "Free";
-  const isPaymentFailed = currentSubscription?.status === 'payment_failed';
-  
-  const showFreePlanButton = !currentSubscription || 
-                           (currentSubscription?.planId?.billingPeriod === 'free' && 
-                            currentSubscription.status === 'active') ||
-                           (currentSubscription?.status === 'canceled' && 
-                            !isInGracePeriod(currentSubscription));
+  if (isLoading) {
+    return <div className="text-center py-10">{translations.loading || "Loading..."}</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-500">{translations.error || "Error loading plans"}</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div {...fadeInUp}>
-          <div className="text-center mb-12">
-            <h1 className="md:text-4xl text-2xl font-bold text-gray-900 md:mb-4 mb-3">
-              {subscriptionTranslations.title}
-            </h1>
-            <p className="md:text-xl text-base text-gray-600 max-w-3xl mx-auto mb-8">
-              {subscriptionTranslations.description}
-            </p>
+    <div className="max-w-6xl mx-auto px-4">
+      
+      {/* Preselected plan notification */}
+      {preselectedPlanId && (
+        <div className="mb-8">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <Check className="h-6 w-6 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-semibold text-green-800 mb-2">
+                  Plan Preselected
+                </h3>
+                <p className="text-green-700">
+                  Your memorial has been created and a plan has been preselected. 
+                  You can proceed with payment or choose a different plan below.
+                </p>
+              </div>
+            </div>
           </div>
-
-          {/* Current Plan Status */}
-          <motion.div variants={fadeInUp} className="mb-8">
-            <Card className="border-gray-200 bg-gray-50">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Star className="h-6 w-6 text-gray-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {subscriptionTranslations.currentPlan.title.replace('{plan}', currentPlanName)}
-                      </h3>
-                      <p className="text-gray-600">
-                        {subscriptionTranslations.currentPlan.description}
-                      </p>
-                      
-                      {isPaymentFailed && (
-                        <p className="text-sm text-red-600 mt-1">
-                          Your last payment attempt failed. Please retry payment to avoid service interruption.
-                        </p>
-                      )}
-                      
-                      {isClient && currentSubscription?.status === 'canceled' && currentSubscription?.endDate && (
-                        <p className="text-sm text-orange-600 mt-1">
-                          {isInGracePeriod(currentSubscription) ? (
-                            `You can resume until ${new Date(currentSubscription.gracePeriodEnd).toLocaleDateString()}`
-                          ) : (
-                            `Access ended on ${new Date(currentSubscription.endDate).toLocaleDateString()}`
-                          )}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className={`${
-                      currentSubscription?.status === 'active' 
-                        ? 'border-green-300 bg-green-50 text-green-800'
-                        : currentSubscription?.status === 'canceled'
-                          ? 'border-gray-300 bg-gray-100 text-gray-800'
-                        : isPaymentFailed
-                          ? 'border-red-300 bg-red-50 text-red-800'
-                          : 'border-yellow-300 bg-yellow-50 text-yellow-800'
-                    }`}
-                  >
-                    {currentSubscription?.status === 'active' 
-                      ? subscriptionTranslations.currentPlan.status 
-                      : isPaymentFailed
-                        ? "Payment Failed"
-                        : currentSubscription?.status?.charAt(0).toUpperCase() + currentSubscription?.status?.slice(1)}
+        </div>
+      )}
+      
+      {/* Plans Grid */}
+      <div className="grid lg:grid-cols-3 md:gap-8 gap-6">
+        {plans?.map((plan, index) => {
+          const promoState = planPromoStates[plan._id] || {
+            input: "",
+            appliedPromo: null,
+            error: "",
+            isValidating: false,
+            selectedDuration: plan.defaultDuration || '1_month'
+          };
+          
+          const hasDiscount = promoState?.appliedPromo;
+          const selectedDurationOption = plan.durationOptions?.find(opt => 
+            opt.duration === (promoState?.selectedDuration || plan.defaultDuration || '1_month') && opt.isActive
+          );
+          const originalPrice = selectedDurationOption?.price || plan.price;
+          const discountedPrice = calculateDiscountedPrice(plan);
+          const discountAmount = originalPrice - discountedPrice;
+          
+          return (
+            <motion.div key={plan._id} {...fadeInUp} transition={{ delay: index * 0.1 }}>
+              <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border-gray-200 hover:shadow-md"} ${preselectedPlanId === plan._id ? "border-2 border-blue-500 shadow-xl bg-blue-50" : ""} transition-all duration-300`}>
+                {plan.isPopular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10">
+                    {translations.badgePopular || "Popular"}
                   </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                )}
+                {preselectedPlanId === plan._id && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 z-10">
+                    Preselected
+                  </Badge>
+                )}
 
-          {/* Plans Grid */}
-          <div className="grid lg:grid-cols-3 md:gap-8 gap-5 mb-12">
-            {plans.map((plan, index) => {
-              const isCurrentPlan = currentSubscription?.planId._id === plan._id;
-              const isFreePlan = plan.billingPeriod === "free";
-              const hasActivePaid = currentSubscription && 
-                                  currentSubscription?.planId?.billingPeriod !== "free" && 
-                                  currentSubscription?.status === "active";
-              
-              const planStatus = subscriptionData?.otherPlanCurrentStatus?.[plan.billingPeriod as 'monthly' | 'one_time'];
-              const isCanceledAndCanResume = planStatus?.status === 'canceled' && planStatus?.canResume;
-              
-              return (
-                <motion.div key={plan._id} {...fadeInUp} transition={{ delay: index * 0.1 }}>
-                  <Card className={`relative h-full flex flex-col 
-                    ${isCurrentPlan && currentSubscription?.status === 'active' 
-                      ? "border-[#243b31] shadow-lg" 
-                      : plan.isPopular 
-                        ? "shadow-lg" 
-                        : "border-gray-200 hover:shadow-md"
-                    } transition-all duration-300`}
-                  >
-                    {isCurrentPlan && currentSubscription?.status === 'active' && (
-                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10 shadow-md">
-                        <span className="flex items-center">
-                          <Check className="h-4 w-4 mr-1" />
-                          {subscriptionTranslations.plans.current || "Current Plan"}
-                        </span>
-                      </Badge>
-                    )}
-
-                    {plan.isPopular && !isCurrentPlan && (
-                      <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 z-10 shadow-md transition-all">
-                        <span className="flex items-center">
-                          <Crown className="h-4 w-4 mr-1" />
-                          {subscriptionTranslations.plans.basic.popular}
-                        </span>
-                      </Badge>
-                    )}
-                    
-                    <CardHeader className="text-center pb-4">
-                      <div className={`md:w-16 md:h-16 w-12 h-12 ${plan.bgColor || 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                        {isFreePlan && <Star className="md:h-8 md:w-8 w-5 h-5 text-black" />}
-                        {plan.name.toLowerCase().includes("premium") && <Crown className="md:h-8 md:w-8 w-5 h-5 text-black" />}
-                        {plan.name.toLowerCase().includes("life") && <Zap className="md:h-8 md:w-8 w-5 h-5 text-black" />}
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    {plan.planType === "premium" && <Crown className="text-black" size={32} />}
+                    {plan.planType === "medium" && <Zap className="text-black" size={32} />}
+                    {plan.planType === "minimal" && <Star className="text-black" size={32} />}
+                  </div>
+                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                  
+                  {/* Duration Selection */}
+                  {plan.durationOptions && plan.durationOptions.length > 0 && (
+                    <div className="mt-4">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        {translations.selectDuration || "Select Duration"}:
+                      </label>
+                      <Select
+                        value={promoState?.selectedDuration || plan.defaultDuration || '1_month'}
+                        onValueChange={(value) => handleDurationChange(plan._id, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {plan.durationOptions.filter(opt => opt.isActive).map((option) => (
+                            <SelectItem key={option.duration} value={option.duration}>
+                              <div className="flex justify-between items-center w-full">
+                                <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                                <span className="ml-2 font-medium">{option.price} GEL</span>
+                                {option.discountPercentage > 0 && (
+                                  <span className="ml-2 text-green-600 text-xs">({option.discountPercentage}% off)</span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  <div className="mt-4">
+                    {hasDiscount ? (
+                      <div>
+                        <span className="text-4xl font-bold text-green-600">{formatCurrency(discountedPrice)}</span>
+                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
+                        <div className="text-sm text-gray-500 line-through">{formatCurrency(originalPrice)}</div>
+                        <Badge variant="outline" className="mt-1 bg-green-50 text-green-700 border-green-200">
+                          You save {formatCurrency(discountAmount)}
+                        </Badge>
                       </div>
-                      <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                      <CardDescription className="text-gray-600">{plan.description}</CardDescription>
-                      <div className="mt-4">
-                        <div className="flex items-baseline justify-center">
-                          <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
-                          <span className="text-gray-600 ml-2">
-                            {plan.billingPeriod === 'one_time' ? 'one-time' : plan.billingPeriod === 'monthly' ? '/month' : 'forever'}
-                          </span>
-                        </div>
+                    ) : (
+                      <div>
+                        <span className="text-4xl font-bold text-gray-900">{formatCurrency(originalPrice)}</span>
+                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
                       </div>
-                    </CardHeader>
+                    )}
+                  </div>
+                </CardHeader>
 
-                    <CardContent className="pt-0 flex-grow flex flex-col">
-                      <div className="space-y-6 flex-grow">
-                        <div>
-                          <ul className="space-y-2">
-                            {plan.features.filter(f => f.included).map((feature) => (
-                              <li key={feature._id} className="flex items-start space-x-3">
-                                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                <span className="text-gray-700 text-sm">{feature.text}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        {plan.features.filter(f => !f.included).length > 0 && (
-                          <div>
-                            <ul className="space-y-2">
-                              {plan.features.filter(f => !f.included).map((feature) => (
-                                <li key={feature._id} className="flex items-start space-x-3">
-                                  <X className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-                                  <span className="text-gray-500 text-sm line-through">{feature.text}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                <CardContent className="pt-0 flex-grow">
+                  <ul className="space-y-3 mb-6">
+                    <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
+                    <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
+                    <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
+                    {plan.features.map((feature) => (
+                      <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
+                    ))}
+                  </ul>
+
+                  {/* Promo Code Section */}
+                  {memorialId && (
+                    <div className="border-t pt-4">
+                      <div className="flex items-center mb-2">
+                        <Tag className="mr-2 h-4 w-4 text-[#243b31]" />
+                        <span className="text-sm font-medium">Promo Code</span>
                       </div>
                       
-                      <Separator className="my-6" />
+                      {promoState?.appliedPromo ? (
+                        <div className="bg-green-50 p-3 rounded-md border border-green-200">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-green-800 font-medium text-sm">
+                                Applied: {promoState.appliedPromo.code}
+                              </p>
+                              <p className="text-green-600 text-xs">
+                                {promoState.appliedPromo.discountType === "percentage" 
+                                  ? `${promoState.appliedPromo.discountValue}% off` 
+                                  : promoState.appliedPromo.discountType === "fixed"
+                                    ? `${promoState.appliedPromo.discountValue} GEL off`
+                                    : "100% off - FREE"}
+                                {promoState.appliedPromo.appliesToPlan && " (Plan specific)"}
+                              </p>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => handleRemovePromoCode(plan._id)}
+                              className="text-red-600 border-red-200 hover:bg-red-50"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Enter promo code"
+                              value={promoState?.input || ""}
+                              onChange={(e) => {
+                                setPlanPromoStates(prev => ({
+                                  ...prev,
+                                  [plan._id]: {
+                                    ...prev[plan._id],
+                                    input: e.target.value.toUpperCase(),
+                                    error: ""
+                                  }
+                                }));
+                              }}
+                              className="flex-1"
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') handleApplyPromoCode(plan._id);
+                              }}
+                            />
+                            <Button 
+                              onClick={() => handleApplyPromoCode(plan._id)}
+                              disabled={promoState?.isValidating || false}
+                              size="sm"
+                            >
+                              {promoState?.isValidating ? "Applying..." : "Apply"}
+                            </Button>
+                          </div>
+                          
+                          {promoState?.error && (
+                            <p className="text-red-500 text-xs">{promoState.error}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
 
-                      {/* Action Button */}
-                      <div className="pt-2 space-y-2">
-                        {isCurrentPlan ? (
-                          <>
-                            {currentSubscription?.status === 'active' && plan.billingPeriod === 'monthly' && (
-                              <Button
-                                variant="outline"
-                                className="w-full border-red-500 text-red-600 hover:bg-red-50"
-                                onClick={() => handleCancelSubscription(currentSubscription._id)}
-                                disabled={isCanceling}
-                              >
-                                {isCanceling ? "Canceling..." : "Cancel Subscription"}
-                              </Button>
-                            )}
-                            
-                            {currentSubscription?.status === 'active' && plan.billingPeriod === 'one_time' && (
-                              <Button variant="outline" className="w-full" disabled>
-                                Lifetime Access (Active)
-                              </Button>
-                            )}
-                            
-                            {isPaymentFailed && (
-                              <Button
-                                className="w-full bg-red-600 hover:bg-red-700 text-white"
-                               onClick={() => retryPayment(currentSubscription._id)}
-                                 disabled={isRetrying}
-                              >
-                                {isRetrying ? "Processing..." : "Retry Payment"}
-                              </Button>
-                            )}
-                            
-                            {currentSubscription?.status === 'canceled' && isInGracePeriod(currentSubscription) && (
-                              <Button
-                                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                                onClick={() => handleResumeSubscription(currentSubscription._id)}
-                                disabled={isResuming}
-                              >
-                                {isResuming ? "Resuming..." : "Resume Subscription"}
-                              </Button>
-                            )}
-                            
-                            {(currentSubscription?.status === 'active' && isFreePlan) && (
-                              <Button variant="outline" className="w-full" disabled>
-                                {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
-                              </Button>
-                            )}
-                          </>
-                        ) : isFreePlan ? (
-                          hasActivePaid ? (
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              disabled
-                              title="Cancel your paid plan first"
-                            >
-                              {isCurrentPlan ? "Your Current Plan" : "Start with Free"}
-                            </Button>
-                          ) :  (
-                            <Button
-                              className="w-full bg-black hover:bg-gray-800 text-white"
-                              size="lg"
-                              onClick={handleRestartFreePlan}
-                              disabled={isProcessing === 'free' || !showFreePlanButton}
-                            >
-                              {isProcessing === 'free' 
-                                ? "Processing..." 
-                                : showFreePlanButton
-                                  ? subscriptionTranslations.plans.restartFree
-                                  : subscriptionTranslations.plans.current}
-                            </Button>
-                          )
-                        ) : (
-                          isCanceledAndCanResume ? (
-                            <Button
-                              className="w-full bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() => handleResumeSubscription(planStatus?.subscriptionId)}
-                              disabled={isResuming}
-                            >
-                              {isResuming ? "Resuming..." : "Resume Subscription"}
-                            </Button>
-                          ) : (
-                            <Button
-                              className={`w-full ${plan.isPopular ? "bg-[#547455] hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
-                              size="lg"
-                              onClick={() => 
-                                plan.billingPeriod === 'monthly' 
-                                  ? handlePayment(plan._id, plan.name)
-                                  : handleLifeTimePayment(plan._id, plan.name)
-                              }
-                              disabled={
-                                isProcessing === plan._id || 
-                                (currentSubscription?.status === 'active' && 
-                                  currentSubscription?.planId?.billingPeriod !== 'free') ||
-                                hasActiveGracePeriod
-                              }
-                            >
-                              {isProcessing === plan._id 
-                                ? "Processing..." 
-                                : plan.ctaButtonText || subscriptionTranslations.plans.choose}
-                            </Button>
-                          )
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* FAQ Section */}
-          <motion.div variants={fadeInUp} className="mt-12">
-            <Card>
-              <CardHeader>
-                <CardTitle>{subscriptionTranslations.faq.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {subscriptionTranslations.faq.questions.map((question, index) => (
-                  <div key={index}>
-                    <h4 className="font-semibold text-gray-900 mb-2">
-                      {question.question}
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      {question.answer}
+                <CardFooter className="pt-0">
+                  
+                  <Button
+                    className="w-full bg-[#243b31] hover:bg-green-700 text-white py-3 text-lg"
+                    onClick={() => memorialId ? handleSelectPlan(plan._id) : clickHandler(plan._id)}
+                    disabled={isProcessing === plan._id || (promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id)}
+                  >
+                    {isProcessing === plan._id
+                      ? (translations.cta?.processing || "Processing...")
+                      : promoState?.appliedPromo?.discountType === "free" && doesPromoApplyToPlan(plan._id, promoState.appliedPromo)
+                        ? "Get For Free"
+                        : (plan.planType === "minimal" && (translations.cta?.getStarted || "Get Started")) ||
+                          (plan.planType === "premium" && (translations.cta?.goPremium || "Go Premium")) ||
+                          (plan.planType === "medium" && (translations.cta?.medium || "Choose Medium")) ||
+                          plan.ctaButtonText ||
+                          (translations.cta?.selectPlan || "Select Plan")}
+                  </Button>
+                  
+                  {promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id && (
+                    <p className="text-xs text-center text-gray-500 mt-2">
+                      This promo code doesn't apply to {plan.name} plan
                     </p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.div>
+                  )}
+                </CardFooter>
+              </Card>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
 }
+
+// Helper component for displaying feature list items consistently
+const FeatureListItem = ({ included, text }: { included: boolean, text: string }) => (
+  <li className="flex items-start space-x-3">
+    {included ? (
+      <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+    ) : (
+      <X className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+    )}
+    <span className={`text-sm ${included ? 'text-gray-700' : 'text-gray-500 line-through'}`}>
+      {text}
+    </span>
+  </li>
+);

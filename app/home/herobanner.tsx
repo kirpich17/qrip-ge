@@ -50,14 +50,14 @@ const floatingAnimation = {
 
 const Herobanner = () => {
   const { t } = useTranslation();
-  const heroTranslations = t("hero");
+  const heroTranslations = t("hero") as any;
   const { language, setLanguage } = useLanguage();
 
   return (
     <>
-      <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-no-repeat bg-center sm:py-20 py-10" style={{ backgroundImage: "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.png')" }}>
         {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* <div className="absolute inset-0 overflow-hidden">
           <motion.div
             animate="animate"
             className="absolute top-20 left-10 opacity-10"
@@ -78,10 +78,10 @@ const Herobanner = () => {
           >
             <FaTree className="h-28 w-28 text-green-300" />
           </motion.div>
-        </div>
+        </div> */}
 
         <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 md:gap-12 items-end">
+          <div className="grid sm:grid-cols-2 md:gap-12 items-end">
             {/* Left Side - Content */}
             <motion.div
               variants={staggerContainer}
@@ -95,22 +95,22 @@ const Herobanner = () => {
               >
                 <div className="inline-flex items-center space-x-2 bg-[#243b31] text-white px-4 py-2 rounded-full text-sm font-medium">
                   <FaHeart className="h-4 w-4" />
-                  <span>{heroTranslations.tagline}</span>
+                  <span>{heroTranslations?.tagline}</span>
                 </div>
 
-                <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-gray-900">
-                  {heroTranslations.title1}
-                  <span className="block text-[#243b31]">
-                    {heroTranslations.title2}
+                <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-white">
+                  {heroTranslations?.title1}
+                  <span className="block ">
+                    {heroTranslations?.title2}
                   </span>
                 </h1>
 
-                <p className="text-base md:text-xl text-black leading-relaxed max-w-xl">
-                  {heroTranslations.description}
+                <p className="text-base md:text-xl text-white leading-relaxed max-w-xl">
+                  {heroTranslations?.description}
                 </p>
               </motion.div>
 
-              <motion.div
+              {/* <motion.div
                 variants={fadeInLeft}
                 className="flex flex-col sm:flex-row gap-4"
               >
@@ -134,9 +134,9 @@ const Herobanner = () => {
                     {heroTranslations.demoButton}
                   </Button>
                 </Link>
-              </motion.div>
+              </motion.div> */}
 
-              <motion.div
+              {/* <motion.div
                 variants={fadeInLeft}
                 className="flex items-center space-x-8 pt-4"
               >
@@ -158,16 +158,15 @@ const Herobanner = () => {
                     {heroTranslations.stats.memories}
                   </div>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
 
             {/* Right Side - Tudor-style Memorial Stone */}
-            <motion.div
+            {/* <motion.div
               variants={fadeInRight}
               className="relative flex lg:justify-end  justify-center items-end h-full"
             >
               <div className="relative w-full max-w-md">
-                {/* Main Memorial Stone */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -180,12 +179,10 @@ const Herobanner = () => {
                     overflow: "hidden",
                   }}
                 >
-                  {/* Stone texture */}
                   <div className="absolute inset-0 opacity-20 pointer-events-none">
                     <div className="absolute w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stone-wall.png')]"></div>
                   </div>
 
-                  {/* Tudor arch details */}
                   <div
                     className="absolute top-0 left-0 right-0 h-16 bg-stone-800 z-10"
                     style={{
@@ -195,12 +192,15 @@ const Herobanner = () => {
                   />
 
                   <div className="text-center space-y-6 relative z-20">
-                    {/* QR Code as the portrait */}
-                    <div className="relative mx-auto w-32 h-32 bg-white rounded-lg flex items-center justify-center p-2 border-4 border-[#547455] shadow-lg">
-                      <QrCode className="h-20 w-20 text-gray-800" />
+                    <div className="relative mx-auto w-[180px] h-[180px] bg-white rounded-lg flex items-center justify-center p-2 border-4 border-[#547455] shadow-lg">
+                      <QrCode className="h-[140px] w-[140px] text-gray-800" />
                     </div>
 
+
                     <div className="text-white">
+                    <h3 className="text-4xl font-bold tracking-wider">
+                        QRIP.GE
+                      </h3>
                       <h3 className="text-3xl font-bold tracking-wider">
                         {heroTranslations.memorialExample.name}
                       </h3>
@@ -231,13 +231,11 @@ const Herobanner = () => {
                       </div>
                     </div>
 
-                    {/* Decorative elements */}
                     <div className="absolute bottom-0 left-4 text-2xl">🌹</div>
                     <div className="absolute bottom-0  right-4 text-2xl">
                       🌹
                     </div>
 
-                    {/* QR Code CTA */}
                     <div className="mt-8 bg-white/90 rounded-lg p-3 mx-auto max-w-xs shadow-md">
                       <div className="flex items-center justify-center space-x-2">
                         <FaQrcode className="h-5 w-5 text-gray-800" />
@@ -249,7 +247,7 @@ const Herobanner = () => {
                   </div>
                 </motion.div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </div>
       </section>

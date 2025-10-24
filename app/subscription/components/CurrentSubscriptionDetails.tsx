@@ -93,7 +93,7 @@ export default function CurrentSubscriptionDetails({ setActiveTab }: Props) {
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           <div><strong className="text-gray-600">Plan Name:</strong> {currentSubscription.planId.name}</div>
-          <div><strong className="text-gray-600">Price:</strong> ${currentSubscription.planId.price} / {currentSubscription.planId.billingPeriod}</div>
+          <div><strong className="text-gray-600">Price:</strong> ₾{currentSubscription.planId.price} / {currentSubscription.planId.billingPeriod}</div>
           <div className="md:col-span-2"><strong className="text-gray-600">Description:</strong> {currentSubscription.planId.description}</div>
           <div><strong className="text-gray-600">Start Date:</strong> {formatDisplayDate(currentSubscription.startDate)}</div>
           <div><strong className="text-gray-600">Last Payment:</strong> {formatDisplayDate(currentSubscription.lastPaymentDate)}</div>

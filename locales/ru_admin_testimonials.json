@@ -1,0 +1,49 @@
+{
+  "adminTestimonials": {
+    "header": {
+      "title": "Управление Отзывами"
+    },
+    "table": {
+      "headers": {
+        "testimonial": "Отзывы",
+        "submitted": "Подано"
+      },
+      "status": {
+        "approved": "Одобрено",
+        "rejected": "Отклонено",
+        "pending": "Ожидает"
+      },
+      "actions": {
+        "approve": "Одобрить",
+        "reject": "Отклонить",
+        "markPending": "Отметить как ожидающий",
+        "delete": "Удалить"
+      }
+    },
+    "search": {
+      "placeholder": "Поиск отзывов...",
+      "filterByStatus": "Фильтр по статусу",
+      "allStatus": "Все статусы",
+      "pending": "Ожидает",
+      "approved": "Одобрено",
+      "rejected": "Отклонено"
+    },
+    "empty": {
+      "title": "Отзывы не найдены",
+      "description": "В данный момент нет отзывов для отображения."
+    },
+    "pagination": {
+      "previous": "Предыдущая",
+      "next": "Следующая",
+      "pageInfo": "Страница {currentPage} из {totalPages}"
+    },
+    "settings": {
+      "title": "Настройки Отзывов",
+      "enableSection": "Включить секцию отзывов",
+      "enableSectionDescription": "Разрешить пользователям подавать отзывы на сайте",
+      "autoApprove": "Автоодобрение отзывов",
+      "autoApproveDescription": "Автоматически одобрять новые отзывы без ручной проверки",
+      "maxDisplay": "Максимальное количество отображения"
+    }
+  }
+}
