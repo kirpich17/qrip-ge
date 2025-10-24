@@ -29,10 +29,10 @@ interface UploadProgress {
 }
 
 function TranslationManagementPage() {
-  const { t, refreshTranslations } = useTranslation();
+  const { t, refreshTranslations, isUsingAPI, isLoading, error, debug } = useTranslation();
   const [languageFiles, setLanguageFiles] = useState<LanguageFile[]>([]);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [previewData, setPreviewData] = useState<any>(null);
 
@@ -99,14 +99,14 @@ function TranslationManagementPage() {
 
   const fetchLanguageFiles = async () => {
     try {
-      setIsLoading(true);
+      setIsUploading(true);
       const response = await axiosInstance.get("/api/admin/translation-files");
       setLanguageFiles(response.data);
     } catch (error) {
       console.error("Error fetching language files:", error);
       toast.error("Failed to fetch language files");
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
@@ -152,16 +152,17 @@ function TranslationManagementPage() {
       ));
 
       toast.success(translations.messages.uploadSuccess.replace('{language}', language));
-      toast.info("Page will reload in 2 seconds to apply changes...");
+      toast.info("Translations updated! Changes will appear immediately.");
       fetchLanguageFiles();
       
       // Refresh translations to show updated content immediately
       refreshTranslations();
       
-      // Force page reload to ensure all components get updated translations
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // Debug: Check if files were updated
+      console.log('=== TRANSLATION UPLOAD DEBUG ===');
+      console.log('Language:', language);
+      console.log('Response:', response.data);
+      console.log('Using Pure API approach - no page reload needed!');
       
       // Clear progress after 3 seconds
       setTimeout(() => {
@@ -259,6 +260,28 @@ function TranslationManagementPage() {
               </span>
             </div>
             <div className="flex items-center space-x-2">
+              {/* API Status Indicator */}
+              <div className="flex items-center space-x-2 text-sm">
+                {isLoading && (
+                  <div className="flex items-center text-yellow-300">
+                    <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                    Loading API...
+                  </div>
+                )}
+                {!isUsingAPI && !isLoading && (
+                  <div className="flex items-center text-blue-300">
+                    <FileText className="h-3 w-3 mr-1" />
+                    Using Static
+                  </div>
+                )}
+                {error && (
+                  <div className="flex items-center text-red-300">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    API Error
+                  </div>
+                )}
+              </div>
+              
               <Button
                 variant="ghost"
                 size="sm"
