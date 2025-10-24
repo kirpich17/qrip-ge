@@ -14,7 +14,7 @@ import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import LanguageDropdown from "@/components/languageDropdown/page";
 import axiosInstance from "@/services/axiosInstance";
 import Link from "next/link";
-import { useTranslationDynamic } from "@/hooks/useTranslateDynamic";
+import { useTranslation } from "@/hooks/useTranslate";
 
 interface LanguageFile {
   name: string;
@@ -25,7 +25,7 @@ interface LanguageFile {
 }
 
 const LanguageUploadPage = () => {
-  const { t, loading: translationsLoading } = useTranslationDynamic();
+  const { t, loading: translationsLoading } = useTranslation();
   const languageManagementTranslations = t("languageManagement") || {
     title: "Language Management",
     description: "Upload and manage translation files for your application",
@@ -195,15 +195,9 @@ const LanguageUploadPage = () => {
 
       toast.success(languageManagementTranslations.messages?.uploadSuccess?.replace('{language}', languages.find(l => l.code === languageCode)?.name || '') || `${languages.find(l => l.code === languageCode)?.name} language file uploaded successfully!`);
       
-      // Reset form
+      // Force refresh the page to load new translations
       setTimeout(() => {
-        setUploading(false);
-        setUploadProgress(0);
-        setUploadStatus("idle");
-        setSelectedLanguage("");
-        if (event.target) {
-          event.target.value = '';
-        }
+        window.location.reload();
       }, 2000);
 
     } catch (error: any) {
