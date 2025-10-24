@@ -1088,7 +1088,57 @@
       "title": "Быстрый доступ",
       "manageTestimonials": "Управление отзывами",
       "subscriptionPlans": "Тарифные планы",
-      "qrStickers": "QR стикеры"
+      "qrStickers": "QR стикеры",
+      "translations": "Управление языками"
+    }
+  },
+  "languageManagement": {
+    "title": "Управление Языками",
+    "description": "Загружайте и управляйте файлами переводов для вашего приложения",
+    "backToDashboard": "Вернуться к панели администратора",
+    "tabs": {
+      "uploadFiles": "Загрузить Файлы",
+      "manageFiles": "Управление Файлами"
+    },
+    "languages": {
+      "english": "Английский",
+      "georgian": "Грузинский",
+      "russian": "Русский"
+    },
+    "upload": {
+      "selectFile": "Выбрать Файл",
+      "uploading": "Загрузка...",
+      "uploadDescription": "Загрузить файл перевода {language}",
+      "progress": "{progress}% загружено",
+      "success": "Файл успешно загружен!",
+      "error": "Ошибка загрузки",
+      "guidelines": {
+        "title": "Правила Загрузки",
+        "jsonFormat": "Файлы должны быть в формате JSON (.json расширение)",
+        "fileSize": "Максимальный размер файла: 5MB",
+        "validJson": "Структура JSON должна быть валидной и правильно отформатированной",
+        "replacement": "Загрузка нового файла заменит существующий",
+        "immediateEffect": "Изменения будут отражены немедленно во всем приложении"
+      }
+    },
+    "manage": {
+      "fileUploaded": "Файл загружен",
+      "noFileUploaded": "Файл не загружен",
+      "active": "Активный",
+      "inactive": "Неактивный",
+      "download": "Скачать",
+      "uploadFile": "Загрузить Файл",
+      "file": "Файл",
+      "size": "Размер",
+      "updated": "Обновлено"
+    },
+    "messages": {
+      "uploadSuccess": "Файл языка {language} успешно загружен!",
+      "downloadSuccess": "Файл {language} успешно скачан!",
+      "uploadError": "Не удалось загрузить файл: {error}",
+      "downloadError": "Не удалось скачать файл: {error}",
+      "invalidJsonFile": "Пожалуйста, выберите действительный JSON файл",
+      "fileSizeError": "Размер файла должен быть менее 5MB"
     }
   },
   "adminlogin": {

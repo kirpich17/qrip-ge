@@ -1106,7 +1106,8 @@
       "title": "სწრაფი წვდომა",
       "manageTestimonials": "მიმოხილვების მართვა",
       "subscriptionPlans": "გამოწერის გეგმები",
-      "qrStickers": "QR სტიკერები"
+      "qrStickers": "QR სტიკერები",
+      "translations": "ენის მართვა"
     },
     "analytics": {
       "platformGrowth": "პლატფორმის ზრდა",
@@ -2022,8 +2023,57 @@
         "downloadSuccess": "QR კოდი ჩამოტვირთულია როგორც {fileName}",
         "downloadError": "QR კოდის გენერირება ვერ მოხერხდა"
       }
+  },
+  "languageManagement": {
+    "title": "ენის მართვა",
+    "description": "ატვირთეთ და მართეთ თარგმანის ფაილები თქვენი აპლიკაციისთვის",
+    "backToDashboard": "ადმინისტრატორის დაფაზე დაბრუნება",
+    "tabs": {
+      "uploadFiles": "ფაილების ატვირთვა",
+      "manageFiles": "ფაილების მართვა"
     },
-    "adminDashboard": {
+    "languages": {
+      "english": "ინგლისური",
+      "georgian": "ქართული",
+      "russian": "რუსული"
+    },
+    "upload": {
+      "selectFile": "ფაილის არჩევა",
+      "uploading": "ატვირთვა...",
+      "uploadDescription": "ატვირთეთ {language} თარგმანის ფაილი",
+      "progress": "{progress}% ატვირთული",
+      "success": "ფაილი წარმატებით ატვირთულია!",
+      "error": "ატვირთვა ვერ მოხერხდა",
+      "guidelines": {
+        "title": "ატვირთვის წესები",
+        "jsonFormat": "ფაილები უნდა იყოს JSON ფორმატში (.json გაფართოება)",
+        "fileSize": "მაქსიმალური ფაილის ზომა: 5MB",
+        "validJson": "JSON სტრუქტურა უნდა იყოს სწორი და სწორად ფორმატირებული",
+        "replacement": "ახალი ფაილის ატვირთვა შეცვლის არსებულს",
+        "immediateEffect": "ცვლილებები მაშინვე აისახება აპლიკაციაში"
+      }
+    },
+    "manage": {
+      "fileUploaded": "ფაილი ატვირთულია",
+      "noFileUploaded": "ფაილი არ არის ატვირთული",
+      "active": "აქტიური",
+      "inactive": "არააქტიური",
+      "download": "ჩამოტვირთვა",
+      "uploadFile": "ფაილის ატვირთვა",
+      "file": "ფაილი",
+      "size": "ზომა",
+      "updated": "განახლებული"
+    },
+    "messages": {
+      "uploadSuccess": "{language} ენის ფაილი წარმატებით ატვირთულია!",
+      "downloadSuccess": "{language} ფაილი წარმატებით ჩამოტვირთულია!",
+      "uploadError": "ფაილის ატვირთვა ვერ მოხერხდა: {error}",
+      "downloadError": "ფაილის ჩამოტვირთვა ვერ მოხერხდა: {error}",
+      "invalidJsonFile": "გთხოვთ, აირჩიოთ სწორი JSON ფაილი",
+      "fileSizeError": "ფაილის ზომა უნდა იყოს 5MB-ზე ნაკლები"
+    }
+  },
+  "adminDashboard": {
       "orders": {
         "tabTitle": "შეკვეთები",
         "title": "QR სტიკერების შეკვეთები",

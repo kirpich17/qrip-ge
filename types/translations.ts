@@ -610,6 +610,56 @@ export interface PlanSelectionTranslations {
   };
 }
 
+export interface LanguageManagementTranslations {
+  title: string;
+  description: string;
+  backToDashboard: string;
+  tabs: {
+    uploadFiles: string;
+    manageFiles: string;
+  };
+  languages: {
+    english: string;
+    georgian: string;
+    russian: string;
+  };
+  upload: {
+    selectFile: string;
+    uploading: string;
+    uploadDescription: string;
+    progress: string;
+    success: string;
+    error: string;
+    guidelines: {
+      title: string;
+      jsonFormat: string;
+      fileSize: string;
+      validJson: string;
+      replacement: string;
+      immediateEffect: string;
+    };
+  };
+  manage: {
+    fileUploaded: string;
+    noFileUploaded: string;
+    active: string;
+    inactive: string;
+    download: string;
+    uploadFile: string;
+    file: string;
+    size: string;
+    updated: string;
+  };
+  messages: {
+    uploadSuccess: string;
+    downloadSuccess: string;
+    uploadError: string;
+    downloadError: string;
+    invalidJsonFile: string;
+    fileSizeError: string;
+  };
+}
+
 export interface Translations {
   header: HeaderTranslations;
   common: CommonTranslations;
@@ -627,4 +677,5 @@ export interface Translations {
   plansTranslations: PlansTranslations;
   homePagePlan: HomePagePlanTranslations;
   planSelection: PlanSelectionTranslations;
+  languageManagement: LanguageManagementTranslations;
 }
