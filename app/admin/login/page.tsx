@@ -213,6 +213,16 @@ export default function AdminLoginPage() {
               </Button>
             </form>
             
+            {/* Forgot Password Link */}
+            <div className="mt-4 text-center">
+              <Link
+                href="/admin/forgot-password"
+                className="text-sm text-[#547455] hover:text-[#243b31] hover:underline font-medium"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+            
             {/* Logout link for existing sessions */}
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-600">
