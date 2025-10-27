@@ -10,11 +10,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslate";
 import { logoutUser } from "@/services/AuthUserData";
+import { useState } from "react";
+import { ChangePasswordModal } from "./ChangePasswordModal";
 
 export function ProfileDropdown() {
   const { t } = useTranslation();
-  const profiledropdownTranslations = t("Profiledropdown");
+  const profiledropdownTranslations = t("Profiledropdown" as any);
   const router = useRouter();
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const handleSubscriptionClick = () => {
     router.push("/admin/adminsubscription"); // Change route as needed
@@ -37,33 +40,52 @@ export function ProfileDropdown() {
     }
   };
 
+  const handleChangePasswordClick = () => {
+    setShowChangePasswordModal(true);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
-          <AvatarFallback>AD</AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-50  ">
-        <DropdownMenuItem
-          onClick={handleSubscriptionClick}
-          className="cursor-pointer"
-        >
-          {profiledropdownTranslations.subscription}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={handleTermsAndConditionClick}
-          className="cursor-pointer"
-        >
-          {profiledropdownTranslations.termsAndCondition}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={handleLogoutClick}
-          className="cursor-pointer"
-        >
-          {profiledropdownTranslations.logout}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Avatar className="cursor-pointer">
+            <AvatarFallback>AD</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-50  ">
+          <DropdownMenuItem
+            onClick={handleSubscriptionClick}
+            className="cursor-pointer"
+          >
+            {profiledropdownTranslations.subscription}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleTermsAndConditionClick}
+            className="cursor-pointer"
+          >
+            {profiledropdownTranslations.termsAndCondition}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleChangePasswordClick}
+            className="cursor-pointer"
+          >
+            {profiledropdownTranslations.changePassword}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleLogoutClick}
+            className="cursor-pointer"
+          >
+            {profiledropdownTranslations.logout}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {showChangePasswordModal && (
+        <ChangePasswordModal
+          isOpen={showChangePasswordModal}
+          onClose={() => setShowChangePasswordModal(false)}
+        />
+      )}
+    </>
   );
 }

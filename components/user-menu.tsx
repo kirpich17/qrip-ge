@@ -1,5 +1,5 @@
 "use client";
-import { LogOut, Settings, User, Crown } from "lucide-react";
+import { LogOut, Settings, User, Crown, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/services/AuthUserData";
 import { useTranslation } from "@/hooks/useTranslate";
+import { useState } from "react";
+import { UserChangePasswordModal } from "./UserChangePasswordModal";
 
 interface UserMenuProps {
   user?: {
@@ -28,9 +30,10 @@ export function UserMenu({
   user,
 }: UserMenuProps) {
   const router = useRouter();
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
-    const { t } = useTranslation(); // Initialize the translation hook
-  const translations = t("userMenu"); // Get the specific translations for this component
+  const { t } = useTranslation(); // Initialize the translation hook
+  const translations = t("userMenu" as any); // Get the specific translations for this component
 
 
   const handleLogout = () => {
@@ -40,7 +43,12 @@ export function UserMenu({
     }
   };
 
+  const handleChangePasswordClick = () => {
+    setShowChangePasswordModal(true);
+  };
+
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -89,6 +97,13 @@ export function UserMenu({
                 <span>{translations.subscription}</span>
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={handleChangePasswordClick}
+          className="cursor-pointer"
+        >
+          <Lock className="mr-2 h-4 w-4" />
+          <span>{translations.changePassword}</span>
+        </DropdownMenuItem>
         {/* <DropdownMenuItem asChild>
           <Link href="/settings" className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
@@ -106,5 +121,12 @@ export function UserMenu({
       </DropdownMenuContent>
     </DropdownMenu>
 
+    {showChangePasswordModal && (
+      <UserChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+      />
+    )}
+  </>
   );
 }
