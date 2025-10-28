@@ -86,6 +86,7 @@ export default function PlanSelection() {
   const [planPromoStates, setPlanPromoStates] = useState<Record<string, PlanPromoState>>({});
   const [memorialHasVideos, setMemorialHasVideos] = useState<boolean>(false);
   const toastShownRef = useRef(false);
+  const promoAppliedRef = useRef(false);
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -100,7 +101,7 @@ export default function PlanSelection() {
   // Get translations
   const translations = t("planSelection");
   const commonTranslations = t("common");
-  const promoTranslations = t("promoCodeManagement");
+  const promoTranslations = t("promoCodeManagement" as any);
 
   // Fetch all active plans using React Query
   const { data: plans, isLoading, error } = useQuery<Plan[]>({
@@ -147,7 +148,7 @@ export default function PlanSelection() {
           const hasVideos = memorial.videoGallery && memorial.videoGallery.length > 0;
           console.log('Has videos:', hasVideos);
           setMemorialHasVideos(hasVideos);
-        } catch (error) {
+        } catch (error: any) {
           console.error('Error checking memorial videos:', error);
           console.error('Error details:', error.response?.data);
         }
@@ -173,9 +174,10 @@ export default function PlanSelection() {
   }, [preselectedPlanId, plans]);
 
   // Function to apply promo code to a specific plan
-  const handleApplyPromoCode = async (planId: string) => {
+  const handleApplyPromoCode = async (planId: string, codeInput?: string) => {
     const state = planPromoStates[planId];
-    if (!state.input.trim()) {
+    const codeToUse = codeInput || state.input;
+    if (!codeToUse.trim()) {
       setPlanPromoStates(prev => ({
         ...prev,
         [planId]: { ...state, error: "Please enter a promo code" }
@@ -183,11 +185,21 @@ export default function PlanSelection() {
       return;
     }
 
+    // If no memorial yet, persist for later and inform the user
     if (!memorialId) {
-      setPlanPromoStates(prev => ({
-        ...prev,
-        [planId]: { ...state, error: "Memorial ID is required to apply promo code" }
-      }));
+      try {
+        localStorage.setItem(`pendingPromoCode_${planId}`, codeToUse.trim().toUpperCase());
+        toast.success("Promo saved. It will be applied at checkout.");
+        setPlanPromoStates(prev => ({
+          ...prev,
+          [planId]: { ...state, error: "" }
+        }));
+      } catch (_) {
+        setPlanPromoStates(prev => ({
+          ...prev,
+          [planId]: { ...state, error: "Could not save promo locally. Try again later." }
+        }));
+      }
       return;
     }
 
@@ -198,7 +210,7 @@ export default function PlanSelection() {
 
     try {
       const response = await axiosInstance.post('/api/admin/validate-promo', {
-        promoCode: state.input,
+        promoCode: codeToUse,
         memorialId,
         planId
       });
@@ -209,7 +221,7 @@ export default function PlanSelection() {
           [planId]: {
             ...state,
             appliedPromo: {
-              code: state.input,
+              code: codeToUse,
               discountType: response.data.discountType,
               discountValue: response.data.discountValue,
               appliesToPlan: response.data.appliesToPlan
@@ -242,6 +254,58 @@ export default function PlanSelection() {
       }));
     }
   };
+
+  // On subscription page: auto-apply promo if present in query/localStorage when memorialId is available
+  useEffect(() => {
+    if (!memorialId || !plans || promoAppliedRef.current) return;
+
+    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const promoFromQuery = urlParams.get('promoCode')?.toUpperCase();
+
+    // Prefer promo from query for preselected plan
+    if (preselectedPlanId && promoFromQuery) {
+      promoAppliedRef.current = true;
+      
+      // First set the input
+      setPlanPromoStates(prev => ({
+        ...prev,
+        [preselectedPlanId]: {
+          ...(prev[preselectedPlanId] || { input: '', appliedPromo: null, error: '', isValidating: false, selectedDuration: plans.find(p => p._id === preselectedPlanId)?.defaultDuration || '1_month' }),
+          input: promoFromQuery,
+        }
+      }));
+      
+      // Then after state update, validate the promo by calling the function
+      setTimeout(() => {
+        handleApplyPromoCode(preselectedPlanId, promoFromQuery);
+      }, 100);
+      return;
+    }
+
+    // Otherwise, check any stored pending promo per plan and try to apply
+    plans.forEach(plan => {
+      const stored = typeof window !== 'undefined' ? localStorage.getItem(`pendingPromoCode_${plan._id}`) : null;
+      if (stored && !promoAppliedRef.current) {
+        promoAppliedRef.current = true;
+        
+        // First set the input
+        setPlanPromoStates(prev => ({
+          ...prev,
+          [plan._id]: {
+            ...(prev[plan._id] || { input: '', appliedPromo: null, error: '', isValidating: false, selectedDuration: plan.defaultDuration || '1_month' }),
+            input: stored,
+          }
+        }));
+        
+        // Then after state update, validate the promo by calling the function
+        setTimeout(() => {
+          handleApplyPromoCode(plan._id, stored);
+          // Clear after attempting apply
+          try { localStorage.removeItem(`pendingPromoCode_${plan._id}`); } catch (_) {}
+        }, 100);
+      }
+    });
+  }, [memorialId, plans, preselectedPlanId]);
 
   // Function to remove applied promo code
   const handleRemovePromoCode = (planId: string) => {
@@ -364,10 +428,10 @@ export default function PlanSelection() {
         // Redirect the user to the payment gateway
         window.location.href = response.data.redirectUrl;
       } else {
-        toast.error(translations.paymentError?.initiate || "Failed to initiate payment");
+        toast.error(translations?.paymentError?.initiate || "Failed to initiate payment");
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || translations.paymentError?.process || "Payment processing failed");
+      toast.error(err.response?.data?.message || translations?.paymentError?.process || "Payment processing failed");
     } finally {
       setIsProcessing(null);
     }
@@ -401,11 +465,11 @@ export default function PlanSelection() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-10">{translations.loading || "Loading..."}</div>;
+    return <div className="text-center py-10">{translations?.loading || "Loading..."}</div>;
   }
 
   if (error) {
-    return <div className="text-center py-10 text-red-500">{translations.error || "Error loading plans"}</div>;
+    return <div className="text-center py-10 text-red-500">{translations?.error || "Error loading plans"}</div>;
   }
 
   return (
@@ -455,7 +519,7 @@ export default function PlanSelection() {
               <Card className={`relative h-full flex flex-col ${plan.isPopular ? "border-2 border-[#243b31] shadow-xl" : "border-gray-200 hover:shadow-md"} ${preselectedPlanId === plan._id ? "border-2 border-blue-500 shadow-xl bg-blue-50" : ""} transition-all duration-300`}>
                 {plan.isPopular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#547455] text-white px-4 py-1 z-10">
-                    {translations.badgePopular || "Popular"}
+                    {translations?.badgePopular || "Popular"}
                   </Badge>
                 )}
                 {preselectedPlanId === plan._id && (
@@ -477,7 +541,7 @@ export default function PlanSelection() {
                   {plan.durationOptions && plan.durationOptions.length > 0 && (
                     <div className="mt-4">
                       <label className="text-sm font-medium text-gray-700 mb-2 block">
-                        {translations.selectDuration || "Select Duration"}:
+                        {translations?.selectDuration || "Select Duration"}:
                       </label>
                       <Select
                         value={promoState?.selectedDuration || plan.defaultDuration || '1_month'}
@@ -531,12 +595,11 @@ export default function PlanSelection() {
                     ))}
                   </ul>
 
-                  {/* Promo Code Section */}
-                  {memorialId && (
-                    <div className="border-t pt-4">
+                  {/* Promo Code Section (available without memorial; saved for later) */}
+                  <div className="border-t pt-4">
                       <div className="flex items-center mb-2">
                         <Tag className="mr-2 h-4 w-4 text-[#243b31]" />
-                        <span className="text-sm font-medium">Promo Code</span>
+                        <span className="text-sm font-medium">{translations?.promoCode?.title || "Promo Code"}</span>
                       </div>
                       
                       {promoState?.appliedPromo ? (
@@ -544,7 +607,7 @@ export default function PlanSelection() {
                           <div className="flex justify-between items-center">
                             <div>
                               <p className="text-green-800 font-medium text-sm">
-                                Applied: {promoState.appliedPromo.code}
+                                {translations?.promoCode?.applied || "Applied"}: {promoState.appliedPromo.code}
                               </p>
                               <p className="text-green-600 text-xs">
                                 {promoState.appliedPromo.discountType === "percentage" 
@@ -561,7 +624,7 @@ export default function PlanSelection() {
                               onClick={() => handleRemovePromoCode(plan._id)}
                               className="text-red-600 border-red-200 hover:bg-red-50"
                             >
-                              Remove
+                              {translations?.promoCode?.remove || "Remove"}
                             </Button>
                           </div>
                         </div>
@@ -569,7 +632,7 @@ export default function PlanSelection() {
                         <div className="space-y-2">
                           <div className="flex gap-2">
                             <Input
-                              placeholder="Enter promo code"
+                              placeholder={translations?.promoCode?.placeholder || "Enter promo code"}
                               value={promoState?.input || ""}
                               onChange={(e) => {
                                 setPlanPromoStates(prev => ({
@@ -591,17 +654,24 @@ export default function PlanSelection() {
                               disabled={promoState?.isValidating || false}
                               size="sm"
                             >
-                              {promoState?.isValidating ? "Applying..." : "Apply"}
+                              {promoState?.isValidating 
+                                ? (translations?.promoCode?.applying || "Applying...") 
+                                : memorialId 
+                                  ? (translations?.promoCode?.apply || "Apply") 
+                                  : (translations?.promoCode?.save || "Save")}
                             </Button>
                           </div>
                           
                           {promoState?.error && (
                             <p className="text-red-500 text-xs">{promoState.error}</p>
                           )}
+                          {!memorialId && !promoState?.error && promoState?.input && (
+                            <p className="text-gray-500 text-xs">Promo will be applied at checkout.</p>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
+                  
                 </CardContent>
 
                 <CardFooter className="pt-0">
@@ -609,17 +679,17 @@ export default function PlanSelection() {
                   <Button
                     className="w-full bg-[#243b31] hover:bg-green-700 text-white py-3 text-lg"
                     onClick={() => memorialId ? handleSelectPlan(plan._id) : clickHandler(plan._id)}
-                    disabled={isProcessing === plan._id || (promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id)}
+                    disabled={isProcessing === plan._id || Boolean(promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id)}
                   >
                     {isProcessing === plan._id
-                      ? (translations.cta?.processing || "Processing...")
+                      ? (translations?.cta?.processing || "Processing...")
                       : promoState?.appliedPromo?.discountType === "free" && doesPromoApplyToPlan(plan._id, promoState.appliedPromo)
                         ? "Get For Free"
-                        : (plan.planType === "minimal" && (translations.cta?.getStarted || "Get Started")) ||
-                          (plan.planType === "premium" && (translations.cta?.goPremium || "Go Premium")) ||
-                          (plan.planType === "medium" && (translations.cta?.medium || "Choose Medium")) ||
+                        : (plan.planType === "minimal" && (translations?.cta?.getStarted || "Get Started")) ||
+                          (plan.planType === "premium" && (translations?.cta?.goPremium || "Go Premium")) ||
+                          (plan.planType === "medium" && (translations?.cta?.medium || "Choose Medium")) ||
                           plan.ctaButtonText ||
-                          (translations.cta?.selectPlan || "Select Plan")}
+                          (translations?.cta?.selectPlan || "Select Plan")}
                   </Button>
                   
                   {promoState?.appliedPromo?.appliesToPlan && promoState.appliedPromo.appliesToPlan !== plan._id && (

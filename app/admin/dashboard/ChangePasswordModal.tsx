@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from "@/hooks/useTranslate";
+import { useLanguage } from "@/contexts/LanguageContext";
 import axiosInstance from "@/services/axiosInstance";
 import { toast } from "react-toastify";
 
@@ -25,7 +26,13 @@ interface ChangePasswordModalProps {
 
 export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
   const { t } = useTranslation();
-  const securityTranslations = t("adminprofile.security" as any) || {};
+  const { language } = useLanguage();
+  const adminProfileTranslations = t("adminprofile" as any);
+  const securityTranslations = (adminProfileTranslations as any)?.security || {};
+  
+  console.log("Current language:", language);
+  console.log("Admin profile translations:", adminProfileTranslations);
+  console.log("Security translations:", securityTranslations);
   
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -262,7 +269,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
               disabled={isLoading}
               className="flex-1"
             >
-{securityTranslations.cancel || "Cancel"}
+              {securityTranslations.cancel || "Cancel"}
             </Button>
             <Button
               type="submit"

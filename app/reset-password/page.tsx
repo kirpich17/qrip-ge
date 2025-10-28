@@ -36,16 +36,25 @@ function SetNewPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) {
-      setError("Invalid reset link");
+      setError(
+        authTranslations?.setNewPassword?.invalidLink ||
+          "Invalid reset link"
+      );
       return;
     }
     if (!password || !confirmPassword) {
-      setError("Both password fields are required");
+      setError(
+        authTranslations?.setNewPassword?.requiredFields ||
+          "Both password fields are required"
+      );
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(
+        authTranslations?.setNewPassword?.passwordsMismatch ||
+          "Passwords do not match"
+      );
       return;
     }
 
@@ -81,11 +90,11 @@ function SetNewPasswordForm() {
         toast.error(data.message || "Failed to update password");
       }
     } catch (err) {
-      setError(
-        authTranslations?.setNewPassword?.errorMessage || 
-        "An error occurred. Please try again."
-      );
-      toast.error("An error occurred. Please try again.");
+      const genericError =
+        authTranslations?.setNewPassword?.errorMessage ||
+        "An error occurred. Please try again.";
+      setError(genericError);
+      toast.error(genericError);
     } finally {
       setIsLoading(false);
     }

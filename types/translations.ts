@@ -607,6 +607,7 @@ export interface PlanSelectionTranslations {
     remove: string;
     getForFree: string;
     notApplicable: string;
+    save: string;
   };
 }
 
