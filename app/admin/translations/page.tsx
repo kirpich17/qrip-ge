@@ -259,42 +259,7 @@ function TranslationManagementPage() {
                 {translations.title}
               </span>
             </div>
-            <div className="flex items-center space-x-2">
-              {/* API Status Indicator */}
-              <div className="flex items-center space-x-2 text-sm">
-                {isLoading && (
-                  <div className="flex items-center text-yellow-300">
-                    <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                    Loading API...
-                  </div>
-                )}
-                {!isUsingAPI && !isLoading && (
-                  <div className="flex items-center text-blue-300">
-                    <FileText className="h-3 w-3 mr-1" />
-                    Using Static
-                  </div>
-                )}
-                {error && (
-                  <div className="flex items-center text-red-300">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    API Error
-                  </div>
-                )}
-              </div>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  refreshTranslations();
-                  toast.success("Translations refreshed successfully!");
-                }}
-                className="text-white hover:bg-white/10"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Translations
-              </Button>
-            </div>
+           
           </div>
         </div>
       </header>
@@ -330,9 +295,9 @@ function TranslationManagementPage() {
           <TabsContent value="upload" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Upload Translation Files</CardTitle>
+                <CardTitle>{translations.upload.title}</CardTitle>
                 <CardDescription>
-                  Upload JSON translation files for each language. Files will be validated and applied immediately.
+                  {translations.upload.description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -430,9 +395,9 @@ function TranslationManagementPage() {
           <TabsContent value="manage" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Manage Translation Files</CardTitle>
+                <CardTitle>{translations.manage.title}</CardTitle>
                 <CardDescription>
-                  View, download, and manage existing translation files.
+                  {translations.manage.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>

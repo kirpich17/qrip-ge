@@ -447,16 +447,9 @@ export default function CreateMemorialPage() {
     handleInputChange("profileImage", null);
   };
 
-  // Function to check if form is valid
+  // Function to check if form is valid - only profileImage and firstName are required
   const isFormValid = () => {
-    return (
-      formData.firstName.trim() !== "" &&
-      formData.lastName.trim() !== "" &&
-      formData.birthDate !== "" &&
-      formData.deathDate !== "" &&
-      formData.biography.trim() !== "" &&
-      formData.biography.trim().length >= 10 // Minimum biography length
-    );
+    return formData.profileImage !== null && formData.firstName.trim() !== "";
   };
 
   const handlePhotosUpload = (files: FileList | null) => {
@@ -741,14 +734,29 @@ export default function CreateMemorialPage() {
       formDataToSend.append("editReq", "true");
     }
 
+    // firstName is required - always append it
     formDataToSend.append("firstName", formData.firstName);
-    formDataToSend.append("lastName", formData.lastName);
-    formDataToSend.append("birthDate", formData.birthDate);
-    formDataToSend.append("deathDate", formData.deathDate);
-    formDataToSend.append("biography", formData.biography);
-    formDataToSend.append("epitaph", formData.epitaph);
+    
+    // All other fields are optional - only append if they have values
+    if (formData.lastName) {
+      formDataToSend.append("lastName", formData.lastName);
+    }
+    if (formData.birthDate) {
+      formDataToSend.append("birthDate", formData.birthDate);
+    }
+    if (formData.deathDate) {
+      formDataToSend.append("deathDate", formData.deathDate);
+    }
+    if (formData.biography) {
+      formDataToSend.append("biography", formData.biography);
+    }
+    if (formData.epitaph) {
+      formDataToSend.append("epitaph", formData.epitaph);
+    }
     formDataToSend.append("isPublic", String(formData.isPublic));
-    formDataToSend.append("location", formData.location)
+    if (formData.location) {
+      formDataToSend.append("location", formData.location);
+    }
 
     if (formData.gps?.lat && formData.gps?.lng) {
       formDataToSend.append('gps', JSON.stringify(formData.gps));
@@ -786,6 +794,25 @@ export default function CreateMemorialPage() {
 
   const handleSaveMemorial = async (e?: React.FormEvent) => {
     e?.preventDefault();
+    
+    // Check if required fields are filled (photo and firstname)
+    if (!isFormValid()) {
+      const missingFields = [];
+      if (formData.profileImage === null) {
+        missingFields.push("Photo");
+      }
+      if (formData.firstName.trim() === "") {
+        missingFields.push("First Name");
+      }
+      
+      toast({
+        title: "Missing Required Fields",
+        description: `Please provide: ${missingFields.join(" and ")}`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSaving(true);
     try {
       const formDataToSend = prepareFormData();
@@ -1506,13 +1533,9 @@ export default function CreateMemorialPage() {
           {/* Save Button at Bottom */}
           <div className="mt-8 flex justify-center">
             <Button
-              className={`px-8 py-3 text-lg ${
-                isFormValid() 
-                  ? "bg-[#547455] hover:bg-[#243b31] text-white" 
-                  : "bg-gray-400 text-gray-600 cursor-not-allowed"
-              }`}
+              className="px-8 py-3 text-lg bg-[#547455] hover:bg-[#243b31] text-white"
               onClick={(e) => handleSaveMemorial(e)}
-              disabled={isSaving || !isFormValid()}
+              disabled={isSaving}
             >
               {isSaving ? (
                 <>
@@ -1531,13 +1554,8 @@ export default function CreateMemorialPage() {
           {/* Form validation message */}
           {!isFormValid() && (
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500">
-                {createMemorialTranslations?.validation?.fillRequiredFields || "Please fill in all required fields to save the memorial"}
-                {formData.biography.trim() !== "" && formData.biography.trim().length < 10 && (
-                  <span className="block mt-1 text-red-500">
-                    Biography must be at least 10 characters long
-                  </span>
-                )}
+              <p className="text-sm text-red-500">
+                ⚠️ Required: Upload a photo and enter first name
               </p>
             </div>
           )}

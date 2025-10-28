@@ -219,26 +219,12 @@ export default function AdminLoginPage() {
                 href="/admin/forgot-password"
                 className="text-sm text-[#547455] hover:text-[#243b31] hover:underline font-medium"
               >
-                Forgot your password?
+                {adminloginTranslations.login.forgotPassword}
               </Link>
             </div>
             
             {/* Logout link for existing sessions */}
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
-                Already logged in as user?{" "}
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    toast.success("Logged out successfully");
-                    window.location.reload();
-                  }}
-                  className="text-[#243b31] hover:underline font-medium cursor-pointer"
-                >
-                  Logout first
-                </button>
-              </p>
-            </div>
+           
           </CardContent>
         </Card>
       </motion.div>

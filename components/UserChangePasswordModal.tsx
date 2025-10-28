@@ -25,7 +25,8 @@ interface UserChangePasswordModalProps {
 
 export function UserChangePasswordModal({ isOpen, onClose }: UserChangePasswordModalProps) {
   const { t } = useTranslation();
-  const securityTranslations = t("userprofile.security" as any) || {};
+  const userProfileTranslations = t("userprofile" as any);
+  const securityTranslations = (userProfileTranslations as any)?.security || {};
   
   const [formData, setFormData] = useState({
     currentPassword: "",
