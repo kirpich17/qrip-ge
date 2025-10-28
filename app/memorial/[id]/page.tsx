@@ -232,7 +232,7 @@ function QRPageTransition({
                           priority
                         />
                       </div>
-                      <h1 className="mt-6 text-4xl font-bold">In Loving Memory</h1>
+                      <h1 className="mt-6 text-4xl font-bold">{memorialTranslations?.inLovingMemory || "In Loving Memory"}</h1>
                       <h2 className="text-3xl font-semibold">
                         {firstName} {lastName}
                       </h2>
@@ -992,15 +992,15 @@ export default function MemorialPage() {
                   <CardContent>
                     <div className="prose prose-gray max-w-none">
                       {apiMemorial.biography
-                        .split("\n\n")
-                        .map((paragraph, index) => (
-                          <p
-                            key={index}
-                            className="text-gray-700 leading-relaxed mb-4"
-                          >
-                            {paragraph}
-                          </p>
-                        ))}
+                        ? apiMemorial.biography.split("\n\n").map((paragraph, index) => (
+                            <p
+                              key={index}
+                              className="text-gray-700 leading-relaxed mb-4"
+                            >
+                              {paragraph}
+                            </p>
+                          ))
+                        : <p className="text-gray-500 italic">{memorialTranslations?.sections?.biography?.noBiography || "No biography available"}</p>}
                     </div>
                   </CardContent>
                 </Card>

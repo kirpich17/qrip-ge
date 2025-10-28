@@ -18,8 +18,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useTranslation } from "@/hooks/useTranslate";
 
 export default function AdminForgotPasswordPage() {
+  const { t } = useTranslation();
+  // @ts-ignore - adminlogin is not in Translations type but exists in JSON files
+  const adminForgotPasswordTranslations = t("adminlogin" as any)?.forgotPassword || {};
+  
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,7 +36,7 @@ export default function AdminForgotPasswordPage() {
     e.preventDefault();
     
     if (!email) {
-      setError("Please enter your email address");
+      setError(adminForgotPasswordTranslations.enterEmail || "Please enter your email address");
       return;
     }
 
@@ -46,17 +51,17 @@ export default function AdminForgotPasswordPage() {
 
       if (response.data.status) {
         setSuccess(true);
-        toast.success("Password reset link sent to your email");
+        toast.success(adminForgotPasswordTranslations.emailSentSuccess || "Password reset link sent to your email");
       } else {
-        setError(response.data.message || "Failed to send reset email");
+        setError(response.data.message || adminForgotPasswordTranslations.emailSentError || "Failed to send reset email");
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(
-          err.response?.data?.message || "An error occurred while sending reset email"
+          err.response?.data?.message || adminForgotPasswordTranslations.errorOccurred || "An error occurred while sending reset email"
         );
       } else {
-        setError("An unexpected error occurred");
+        setError(adminForgotPasswordTranslations.errorOccurred || "An error occurred");
       }
     } finally {
       setIsLoading(false);
@@ -94,16 +99,16 @@ export default function AdminForgotPasswordPage() {
                 <Mail className="h-8 w-8 text-green-600" />
               </div>
               <CardTitle className="text-xl text-green-600">
-                Check Your Email
+                {adminForgotPasswordTranslations.successTitle || "Check Your Email"}
               </CardTitle>
               <CardDescription>
-                We've sent a password reset link to your email address.
+                {adminForgotPasswordTranslations.successMessage || "We've sent a password reset link to your email address."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert className="border-green-500 bg-green-900/20">
                 <AlertDescription className="text-green-400">
-                  If you don't see the email, please check your spam folder.
+                  {adminForgotPasswordTranslations.checkSpam || "If you don't see the email, please check your spam folder."}
                 </AlertDescription>
               </Alert>
               
@@ -112,7 +117,7 @@ export default function AdminForgotPasswordPage() {
                   onClick={() => router.push("/admin/login")}
                   className="w-full bg-[#547455] hover:bg-[#243b31]"
                 >
-                  Back to Login
+                  {adminForgotPasswordTranslations.backToLogin || "Back to Login"}
                 </Button>
               </div>
             </CardContent>
@@ -145,20 +150,20 @@ export default function AdminForgotPasswordPage() {
             <span className="text-2xl font-bold text-[#243b31]">QRIP.ge</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
-            Forgot Password
+            {adminForgotPasswordTranslations.pageTitle || "Forgot Password"}
           </h1>
           <p className="text-gray-600 mt-2">
-            Enter your email address and we'll send you a link to reset your password.
+            {adminForgotPasswordTranslations.subtitle || "Enter your admin email and we'll send you a link to reset your password."}
           </p>
         </div>
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl text-center">
-              Reset Admin Password
+              {adminForgotPasswordTranslations.resetTitle || "Reset Admin Password"}
             </CardTitle>
             <CardDescription className="text-center">
-              Enter your admin email address
+              {adminForgotPasswordTranslations.description || "Enter your admin email address"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -173,12 +178,12 @@ export default function AdminForgotPasswordPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email">
-                  Email Address
+                  {adminForgotPasswordTranslations.emailLabel || "Email Address"}
                 </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your admin email"
+                  placeholder={adminForgotPasswordTranslations.emailPlaceholder || "Enter your admin email"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -191,7 +196,7 @@ export default function AdminForgotPasswordPage() {
                 className="bg-[#547455] hover:bg-[#243b31] shadow-lg w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Sending..." : "Send Reset Link"}
+                {isLoading ? (adminForgotPasswordTranslations.sending || "Sending...") : (adminForgotPasswordTranslations.sendButton || "Send Reset Link")}
               </Button>
             </form>
             
@@ -200,7 +205,7 @@ export default function AdminForgotPasswordPage() {
                 href="/admin/login"
                 className="text-sm text-[#547455] hover:text-[#243b31] hover:underline font-medium"
               >
-                Back to Login
+                {adminForgotPasswordTranslations.backToLogin || "Back to Login"}
               </Link>
             </div>
           </CardContent>
