@@ -63,7 +63,7 @@ const Header = () => {
               </Link> */}
               <Link href="/login">
                 <Button className="bg-white shadow-lg text-[#243b31] hover:bg-[#243b31] hover:text-white border-white border">
-                  {t("header").getStarted}
+                  {t("header")?.getStarted ?? "Get Started"}
                 </Button>
               </Link>
             </div>
@@ -127,15 +127,6 @@ const Header = () => {
             >
               <div className="flex flex-col space-y-2">
                 <Link
-                  href="/admin/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="border-b border-[#354f44] rounded-0"
-                >
-                  <Button variant="ghost" className="text-white ">
-                    {t("header").admin}
-                  </Button>
-                </Link>
-                <Link
                   href="/login"
                   onClick={() => setIsMenuOpen(false)}
                   className="border-b border-[#354f44] rounded-0"
@@ -144,7 +135,7 @@ const Header = () => {
                     variant="ghost"
                     className="w-full text-white justify-start"
                   >
-                    {t("header").getStarted}
+                    {t("header")?.getStarted ?? "Get Started"}
                   </Button>
                 </Link>
               </div>

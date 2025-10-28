@@ -491,6 +491,8 @@ export interface MemorialTranslations {
   };
   video: {
     description: string;
+    noVideosTitle?: string;
+    noVideosMessage?: string;
   };
   premium: {
     feature: string;

@@ -953,10 +953,10 @@ export default function MemorialPage() {
                             <div className="text-center py-12 bg-gray-50 rounded-lg">
                               <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                No Videos Available
+                                {memorialTranslations?.video?.noVideosTitle || "No Videos Available"}
                               </h3>
                               <p className="text-gray-600 mb-4">
-                                This memorial doesn't have any videos yet
+                                {memorialTranslations?.video?.noVideosMessage || "This memorial doesn't have any videos yet"}
                               </p>
                             </div>
                           )
