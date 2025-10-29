@@ -57,6 +57,8 @@ function TranslationManagementPage() {
       russian: "Russian"
     },
     upload: {
+      title: "Upload Translation Files",
+      description: "Upload JSON translation files for different languages",
       selectFile: "Select File",
       uploading: "Uploading...",
       uploadDescription: "Upload {language} translation file",
@@ -73,6 +75,8 @@ function TranslationManagementPage() {
       }
     },
     manage: {
+      title: "Manage Translation Files",
+      description: "View and manage uploaded translation files",
       fileUploaded: "File uploaded",
       noFileUploaded: "No file uploaded",
       active: "Active",
@@ -295,9 +299,9 @@ function TranslationManagementPage() {
           <TabsContent value="upload" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{translations.upload.title}</CardTitle>
+                <CardTitle>{(translations.upload as any).title}</CardTitle>
                 <CardDescription>
-                  {translations.upload.description}
+                  {(translations.upload as any).description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -395,9 +399,9 @@ function TranslationManagementPage() {
           <TabsContent value="manage" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{translations.manage.title}</CardTitle>
+                <CardTitle>{(translations.manage as any).title}</CardTitle>
                 <CardDescription>
-                  {translations.manage.description}
+                  {(translations.manage as any).description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
