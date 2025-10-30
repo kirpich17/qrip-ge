@@ -40,6 +40,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Image from 'next/image';
 import LanguageDropdown from "@/components/languageDropdown/page";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -336,6 +337,7 @@ export default function MemorialPage() {
   const slideshowIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
   const isScan = searchParams.get("isScan") === "true";
+  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchMemorial = async () => {
@@ -862,7 +864,7 @@ export default function MemorialPage() {
                         {isPremium ? (
                           apiMemorial.videoGallery?.length > 0 ? (
                             <div className="space-y-4">
-                              <div className="relative bg-black rounded-lg overflow-hidden">
+                              <div className="relative bg-black rounded-lg overflow-hidden aspect-video cursor-pointer" onClick={() => setIsVideoDialogOpen(true)}>
                                 {/* Video Error Fallback */}
                                 <div id="video-error-fallback" className="hidden absolute inset-0 flex items-center justify-center bg-red-100 text-red-800 p-4">
                                   <div className="text-center">
@@ -873,7 +875,7 @@ export default function MemorialPage() {
                                 <video
                                   ref={videoRef}
                                   src={formatVideoUrl(apiMemorial.videoGallery[0])}
-                                  className="w-full h-64 object-cover"
+                                  className="absolute inset-0 w-full h-full object-contain"
                                   muted={isVideoMuted}
                                   poster="/placeholder.svg?height=300&width=500"
                                   onPlay={() => setIsVideoPlaying(true)}
@@ -1000,7 +1002,7 @@ export default function MemorialPage() {
                               {paragraph}
                             </p>
                           ))
-                        : <p className="text-gray-500 italic">{memorialTranslations?.sections?.biography?.noBiography || "No biography available"}</p>}
+                        : <p className="text-gray-500 italic">{(memorialTranslations as any)?.sections?.biography?.noBiography || "No biography available"}</p>}
                     </div>
                   </CardContent>
                 </Card>
@@ -1266,6 +1268,20 @@ export default function MemorialPage() {
           />
         );
       })()}
+
+      {/* Video Dialog */}
+      <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
+        <DialogContent className="max-w-[90vw] w-[90vw] sm:max-w-[80vw] sm:w-[80vw] p-0 bg-black">
+          <div className="w-full h-full flex items-center justify-center bg-black">
+            <video
+              src={formatVideoUrl(apiMemorial.videoGallery?.[0] || '')}
+              controls
+              autoPlay
+              className="w-full h-auto max-h-[85vh] object-contain"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

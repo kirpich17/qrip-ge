@@ -163,12 +163,37 @@ export default function EditMemorialPage() {
         setLoading(true);
         const response = await getMyMemorialById(params.id as string);
         if (response?.status && response.data) {
-          setFormData(response.data);
-          if (response.data.achievements) {
+          const d = response.data;
+          setFormData({
+            _id: d._id,
+            firstName: d.firstName || "",
+            lastName: d.lastName && d.lastName.toLowerCase() !== "memorial" && d.lastName.toLowerCase() !== "memorail" ? d.lastName : "",
+            birthDate: d.birthDate ? new Date(d.birthDate).toISOString() : "",
+            deathDate: d.deathDate ? new Date(d.deathDate).toISOString() : "",
+            biography: d.biography || "",
+            location: d.location || "",
+            isPublic: typeof d.isPublic === 'boolean' ? d.isPublic : true,
+            allowComments: typeof d.allowComments === 'boolean' ? d.allowComments : true,
+            enableEmailNotifications: typeof d.enableEmailNotifications === 'boolean' ? d.enableEmailNotifications : true,
+            allowSlideshow: !!d.allowSlideshow,
+            photoGallery: d.photoGallery || [],
+            videoGallery: d.videoGallery || [],
+            documents: d.documents || [],
+            familyTree: d.familyTree || [],
+            status: d.status,
+            plan: d.plan,
+            planType: d.planType,
+            views: d.views,
+            slug: d.slug,
+            createdAt: d.createdAt,
+            updatedAt: d.updatedAt,
+            gps: d.gps || undefined
+          });
+          if (d.achievements) {
             setAchievements(response.data.achievements);
           }
           // Set the first photo as profile image preview if available
-          setProfileImagePreview(response.data.profileImage);
+          setProfileImagePreview(d.profileImage || null);
         } else {
           throw new Error("Invalid response structure");
         }
@@ -375,11 +400,11 @@ export default function EditMemorialPage() {
       // Append basic fields
       formDataToSend.append('_id', formData._id);
       formDataToSend.append('firstName', formData.firstName);
-      formDataToSend.append('lastName', formData.lastName);
-      formDataToSend.append('birthDate', formData.birthDate);
-      formDataToSend.append('deathDate', formData.deathDate);
-      formDataToSend.append('biography', formData.biography);
-      formDataToSend.append('location', formData.location);
+      if (formData.lastName) formDataToSend.append('lastName', formData.lastName);
+      if (formData.birthDate) formDataToSend.append('birthDate', formData.birthDate);
+      if (formData.deathDate) formDataToSend.append('deathDate', formData.deathDate);
+      if (formData.biography) formDataToSend.append('biography', formData.biography);
+      if (formData.location) formDataToSend.append('location', formData.location);
       formDataToSend.append('isPublic', String(formData.isPublic));
       
       // Append GPS coordinates
@@ -457,7 +482,7 @@ export default function EditMemorialPage() {
           });
         }
       } else {
-        throw new Error(response?.message || "Failed to update memorial");
+        throw new Error((response as any)?.data?.message || "Failed to update memorial");
       }
     } catch (err: any) {
       console.error("Failed to update memorial:", err);
@@ -752,7 +777,7 @@ export default function EditMemorialPage() {
                       <Input
                         id="birthDate"
                         type="date"
-                        value={formData.birthDate.split('T')[0]}
+                        value={formData.birthDate ? formData.birthDate.split('T')[0] : ''}
                         onChange={(e) =>
                           handleInputChange("birthDate", e.target.value)
                         }
@@ -768,7 +793,7 @@ export default function EditMemorialPage() {
                         id="deathDate"
                         max={getYesterdayDate()}
                         type="date"
-                        value={formData.deathDate.split('T')[0]}
+                        value={formData.deathDate ? formData.deathDate.split('T')[0] : ''}
                         onChange={(e) =>
                           handleInputChange("deathDate", e.target.value)
                         }
@@ -791,7 +816,7 @@ export default function EditMemorialPage() {
                       initialLng={formData.gps?.lng || 44.8271}
                       onLocationChange={(lat, lng) => {
                         setFormData(prev => ({
-                          ...prev,
+                          ...((prev as Memorial)),
                           gps: { lat, lng }
                         }));
                       }}
@@ -1274,7 +1299,7 @@ export default function EditMemorialPage() {
 
                           <Button
                             variant="outline"
-                            disabled={userSubscription !== 'premium'}
+                            disabled={userSubscription !== 'Premium'}
                             onClick={() => {
                               const input = document.createElement("input");
                               input.type = "file";
@@ -1446,7 +1471,7 @@ export default function EditMemorialPage() {
                                   <Avatar>
                                     <AvatarImage src={member.image} />
                                     <AvatarFallback>
-                                      {member.name?.split(' ').map(n => n[0]).join('')}
+                                      {member.name?.split(' ').map((part: string) => part[0]).join('')}
                                     </AvatarFallback>
                                   </Avatar>
                                   <div>
