@@ -1130,12 +1130,10 @@ export default function CreateMemorialPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="epitaph">
-                      {createMemorialTranslations.basicInfo.epitaph}
-                    </Label>
+                 
                     <Input
                       id="epitaph"
-                      placeholder="Short memorial phrase"
+                      placeholder={createMemorialTranslations.basicInfo.epitaphPlaceholder}
                       value={formData.epitaph}
                       onChange={(e) => handleInputChange("epitaph", e.target.value)}
                       className="h-12"
