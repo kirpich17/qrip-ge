@@ -102,6 +102,7 @@ export default function PlanSelection() {
   const translations = t("planSelection");
   const commonTranslations = t("common");
   const promoTranslations = t("promoCodeManagement" as any);
+  const plansTranslations = t("plansTranslations");
 
   // Fetch all active plans using React Query
   const { data: plans, isLoading, error } = useQuery<Plan[]>({
@@ -534,8 +535,12 @@ export default function PlanSelection() {
                     {plan.planType === "medium" && <Zap className="text-black" size={32} />}
                     {plan.planType === "minimal" && <Star className="text-black" size={32} />}
                   </div>
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                  <CardTitle className="text-2xl font-bold">
+                    {plansTranslations?.[plan.planType]?.name || plan.name}
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    {plansTranslations?.[plan.planType]?.description || plan.description}
+                  </CardDescription>
                   
                   {/* Duration Selection */}
                   {plan.durationOptions && plan.durationOptions.length > 0 && (
@@ -587,12 +592,46 @@ export default function PlanSelection() {
 
                 <CardContent className="pt-0 flex-grow">
                   <ul className="space-y-3 mb-6">
-                    <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
-                    <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
-                    <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
-                    {plan.features.map((feature) => (
-                      <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
-                    ))}
+                    <FeatureListItem 
+                      included={plan.maxPhotos > 0} 
+                      text={
+                        plan.maxPhotos >= 999 
+                          ? (plansTranslations?.[plan.planType]?.features?.photoUploads || translations?.features?.unlimitedPhotos || 'Unlimited Photo Uploads')
+                          : (plansTranslations?.[plan.planType]?.features?.photoUploads || translations?.features?.photoUploads?.replace(/{count}/g, plan.maxPhotos.toString()) || `${plan.maxPhotos} Photo Uploads`)
+                      } 
+                    />
+                    <FeatureListItem 
+                      included={plan.allowSlideshow} 
+                      text={plansTranslations?.[plan.planType]?.features?.slideshow || translations?.features?.slideshow || "Photo Slideshow"} 
+                    />
+                    <FeatureListItem 
+                      included={plan.allowVideos} 
+                      text={
+                        plansTranslations?.[plan.planType]?.features?.videoUploads?.replace(/{duration}/g, plan.maxVideoDuration.toString()) ||
+                        translations?.features?.videoUploads?.replace(/{duration}/g, plan.maxVideoDuration.toString()) ||
+                        `Video Uploads (Max ${plan.maxVideoDuration}s)`
+                      } 
+                    />
+                    {plan.features.map((feature) => {
+                      // Try to match feature text with translation keys
+                      let translatedText = feature.text;
+                      const planTranslations = plansTranslations?.[plan.planType]?.features;
+                      
+                      if (planTranslations) {
+                        // Check if feature text matches any translation key
+                        if (feature.text.toLowerCase().includes('document') || feature.text.toLowerCase().includes('document upload')) {
+                          translatedText = planTranslations.documentUpload || feature.text;
+                        } else if (feature.text.toLowerCase().includes('family') || feature.text.toLowerCase().includes('family tree')) {
+                          translatedText = planTranslations.familyTree || feature.text;
+                        } else if (feature.text.toLowerCase().includes('photo') && !feature.text.toLowerCase().includes('slideshow')) {
+                          translatedText = planTranslations.photoUploads || feature.text;
+                        }
+                      }
+                      
+                      return (
+                        <FeatureListItem key={feature._id} included={feature.included} text={translatedText} />
+                      );
+                    })}
                   </ul>
 
                   {/* Promo Code Section (available without memorial; saved for later) */}
