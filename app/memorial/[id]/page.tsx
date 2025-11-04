@@ -713,22 +713,8 @@ export default function MemorialPage() {
                         </TabsTrigger>
                         <TabsTrigger
                           value="video"
-                          onClick={(e) => {
-                            if (!isPremium) {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toast({
-                                title: memorialTranslations?.premium?.feature || "Premium Feature",
-                                description: "Video uploads are available only for Premium subscribers.",
-                                variant: "default",
-                              });
-                            }
-                          }}
                         >
-                          {memorialTranslations?.tabs?.video || "Video"}{" "}
-                          {!isPremium && (
-                            <Lock className="h-3 w-3 ml-1" />
-                          )}
+                          {memorialTranslations?.tabs?.video || "Video"}
                         </TabsTrigger>
                       </TabsList>
 
@@ -861,120 +847,104 @@ export default function MemorialPage() {
                       </TabsContent>
 
                       <TabsContent value="video" className="mt-6">
-                        {isPremium ? (
-                          apiMemorial.videoGallery?.length > 0 ? (
-                            <div className="space-y-4">
-                              <div className="relative bg-black rounded-lg overflow-hidden aspect-video cursor-pointer" onClick={() => setIsVideoDialogOpen(true)}>
-                                {/* Video Error Fallback */}
-                                <div id="video-error-fallback" className="hidden absolute inset-0 flex items-center justify-center bg-red-100 text-red-800 p-4">
-                                  <div className="text-center">
-                                    <p className="font-semibold">Video failed to load</p>
-                                    <p className="text-sm">Please check the video URL or try refreshing the page</p>
-                                  </div>
+                        {apiMemorial.videoGallery?.length > 0 ? (
+                          <div className="space-y-4">
+                            <div className="relative bg-black rounded-lg overflow-hidden aspect-video cursor-pointer" onClick={() => setIsVideoDialogOpen(true)}>
+                              {/* Video Error Fallback */}
+                              <div id="video-error-fallback" className="hidden absolute inset-0 flex items-center justify-center bg-red-100 text-red-800 p-4">
+                                <div className="text-center">
+                                  <p className="font-semibold">Video failed to load</p>
+                                  <p className="text-sm">Please check the video URL or try refreshing the page</p>
                                 </div>
-                                <video
-                                  ref={videoRef}
-                                  src={formatVideoUrl(apiMemorial.videoGallery[0])}
-                                  className="absolute inset-0 w-full h-full object-contain"
-                                  muted={isVideoMuted}
-                                  poster="/placeholder.svg?height=300&width=500"
-                                  onPlay={() => setIsVideoPlaying(true)}
-                                  onPause={() => setIsVideoPlaying(false)}
-                                  onLoadStart={() => {
-                                    setVideoLoading(true);
-                                    setVideoError(null);
-                                  }}
-                                  onCanPlay={() => {
-                                    setVideoLoading(false);
-                                  }}
-                                  onError={(e) => {
-                                    setVideoLoading(false);
-                                    setVideoError('Video failed to load');
-                                    const fallback = document.getElementById('video-error-fallback');
-                                    if (fallback) {
-                                      fallback.classList.remove('hidden');
-                                    }
-                                  }}
-                                />
-                                {/* Loading indicator */}
-                                {videoLoading && (
-                                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                                  </div>
-                                )}
-                                
-                                {/* Play/Pause button */}
-                                {!videoLoading && !videoError && (
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <Button
-                                      size="lg"
-                                      onClick={() => {
-                                        if (videoRef.current) {
-                                          if (isVideoPlaying) {
-                                            videoRef.current.pause();
-                                          } else {
-                                            videoRef.current.play();
-                                          }
-                                        }
-                                      }}
-                                      className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-                                    >
-                                      {isVideoPlaying ? (
-                                        <Pause className="h-8 w-8" />
-                                      ) : (
-                                        <Play className="h-8 w-8 ml-1" />
-                                      )}
-                                    </Button>
-                                  </div>
-                                )}
-                                <div className="absolute bottom-4 right-4">
+                              </div>
+                              <video
+                                ref={videoRef}
+                                src={formatVideoUrl(apiMemorial.videoGallery[0])}
+                                className="absolute inset-0 w-full h-full object-contain"
+                                muted={isVideoMuted}
+                                poster="/placeholder.svg?height=300&width=500"
+                                onPlay={() => setIsVideoPlaying(true)}
+                                onPause={() => setIsVideoPlaying(false)}
+                                onLoadStart={() => {
+                                  setVideoLoading(true);
+                                  setVideoError(null);
+                                }}
+                                onCanPlay={() => {
+                                  setVideoLoading(false);
+                                }}
+                                onError={(e) => {
+                                  setVideoLoading(false);
+                                  setVideoError('Video failed to load');
+                                  const fallback = document.getElementById('video-error-fallback');
+                                  if (fallback) {
+                                    fallback.classList.remove('hidden');
+                                  }
+                                }}
+                              />
+                              {/* Loading indicator */}
+                              {videoLoading && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                </div>
+                              )}
+                              
+                              {/* Play/Pause button */}
+                              {!videoLoading && !videoError && (
+                                <div className="absolute inset-0 flex items-center justify-center">
                                   <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={() => setIsVideoMuted(!isVideoMuted)}
-                                    className="bg-black/50 hover:bg-black/70 text-white"
+                                    size="lg"
+                                    onClick={() => {
+                                      if (videoRef.current) {
+                                        if (isVideoPlaying) {
+                                          videoRef.current.pause();
+                                        } else {
+                                          videoRef.current.play();
+                                        }
+                                      }
+                                    }}
+                                    className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
                                   >
-                                    {isVideoMuted ? (
-                                      <VolumeX className="h-4 w-4" />
+                                    {isVideoPlaying ? (
+                                      <Pause className="h-8 w-8" />
                                     ) : (
-                                      <Volume2 className="h-4 w-4" />
+                                      <Play className="h-8 w-8 ml-1" />
                                     )}
                                   </Button>
                                 </div>
-                              </div>
-                              <div>
-                                <h3 className="font-semibold text-gray-900">
-                                  Memorial Video
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                  {memorialTranslations?.video?.description || "Memorial video"}
-                                </p>
+                              )}
+                              <div className="absolute bottom-4 right-4">
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => setIsVideoMuted(!isVideoMuted)}
+                                  className="bg-black/50 hover:bg-black/70 text-white"
+                                >
+                                  {isVideoMuted ? (
+                                    <VolumeX className="h-4 w-4" />
+                                  ) : (
+                                    <Volume2 className="h-4 w-4" />
+                                  )}
+                                </Button>
                               </div>
                             </div>
-                          ) : (
-                            <div className="text-center py-12 bg-gray-50 rounded-lg">
-                              <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                {memorialTranslations?.video?.noVideosTitle || "No Videos Available"}
+                            <div>
+                              <h3 className="font-semibold text-gray-900">
+                                Memorial Video
                               </h3>
-                              <p className="text-gray-600 mb-4">
-                                {memorialTranslations?.video?.noVideosMessage || "This memorial doesn't have any videos yet"}
+                              <p className="text-sm text-gray-600">
+                                {memorialTranslations?.video?.description || "Memorial video"}
                               </p>
                             </div>
-                          )
+                          </div>
                         ) : (
                           <div className="text-center py-12 bg-gray-50 rounded-lg">
                             <Lock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                              {apiMemorial.videoGallery?.length > 0 ? "Video Uploads Available Only for Premium Subscribers" : memorialTranslations?.premium?.feature || "Premium Feature"}
+                              {memorialTranslations?.video?.noVideosTitle || "No Videos Available"}
                             </h3>
                             <p className="text-gray-600 mb-4">
-                              {apiMemorial.videoGallery?.length > 0 
-                                ? "Video uploads are available only for Premium subscribers. Upgrade to Premium to view and manage your uploaded videos."
-                                : memorialTranslations?.premium?.videoContent || "Video content is available with premium memorials"
-                              }
+                              {memorialTranslations?.video?.noVideosMessage || "This memorial doesn't have any videos yet"}
                             </p>
-                            <Button variant="outline">{memorialTranslations?.premium?.learnMore || "Learn More"}</Button>
                           </div>
                         )}
                       </TabsContent>

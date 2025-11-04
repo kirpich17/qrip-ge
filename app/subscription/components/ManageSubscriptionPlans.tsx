@@ -379,34 +379,43 @@ export default function PlanSelection() {
       const state = planPromoStates[planId];
       const plan = plans?.find(p => p._id === planId);
       
-      // First check using the state we already have
-      if (memorialHasVideos && plan && plan.planType !== 'premium') {
-        console.log('Blocking payment - videos detected with non-premium plan (using state)');
-        toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+      if (!plan) {
+        toast.error("Plan not found");
         setIsProcessing(null);
         return;
       }
       
-      // Double check by fetching memorial data if we don't have the state yet
-      if (memorialId && plan && !memorialHasVideos) {
+      // Block minimal plan selection if memorial has videos
+      // Video viewing is available for all plans, but video uploads require premium
+      if (plan.planType === 'minimal' && memorialId) {
+        console.log('🔍 Checking for videos in memorial:', memorialId);
+        // Always check the API to ensure we have the latest data
         try {
-          // Fetch memorial data to check for videos
           const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
           const memorial = memorialResponse.data.data;
-          console.log('Payment handler - Memorial data:', memorial);
-          console.log('Payment handler - Video gallery:', memorial.videoGallery);
-          console.log('Payment handler - Plan type:', plan.planType);
+          console.log('📹 Memorial videoGallery:', memorial.videoGallery);
+          const hasVideos = memorial.videoGallery && Array.isArray(memorial.videoGallery) && memorial.videoGallery.length > 0;
+          console.log('📹 Has videos:', hasVideos);
           
-          // Check if memorial has videos and plan is not premium
-          if (memorial.videoGallery && memorial.videoGallery.length > 0 && plan.planType !== 'premium') {
-            console.log('Blocking payment - videos detected with non-premium plan (from API)');
-            toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+          if (hasVideos) {
+            console.log('❌ Blocking minimal plan - videos detected');
+            toast.error("Video upload feature is available for premium memorials. Please select a Premium plan to proceed.", {
+              autoClose: 6000,
+            });
             setIsProcessing(null);
             return;
           }
-        } catch (memorialError) {
-          console.error('Error fetching memorial data:', memorialError);
-          // Continue with payment if we can't fetch memorial data
+        } catch (error) {
+          console.error('Error checking memorial videos:', error);
+          // If we can't verify, still check the state as fallback
+          if (memorialHasVideos) {
+            console.log('❌ Blocking minimal plan - videos detected (from state)');
+            toast.error("Video upload feature is available for premium memorials. Please select a Premium plan to proceed.", {
+              autoClose: 6000,
+            });
+            setIsProcessing(null);
+            return;
+          }
         }
       }
       
