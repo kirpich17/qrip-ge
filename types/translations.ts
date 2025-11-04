@@ -580,6 +580,13 @@ export interface PlanSelectionTranslations {
   };
   badgePopular?: string;
   selectDuration?: string;
+  durations?: {
+    "1_month": string;
+    "3_months": string;
+    "6_months": string;
+    "1_year": string;
+    "2_years": string;
+  };
   features?: {
     photoUploads: string;
     unlimitedPhotos: string;

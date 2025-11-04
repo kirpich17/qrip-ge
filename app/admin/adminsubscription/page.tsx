@@ -509,11 +509,11 @@ function AdminSubscription() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="1_month">1 Month</SelectItem>
-                                <SelectItem value="3_months">3 Months</SelectItem>
-                                <SelectItem value="6_months">6 Months</SelectItem>
-                                <SelectItem value="1_year">1 Year</SelectItem>
-                                <SelectItem value="2_years">2 Years</SelectItem>
+                                <SelectItem value="1_month">{translations.modal.durationOptions?.durations?.["1_month"] || "1 Month"}</SelectItem>
+                                <SelectItem value="3_months">{translations.modal.durationOptions?.durations?.["3_months"] || "3 Months"}</SelectItem>
+                                <SelectItem value="6_months">{translations.modal.durationOptions?.durations?.["6_months"] || "6 Months"}</SelectItem>
+                                <SelectItem value="1_year">{translations.modal.durationOptions?.durations?.["1_year"] || "1 Year"}</SelectItem>
+                                <SelectItem value="2_years">{translations.modal.durationOptions?.durations?.["2_years"] || "2 Years"}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -652,7 +652,7 @@ function AdminSubscription() {
                         <div className="space-y-1">
                           {plan.durationOptions.filter(opt => opt.isActive).map((option, index) => (
                             <div key={index} className="flex justify-between text-sm">
-                              <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                              <span>{translations.modal.durationOptions?.durations?.[option.duration as keyof typeof translations.modal.durationOptions.durations] || option.duration.replace('_', ' ')}</span>
                               <span className="font-medium">{option.price} GEL</span>
                               {option.discountPercentage > 0 && (
                                 <span className="text-green-600">({option.discountPercentage}% off)</span>

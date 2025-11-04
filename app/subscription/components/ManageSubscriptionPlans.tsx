@@ -568,7 +568,7 @@ export default function PlanSelection() {
                           {plan.durationOptions.filter(opt => opt.isActive).map((option) => (
                             <SelectItem key={option.duration} value={option.duration}>
                               <div className="flex justify-between items-center w-full">
-                                <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                                <span>{translations?.durations?.[option.duration as keyof typeof translations.durations] || option.duration.replace('_', ' ')}</span>
                                 <span className="ml-2 font-medium">{option.price} GEL</span>
                                 {option.discountPercentage > 0 && (
                                   <span className="ml-2 text-green-600 text-xs">({option.discountPercentage}% off)</span>
@@ -584,7 +584,7 @@ export default function PlanSelection() {
                     {hasDiscount ? (
                       <div>
                         <span className="text-4xl font-bold text-green-600">{formatCurrency(discountedPrice)}</span>
-                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
+                        <span className="text-gray-600"> / {translations?.durations?.[(promoState?.selectedDuration || plan.defaultDuration || '1_month') as keyof typeof translations.durations] || (promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
                         <div className="text-sm text-gray-500 line-through">{formatCurrency(originalPrice)}</div>
                         <Badge variant="outline" className="mt-1 bg-green-50 text-green-700 border-green-200">
                           You save {formatCurrency(discountAmount)}
@@ -593,7 +593,7 @@ export default function PlanSelection() {
                     ) : (
                       <div>
                         <span className="text-4xl font-bold text-gray-900">{formatCurrency(originalPrice)}</span>
-                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
+                        <span className="text-gray-600"> / {translations?.durations?.[(promoState?.selectedDuration || plan.defaultDuration || '1_month') as keyof typeof translations.durations] || (promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
                       </div>
                     )}
                   </div>
