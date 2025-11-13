@@ -673,10 +673,12 @@ export default function MemorialPage() {
                         <p className="text-xl text-white/90 mb-2">
                           {formattedDates}
                         </p>
-                        <p className="text-white/80 flex items-center justify-center md:justify-start">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {"Tbilisi, Georgia"}
-                        </p>
+                        {apiMemorial.location && (
+                          <p className="text-white/80 flex items-center justify-center md:justify-start">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {apiMemorial.location}
+                          </p>
+                        )}
                         <p className="text-white/80 mt-2">
                           {memorialTranslations?.profile?.age?.replace(
                             "{age}",

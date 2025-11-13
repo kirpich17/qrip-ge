@@ -208,6 +208,18 @@ export default function EditMemorialPage() {
     fetchMemorial();
   }, [params.id]);
 
+  // Auto-reverse geocode when GPS coordinates exist but location is missing or incorrect
+  useEffect(() => {
+    if (formData?.gps?.lat && formData?.gps?.lng) {
+      const hasLocation = formData.location && formData.location.trim() !== '' && formData.location.trim() !== 'Tbilisi, Georgia';
+      if (!hasLocation) {
+        // Only reverse geocode if location is missing or is the default "Tbilisi, Georgia"
+        handleReverseGeocode(formData.gps.lat, formData.gps.lng);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData?.gps?.lat, formData?.gps?.lng]); // Only run when GPS coordinates change
+
   const handleInputChange = (field: string, value: any) => {
     if (!formData) return;
     setFormData((prev) => ({ ...prev!, [field]: value }));
@@ -272,6 +284,54 @@ export default function EditMemorialPage() {
     const today = new Date();
     today.setDate(today.getDate() - 1); // subtract 1 day
     return today.toISOString().split('T')[0];
+  };
+
+  // Function to handle reverse geocoding (GPS coordinates to location string)
+  const handleReverseGeocode = async (lat: number, lng: number) => {
+    if (!formData) return;
+    
+    try {
+      // Using OpenStreetMap's Nominatim reverse geocoding API
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
+      );
+
+      if (!response.ok) {
+        throw new Error("Reverse geocoding service unavailable");
+      }
+
+      const data = await response.json();
+
+      if (data && data.address) {
+        // Build location string from address components
+        const address = data.address;
+        const locationParts = [];
+        
+        if (address.city || address.town || address.village) {
+          locationParts.push(address.city || address.town || address.village);
+        }
+        if (address.state || address.region) {
+          locationParts.push(address.state || address.region);
+        }
+        if (address.country) {
+          locationParts.push(address.country);
+        }
+        
+        const locationString = locationParts.length > 0 
+          ? locationParts.join(", ") 
+          : data.display_name || "";
+
+        if (locationString) {
+          setFormData(prev => ({
+            ...prev!,
+            location: locationString
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Reverse geocoding error:", error);
+      // Silently fail - location string will remain empty or user can enter manually
+    }
   };
 
   const removeProfileImage = () => {
@@ -814,11 +874,14 @@ export default function EditMemorialPage() {
                     <InteractiveMap
                       initialLat={formData.gps?.lat || 41.7151}
                       initialLng={formData.gps?.lng || 44.8271}
+                      initialLocation={formData.location || ""}
                       onLocationChange={(lat, lng) => {
                         setFormData(prev => ({
                           ...((prev as Memorial)),
                           gps: { lat, lng }
                         }));
+                        // Automatically populate location string from GPS coordinates
+                        handleReverseGeocode(lat, lng);
                       }}
                       height="400px"
                       showCoordinateInputs={true}
