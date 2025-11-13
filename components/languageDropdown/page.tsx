@@ -13,6 +13,12 @@ const LanguageDropdown = () => {
   const { language, setLanguage } = useLanguage();
   const toggleLanguage = () => setIsLanguageOpen((prev) => !prev);
 
+  const displayLanguage: Record<"English" | "Georgian" | "Russian", string> = {
+    English: "English",
+    Georgian: "ქართული",
+    Russian: "Русский",
+  };
+
   const handleLanguageChange = (lang: "English" | "Georgian" | "Russian") => {
     setLanguage(lang);
     setIsLanguageOpen(false);
@@ -25,7 +31,7 @@ const LanguageDropdown = () => {
         className="text-white px-2 hover:bg-[#354f44]"
         onClick={toggleLanguage}
       >
-        {language}
+        {displayLanguage[language]}
         <ChevronDown className="ml-1 h-4 w-4" />
       </Button>
       <AnimatePresence>
@@ -34,7 +40,7 @@ const LanguageDropdown = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 mt-2 w-30 bg-white rounded-md shadow-lg z-50"
+            className="absolute right-0 mt-2 w-[105px] bg-white rounded-md shadow-lg z-50"
           >
             <div className="py-1">
               <button
@@ -47,14 +53,14 @@ const LanguageDropdown = () => {
                 onClick={() => handleLanguageChange("Georgian")}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
-                Georgian
+                ქართული
               </button>
 
               <button
                 onClick={() => handleLanguageChange("Russian")}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
-                Russian
+               Русский
               </button>
             </div>
           </motion.div>

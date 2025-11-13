@@ -34,8 +34,8 @@ import { toast } from "react-toastify";
 import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import { QRCodeSVG } from 'qrcode.react';
 import { saveAs } from 'file-saver';
-import axios from "axios";
 import { useTranslation } from "@/hooks/useTranslate";
+import axios from "axios";
 
 // Helper function to get authentication token
 const getAuthToken = () => {
@@ -175,17 +175,10 @@ function OrderDetailPage() {
     if (!order) return;
     
     setDownloadingFormat(format);
-    
-    const token = getAuthToken();
-    if (!token) {
-      toast.error(orderDetailTranslations.messages.notLoggedIn);
-      setDownloadingFormat(null);
-      return;
-    }
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}api/qrcode/generate`,
+      const response = await axiosInstance.post(
+        `/api/qrcode/generate`,
         {
           memorialId: order.memorial._id,
           format,
@@ -193,7 +186,6 @@ function OrderDetailPage() {
           style: 'default',
         },
         {
-          headers: { 'Authorization': `Bearer ${token}` },
           responseType: 'blob',
         }
       );

@@ -77,6 +77,9 @@ function AdminDashboardPage() {
         }).format(amount);
       };
 
+      const revenueTotal = Number(res.data?.revenue?.total) || 0;
+      const revenueChange = Number(res.data?.revenue?.percentageChange) || 0;
+
       setStats([
         {
           label: admindashTranslations.stats.totalUsers,
@@ -96,8 +99,8 @@ function AdminDashboardPage() {
         },
         {
           label: admindashTranslations.stats.monthlyRevenue,
-          value: formatCurrency(res.data.revenue.total),
-          change: (res.data.revenue.percentageChange >= 0 ? "+" : "") + res.data.revenue.percentageChange + "%",
+          value: formatCurrency(revenueTotal),
+          change: (revenueChange >= 0 ? "+" : "") + revenueChange + "%",
           icon: Banknote,
           color: "text-green-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,

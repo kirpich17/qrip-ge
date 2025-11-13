@@ -102,6 +102,7 @@ export default function PlanSelection() {
   const translations = t("planSelection");
   const commonTranslations = t("common");
   const promoTranslations = t("promoCodeManagement" as any);
+  const plansTranslations = t("plansTranslations");
 
   // Fetch all active plans using React Query
   const { data: plans, isLoading, error } = useQuery<Plan[]>({
@@ -378,34 +379,43 @@ export default function PlanSelection() {
       const state = planPromoStates[planId];
       const plan = plans?.find(p => p._id === planId);
       
-      // First check using the state we already have
-      if (memorialHasVideos && plan && plan.planType !== 'premium') {
-        console.log('Blocking payment - videos detected with non-premium plan (using state)');
-        toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+      if (!plan) {
+        toast.error("Plan not found");
         setIsProcessing(null);
         return;
       }
       
-      // Double check by fetching memorial data if we don't have the state yet
-      if (memorialId && plan && !memorialHasVideos) {
+      // Block minimal plan selection if memorial has videos
+      // Video viewing is available for all plans, but video uploads require premium
+      if (plan.planType === 'minimal' && memorialId) {
+        console.log('🔍 Checking for videos in memorial:', memorialId);
+        // Always check the API to ensure we have the latest data
         try {
-          // Fetch memorial data to check for videos
           const memorialResponse = await axiosInstance.get(`/api/memorials/${memorialId}`);
           const memorial = memorialResponse.data.data;
-          console.log('Payment handler - Memorial data:', memorial);
-          console.log('Payment handler - Video gallery:', memorial.videoGallery);
-          console.log('Payment handler - Plan type:', plan.planType);
+          console.log('📹 Memorial videoGallery:', memorial.videoGallery);
+          const hasVideos = memorial.videoGallery && Array.isArray(memorial.videoGallery) && memorial.videoGallery.length > 0;
+          console.log('📹 Has videos:', hasVideos);
           
-          // Check if memorial has videos and plan is not premium
-          if (memorial.videoGallery && memorial.videoGallery.length > 0 && plan.planType !== 'premium') {
-            console.log('Blocking payment - videos detected with non-premium plan (from API)');
-            toast.error("Video uploads are available only for Premium subscribers. Please select a Premium plan to keep your uploaded videos.");
+          if (hasVideos) {
+            console.log('❌ Blocking minimal plan - videos detected');
+            toast.error("Video upload feature is available for premium memorials. Please select a Premium plan to proceed.", {
+              autoClose: 6000,
+            });
             setIsProcessing(null);
             return;
           }
-        } catch (memorialError) {
-          console.error('Error fetching memorial data:', memorialError);
-          // Continue with payment if we can't fetch memorial data
+        } catch (error) {
+          console.error('Error checking memorial videos:', error);
+          // If we can't verify, still check the state as fallback
+          if (memorialHasVideos) {
+            console.log('❌ Blocking minimal plan - videos detected (from state)');
+            toast.error("Video upload feature is available for premium memorials. Please select a Premium plan to proceed.", {
+              autoClose: 6000,
+            });
+            setIsProcessing(null);
+            return;
+          }
         }
       }
       
@@ -534,8 +544,12 @@ export default function PlanSelection() {
                     {plan.planType === "medium" && <Zap className="text-black" size={32} />}
                     {plan.planType === "minimal" && <Star className="text-black" size={32} />}
                   </div>
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                  <CardTitle className="text-2xl font-bold">
+                    {plansTranslations?.[plan.planType]?.name || plan.name}
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    {plansTranslations?.[plan.planType]?.description || plan.description}
+                  </CardDescription>
                   
                   {/* Duration Selection */}
                   {plan.durationOptions && plan.durationOptions.length > 0 && (
@@ -554,7 +568,7 @@ export default function PlanSelection() {
                           {plan.durationOptions.filter(opt => opt.isActive).map((option) => (
                             <SelectItem key={option.duration} value={option.duration}>
                               <div className="flex justify-between items-center w-full">
-                                <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                                <span>{translations?.durations?.[option.duration as keyof typeof translations.durations] || option.duration.replace('_', ' ')}</span>
                                 <span className="ml-2 font-medium">{option.price} GEL</span>
                                 {option.discountPercentage > 0 && (
                                   <span className="ml-2 text-green-600 text-xs">({option.discountPercentage}% off)</span>
@@ -570,7 +584,7 @@ export default function PlanSelection() {
                     {hasDiscount ? (
                       <div>
                         <span className="text-4xl font-bold text-green-600">{formatCurrency(discountedPrice)}</span>
-                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
+                        <span className="text-gray-600"> / {translations?.durations?.[(promoState?.selectedDuration || plan.defaultDuration || '1_month') as keyof typeof translations.durations] || (promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
                         <div className="text-sm text-gray-500 line-through">{formatCurrency(originalPrice)}</div>
                         <Badge variant="outline" className="mt-1 bg-green-50 text-green-700 border-green-200">
                           You save {formatCurrency(discountAmount)}
@@ -579,7 +593,7 @@ export default function PlanSelection() {
                     ) : (
                       <div>
                         <span className="text-4xl font-bold text-gray-900">{formatCurrency(originalPrice)}</span>
-                        <span className="text-gray-600"> / {(promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
+                        <span className="text-gray-600"> / {translations?.durations?.[(promoState?.selectedDuration || plan.defaultDuration || '1_month') as keyof typeof translations.durations] || (promoState?.selectedDuration || plan.defaultDuration || '1_month').replace('_', ' ')}</span>
                       </div>
                     )}
                   </div>
@@ -587,12 +601,46 @@ export default function PlanSelection() {
 
                 <CardContent className="pt-0 flex-grow">
                   <ul className="space-y-3 mb-6">
-                    <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
-                    <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
-                    <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
-                    {plan.features.map((feature) => (
-                      <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
-                    ))}
+                    <FeatureListItem 
+                      included={plan.maxPhotos > 0} 
+                      text={
+                        plan.maxPhotos >= 999 
+                          ? (plansTranslations?.[plan.planType]?.features?.photoUploads || translations?.features?.unlimitedPhotos || 'Unlimited Photo Uploads')
+                          : (plansTranslations?.[plan.planType]?.features?.photoUploads || translations?.features?.photoUploads?.replace(/{count}/g, plan.maxPhotos.toString()) || `${plan.maxPhotos} Photo Uploads`)
+                      } 
+                    />
+                    <FeatureListItem 
+                      included={plan.allowSlideshow} 
+                      text={plansTranslations?.[plan.planType]?.features?.slideshow || translations?.features?.slideshow || "Photo Slideshow"} 
+                    />
+                    <FeatureListItem 
+                      included={plan.allowVideos} 
+                      text={
+                        plansTranslations?.[plan.planType]?.features?.videoUploads?.replace(/{duration}/g, plan.maxVideoDuration.toString()) ||
+                        translations?.features?.videoUploads?.replace(/{duration}/g, plan.maxVideoDuration.toString()) ||
+                        `Video Uploads (Max ${plan.maxVideoDuration}s)`
+                      } 
+                    />
+                    {plan.features.map((feature) => {
+                      // Try to match feature text with translation keys
+                      let translatedText = feature.text;
+                      const planTranslations = plansTranslations?.[plan.planType]?.features;
+                      
+                      if (planTranslations) {
+                        // Check if feature text matches any translation key
+                        if (feature.text.toLowerCase().includes('document') || feature.text.toLowerCase().includes('document upload')) {
+                          translatedText = planTranslations.documentUpload || feature.text;
+                        } else if (feature.text.toLowerCase().includes('family') || feature.text.toLowerCase().includes('family tree')) {
+                          translatedText = planTranslations.familyTree || feature.text;
+                        } else if (feature.text.toLowerCase().includes('photo') && !feature.text.toLowerCase().includes('slideshow')) {
+                          translatedText = planTranslations.photoUploads || feature.text;
+                        }
+                      }
+                      
+                      return (
+                        <FeatureListItem key={feature._id} included={feature.included} text={translatedText} />
+                      );
+                    })}
                   </ul>
 
                   {/* Promo Code Section (available without memorial; saved for later) */}

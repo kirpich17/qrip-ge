@@ -256,7 +256,7 @@ export default function SignupPage() {
               {/* Shipping Details Toggle */}
               <div className="flex items-center justify-between pt-2">
                 <Label className="text-sm font-medium">
-                  Shipping Information (Optional)
+                  {authTranslations.signup.shippingInformation}
                 </Label>
                 <Button
                   type="button"
@@ -267,10 +267,10 @@ export default function SignupPage() {
                   {showShippingForm ? (
                     <>
                       <ArrowLeft className="mr-2 h-4 w-4" />
-                      Hide
+                      {authTranslations.signup.hideShippingDetails}
                     </>
                   ) : (
-                    "Add Shipping Details"
+                    authTranslations.signup.addShippingDetails
                   )}
                 </Button>
               </div>
@@ -284,10 +284,12 @@ export default function SignupPage() {
                   className="space-y-4 p-4 border rounded-lg bg-gray-50/50"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="shippingFullName">Full Name</Label>
+                    <Label htmlFor="shippingFullName">
+                      {authTranslations.signup.shippingFullName}
+                    </Label>
                     <Input
                       id="shippingFullName"
-                      placeholder="John Doe"
+                      placeholder={authTranslations.signup.shippingFullNamePlaceholder}
                       value={formData.shippingDetails.fullName}
                       onChange={(e) =>
                         handleShippingInputChange("fullName", e.target.value)
@@ -297,10 +299,12 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="shippingAddress">Address</Label>
+                    <Label htmlFor="shippingAddress">
+                      {authTranslations.signup.shippingAddress}
+                    </Label>
                     <Input
                       id="shippingAddress"
-                      placeholder="123 Main St, Apt 4B"
+                      placeholder={authTranslations.signup.shippingAddressPlaceholder}
                       value={formData.shippingDetails.address}
                       onChange={(e) =>
                         handleShippingInputChange("address", e.target.value)
@@ -311,10 +315,12 @@ export default function SignupPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="shippingCity">City</Label>
+                      <Label htmlFor="shippingCity">
+                        {authTranslations.signup.shippingCity}
+                      </Label>
                       <Input
                         id="shippingCity"
-                        placeholder="New York"
+                        placeholder={authTranslations.signup.shippingCityPlaceholder}
                         value={formData.shippingDetails.city}
                         onChange={(e) =>
                           handleShippingInputChange("city", e.target.value)
@@ -323,10 +329,12 @@ export default function SignupPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="shippingZipCode">Postal Code</Label>
+                      <Label htmlFor="shippingZipCode">
+                        {authTranslations.signup.shippingPostalCode}
+                      </Label>
                       <Input
                         id="shippingZipCode"
-                        placeholder="10001"
+                        placeholder={authTranslations.signup.shippingPostalCodePlaceholder}
                         value={formData.shippingDetails.zipCode}
                         onChange={(e) =>
                           handleShippingInputChange("zipCode", e.target.value)
@@ -338,10 +346,12 @@ export default function SignupPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="shippingCountry">Country</Label>
+                      <Label htmlFor="shippingCountry">
+                        {authTranslations.signup.shippingCountry}
+                      </Label>
                       <Input
                         id="shippingCountry"
-                        placeholder="United States"
+                        placeholder={authTranslations.signup.shippingCountryPlaceholder}
                         value={formData.shippingDetails.country}
                         onChange={(e) =>
                           handleShippingInputChange("country", e.target.value)
@@ -350,10 +360,12 @@ export default function SignupPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="shippingPhone">Phone Number</Label>
+                      <Label htmlFor="shippingPhone">
+                        {authTranslations.signup.shippingPhoneNumber}
+                      </Label>
                       <Input
                         id="shippingPhone"
-                        placeholder="+1 234 567 8900"
+                        placeholder={authTranslations.signup.shippingPhoneNumberPlaceholder}
                         value={formData.shippingDetails.phone}
                         onChange={(e) =>
                           handleShippingInputChange("phone", e.target.value)
@@ -418,10 +430,10 @@ export default function SignupPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Creating Account...
+                    {authTranslations.signup.creatingAccount}
                   </span>
                 ) : (
-                  "Create Account"
+                  authTranslations.signup.createAccountButton
                 )}
               </Button>
             </form>

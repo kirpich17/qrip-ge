@@ -23,6 +23,7 @@ const DynamicMap = dynamic(() => import("./MapComponent"), {
 interface InteractiveMapProps {
   initialLat?: number;
   initialLng?: number;
+  initialLocation?: string; // Location string to prefill in search
   onLocationChange: (lat: number, lng: number) => void;
   height?: string;
   showCoordinateInputs?: boolean;
@@ -47,6 +48,7 @@ interface InteractiveMapProps {
 export default function InteractiveMap({
   initialLat = 41.7151,
   initialLng = 44.8271,
+  initialLocation = "",
   onLocationChange,
   height = "400px",
   showCoordinateInputs = true,
@@ -57,7 +59,7 @@ export default function InteractiveMap({
   const [manualLat, setManualLat] = useState<string>(initialLat.toString());
   const [manualLng, setManualLng] = useState<string>(initialLng.toString());
   const [isGeocoding, setIsGeocoding] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialLocation || "");
 
   useEffect(() => {
     if (initialLat && initialLng) {
@@ -66,6 +68,13 @@ export default function InteractiveMap({
       setManualLng(initialLng.toString());
     }
   }, [initialLat, initialLng]);
+
+  // Update search query when initialLocation changes
+  useEffect(() => {
+    if (initialLocation) {
+      setSearchQuery(initialLocation);
+    }
+  }, [initialLocation]);
 
   // Add cursor styling and z-index for the map
   useEffect(() => {

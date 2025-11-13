@@ -116,6 +116,7 @@ function AdminSubscription() {
   const { t } = useTranslation();
   const translations = t("adminSubscriptionPage" as any);
   const promoTranslations = t("promoCodeManagement" as any);
+  const plansTranslations = t("plansTranslations");
 
   const [editingPlan, setEditingPlan] = useState<Plan | NewPlan | null>(null);
   const [isAddingPlan, setIsAddingPlan] = useState(false);
@@ -409,7 +410,7 @@ function AdminSubscription() {
                 className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold">{isAddingPlan ? "Add New Plan" : "Edit Plan"}</h3>
+                  <h3 className="text-2xl font-bold">{isAddingPlan ? translations.modal.titleAdd : translations.modal.titleEdit}</h3>
                   <Button variant="ghost" size="icon" onClick={() => setEditingPlan(null)}>
                     <X size={20} />
                   </Button>
@@ -488,14 +489,14 @@ function AdminSubscription() {
 
                   {/* Section: Duration Options */}
                   <div className="space-y-4 p-4 border rounded-lg">
-                    <h4 className="font-semibold text-gray-800">Duration Options</h4>
-                    <p className="text-sm text-gray-600">Configure different pricing for various subscription durations</p>
+                    <h4 className="font-semibold text-gray-800">{translations.modal.durationOptions?.title || "Duration Options"}</h4>
+                    <p className="text-sm text-gray-600">{translations.modal.durationOptions?.description || "Configure different pricing for various subscription durations"}</p>
                     
                     <div className="space-y-3">
                       {editingPlan.durationOptions?.map((option, index) => (
                         <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
                           <div className="flex-1">
-                            <label className="text-sm font-medium">Duration</label>
+                            <label className="text-sm font-medium">{translations.modal.durationOptions?.durationLabel || "Duration"}</label>
                             <Select
                               value={option.duration}
                               onValueChange={(value) => {
@@ -508,16 +509,16 @@ function AdminSubscription() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="1_month">1 Month</SelectItem>
-                                <SelectItem value="3_months">3 Months</SelectItem>
-                                <SelectItem value="6_months">6 Months</SelectItem>
-                                <SelectItem value="1_year">1 Year</SelectItem>
-                                <SelectItem value="2_years">2 Years</SelectItem>
+                                <SelectItem value="1_month">{translations.modal.durationOptions?.durations?.["1_month"] || "1 Month"}</SelectItem>
+                                <SelectItem value="3_months">{translations.modal.durationOptions?.durations?.["3_months"] || "3 Months"}</SelectItem>
+                                <SelectItem value="6_months">{translations.modal.durationOptions?.durations?.["6_months"] || "6 Months"}</SelectItem>
+                                <SelectItem value="1_year">{translations.modal.durationOptions?.durations?.["1_year"] || "1 Year"}</SelectItem>
+                                <SelectItem value="2_years">{translations.modal.durationOptions?.durations?.["2_years"] || "2 Years"}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="flex-1">
-                            <label className="text-sm font-medium">Price (GEL)</label>
+                            <label className="text-sm font-medium">{translations.modal.durationOptions?.priceLabel || "Price (GEL)"}</label>
                             <Input
                               type="number"
                               value={option.price}
@@ -529,7 +530,7 @@ function AdminSubscription() {
                             />
                           </div>
                           <div className="flex-1">
-                            <label className="text-sm font-medium">Discount %</label>
+                            <label className="text-sm font-medium">{translations.modal.durationOptions?.discountLabel || "Discount %"}</label>
                             <Input
                               type="number"
                               min="0"
@@ -580,7 +581,7 @@ function AdminSubscription() {
                         className="w-full"
                       >
                         <Plus size={16} className="mr-2" />
-                        Add Duration Option
+                        {translations.modal.durationOptions?.addButton || "Add Duration Option"}
                       </Button>
                     </div>
                   </div>
@@ -634,20 +635,24 @@ function AdminSubscription() {
                       {plan.planType === "medium" && <Zap className="text-black" size={32} />}
                       {plan.planType === "minimal" && <Star className="text-black" size={32} />}
                     </div>
-                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                    <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                    <CardTitle className="text-2xl font-bold">
+                      {plansTranslations?.[plan.planType]?.name || plan.name}
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      {plansTranslations?.[plan.planType]?.description || plan.description}
+                    </CardDescription>
                     <div className="mt-4">
                       <span className="text-4xl font-bold text-gray-900">{plan.price} GEL</span>
-                      <span className="text-gray-600"> / {plan.durationOptions && plan.durationOptions.length > 0 ? 'base price' : 'one-time'}</span>
+                      <span className="text-gray-600"> / {plan.durationOptions && plan.durationOptions.length > 0 ? (translations.card.basePrice || 'base price') : translations.card.oneTime}</span>
                     </div>
                     
                     {plan.durationOptions && plan.durationOptions.length > 0 ? (
                       <div className="mt-4">
-                        <h5 className="text-sm font-medium text-gray-700 mb-2">Duration Options:</h5>
+                        <h5 className="text-sm font-medium text-gray-700 mb-2">{translations.card.durationOptionsLabel || "Duration Options:"}</h5>
                         <div className="space-y-1">
                           {plan.durationOptions.filter(opt => opt.isActive).map((option, index) => (
                             <div key={index} className="flex justify-between text-sm">
-                              <span className="capitalize">{option.duration.replace('_', ' ')}</span>
+                              <span>{translations.modal.durationOptions?.durations?.[option.duration as keyof typeof translations.modal.durationOptions.durations] || option.duration.replace('_', ' ')}</span>
                               <span className="font-medium">{option.price} GEL</span>
                               {option.discountPercentage > 0 && (
                                 <span className="text-green-600">({option.discountPercentage}% off)</span>
@@ -660,9 +665,9 @@ function AdminSubscription() {
                       <div className="mt-4">
                         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                           <p className="text-yellow-800 text-sm mb-2">
-                            <strong>No duration options configured.</strong> 
+                            <strong>{translations.card.noDurationOptions?.title || "No duration options configured."}</strong> 
                             <br />
-                            Add duration options to enable flexible pricing.
+                            {translations.card.noDurationOptions?.description || "Add duration options to enable flexible pricing."}
                           </p>
                           <Button 
                             size="sm" 
@@ -670,7 +675,7 @@ function AdminSubscription() {
                             onClick={() => handleEditPlan(plan)}
                             className="text-yellow-800 border-yellow-300 hover:bg-yellow-100"
                           >
-                            Configure Duration Options
+                            {translations.card.noDurationOptions?.button || "Configure Duration Options"}
                           </Button>
                         </div>
                       </div>
@@ -687,17 +692,48 @@ function AdminSubscription() {
                       ))} */}
 
 
-                      <FeatureListItem included={plan.maxPhotos > 0} text={`${plan.maxPhotos >= 999 ? 'Unlimited' : plan.maxPhotos} Photo Uploads`} />
-                      <FeatureListItem included={plan.allowSlideshow} text="Photo Slideshow" />
-                      <FeatureListItem included={plan.allowVideos} text={`Video Uploads (Max ${plan.maxVideoDuration}s)`} />
-                      {plan.features.map((feature) => (
-                        <FeatureListItem key={feature._id} included={feature.included} text={feature.text} />
-                      ))}
+                      <FeatureListItem 
+                        included={plan.maxPhotos > 0} 
+                        text={
+                          plan.maxPhotos >= 999 
+                            ? (plansTranslations?.[plan.planType]?.features?.photoUploads || 'Unlimited Photo Uploads')
+                            : (plansTranslations?.[plan.planType]?.features?.photoUploads || `${plan.maxPhotos} Photo Uploads`)
+                        } 
+                      />
+                      <FeatureListItem 
+                        included={plan.allowSlideshow} 
+                        text={plansTranslations?.[plan.planType]?.features?.slideshow || "Photo Slideshow"} 
+                      />
+                      <FeatureListItem 
+                        included={plan.allowVideos} 
+                        text={
+                          plansTranslations?.[plan.planType]?.features?.videoUploads?.replace(/{duration}/g, plan.maxVideoDuration.toString()) ||
+                          `Video Uploads (Max ${plan.maxVideoDuration}s)`
+                        } 
+                      />
+                      {plan.features.map((feature) => {
+                        // Try to match feature text with translation keys
+                        let translatedText = feature.text;
+                        const planTranslations = plansTranslations?.[plan.planType]?.features;
+                        
+                        if (planTranslations) {
+                          // Check if feature text matches any translation key
+                          if (feature.text.toLowerCase().includes('document') || feature.text.toLowerCase().includes('document upload')) {
+                            translatedText = planTranslations.documentUpload || feature.text;
+                          } else if (feature.text.toLowerCase().includes('family') || feature.text.toLowerCase().includes('family tree')) {
+                            translatedText = planTranslations.familyTree || feature.text;
+                          }
+                        }
+                        
+                        return (
+                          <FeatureListItem key={feature._id} included={feature.included} text={translatedText} />
+                        );
+                      })}
 
                     </ul>
                     <Separator className="my-6" />
                     <Button variant="outline" onClick={() => handleEditPlan(plan)}>
-                      <Edit size={16} className="mr-2" /> Edit Plan
+                      <Edit size={16} className="mr-2" /> {translations.modal.editPlan || "Edit Plan"}
                     </Button>
                   </CardContent>
                 </Card>

@@ -1,5 +1,5 @@
 "use client";
-import { LogOut, Settings, User, Crown, Lock } from "lucide-react";
+import { LogOut, Settings, User, Crown, Lock, User2, CircleUserRound, CircleUserRoundIcon, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -51,8 +51,10 @@ export function UserMenu({
     <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10 ">
+        <Button variant="ghost" className="relative h-[30px] w-[30px] rounded-full bg-[#fff]">
+          {/* <User2 className="h-10 w-10 text-white" /> */}
+          <UserRound className="text-7xl text-black" />
+          {/* <Avatar className="h-10 w-10 ">
             <AvatarImage
               src={user.profileImage || "/placeholder.svg?height=32&width=32"}
               alt={user.firstname}
@@ -63,7 +65,7 @@ export function UserMenu({
                 .map((n) => n[0])
                 .join("") : ""}
             </AvatarFallback>
-          </Avatar>
+          </Avatar> */}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

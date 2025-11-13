@@ -7,14 +7,15 @@ import { useTranslation } from "@/hooks/useTranslate";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft } from "lucide-react";
 import LanguageDropdown from "@/components/languageDropdown/page";
+import { useRouter } from "next/navigation";
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 console.log("🚀 ~ API_BASE_URL:", API_BASE_URL)
 const TermsAndConditions = () => {
   const { t } = useTranslation();
-  const termPage = t("TermsPage")
+  const termPage = t("TermsPage" as any);
+  const router = useRouter();
 
-
-  const translations = t("adminSubscriptionPage");
+  const translations = t("adminSubscriptionPage" as any);
   const [TermsMainData, setTermsMainData] = useState({});
 
   const [loading, setLoading] = useState(true);
@@ -42,13 +43,22 @@ const TermsAndConditions = () => {
     Georgian: "ka",
   };
 
-  const termsData = TermsMainData?.[lang[language]];
+  // Handle back button - go to previous page or fallback to /signup
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/signup");
+    }
+  };
+
+  const termsData = (TermsMainData as any)?.[lang[language]];
   return (<>
     <header className="bg-[#243b31] py-4 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex items-center justify-between">
-        <Link href="/admin/dashboard" className="flex items-center text-white hover:underline gap-2 whitespace-nowrap">
+        <button onClick={handleBack} className="flex items-center text-white hover:underline gap-2 whitespace-nowrap">
           <ArrowLeft size={20} /> {translations.header.back}
-        </Link>
+        </button>
         <div className="flex sm:gap-3 gap-0">
           <LanguageDropdown />
           <h1 className="sm:text-xl text-xs font-bold text-white flex items-center gap-2">
@@ -74,7 +84,7 @@ const TermsAndConditions = () => {
           Last updated: {termsData?.lastUpdated}
         </div>
 
-        {termsData?.sections.map((section) => (
+        {termsData?.sections.map((section: any) => (
           <section key={section.id} className="mb-8">
             <h2 className="text-xl font-semibold mb-4">{section?.title}</h2>
 
@@ -82,7 +92,7 @@ const TermsAndConditions = () => {
 
             {section?.type === "list" ? (
               <ul className="list-disc pl-6 space-y-2">
-                {section?.items?.map((item, index) => (
+                {section?.items?.map((item: any, index: number) => (
                   <li key={index}>{item}</li>
                 ))}
               </ul>
