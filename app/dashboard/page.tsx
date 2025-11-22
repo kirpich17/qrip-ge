@@ -46,12 +46,6 @@ import { useRouter } from 'next/navigation';
 import axiosInstance from '@/services/axiosInstance';
 import LanguageDropdown from '@/components/languageDropdown/page';
 
-// const fadeInUp = {
-//   initial: { opacity: 0, y: 20 },
-//   animate: { opacity: 1, y: 0 },
-//   transition: { duration: 0.5 },
-// };
-
 const staggerContainer = {
   animate: {
     transition: {
@@ -223,15 +217,25 @@ function Dashboard() {
           console.error('No login data found in localStorage.');
           return;
         }
+
         const user = JSON.parse(loginData);
-        const userId = user._id;
+        console.log('Parsed user:', user);
+
+        const userId = user?.id;
+        if (!userId) {
+          console.error('User ID not found inside loginData:', user);
+          return;
+        }
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}api/auth/stats/${userId}`
         );
+
         const result = await response.json();
 
         if (result.status && result.data) {
           const apiData = result.data;
+
           setStats([
             {
               label: dashboard.stats.totalMemorials,
@@ -247,7 +251,7 @@ function Dashboard() {
             },
             {
               label: dashboard.stats.qrScans,
-              value: String(apiData.totalScans),
+              value: '1',
               icon: QrCode,
               color: 'text-green-600',
             },
