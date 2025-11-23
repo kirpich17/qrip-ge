@@ -15,7 +15,7 @@ const normalizeUrl = (base: string | undefined, path: string): string => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:4040',
+  baseURL: BASE_URL,
 });
 
 // Flag to prevent multiple simultaneous refresh attempts
@@ -55,8 +55,8 @@ const refreshToken = async (): Promise<string | null> => {
     console.log('🔄 Token refresh triggered for:', user?.userType || 'user');
     console.log('🔄 Using endpoint:', refreshEndpoint);
 
-    // Use the baseURL from axiosInstance
-    const refreshUrl = `http://localhost:4040${refreshEndpoint}`;
+    // ✅ FIX: Use BASE_URL instead of undefined baseURL
+    const refreshUrl = normalizeUrl(BASE_URL, refreshEndpoint);
     console.log('🔄 Full refresh URL:', refreshUrl);
 
     const response = await axios.post(
@@ -134,11 +134,15 @@ axiosInstance.interceptors.request.use(
       token ? token.substring(0, 20) + '...' : 'NO TOKEN'
     );
     console.log('📤 Request URL:', config.url);
+    console.log(
+      '📤 Full URL:',
+      config.baseURL ? `${config.baseURL}${config.url}` : config.url
+    );
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log(
-        '📤 Authorization header set:',
+        '✅ Authorization header set:',
         `Bearer ${token.substring(0, 20)}...`
       );
     } else {
@@ -147,6 +151,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error: any) => {
+    console.error('❌ Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -154,6 +159,7 @@ axiosInstance.interceptors.request.use(
 // ✅ RESPONSE INTERCEPTOR - Handles 401/403 and token refresh
 axiosInstance.interceptors.response.use(
   (response: any) => {
+    console.log('✅ Response success:', response.config.url, response.status);
     return response;
   },
   async (error: AxiosError) => {
@@ -241,6 +247,7 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
       } catch (refreshError) {
+        console.error('❌ Token refresh failed completely:', refreshError);
         processQueue(refreshError, null);
         return Promise.reject(refreshError);
       } finally {
