@@ -112,7 +112,7 @@ function Dashboard() {
 
         const user = JSON.parse(loginData);
 
-        const userId = user?.id;
+        const userId = user?._id;
 
         if (!userId) {
           console.error('User ID not found in loginData:', user);
@@ -235,7 +235,7 @@ function Dashboard() {
         const user = JSON.parse(loginData);
         console.log('Parsed user:', user);
 
-        const userId = user?.id;
+        const userId = user?._id;
         if (!userId) {
           console.error('User ID not found inside loginData:', user);
           return;

@@ -46,72 +46,47 @@ const refreshToken = async (): Promise<string | null> => {
       throw new Error('No token available for refresh');
     }
 
-    // Determine which refresh endpoint to use based on user type
     const refreshEndpoint =
       user?.userType === 'admin'
         ? '/api/admin/refresh-token'
         : '/api/auth/refresh-token';
 
-    console.log('🔄 Token refresh triggered for:', user?.userType || 'user');
-    console.log('🔄 Using endpoint:', refreshEndpoint);
-
-    // ✅ FIX: Use BASE_URL instead of undefined baseURL
     const refreshUrl = normalizeUrl(BASE_URL, refreshEndpoint);
-    console.log('🔄 Full refresh URL:', refreshUrl);
 
     const response = await axios.post(
       refreshUrl,
       {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    if (response.data.status && response.data.token) {
-      const newToken = response.data.token;
-      const newUser = response.data.user;
+    const { status, token: newToken, user: newUser } = response.data || {};
 
-      // Update localStorage with new token
-      localStorage.setItem('authToken', newToken);
+    if (status && newToken) {
       if (newUser) {
-        localStorage.setItem('loginData', JSON.stringify(newUser));
+        // ✅ შევინახოთ სრულად ყველა საჭირო ველი, _id ჩათვლით
+        const userDataToStore = {
+          _id: newUser._id || user?._id, // თუ newUser._id არ არსებობს, გამოვიყენოთ ძველი
+          firstname: newUser.firstname || user?.firstname,
+          lastname: newUser.lastname || user?.lastname,
+          email: newUser.email || user?.email,
+          userType: newUser.userType || user?.userType,
+        };
+        localStorage.setItem('loginData', JSON.stringify(userDataToStore));
       }
 
+      localStorage.setItem('authToken', newToken);
       console.log('✅ Token refreshed successfully');
       return newToken;
     }
 
-    throw new Error('Token refresh failed');
+    throw new Error('Token refresh failed: No token in response');
   } catch (error: any) {
     console.error('❌ Token refresh error:', error);
-    console.error('❌ Error details:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
 
-    // Check if it's a completely invalid token (not a JWT)
-    if (error.response?.status === 401) {
-      const errorMessage = error.response?.data?.message || '';
-      if (
-        errorMessage.includes('Invalid token format') ||
-        errorMessage.includes('Invalid token payload')
-      ) {
-        console.warn(
-          '⚠️ Token is not a valid JWT. Cannot refresh. Redirecting to login...'
-        );
-      }
-    }
-
-    // If refresh fails, logout user
     logoutUser();
 
-    // Redirect to appropriate login page
     if (typeof window !== 'undefined') {
       const userRole = localStorage.getItem('userRole');
-      console.log('🚪 Redirecting to login page. User role:', userRole);
       if (userRole === 'admin') {
         window.location.href = '/admin/login';
       } else {
@@ -123,7 +98,6 @@ const refreshToken = async (): Promise<string | null> => {
   }
 };
 
-// ✅ SINGLE REQUEST INTERCEPTOR - Adds token to all requests
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const authData = localStorageAuthUserData();

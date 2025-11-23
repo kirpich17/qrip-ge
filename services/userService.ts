@@ -12,7 +12,7 @@ export const getUserDetails = async (userId?: string) => {
     }
 
     const user = JSON.parse(loginData);
-    userId = user?.id;
+    userId = user?._id;
 
     if (!userId) {
       throw new Error('User ID not found in login data');
