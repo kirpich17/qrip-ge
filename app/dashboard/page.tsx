@@ -103,7 +103,23 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await getUserDetails();
+        const loginData = localStorage.getItem('loginData');
+
+        if (!loginData) {
+          console.error('No login data found');
+          return;
+        }
+
+        const user = JSON.parse(loginData);
+
+        const userId = user?.id;
+
+        if (!userId) {
+          console.error('User ID not found in loginData:', user);
+          return;
+        }
+
+        const userData = await getUserDetails(userId);
         setProfileData(userData.user);
       } catch (error) {
         console.error('Error fetching user details:', error);
@@ -112,18 +128,16 @@ function Dashboard() {
     fetchUserData();
   }, []);
 
-  // Fetch recent activities
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         setActivitiesLoading(true);
-        const response = await getUserRecentActivities(5); // Get 5 most recent activities
+        const response = await getUserRecentActivities(5);
         if (response.status && response.data) {
           setRecentActivities(response.data);
         }
       } catch (error) {
         console.error('Error fetching activities:', error);
-        // Set empty array on error to show no activities
         setRecentActivities([]);
       } finally {
         setActivitiesLoading(false);

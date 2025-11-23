@@ -1,7 +1,23 @@
 import axiosInstance from './axiosInstance';
 
-export const getUserDetails = async (userId) => {
-  if (!userId) throw new Error('User ID is required');
+export const getUserDetails = async (userId?: string) => {
+  if (!userId) {
+    if (typeof window === 'undefined') {
+      throw new Error('Cannot access localStorage on server side');
+    }
+
+    const loginData = localStorage.getItem('loginData');
+    if (!loginData) {
+      throw new Error('No login data found');
+    }
+
+    const user = JSON.parse(loginData);
+    userId = user?.id;
+
+    if (!userId) {
+      throw new Error('User ID not found in login data');
+    }
+  }
 
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
