@@ -6,7 +6,8 @@ import Features from './home/features';
 import Testimonials from './home/testimonials';
 import PublicMemorials from './home/publicMemorials';
 import { Suspense } from 'react';
-import MemorialActions from './home/MemorialActions';
+// import MemorialActions from './home/MemorialActions';
+import Plans from './home/plans';
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -49,7 +50,8 @@ export default function HomePage() {
     <Suspense fallback={<div>Loading...</div>}>
       <div className="min-h-screen">
         <Herobanner />
-        <MemorialActions />
+        <Plans />
+        {/* <MemorialActions /> */}
         <Howitwork />
         <Features />
         <PublicMemorials />
