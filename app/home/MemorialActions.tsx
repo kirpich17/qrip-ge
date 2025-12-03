@@ -1,5 +1,20 @@
-import { Plus, Tag } from 'lucide-react';
+"use client";
+
+import { Plus, Tag } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 const MemorialActions = () => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  };
   return (
     <div className="relative flex justify-center items-center bg-[#ecefdc] mt-8 lg:mt-20 w-full overflow-hidden">
       <div className="relative flex flex-col justify-center items-center gap-10 lg:gap-16 px-4 sm:px-6 lg:px-8 py-16 lg:py-24 w-full max-w-[1440px]">
@@ -22,11 +37,12 @@ const MemorialActions = () => {
         </div>
 
         <div className="flex sm:flex-row flex-col justify-center items-center gap-5 sm:gap-8 lg:gap-10 w-full">
-          <button className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300">
-            <span className="relative flex justify-center items-center gap-2">
-              <Plus className="w-5 h-5" />
-              start create memorial
-            </span>
+          <button
+            onClick={handleClick}
+            className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300 flex justify-center items-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            start create memorial
           </button>
 
           <button className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300">
