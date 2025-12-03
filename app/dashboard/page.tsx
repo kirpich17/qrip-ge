@@ -46,6 +46,12 @@ import { useRouter } from 'next/navigation';
 import axiosInstance from '@/services/axiosInstance';
 import LanguageDropdown from '@/components/languageDropdown/page';
 
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 },
+};
+
 const staggerContainer = {
   animate: {
     transition: {
@@ -103,41 +109,40 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const loginData = localStorage.getItem('loginData');
+        const loginDataString = localStorage.getItem('loginData');
+        if (!loginDataString) return;
 
-        if (!loginData) {
-          console.error('No login data found');
-          return;
-        }
-
-        const user = JSON.parse(loginData);
-
-        const userId = user?._id;
-
-        if (!userId) {
-          console.error('User ID not found in loginData:', user);
-          return;
-        }
+        const loginData = JSON.parse(loginDataString);
+        const userId = loginData._id;
+        if (!userId) return;
 
         const userData = await getUserDetails(userId);
-        setProfileData(userData.user);
+
+        setProfileData({
+          ...userData.user,
+          shippingDetails: userData.user?.shippingDetails || {},
+        });
       } catch (error) {
         console.error('Error fetching user details:', error);
+        toast.error('Failed to fetch user details.');
       }
     };
+
     fetchUserData();
   }, []);
 
+  // Fetch recent activities
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         setActivitiesLoading(true);
-        const response = await getUserRecentActivities(5);
+        const response = await getUserRecentActivities(5); // Get 5 most recent activities
         if (response.status && response.data) {
           setRecentActivities(response.data);
         }
       } catch (error) {
         console.error('Error fetching activities:', error);
+        // Set empty array on error to show no activities
         setRecentActivities([]);
       } finally {
         setActivitiesLoading(false);
@@ -231,25 +236,15 @@ function Dashboard() {
           console.error('No login data found in localStorage.');
           return;
         }
-
         const user = JSON.parse(loginData);
-        console.log('Parsed user:', user);
-
-        const userId = user?._id;
-        if (!userId) {
-          console.error('User ID not found inside loginData:', user);
-          return;
-        }
-
+        const userId = user._id;
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}api/auth/stats/${userId}`
         );
-
         const result = await response.json();
 
         if (result.status && result.data) {
           const apiData = result.data;
-
           setStats([
             {
               label: dashboard.stats.totalMemorials,
@@ -265,7 +260,7 @@ function Dashboard() {
             },
             {
               label: dashboard.stats.qrScans,
-              value: '1',
+              value: String(apiData.totalScans),
               icon: QrCode,
               color: 'text-green-600',
             },
@@ -350,7 +345,7 @@ function Dashboard() {
           className="gap-3 md:gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-4 md:mb-8"
         >
           {stats.map((stat, index) => (
-            <motion.div key={index}>
+            <motion.div key={index} variants={fadeInUp}>
               <Card>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center">

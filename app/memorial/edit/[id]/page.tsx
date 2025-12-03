@@ -145,7 +145,15 @@ export default function EditMemorialPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await getUserDetails();
+        const loginDataString = localStorage.getItem('loginData');
+        if (!loginDataString) throw new Error('loginData not found');
+
+        const loginData = JSON.parse(loginDataString);
+        const userId = loginData._id;
+        if (!userId) throw new Error('User ID missing in loginData');
+
+        const userData = await getUserDetails(userId);
+
         setUserDetails(userData.user);
         setUserSubscription(userData.user.subscriptionPlan);
       } catch (error) {
@@ -157,7 +165,7 @@ export default function EditMemorialPage() {
     };
 
     fetchUserData();
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     if (!params?.id) return;

@@ -1,36 +1,8 @@
 import axiosInstance from './axiosInstance';
 
-export const getUserDetails = async (userId?: string) => {
-  if (!userId) {
-    if (typeof window === 'undefined') {
-      throw new Error('Cannot access localStorage on server side');
-    }
-
-    const loginData = localStorage.getItem('loginData');
-    if (!loginData) {
-      throw new Error('No login data found');
-    }
-
-    const user = JSON.parse(loginData);
-    userId = user?._id;
-
-    if (!userId) {
-      throw new Error('User ID not found in login data');
-    }
-  }
-
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-
-  if (!token) throw new Error('No auth token found');
-
+export const getUserDetails = async (userId: any) => {
   try {
-    const response = await axiosInstance.get(`/api/auth/details/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+    const response = await axiosInstance.get(`/api/auth/details/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user details:', error);
