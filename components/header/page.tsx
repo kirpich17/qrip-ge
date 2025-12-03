@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { QrCode, Menu, X, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useTranslation } from "@/hooks/useTranslate";
-import LanguageDropdown from "../languageDropdown/page";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { QrCode, Menu, X, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/hooks/useTranslate';
+import LanguageDropdown from '../languageDropdown/page';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,11 +18,10 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleLanguage = () => setIsLanguageOpen((prev) => !prev);
 
-  const handleLanguageChange = (lang: "English" | "Georgian" | "Russian") => {
+  const handleLanguageChange = (lang: 'English' | 'Georgian' | 'Russian') => {
     setLanguage(lang);
     setIsLanguageOpen(false);
   };
-
 
   return (
     <>
@@ -30,23 +29,23 @@ const Header = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 w-full bg-[#243b31] z-50"
+        className="top-0 z-50 sticky bg-[#243b31] w-full"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center md:space-x-3 space-x-2">
+            <Link href="/" className="flex items-center space-x-2 md:space-x-3">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-white rounded-xl"
+                className="bg-white p-2 rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-[#243b31]" />
+                <QrCode className="w-5 h-5 text-[#243b31]" />
               </motion.div>
-              <span className="md:text-2xl text-xl font-bold text-white">
+              <span className="font-bold text-white text-xl md:text-2xl">
                 QRIP.ge
               </span>
-            </div>
+            </Link>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
@@ -56,14 +55,14 @@ const Header = () => {
               {/* <Link href="/admin/login">
                 <Button
                   variant="outline"
-                  className="border-white text-white bg-[#243b31]"
+                  className="bg-[#243b31] border-white text-white"
                 >
                   {t("header").admin}
                 </Button>
               </Link> */}
               <Link href="/login">
-                <Button className="bg-white shadow-lg text-[#243b31] hover:bg-[#243b31] hover:text-white border-white border">
-                  {t("header")?.getStarted ?? "Get Started"}
+                <Button className="bg-white hover:bg-[#243b31] shadow-lg border border-white text-[#243b31] hover:text-white">
+                  {t('header')?.getStarted ?? 'Get Started'}
                 </Button>
               </Link>
             </div>
@@ -73,11 +72,11 @@ const Header = () => {
               <div className="relative">
                 <Button
                   variant="ghost"
-                  className="text-white hover:bg-[#354f44]"
+                  className="hover:bg-[#354f44] text-white"
                   onClick={toggleLanguage}
                 >
                   {language}
-                  <ChevronDown className="ml-1 h-4 w-4" />
+                  <ChevronDown className="ml-1 w-4 h-4" />
                 </Button>
                 <AnimatePresence>
                   {isLanguageOpen && (
@@ -85,18 +84,18 @@ const Header = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-20 bg-white rounded-md shadow-lg z-50"
+                      className="right-0 z-50 absolute bg-white shadow-lg mt-2 rounded-md w-20"
                     >
                       <div className="py-1">
                         <button
-                          onClick={() => handleLanguageChange("English")}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => handleLanguageChange('English')}
+                          className="block hover:bg-gray-100 px-4 py-2 w-full text-gray-700 text-sm text-left"
                         >
                           EN
                         </button>
                         <button
-                          onClick={() => handleLanguageChange("Georgian")}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => handleLanguageChange('Georgian')}
+                          className="block hover:bg-gray-100 px-4 py-2 w-full text-gray-700 text-sm text-left"
                         >
                           KA
                         </button>
@@ -121,21 +120,21 @@ const Header = () => {
           {isMenuOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
+              animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="absolute top-16 left-0 w-full bg-[#243b31] px-4 pb-4 z-40 md:hidden"
+              className="md:hidden top-16 left-0 z-40 absolute bg-[#243b31] px-4 pb-4 w-full"
             >
               <div className="flex flex-col space-y-2">
                 <Link
                   href="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="border-b border-[#354f44] rounded-0"
+                  className="border-[#354f44] border-b rounded-0"
                 >
                   <Button
                     variant="ghost"
-                    className="w-full text-white justify-start"
+                    className="justify-start w-full text-white"
                   >
-                    {t("header")?.getStarted ?? "Get Started"}
+                    {t('header')?.getStarted ?? 'Get Started'}
                   </Button>
                 </Link>
               </div>

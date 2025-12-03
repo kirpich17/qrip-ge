@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import Herobanner from "./home/herobanner";
-import Howitwork from "./home/howitwork";
-import Features from "./home/features";
-import Testimonials from "./home/testimonials";
-import PublicMemorials from "./home/publicMemorials";
-import { Suspense } from "react";
+import Herobanner from './home/herobanner';
+import Howitwork from './home/howitwork';
+import Features from './home/features';
+import Testimonials from './home/testimonials';
+import PublicMemorials from './home/publicMemorials';
+import { Suspense } from 'react';
 
-import MemorialActions from "./home/MemorialActions";
+import MemorialActions from './home/MemorialActions';
+import Plans from './home/plans';
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -40,7 +41,7 @@ const floatingAnimation = {
     transition: {
       duration: 4,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
+      ease: 'easeInOut',
     },
   },
 };
@@ -51,6 +52,7 @@ export default function HomePage() {
       <div className="min-h-screen">
         <Herobanner />
         <MemorialActions />
+        <Plans />
         <Howitwork />
         <Features />
         <PublicMemorials />

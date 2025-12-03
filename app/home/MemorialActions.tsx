@@ -1,18 +1,19 @@
-"use client";
+'use client';
 
-import { Plus, Tag } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Plus, Tag } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const MemorialActions = () => {
   const router = useRouter();
 
   const handleClick = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     if (token) {
-      router.push("/dashboard");
+      router.push('/dashboard');
     } else {
-      router.push("/login");
+      router.push('/login');
     }
   };
   return (
@@ -37,20 +38,24 @@ const MemorialActions = () => {
         </div>
 
         <div className="flex sm:flex-row flex-col justify-center items-center gap-5 sm:gap-8 lg:gap-10 w-full">
-          <button
+          <Link
+            href="/planDetails"
             onClick={handleClick}
-            className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300 flex justify-center items-center gap-2"
+            className="group relative flex justify-center items-center gap-2 hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300"
           >
             <Plus className="w-5 h-5" />
             start create memorial
-          </button>
+          </Link>
 
-          <button className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300">
+          <Link
+            href="/planDetails"
+            className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300"
+          >
             <span className="relative flex justify-center items-center gap-2">
               <Tag className="w-5 h-5" />
               show memorial price
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
