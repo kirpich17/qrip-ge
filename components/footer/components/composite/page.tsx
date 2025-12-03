@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FooterInfo } from '../../api';
 import { ArrowUp, Phone, Mail, QrCode } from 'lucide-react';
 import { navigationLinks, socialLinks } from '../../data/navigation';
+import Link from 'next/link';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -66,7 +67,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Navigation Links */}
         <div className="flex-1 min-w-[180px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
             <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
@@ -76,19 +76,18 @@ const Footer = () => {
           </div>
           <nav className="flex flex-col gap-2 sm:gap-3">
             {navigationLinks.map((link, index) => (
-              <a
+              <Link
                 key={index}
                 href={link.href}
                 className="group flex items-center gap-2 sm:gap-3 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-medium text-gray-300 hover:text-white text-sm sm:text-base md:text-lg transition-all duration-300"
               >
                 <div className="bg-[#4fa167]/40 group-hover:bg-white rounded-full w-1.5 h-1.5 group-hover:scale-150 transition-all duration-300"></div>
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
 
-        {/* Social Links */}
         <div className="flex-1 min-w-[180px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
             <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
@@ -98,14 +97,14 @@ const Footer = () => {
           </div>
           <nav className="flex flex-col gap-2 sm:gap-3">
             {socialLinks.map((link, index) => (
-              <a
+              <Link
                 key={index}
                 href={link.href}
                 className="group flex items-center gap-2 sm:gap-3 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-medium text-gray-300 hover:text-white text-sm sm:text-base md:text-lg transition-all duration-300"
               >
                 <div className="bg-[#4fa167]/40 group-hover:bg-white rounded-full w-1.5 h-1.5 group-hover:scale-150 transition-all duration-300"></div>
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
