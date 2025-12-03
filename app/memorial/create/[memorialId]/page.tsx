@@ -1779,7 +1779,6 @@ export default function CreateMemorialPage() {
             </TabsContent>
           </Tabs>
 
-          {/* Save Button at Bottom */}
           <div className="flex justify-center mt-8">
             <Button
               className="bg-[#547455] hover:bg-[#243b31] px-8 py-3 text-white text-lg"
@@ -1803,7 +1802,6 @@ export default function CreateMemorialPage() {
             </Button>
           </div>
 
-          {/* Form validation message */}
           {!isFormValid() && (
             <div className="mt-4 text-center">
               <p className="text-red-500 text-sm">
