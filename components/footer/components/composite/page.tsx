@@ -21,7 +21,7 @@ const Footer = () => {
 
   return (
     <footer className="relative bg-[#243b31] mt-[60px] px-4 sm:px-6 lg:px-12 py-12 sm:py-16 overflow-hidden text-white">
-      <div className="top-10 left-10 absolute opacity-5">
+      <div className="top-5 left-0 absolute opacity-5">
         <QrCode className="w-28 sm:w-32 h-28 sm:h-32 text-[#4fa167]" />
       </div>
 
