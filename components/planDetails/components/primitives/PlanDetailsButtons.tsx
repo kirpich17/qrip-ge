@@ -44,7 +44,7 @@ const PlanDetailsButtons = () => {
             <div className="flex justify-center items-center bg-[#ffffff] shadow-lg px-[4px] rounded-[30px] w-full max-w-[608px] min-h-[55px]">
               <div className="relative flex justify-center items-center rounded-[30px] w-full max-w-[600px] min-h-[55px]">
                 <motion.div
-                  className="left-0 absolute rounded-[30px] w-1/3 h-[48px] -translate-y-1/2"
+                  className="left-0 absolute rounded-[30px] w-1/3 h-[48px]"
                   variants={planVariants}
                   animate={active}
                   transition={{ type: 'spring', stiffness: 300, damping: 40 }}
