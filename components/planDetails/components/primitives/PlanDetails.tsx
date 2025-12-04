@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
+import PlanSkeleton from './PlanSkeleton';
 
 const PlanDetails = ({
   data,
@@ -11,7 +12,14 @@ const PlanDetails = ({
   isLoading: boolean;
   isError: boolean;
 }) => {
-  if (!data) return null;
+  if (isLoading) {
+    return <PlanSkeleton />;
+  }
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="p-4 w-full max-w-[1000px]">
       <div className="flex flex-col bg-white dark:bg-background-dark/50 shadow-lg rounded-xl overflow-hidden">
