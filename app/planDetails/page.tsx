@@ -4,7 +4,7 @@ import React from 'react';
 
 const PlanDetails = () => {
   return (
-    <div>
+    <div className="bg-[#ecefdc]">
       <Header />
       <PlansPrice />
     </div>

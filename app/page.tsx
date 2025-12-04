@@ -52,7 +52,6 @@ export default function HomePage() {
       <div className="min-h-screen">
         <Herobanner />
         <MemorialActions />
-        <Plans />
         <Howitwork />
         <Features />
         <PublicMemorials />
