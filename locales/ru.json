@@ -113,11 +113,7 @@
       "name": "Бесплатный",
       "price": "0 ₽",
       "period": "навсегда",
-      "features": [
-        "Биография и фото",
-        "QR-код",
-        "Базовый мемориал"
-      ]
+      "features": ["Биография и фото", "QR-код", "Базовый мемориал"]
     },
     "premium": {
       "name": "Базовый Премиум",
@@ -277,7 +273,7 @@
       "deleteConfirm": "Вы уверены, что хотите удалить этот мемориал?",
       "active": "Активен",
       "draft": "Черновик",
-        "managePlan": "Управление планом",
+      "managePlan": "Управление планом",
       "noMemorialsFound": "Мемориалы не найдены"
     },
     "quickActions": {
@@ -403,11 +399,10 @@
     "validation": {
       "fillRequiredFields": "Пожалуйста, заполните все обязательные поля для сохранения мемориала"
     },
-    
-  "latitude": "Широта",
-  "longitude": "Долгота",
-  "autoFillGPS": "Автозаполнение GPS"
 
+    "latitude": "Широта",
+    "longitude": "Долгота",
+    "autoFillGPS": "Автозаполнение GPS"
   },
   "qrGenerator": {
     "header": {
@@ -520,9 +515,7 @@
           "Расширенные настройки",
           "Приоритетная поддержка"
         ],
-        "limitations": [
-          "Без пожизненного доступа"
-        ],
+        "limitations": ["Без пожизненного доступа"],
         "button": "Перейти на Базовый Премиум",
         "popular": "Самый популярный",
         "yearlySave": "Экономия 1188 ₽ в год"
@@ -639,10 +632,10 @@
           "manualCoordinates": "Введите точные координаты вручную в поля ввода"
         }
       },
-          "achievements": "Достижения",
-  "awards": "Добавьте заметные достижения или награды",
-  "nobelPrice": "Нобелевская премия по физике",
-  "achievement": "Добавьте заметные достижения или награды (напр., «Нобелевская премия», «Золотая олимпийская медаль»)"
+      "achievements": "Достижения",
+      "awards": "Добавьте заметные достижения или награды",
+      "nobelPrice": "Нобелевская премия по физике",
+      "achievement": "Добавьте заметные достижения или награды (напр., «Нобелевская премия», «Золотая олимпийская медаль»)"
     },
     "media": {
       "title": "Фото и Видео",
@@ -662,27 +655,27 @@
         "description": "Управляйте документами",
         "button": "Управлять файлами"
       },
-  "videosCard": {
-    "videos": "Видео",
-    "upload": "Загрузите видео воспоминания",
-    "uploadVideo": "Загрузить видео",
-    "existingVideos": "Существующие видео",
-    "newVideos": "Новые видео"
-  },
-  "documentCard": {
-    "document": "Документы",
-    "upload": "Загрузите важные документы",
-    "uploadDocument": "Загрузить документы",
-    "existingDocument": "Существующие документы"
-  }
+      "videosCard": {
+        "videos": "Видео",
+        "upload": "Загрузите видео воспоминания",
+        "uploadVideo": "Загрузить видео",
+        "existingVideos": "Существующие видео",
+        "newVideos": "Новые видео"
+      },
+      "documentCard": {
+        "document": "Документы",
+        "upload": "Загрузите важные документы",
+        "uploadDocument": "Загрузить документы",
+        "existingDocument": "Существующие документы"
+      }
     },
     "familyTree": {
       "title": "Семейное древо",
       "description": "Редактируйте семейные связи и отношения",
-          "familyMember": "Имя члена семьи",
-    "relationship": "Отношение",
+      "familyMember": "Имя члена семьи",
+      "relationship": "Отношение",
       "namePlaceholder": "напр., Иван Иванов",
-    "relationshipPlaceholder": "напр., Отец",
+      "relationshipPlaceholder": "напр., Отец",
       "placeholder": {
         "title": "Редактор семейного древа",
         "description": "Редактируйте связи между членами семьи и их отношения",
@@ -818,7 +811,7 @@
       "family": {
         "title": "Семья",
         "locked": "Семейное древо доступно в премиум-тарифе",
-           "noFamily": "Члены семьи еще не добавлены"
+        "noFamily": "Члены семьи еще не добавлены"
       },
       "location": {
         "title": "Местоположение мемориала",
@@ -828,11 +821,11 @@
         "copyCoordinates": "Копировать координаты",
         "preciseLocation": "Точное местоположение:",
         "locked": "GPS-координаты доступны в премиум-тарифе",
-           "noLocation":"Данные о местоположении для этого мемориала недоступны"
+        "noLocation": "Данные о местоположении для этого мемориала недоступны"
       },
       "achievements": {
         "title": "Достижения и наследие",
-         "noAchievements": "Достижения еще не добавлены"
+        "noAchievements": "Достижения еще не добавлены"
       },
       "info": {
         "title": "Информация о мемориале",
@@ -932,16 +925,16 @@
       "bioPlaceholder": "Расскажите немного о себе...",
       "saveChanges": "Сохранить изменения"
     },
-  "shippingInfo": {
-    "title": "Адрес доставки",
-    "description": "Обновите ваш адрес доставки для физических посылок",
-    "fullName": "Полное имя",
-    "address": "Адрес (улица, дом)",
-    "phone": "Номер телефона",
-    "zipCode": "Почтовый индекс",
-    "city": "Город",
-    "country": "Страна"
-  }
+    "shippingInfo": {
+      "title": "Адрес доставки",
+      "description": "Обновите ваш адрес доставки для физических посылок",
+      "fullName": "Полное имя",
+      "address": "Адрес (улица, дом)",
+      "phone": "Номер телефона",
+      "zipCode": "Почтовый индекс",
+      "city": "Город",
+      "country": "Страна"
+    }
   },
   "setting": {
     "header": {
@@ -1392,7 +1385,7 @@
     "changePassword": "Изменить пароль",
     "logout": "Выйти"
   },
-"subscription_management": {
+  "subscription_management": {
     "my_subscription_tab": "Моя подписка",
     "manage_plans_tab": "Управление тарифами",
     "payment_success": "Платёж прошёл успешно!",
@@ -1410,8 +1403,8 @@
       "try_again_button": "Попробовать снова"
     },
     "plan_updated_success": "План успешно обновлен!",
-"plan_updated_msg": "Ваш тарифный план успешно обновлен.",
-"go_to_dashboard": "Перейти в личный кабинет"
+    "plan_updated_msg": "Ваш тарифный план успешно обновлен.",
+    "go_to_dashboard": "Перейти в личный кабинет"
   },
   "selectPlanPage": {
     "header": {
@@ -1446,31 +1439,30 @@
       "processing": "Обработка...",
       "selectPlan": "Выбрать план",
 
-
-   "getStarted": "Начать",
-  "goPremium": "Перейти на Премиум",
-  "medium": "Перейти на Премиум"
+      "getStarted": "Начать",
+      "goPremium": "Перейти на Премиум",
+      "medium": "Перейти на Премиум"
     },
 
-      "promoCode": {
-     "applyButton": "Применить",
-    "applying": "Применение...",
-    "placeholder": "Введите промокод",
-    "success": "Промокод успешно применен!",
-    "invalid": "Неверный промокод",
-    "failed": "Не удалось применить промокод",
-    "tooltip": "Введите промокод, чтобы получить скидки на этот план.",
-    "sectionTitle": "Применить промокод",
-    "applied": "Промокод применен: {code}",
-    "discountPercentage": "{value}% скидка",
-    "discountFixed": "{value} GEL скидка",
-    "discountFree": "100% скидка - БЕСПЛАТНО",
-    "removeButton": "Удалить",
-    "youSave": "Вы экономите",
-    "getForFree": "Получить бесплатно",
-    "memorialIdRequired": "Для применения промокода требуется ID мемориала",
-    "enterCode": "Пожалуйста, введите промокод"
-  }
+    "promoCode": {
+      "applyButton": "Применить",
+      "applying": "Применение...",
+      "placeholder": "Введите промокод",
+      "success": "Промокод успешно применен!",
+      "invalid": "Неверный промокод",
+      "failed": "Не удалось применить промокод",
+      "tooltip": "Введите промокод, чтобы получить скидки на этот план.",
+      "sectionTitle": "Применить промокод",
+      "applied": "Промокод применен: {code}",
+      "discountPercentage": "{value}% скидка",
+      "discountFixed": "{value} GEL скидка",
+      "discountFree": "100% скидка - БЕСПЛАТНО",
+      "removeButton": "Удалить",
+      "youSave": "Вы экономите",
+      "getForFree": "Получить бесплатно",
+      "memorialIdRequired": "Для применения промокода требуется ID мемориала",
+      "enterCode": "Пожалуйста, введите промокод"
+    }
   },
   "adminSubscriptionPage": {
     "header": {
@@ -1591,7 +1583,7 @@
       "pageInfo": "Страница {currentPage} из {totalPages}"
     }
   },
-    "promoCodeManagement": {
+  "promoCodeManagement": {
     "title": "პრომო კოდების მართვა",
     "description": "შექმენით და მართეთ პრომო კოდები ფასდაკლებისთვის ან უფასო გეგმებისთვის.",
     "addNewButton": "ახალი პრომო კოდის დამატება",
@@ -1645,542 +1637,542 @@
     "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ პრომო კოდის წაშლა?",
     "noPromoCodes": "პრომო კოდები არ მოიძებნა."
   },
-  "homePagePlan":{
+  "homePagePlan": {
     "heading": "Выберите свой план",
-      "title": "Выберите идеальный план, чтобы почтить память ваших близких"
-},
-"help":{
-"helpButton": "помощь"
-},
-    "TermsPage": {
-      "manage": "Управление Условиями и Положениями",
-        "termAndCondition": "Условия и Положения",
-      "heading": "Редактор Условий и Положений",
-      "Preview": "Предпросмотр",
-      "ExitPreview": "Выйти из предпросмотра",
-      "NoteSection": "Раздел заметки",
-      "NoteTitle": "Заголовок заметки",
-      "NoteContent": "Содержание заметки",
-      "Sections": "Разделы",
-      "AddSections": "Добавить новый раздел",
-      "TermsConditions": "Условия и Положения",
-      "SectionTitle": "Заголовок раздела",
-      "SectionType": "Тип раздела",
-      "Content": "Содержание",
-      "characters": "символов",
-      "Introduction": "Введение (необязательно)",
-      "EnterTitle": "Введите заголовок",
-      "Entercontent": "Введите содержание...",
-      "EnterIntroduction": "Введите текст введения (необязательно)",
-      "EnterListItem": "Введите элемент списка",
-      "ListItems": "Элементы списка",
-      "AddItam": "Добавить элемент",
-      "List": "Список",
-       "Text": "Текст",
-      "Saving": "Сохранение",
-      "Save": "Сохранить",
-      "ResetAll": "Сбросить всё"
+    "title": "Выберите идеальный план, чтобы почтить память ваших близких"
+  },
+  "help": {
+    "helpButton": "помощь"
+  },
+  "TermsPage": {
+    "manage": "Управление Условиями и Положениями",
+    "termAndCondition": "Условия и Положения",
+    "heading": "Редактор Условий и Положений",
+    "Preview": "Предпросмотр",
+    "ExitPreview": "Выйти из предпросмотра",
+    "NoteSection": "Раздел заметки",
+    "NoteTitle": "Заголовок заметки",
+    "NoteContent": "Содержание заметки",
+    "Sections": "Разделы",
+    "AddSections": "Добавить новый раздел",
+    "TermsConditions": "Условия и Положения",
+    "SectionTitle": "Заголовок раздела",
+    "SectionType": "Тип раздела",
+    "Content": "Содержание",
+    "characters": "символов",
+    "Introduction": "Введение (необязательно)",
+    "EnterTitle": "Введите заголовок",
+    "Entercontent": "Введите содержание...",
+    "EnterIntroduction": "Введите текст введения (необязательно)",
+    "EnterListItem": "Введите элемент списка",
+    "ListItems": "Элементы списка",
+    "AddItam": "Добавить элемент",
+    "List": "Список",
+    "Text": "Текст",
+    "Saving": "Сохранение",
+    "Save": "Сохранить",
+    "ResetAll": "Сбросить всё"
+  },
+  "adminStickers": {
+    "header": {
+      "back": "Назад к панели администратора",
+      "title": "Варианты QR стикеров"
     },
-    "adminStickers": {
-      "header": {
-        "back": "Назад к панели администратора",
-        "title": "Варианты QR стикеров"
-      },
-      "main": {
-        "title": "Варианты QR стикеров",
-        "description": "Управляйте доступными типами QR стикеров и ценами",
-        "addButton": "Добавить вариант стикера"
-      },
-      "search": {
-        "placeholder": "Поиск вариантов стикеров..."
-      },
-      "table": {
-        "title": "Варианты стикеров ({count})",
-        "description": "Управляйте всеми доступными вариантами QR стикеров",
-        "headers": {
-          "name": "Название",
-          "type": "Тип",
-          "size": "Размер",
-          "price": "Цена",
-          "stock": "Склад",
-          "status": "Статус",
-          "actions": "Действия"
-        },
-        "status": {
-          "active": "Активный",
-          "inactive": "Неактивный"
-        }
-      },
-      "createDialog": {
-        "title": "Создать новый вариант стикера",
-        "description": "Добавьте новый вариант QR стикера с ценами и спецификациями.",
-        "form": {
-          "name": "Название",
-          "namePlaceholder": "Стандартный виниловый QR стикер",
-          "type": "Тип",
-          "typePlaceholder": "Выберите тип",
-          "description": "Описание",
-          "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
-          "size": "Размер",
-          "sizePlaceholder": "3x3 дюйма",
-          "price": "Цена (₾)",
-          "pricePlaceholder": "25.00",
-          "stock": "Склад",
-          "stockPlaceholder": "100",
-          "material": "Материал",
-          "materialPlaceholder": "Премиум винил",
-          "dimensions": "Размеры",
-          "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
-          "durability": "Долговечность",
-          "durabilityPlaceholder": "2-3 года на улице",
-          "weatherResistance": "Устойчивость к погоде",
-          "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ"
-        },
-        "buttons": {
-          "cancel": "Отмена",
-          "create": "Создать"
-        }
-      },
-      "editDialog": {
-        "title": "Редактировать вариант стикера",
-        "description": "Обновите детали и спецификации варианта стикера.",
-        "buttons": {
-          "cancel": "Отмена",
-          "update": "Обновить"
-        }
-      },
-      "types": {
-        "vinyl": "Винил",
-        "engraving": "Гравировка",
-        "premium": "Премиум"
-      },
-      "messages": {
-        "loading": "Загрузка вариантов стикеров...",
-        "createSuccess": "Вариант стикера успешно создан",
-        "updateSuccess": "Вариант стикера успешно обновлен",
-        "deleteSuccess": "Вариант стикера успешно удален",
-        "statusUpdateSuccess": "Статус успешно обновлен",
-        "createError": "Не удалось создать вариант стикера",
-        "updateError": "Не удалось обновить вариант стикера",
-        "deleteError": "Не удалось удалить вариант стикера",
-        "statusUpdateError": "Не удалось обновить статус",
-        "loadError": "Не удалось загрузить варианты стикеров",
-        "deleteConfirm": "Вы уверены, что хотите удалить этот вариант стикера?"
-      }
+    "main": {
+      "title": "Варианты QR стикеров",
+      "description": "Управляйте доступными типами QR стикеров и ценами",
+      "addButton": "Добавить вариант стикера"
     },
-    "adminStickerTypes": {
-      "header": {
-        "back": "Назад к панели администратора",
-        "title": "Типы стикеров",
-        "description": "Управление доступными типами стикеров"
-      },
-      "loading": {
-        "message": "Загрузка типов стикеров..."
-      },
-      "search": {
-        "placeholder": "Поиск типов стикеров..."
-      },
-      "table": {
-        "title": "Типы стикеров ({count})",
-        "description": "Управление всеми доступными типами стикеров",
-        "headers": {
-          "name": "Название",
-          "displayName": "Отображаемое название",
-          "description": "Описание",
-          "status": "Статус",
-          "actions": "Действия"
-        },
-        "status": {
-          "active": "Активный",
-          "inactive": "Неактивный"
-        }
-      },
-      "createDialog": {
-        "title": "Создать новый тип стикера",
-        "description": "Добавить новый тип стикера со спецификациями.",
-        "form": {
-          "name": "Название",
-          "namePlaceholder": "vinyl",
-          "displayName": "Отображаемое название",
-          "displayNamePlaceholder": "Винил",
-          "description": "Описание",
-          "descriptionPlaceholder": "Высококачественный виниловый материал...",
-          "material": "Материал",
-          "materialPlaceholder": "Премиум винил",
-          "durability": "Долговечность",
-          "durabilityPlaceholder": "2-3 года на улице",
-          "weatherResistance": "Устойчивость к погоде",
-          "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ",
-          "specialFeatures": "Особые функции",
-          "specialFeaturesPlaceholder": "Доступны пользовательские цвета"
-        },
-        "buttons": {
-          "cancel": "Отмена",
-          "create": "Создать"
-        }
-      },
-      "editDialog": {
-        "title": "Редактировать тип стикера",
-        "description": "Обновить детали и спецификации типа стикера.",
-        "buttons": {
-          "cancel": "Отмена",
-          "update": "Обновить"
-        }
-      },
-      "messages": {
-        "loading": "Загрузка типов стикеров...",
-        "createSuccess": "Тип стикера успешно создан",
-        "updateSuccess": "Тип стикера успешно обновлен",
-        "deleteSuccess": "Тип стикера успешно удален",
-        "statusUpdateSuccess": "Статус успешно обновлен",
-        "createError": "Не удалось создать тип стикера",
-        "updateError": "Не удалось обновить тип стикера",
-        "deleteError": "Не удалось удалить тип стикера",
-        "statusUpdateError": "Не удалось обновить статус",
-        "loadError": "Не удалось загрузить типы стикеров",
-        "deleteConfirm": "Вы уверены, что хотите удалить этот тип стикера?"
-      }
+    "search": {
+      "placeholder": "Поиск вариантов стикеров..."
     },
-    "adminOrders": {
-      "header": {
-        "back": "Назад к панели администратора",
-        "title": "Заказы QR стикеров"
-      },
-      "main": {
-        "title": "Заказы QR стикеров",
-        "description": "Управляйте всеми заказами QR стикеров и отслеживайте их статус"
-      },
-      "stats": {
-        "totalOrders": "Всего заказов",
-        "pending": "В ожидании",
-        "paid": "Оплачено",
-        "shipped": "Отправлено",
-        "totalRevenue": "Общий доход"
-      },
-      "filters": {
-        "searchPlaceholder": "Поиск по имени, email или номеру отслеживания...",
-        "orderStatus": "Статус заказа",
-        "paymentStatus": "Статус оплаты",
-        "allStatuses": "Все статусы",
-        "allPayments": "Все платежи"
+    "table": {
+      "title": "Варианты стикеров ({count})",
+      "description": "Управляйте всеми доступными вариантами QR стикеров",
+      "headers": {
+        "name": "Название",
+        "type": "Тип",
+        "size": "Размер",
+        "price": "Цена",
+        "stock": "Склад",
+        "status": "Статус",
+        "actions": "Действия"
       },
       "status": {
-        "pending": "В ожидании",
-        "processing": "Обрабатывается",
-        "shipped": "Отправлено",
-        "delivered": "Доставлено",
-        "cancelled": "Отменено"
-      },
-      "paymentStatus": {
-        "pending": "В ожидании",
-        "paid": "Оплачено",
-        "failed": "Не удалось",
-        "refunded": "Возвращено"
-      },
-      "table": {
-        "title": "Заказы ({count})",
-        "description": "Управляйте и отслеживайте все заказы QR стикеров",
-        "headers": {
-          "orderId": "ID заказа",
-          "customer": "Клиент",
-          "memorial": "Мемориал",
-          "sticker": "Стикер",
-          "quantity": "Количество",
-          "total": "Итого",
-          "payment": "Оплата",
-          "status": "Статус",
-          "date": "Дата",
-          "actions": "Действия"
-        },
-        "actions": {
-          "ship": "Отправить",
-          "markDelivered": "Отметить доставленным",
-          "viewDetails": "Просмотр деталей и скачивание QR",
-          "deleteOrder": "Удалить заказ"
-        }
-      },
-      "pagination": {
-        "pageInfo": "Страница {currentPage} из {totalPages}",
-        "previous": "Предыдущая",
-        "next": "Следующая"
-      },
-      "messages": {
-        "loading": "Загрузка заказов...",
-        "loadError": "Не удалось загрузить заказы",
-        "updateSuccess": "Статус заказа успешно обновлен",
-        "updateError": "Не удалось обновить статус заказа",
-        "deleteSuccess": "Заказ успешно удален",
-        "deleteError": "Не удалось удалить заказ",
-        "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?\n\nЭто действие нельзя отменить и оно навсегда удалит:\n• Детали заказа\n• Информацию об оплате\n• Адрес доставки\n• Все связанные данные\n\nНажмите OK для подтверждения удаления.",
-        "trackingPrompt": "Введите номер отслеживания:"
-      },
-      "pagination": {
-        "previous": "Предыдущая",
-        "next": "Следующая",
-        "page": "Страница",
-        "of": "из",
-        "showing": "Показано",
-        "to": "до",
-        "results": "результатов"
+        "active": "Активный",
+        "inactive": "Неактивный"
       }
     },
-    "adminOrderDetail": {
-      "header": {
-        "back": "Назад к заказам",
-        "title": "Детали заказа"
+    "createDialog": {
+      "title": "Создать новый вариант стикера",
+      "description": "Добавьте новый вариант QR стикера с ценами и спецификациями.",
+      "form": {
+        "name": "Название",
+        "namePlaceholder": "Стандартный виниловый QR стикер",
+        "type": "Тип",
+        "typePlaceholder": "Выберите тип",
+        "description": "Описание",
+        "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
+        "size": "Размер",
+        "sizePlaceholder": "3x3 дюйма",
+        "price": "Цена (₾)",
+        "pricePlaceholder": "25.00",
+        "stock": "Склад",
+        "stockPlaceholder": "100",
+        "material": "Материал",
+        "materialPlaceholder": "Премиум винил",
+        "dimensions": "Размеры",
+        "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+        "durability": "Долговечность",
+        "durabilityPlaceholder": "2-3 года на улице",
+        "weatherResistance": "Устойчивость к погоде",
+        "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ"
       },
-      "loading": {
-        "message": "Загрузка деталей заказа..."
-      },
-      "notFound": {
-        "title": "Заказ не найден",
-        "message": "Заказ, который вы ищете, не существует.",
-        "backButton": "Назад к заказам"
-      },
-      "orderHeader": {
-        "orderNumber": "Заказ #{orderId}",
-        "createdOn": "Создан {date}"
-      },
-      "sections": {
-        "customerInfo": {
-          "title": "Информация о клиенте",
-          "name": "Имя",
-          "email": "Email",
-          "phone": "Телефон",
-          "userId": "ID пользователя"
-        },
-        "memorialInfo": {
-          "title": "Информация о мемориале",
-          "memorialName": "Название мемориала",
-          "slug": "Slug",
-          "memorialId": "ID мемориала"
-        },
-        "shippingAddress": {
-          "title": "Адрес доставки",
-          "phone": "Телефон"
-        },
-        "orderSummary": {
-          "title": "Сводка заказа",
-          "sticker": "Стикер",
-          "type": "Тип",
-          "size": "Размер",
-          "quantity": "Количество",
-          "unitPrice": "Цена за единицу",
-          "total": "Итого"
-        },
-        "qrCodeDownload": {
-          "title": "Скачивание QR кода",
-          "description": "Скачайте QR код для этого мемориала",
-          "memorialLabel": "Мемориал: {name}",
-          "qualityNote": "Высококачественные QR коды, подходящие для печати на стикерах"
-        },
-        "paymentInfo": {
-          "title": "Информация об оплате",
-          "status": "Статус",
-          "paymentId": "ID платежа"
-        },
-        "orderActions": {
-          "title": "Действия с заказом",
-          "deleteOrder": "Удалить заказ"
-        },
-        "timeline": {
-          "title": "Временная шкала",
-          "orderCreated": "Заказ создан",
-          "lastUpdated": "Последнее обновление"
-        }
+      "buttons": {
+        "cancel": "Отмена",
+        "create": "Создать"
+      }
+    },
+    "editDialog": {
+      "title": "Редактировать вариант стикера",
+      "description": "Обновите детали и спецификации варианта стикера.",
+      "buttons": {
+        "cancel": "Отмена",
+        "update": "Обновить"
+      }
+    },
+    "types": {
+      "vinyl": "Винил",
+      "engraving": "Гравировка",
+      "premium": "Премиум"
+    },
+    "messages": {
+      "loading": "Загрузка вариантов стикеров...",
+      "createSuccess": "Вариант стикера успешно создан",
+      "updateSuccess": "Вариант стикера успешно обновлен",
+      "deleteSuccess": "Вариант стикера успешно удален",
+      "statusUpdateSuccess": "Статус успешно обновлен",
+      "createError": "Не удалось создать вариант стикера",
+      "updateError": "Не удалось обновить вариант стикера",
+      "deleteError": "Не удалось удалить вариант стикера",
+      "statusUpdateError": "Не удалось обновить статус",
+      "loadError": "Не удалось загрузить варианты стикеров",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот вариант стикера?"
+    }
+  },
+  "adminStickerTypes": {
+    "header": {
+      "back": "Назад к панели администратора",
+      "title": "Типы стикеров",
+      "description": "Управление доступными типами стикеров"
+    },
+    "loading": {
+      "message": "Загрузка типов стикеров..."
+    },
+    "search": {
+      "placeholder": "Поиск типов стикеров..."
+    },
+    "table": {
+      "title": "Типы стикеров ({count})",
+      "description": "Управление всеми доступными типами стикеров",
+      "headers": {
+        "name": "Название",
+        "displayName": "Отображаемое название",
+        "description": "Описание",
+        "status": "Статус",
+        "actions": "Действия"
       },
       "status": {
-        "pending": "В ожидании",
-        "processing": "Обрабатывается",
-        "shipped": "Отправлено",
-        "delivered": "Доставлено",
-        "cancelled": "Отменено"
-      },
-      "paymentStatus": {
-        "pending": "В ожидании",
-        "paid": "Оплачено",
-        "failed": "Не удалось",
-        "refunded": "Возвращено"
-      },
-      "messages": {
-        "orderNotFound": "Заказ не найден",
-        "loadError": "Не удалось загрузить детали заказа",
-        "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?\n\nЭто действие нельзя отменить и оно навсегда удалит все данные заказа.",
-        "deleteSuccess": "Заказ успешно удален",
-        "deleteError": "Не удалось удалить заказ",
-        "notLoggedIn": "Вы не авторизованы",
-        "downloadSuccess": "QR код скачан как {fileName}",
-        "downloadError": "Не удалось сгенерировать QR код"
+        "active": "Активный",
+        "inactive": "Неактивный"
       }
     },
-    "adminDashboard": {
-      "orders": {
-        "tabTitle": "Заказы",
-        "title": "Заказы QR стикеров",
-        "description": "Управляйте всеми заказами QR стикеров и отслеживайте их статус",
-        "viewAllOrders": "Просмотреть все заказы",
-        "manageStickers": "Управление стикерами",
-        "manageTypes": "Управление типами",
-        "orderManagement": "Управление заказами",
-        "orderManagementDescription": "Просматривайте и управляйте всеми заказами QR стикеров на специальной странице заказов.",
-        "goToOrders": "Перейти к заказам"
+    "createDialog": {
+      "title": "Создать новый тип стикера",
+      "description": "Добавить новый тип стикера со спецификациями.",
+      "form": {
+        "name": "Название",
+        "namePlaceholder": "vinyl",
+        "displayName": "Отображаемое название",
+        "displayNamePlaceholder": "Винил",
+        "description": "Описание",
+        "descriptionPlaceholder": "Высококачественный виниловый материал...",
+        "material": "Материал",
+        "materialPlaceholder": "Премиум винил",
+        "durability": "Долговечность",
+        "durabilityPlaceholder": "2-3 года на улице",
+        "weatherResistance": "Устойчивость к погоде",
+        "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ",
+        "specialFeatures": "Особые функции",
+        "specialFeaturesPlaceholder": "Доступны пользовательские цвета"
+      },
+      "buttons": {
+        "cancel": "Отмена",
+        "create": "Создать"
       }
     },
-    "adminStickersPage": {
-      "header": {
-        "back": "Назад к панели администратора",
-        "title": "Варианты QR стикеров",
-        "description": "Управляйте доступными типами QR стикеров и ценами"
+    "editDialog": {
+      "title": "Редактировать тип стикера",
+      "description": "Обновить детали и спецификации типа стикера.",
+      "buttons": {
+        "cancel": "Отмена",
+        "update": "Обновить"
+      }
+    },
+    "messages": {
+      "loading": "Загрузка типов стикеров...",
+      "createSuccess": "Тип стикера успешно создан",
+      "updateSuccess": "Тип стикера успешно обновлен",
+      "deleteSuccess": "Тип стикера успешно удален",
+      "statusUpdateSuccess": "Статус успешно обновлен",
+      "createError": "Не удалось создать тип стикера",
+      "updateError": "Не удалось обновить тип стикера",
+      "deleteError": "Не удалось удалить тип стикера",
+      "statusUpdateError": "Не удалось обновить статус",
+      "loadError": "Не удалось загрузить типы стикеров",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот тип стикера?"
+    }
+  },
+  "adminOrders": {
+    "header": {
+      "back": "Назад к панели администратора",
+      "title": "Заказы QR стикеров"
+    },
+    "main": {
+      "title": "Заказы QR стикеров",
+      "description": "Управляйте всеми заказами QR стикеров и отслеживайте их статус"
+    },
+    "stats": {
+      "totalOrders": "Всего заказов",
+      "pending": "В ожидании",
+      "paid": "Оплачено",
+      "shipped": "Отправлено",
+      "totalRevenue": "Общий доход"
+    },
+    "filters": {
+      "searchPlaceholder": "Поиск по имени, email или номеру отслеживания...",
+      "orderStatus": "Статус заказа",
+      "paymentStatus": "Статус оплаты",
+      "allStatuses": "Все статусы",
+      "allPayments": "Все платежи"
+    },
+    "status": {
+      "pending": "В ожидании",
+      "processing": "Обрабатывается",
+      "shipped": "Отправлено",
+      "delivered": "Доставлено",
+      "cancelled": "Отменено"
+    },
+    "paymentStatus": {
+      "pending": "В ожидании",
+      "paid": "Оплачено",
+      "failed": "Не удалось",
+      "refunded": "Возвращено"
+    },
+    "table": {
+      "title": "Заказы ({count})",
+      "description": "Управляйте и отслеживайте все заказы QR стикеров",
+      "headers": {
+        "orderId": "ID заказа",
+        "customer": "Клиент",
+        "memorial": "Мемориал",
+        "sticker": "Стикер",
+        "quantity": "Количество",
+        "total": "Итого",
+        "payment": "Оплата",
+        "status": "Статус",
+        "date": "Дата",
+        "actions": "Действия"
       },
-      "loading": {
-        "message": "Загрузка вариантов стикеров..."
+      "actions": {
+        "ship": "Отправить",
+        "markDelivered": "Отметить доставленным",
+        "viewDetails": "Просмотр деталей и скачивание QR",
+        "deleteOrder": "Удалить заказ"
+      }
+    },
+    "pagination": {
+      "pageInfo": "Страница {currentPage} из {totalPages}",
+      "previous": "Предыдущая",
+      "next": "Следующая"
+    },
+    "messages": {
+      "loading": "Загрузка заказов...",
+      "loadError": "Не удалось загрузить заказы",
+      "updateSuccess": "Статус заказа успешно обновлен",
+      "updateError": "Не удалось обновить статус заказа",
+      "deleteSuccess": "Заказ успешно удален",
+      "deleteError": "Не удалось удалить заказ",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?\n\nЭто действие нельзя отменить и оно навсегда удалит:\n• Детали заказа\n• Информацию об оплате\n• Адрес доставки\n• Все связанные данные\n\nНажмите OK для подтверждения удаления.",
+      "trackingPrompt": "Введите номер отслеживания:"
+    },
+    "pagination": {
+      "previous": "Предыдущая",
+      "next": "Следующая",
+      "page": "Страница",
+      "of": "из",
+      "showing": "Показано",
+      "to": "до",
+      "results": "результатов"
+    }
+  },
+  "adminOrderDetail": {
+    "header": {
+      "back": "Назад к заказам",
+      "title": "Детали заказа"
+    },
+    "loading": {
+      "message": "Загрузка деталей заказа..."
+    },
+    "notFound": {
+      "title": "Заказ не найден",
+      "message": "Заказ, который вы ищете, не существует.",
+      "backButton": "Назад к заказам"
+    },
+    "orderHeader": {
+      "orderNumber": "Заказ #{orderId}",
+      "createdOn": "Создан {date}"
+    },
+    "sections": {
+      "customerInfo": {
+        "title": "Информация о клиенте",
+        "name": "Имя",
+        "email": "Email",
+        "phone": "Телефон",
+        "userId": "ID пользователя"
       },
-      "search": {
-        "placeholder": "Поиск вариантов стикеров..."
+      "memorialInfo": {
+        "title": "Информация о мемориале",
+        "memorialName": "Название мемориала",
+        "slug": "Slug",
+        "memorialId": "ID мемориала"
       },
-      "table": {
-        "title": "Варианты стикеров ({count})",
-        "description": "Управляйте всеми доступными вариантами QR стикеров",
-        "headers": {
-          "name": "Название",
-          "type": "Тип",
-          "size": "Размер",
-          "price": "Цена",
-          "stock": "Склад",
-          "status": "Статус",
-          "actions": "Действия"
-        },
-        "status": {
-          "active": "Активный",
-          "inactive": "Неактивный"
+      "shippingAddress": {
+        "title": "Адрес доставки",
+        "phone": "Телефон"
+      },
+      "orderSummary": {
+        "title": "Сводка заказа",
+        "sticker": "Стикер",
+        "type": "Тип",
+        "size": "Размер",
+        "quantity": "Количество",
+        "unitPrice": "Цена за единицу",
+        "total": "Итого"
+      },
+      "qrCodeDownload": {
+        "title": "Скачивание QR кода",
+        "description": "Скачайте QR код для этого мемориала",
+        "memorialLabel": "Мемориал: {name}",
+        "qualityNote": "Высококачественные QR коды, подходящие для печати на стикерах"
+      },
+      "paymentInfo": {
+        "title": "Информация об оплате",
+        "status": "Статус",
+        "paymentId": "ID платежа"
+      },
+      "orderActions": {
+        "title": "Действия с заказом",
+        "deleteOrder": "Удалить заказ"
+      },
+      "timeline": {
+        "title": "Временная шкала",
+        "orderCreated": "Заказ создан",
+        "lastUpdated": "Последнее обновление"
+      }
+    },
+    "status": {
+      "pending": "В ожидании",
+      "processing": "Обрабатывается",
+      "shipped": "Отправлено",
+      "delivered": "Доставлено",
+      "cancelled": "Отменено"
+    },
+    "paymentStatus": {
+      "pending": "В ожидании",
+      "paid": "Оплачено",
+      "failed": "Не удалось",
+      "refunded": "Возвращено"
+    },
+    "messages": {
+      "orderNotFound": "Заказ не найден",
+      "loadError": "Не удалось загрузить детали заказа",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?\n\nЭто действие нельзя отменить и оно навсегда удалит все данные заказа.",
+      "deleteSuccess": "Заказ успешно удален",
+      "deleteError": "Не удалось удалить заказ",
+      "notLoggedIn": "Вы не авторизованы",
+      "downloadSuccess": "QR код скачан как {fileName}",
+      "downloadError": "Не удалось сгенерировать QR код"
+    }
+  },
+  "adminDashboard": {
+    "orders": {
+      "tabTitle": "Заказы",
+      "title": "Заказы QR стикеров",
+      "description": "Управляйте всеми заказами QR стикеров и отслеживайте их статус",
+      "viewAllOrders": "Просмотреть все заказы",
+      "manageStickers": "Управление стикерами",
+      "manageTypes": "Управление типами",
+      "orderManagement": "Управление заказами",
+      "orderManagementDescription": "Просматривайте и управляйте всеми заказами QR стикеров на специальной странице заказов.",
+      "goToOrders": "Перейти к заказам"
+    }
+  },
+  "adminStickersPage": {
+    "header": {
+      "back": "Назад к панели администратора",
+      "title": "Варианты QR стикеров",
+      "description": "Управляйте доступными типами QR стикеров и ценами"
+    },
+    "loading": {
+      "message": "Загрузка вариантов стикеров..."
+    },
+    "search": {
+      "placeholder": "Поиск вариантов стикеров..."
+    },
+    "table": {
+      "title": "Варианты стикеров ({count})",
+      "description": "Управляйте всеми доступными вариантами QR стикеров",
+      "headers": {
+        "name": "Название",
+        "type": "Тип",
+        "size": "Размер",
+        "price": "Цена",
+        "stock": "Склад",
+        "status": "Статус",
+        "actions": "Действия"
+      },
+      "status": {
+        "active": "Активный",
+        "inactive": "Неактивный"
+      }
+    },
+    "createDialog": {
+      "title": "Создать новый вариант стикера",
+      "description": "Добавьте новый вариант QR стикера с ценами и спецификациями.",
+      "form": {
+        "name": "Название",
+        "namePlaceholder": "Стандартный виниловый QR стикер",
+        "type": "Тип",
+        "typePlaceholder": "Выберите тип",
+        "description": "Описание",
+        "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
+        "size": "Размер",
+        "sizePlaceholder": "3x3 дюйма",
+        "price": "Цена (₾)",
+        "pricePlaceholder": "25.00",
+        "stock": "Склад",
+        "stockPlaceholder": "100",
+        "material": "Материал",
+        "materialPlaceholder": "Премиум винил",
+        "dimensions": "Размеры",
+        "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
+        "durability": "Долговечность",
+        "durabilityPlaceholder": "2-3 года на улице",
+        "weatherResistance": "Устойчивость к погоде",
+        "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ"
+      },
+      "buttons": {
+        "cancel": "Отмена",
+        "create": "Создать"
+      }
+    },
+    "editDialog": {
+      "title": "Редактировать вариант стикера",
+      "description": "Обновите детали и спецификации варианта стикера.",
+      "buttons": {
+        "cancel": "Отмена",
+        "update": "Обновить"
+      }
+    },
+    "types": {
+      "vinyl": "Винил",
+      "engraving": "Гравировка",
+      "premium": "Премиум"
+    },
+    "messages": {
+      "loading": "Загрузка вариантов стикеров...",
+      "createSuccess": "Вариант стикера успешно создан",
+      "updateSuccess": "Вариант стикера успешно обновлен",
+      "deleteSuccess": "Вариант стикера успешно удален",
+      "statusUpdateSuccess": "Статус успешно обновлен",
+      "createError": "Не удалось создать вариант стикера",
+      "updateError": "Не удалось обновить вариант стикера",
+      "deleteError": "Не удалось удалить вариант стикера",
+      "statusUpdateError": "Не удалось обновить статус",
+      "loadError": "Не удалось загрузить варианты стикеров",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот вариант стикера?",
+      "noStickerOptionsFound": "Варианты стикеров не найдены"
+    }
+  },
+  "stickerPurchase": {
+    "header": {
+      "back": "Назад к панели управления",
+      "title": "Купить QR стикер",
+      "description": "Закажите физический QR код стикер для вашего мемориала"
+    },
+    "loading": {
+      "message": "Загрузка..."
+    },
+    "comingSoon": {
+      "title": "Скоро",
+      "message": "QR стикеры в настоящее время недоступны. Пожалуйста, проверьте позже.",
+      "backButton": "Назад к панели управления"
+    },
+    "sections": {
+      "memorialSelection": {
+        "title": "Выберите мемориал",
+        "description": "Выберите, для какого мемориала будет этот стикер"
+      },
+      "stickerOptions": {
+        "title": "Выберите тип стикера",
+        "description": "Выберите тип и размер QR стикера",
+        "specifications": {
+          "material": "Материал:",
+          "dimensions": "Размеры:",
+          "durability": "Долговечность:"
         }
       },
-      "createDialog": {
-        "title": "Создать новый вариант стикера",
-        "description": "Добавьте новый вариант QR стикера с ценами и спецификациями.",
+      "quantity": {
+        "title": "Количество",
+        "description": "Сколько стикеров вы хотите?"
+      },
+      "shippingAddress": {
+        "title": "Адрес доставки",
+        "description": "Подтвердите детали доставки",
         "form": {
-          "name": "Название",
-          "namePlaceholder": "Стандартный виниловый QR стикер",
-          "type": "Тип",
-          "typePlaceholder": "Выберите тип",
-          "description": "Описание",
-          "descriptionPlaceholder": "Высококачественный виниловый QR код стикер...",
-          "size": "Размер",
-          "sizePlaceholder": "3x3 дюйма",
-          "price": "Цена (₾)",
-          "pricePlaceholder": "25.00",
-          "stock": "Склад",
-          "stockPlaceholder": "100",
-          "material": "Материал",
-          "materialPlaceholder": "Премиум винил",
-          "dimensions": "Размеры",
-          "dimensionsPlaceholder": "3\" x 3\" (76mm x 76mm)",
-          "durability": "Долговечность",
-          "durabilityPlaceholder": "2-3 года на улице",
-          "weatherResistance": "Устойчивость к погоде",
-          "weatherResistancePlaceholder": "Водонепроницаемый, устойчивый к УФ"
-        },
-        "buttons": {
-          "cancel": "Отмена",
-          "create": "Создать"
+          "fullName": "Полное имя *",
+          "fullNamePlaceholder": "Иван Иванов",
+          "address": "Адрес *",
+          "addressPlaceholder": "123 Главная улица, квартира 4B",
+          "city": "Город *",
+          "cityPlaceholder": "Тбилиси",
+          "zipCode": "Почтовый индекс",
+          "zipCodePlaceholder": "0100",
+          "country": "Страна",
+          "countryPlaceholder": "Грузия",
+          "phone": "Номер телефона *",
+          "phonePlaceholder": "+995 555 123 456"
         }
       },
-      "editDialog": {
-        "title": "Редактировать вариант стикера",
-        "description": "Обновите детали и спецификации варианта стикера.",
-        "buttons": {
-          "cancel": "Отмена",
-          "update": "Обновить"
-        }
-      },
-      "types": {
-        "vinyl": "Винил",
-        "engraving": "Гравировка",
-        "premium": "Премиум"
-      },
-      "messages": {
-        "loading": "Загрузка вариантов стикеров...",
-        "createSuccess": "Вариант стикера успешно создан",
-        "updateSuccess": "Вариант стикера успешно обновлен",
-        "deleteSuccess": "Вариант стикера успешно удален",
-        "statusUpdateSuccess": "Статус успешно обновлен",
-        "createError": "Не удалось создать вариант стикера",
-        "updateError": "Не удалось обновить вариант стикера",
-        "deleteError": "Не удалось удалить вариант стикера",
-        "statusUpdateError": "Не удалось обновить статус",
-        "loadError": "Не удалось загрузить варианты стикеров",
-        "deleteConfirm": "Вы уверены, что хотите удалить этот вариант стикера?",
-        "noStickerOptionsFound": "Варианты стикеров не найдены"
+      "orderSummary": {
+        "title": "Сводка заказа",
+        "quantity": "Количество:",
+        "total": "Итого",
+        "proceedToPayment": "Перейти к оплате",
+        "processing": "Обработка...",
+        "securePayment": "Безопасная обработка платежей"
       }
     },
-    "stickerPurchase": {
-      "header": {
-        "back": "Назад к панели управления",
-        "title": "Купить QR стикер",
-        "description": "Закажите физический QR код стикер для вашего мемориала"
-      },
-      "loading": {
-        "message": "Загрузка..."
-      },
-      "comingSoon": {
-        "title": "Скоро",
-        "message": "QR стикеры в настоящее время недоступны. Пожалуйста, проверьте позже.",
-        "backButton": "Назад к панели управления"
-      },
-      "sections": {
-        "memorialSelection": {
-          "title": "Выберите мемориал",
-          "description": "Выберите, для какого мемориала будет этот стикер"
-        },
-        "stickerOptions": {
-          "title": "Выберите тип стикера",
-          "description": "Выберите тип и размер QR стикера",
-          "specifications": {
-            "material": "Материал:",
-            "dimensions": "Размеры:",
-            "durability": "Долговечность:"
-          }
-        },
-        "quantity": {
-          "title": "Количество",
-          "description": "Сколько стикеров вы хотите?"
-        },
-        "shippingAddress": {
-          "title": "Адрес доставки",
-          "description": "Подтвердите детали доставки",
-          "form": {
-            "fullName": "Полное имя *",
-            "fullNamePlaceholder": "Иван Иванов",
-            "address": "Адрес *",
-            "addressPlaceholder": "123 Главная улица, квартира 4B",
-            "city": "Город *",
-            "cityPlaceholder": "Тбилиси",
-            "zipCode": "Почтовый индекс",
-            "zipCodePlaceholder": "0100",
-            "country": "Страна",
-            "countryPlaceholder": "Грузия",
-            "phone": "Номер телефона *",
-            "phonePlaceholder": "+995 555 123 456"
-          }
-        },
-        "orderSummary": {
-          "title": "Сводка заказа",
-          "quantity": "Количество:",
-          "total": "Итого",
-          "proceedToPayment": "Перейти к оплате",
-          "processing": "Обработка...",
-          "securePayment": "Безопасная обработка платежей"
-        }
-      },
-      "messages": {
-        "loadError": "Не удалось загрузить данные",
-        "selectMemorialAndSticker": "Пожалуйста, выберите мемориал и вариант стикера",
-        "fillShippingDetails": "Пожалуйста, заполните все необходимые детали доставки",
-        "orderCreated": "Заказ успешно создан! Инициирование платежа...",
-        "paymentInitiationFailed": "Не удалось инициировать платеж. Пожалуйста, попробуйте снова.",
-        "orderCreationFailed": "Не удалось создать заказ"
-      }
-    },
+    "messages": {
+      "loadError": "Не удалось загрузить данные",
+      "selectMemorialAndSticker": "Пожалуйста, выберите мемориал и вариант стикера",
+      "fillShippingDetails": "Пожалуйста, заполните все необходимые детали доставки",
+      "orderCreated": "Заказ успешно создан! Инициирование платежа...",
+      "paymentInitiationFailed": "Не удалось инициировать платеж. Пожалуйста, попробуйте снова.",
+      "orderCreationFailed": "Не удалось создать заказ"
+    }
+  },
   "adminTestimonials": {
     "header": {
       "title": "Управление отзывами",
@@ -2258,5 +2250,30 @@
       "title": "Пока нет отзывов",
       "message": "Станьте первым, кто поделится своим опытом с нашими мемориальными услугами"
     }
+  },
+
+  "Footer": {
+    "contact": {
+      "title": "Контакты",
+      "phoneLabel": "Телефон",
+      "emailLabel": "Эл. почта"
+    },
+    "navigation": {
+      "title": "Навигация",
+      "links": [
+        { "label": "Главная", "href": "/" },
+        { "label": "Мемориалы", "href": "/memorials" },
+        { "label": "Цены", "href": "/pricing" },
+        { "label": "О нас", "href": "/about" }
+      ]
+    },
+    "social": {
+      "title": "Соц. сети",
+      "links": [
+        { "label": "Facebook", "href": "https://facebook.com" },
+        { "label": "Instagram", "href": "https://instagram.com" }
+      ]
+    },
+    "copyright": "© 2025 Все права защищены"
   }
 }
