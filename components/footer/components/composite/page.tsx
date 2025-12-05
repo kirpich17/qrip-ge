@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useTranslation } from "@/hooks/useTranslate";
-import { useQuery } from "@tanstack/react-query";
-import { FooterInfo } from "../../api";
-import { ArrowUp, Phone, Mail, QrCode } from "lucide-react";
-import Link from "next/link";
+import { useTranslation } from '@/hooks/useTranslate';
+import { useQuery } from '@tanstack/react-query';
+import { FooterInfo } from '../../api';
+import { ArrowUp, Phone, Mail, QrCode } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
   const { t } = useTranslation();
-  const footerTranslations = t("Footer") as any;
+  const footerTranslations = t('Footer');
 
   const { isLoading, data } = useQuery({
-    queryKey: ["data"],
+    queryKey: ['data'],
     queryFn: FooterInfo,
   });
 
-  const { phone, email } = data?.[0] || {};
+  const { phone, email, isVisiblePhone, isVisibleEmail } = data?.[0] || {};
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -28,7 +28,6 @@ const Footer = () => {
       </div>
 
       <div className="relative flex flex-wrap justify-between gap-8 sm:gap-12 lg:gap-16 mx-auto max-w-[1440px]">
-        {/* CONTACTS */}
         <div className="flex-1 min-w-[220px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
             <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
@@ -38,7 +37,7 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col gap-3 sm:gap-4">
-            {!isLoading && data && phone && (
+            {!isLoading && data && phone && isVisiblePhone && (
               <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
                 <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
                   <Phone className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
@@ -54,7 +53,7 @@ const Footer = () => {
               </div>
             )}
 
-            {!isLoading && data && email && (
+            {!isLoading && data && email && isVisibleEmail && (
               <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
                 <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
                   <Mail className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
@@ -72,7 +71,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* NAVIGATION */}
         <div className="flex-1 min-w-[180px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
             <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
@@ -97,7 +95,6 @@ const Footer = () => {
           </nav>
         </div>
 
-        {/* SOCIALS */}
         <div className="flex-1 min-w-[180px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
             <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
@@ -120,7 +117,6 @@ const Footer = () => {
           </nav>
         </div>
 
-        {/* SCROLL UP BUTTON */}
         <div className="flex justify-center items-start mt-4 sm:mt-0 min-w-[70px]">
           <button
             onClick={scrollToTop}
@@ -132,7 +128,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* BOTTOM LINE */}
       <div className="relative flex flex-col items-center gap-4 sm:gap-6 mx-auto mt-12 sm:mt-16 max-w-[1440px]">
         <div className="flex items-center gap-2 sm:gap-4 w-full">
           <div className="flex-1 bg-gradient-to-r from-transparent via-[#4fa167]/30 to-[#4fa167]/30 h-px"></div>
