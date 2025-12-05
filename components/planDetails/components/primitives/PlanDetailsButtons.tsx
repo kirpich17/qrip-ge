@@ -56,7 +56,7 @@ const PlanDetailsButtons = () => {
                   } w-1/2 font-bold  cursor-pointer`}
                   onClick={() => setActive('minimal')}
                 >
-                  Basic
+                  Minimal
                 </button>
                 <button
                   className={`flex justify-center relative z-[10] hover:ease-in-out duration-300 items-center rounded-[12px] ${
@@ -79,7 +79,7 @@ const PlanDetailsButtons = () => {
           </div>
         </div>
       </div>
-      <PlanDetails data={data} isLoading={isLoading} isError={isError} />
+      <PlanDetails data={data} isLoading={isLoading} />
     </div>
   );
 };

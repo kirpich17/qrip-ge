@@ -1617,6 +1617,36 @@
       }
     }
   },
+  "plansDetailsFeatures": {
+    "minimal": {
+      "name": "Minimal Plan",
+      "description": "1 photo + biography",
+      "features": {
+        "photoUploads": "1 Photo Uploads",
+        "familyTree": "Family Tree"
+      }
+    },
+    "medium": {
+      "name": "Medium Plan",
+      "description": "Up to 10 photos per memorial with slideshow",
+      "features": {
+        "photoUploads": "10 Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "familyTree": "Family Tree"
+      }
+    },
+    "premium": {
+      "name": "Premium Plan",
+      "description": "Unlimited photos, slideshow, videos",
+      "features": {
+        "photoUploads": "Unlimited Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max 60s)",
+        "documentUpload": "Document Upload",
+        "familyTree": "Family Tree"
+      }
+    }
+  },
   "help": {
     "helpButton": "help"
   },

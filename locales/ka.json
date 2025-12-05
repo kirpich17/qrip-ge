@@ -1679,6 +1679,36 @@
       }
     }
   },
+  "plansDetailsFeatures": {
+    "minimal": {
+      "name": "მინიმალური პაკეტი",
+      "description": "1 ფოტო + ბიოგრაფია",
+      "features": {
+        "photoUploads": "1 ფოტოს ატვირთვა",
+        "familyTree": "საოჯახო ხე"
+      }
+    },
+    "medium": {
+      "name": "საშუალო პაკეტი",
+      "description": "მაქსიმუმ 10 ფოტო თითო მემორიალზე + სლაიდშოუ",
+      "features": {
+        "photoUploads": "10 ფოტოს ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "familyTree": "საოჯახო ხე"
+      }
+    },
+    "premium": {
+      "name": "პრემიუმ პაკეტი",
+      "description": "ულიმიტო ფოტოები, სლაიდშოუ, ვიდეოები",
+      "features": {
+        "photoUploads": "ულიმიტო ფოტოების ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "videoUploads": "ვიდეოს ატვირთვა (მაქს 60წმ)",
+        "documentUpload": "დოკუმენტის ატვირთვა",
+        "familyTree": "საოჯახო ხე"
+      }
+    }
+  },
   "help": {
     "helpButton": "დახმარება"
   },
