@@ -27,39 +27,37 @@ const PlanDetails = ({
 
   return (
     <div className="p-4 w-full max-w-[1000px]">
-      <div className="flex flex-col bg-white dark:bg-background-dark/50 shadow-lg rounded-xl overflow-hidden">
+      <div className="flex flex-col bg-white shadow-lg rounded-xl overflow-hidden">
         <div className="flex flex-col gap-6 p-6 sm:p-8">
           <div className="flex flex-col gap-4">
-            <p className="font-bold text-primary dark:text-background-light text-2xl">
+            <p className="font-bold text-primary text-2xl">
               {planTrans?.name || 'Plan Name'}
             </p>
 
-            <p className="text-primary/70 dark:text-background-light/70 text-base">
+            <p className="text-primary/70 text-base">
               {planTrans?.description || 'Plan Description'}
             </p>
           </div>
 
-          <hr className="border-primary/20 dark:border-background-light/20 border-dashed" />
+          <hr className="border-primary/20 border-dashed" />
 
           <div className="flex flex-col gap-5">
-            <h3 className="font-bold text-primary dark:text-background-light text-lg">
-              What's Included
+            <h3 className="font-bold text-primary text-lg">
+              {plansTranslations?.included || "What's Included"}
             </h3>
 
             <div className="gap-x-6 gap-y-3 grid grid-cols-1 sm:grid-cols-2">
               {features.map((txt, i) => (
                 <div key={i} className="flex items-center gap-x-3">
-                  <CheckCircle className="w-5 h-5 text-primary dark:text-background-light" />
-                  <span className="text-primary dark:text-background-light text-base">
-                    {txt}
-                  </span>
+                  <CheckCircle className="w-5 h-5 text-primary" />
+                  <span className="text-primary text-base">{txt}</span>
                 </div>
               ))}
             </div>
 
             <div className="flex flex-col gap-5">
-              <h3 className="font-bold text-primary dark:text-background-light text-lg">
-                Price
+              <h3 className="font-bold text-primary text-lg">
+                {plansTranslations?.price || 'Price'}
               </h3>
               <ul className="gap-x-6 gap-y-3 grid grid-cols-1 sm:grid-cols-2">
                 {plan?.durationOptions?.map((opt) => (

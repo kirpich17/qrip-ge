@@ -1582,6 +1582,15 @@
     "heading": "Choose Your Plan",
     "title": " Select the perfect plan to honor your loved ones"
   },
+  "planDetailsButtons": {
+    "heading": "Choose Your Plan",
+    "title": "Compare Basic, Medium, and Premium features to find the right option for you.",
+    "buttons": {
+      "minimal": "Minimal",
+      "medium": "Medium",
+      "premium": "Premium"
+    }
+  },
   "plansTranslations": {
     "minimal": {
       "name": "Minimal Plan",
@@ -1618,6 +1627,8 @@
     }
   },
   "plansDetailsFeatures": {
+    "price": "Price",
+    "included": "What's Included",
     "minimal": {
       "name": "Minimal Plan",
       "description": "1 photo + biography",
