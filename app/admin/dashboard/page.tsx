@@ -3,7 +3,18 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Users, Heart, Banknote, Search, Bell, QrCode, Package, MessageCircle, RefreshCw, Languages } from "lucide-react";
+import {
+  Users,
+  Heart,
+  Banknote,
+  Search,
+  Bell,
+  QrCode,
+  Package,
+  MessageCircle,
+  RefreshCw,
+  Languages,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import {
@@ -31,7 +42,8 @@ import LanguageDropdown from "@/components/languageDropdown/page";
 
 function AdminDashboardPage() {
   const { t } = useTranslation();
-  const admindashTranslations: any = t("admindash" as any);
+  const admindashTranslations = t("admindash", { returnObjects: true }) as any;
+
   const dashboardTranslations = t("adminDashboard") || {
     orders: {
       tabTitle: "Orders",
@@ -40,9 +52,10 @@ function AdminDashboardPage() {
       viewAllOrders: "View All Orders",
       manageStickers: "Manage Stickers",
       orderManagement: "Order Management",
-      orderManagementDescription: "View and manage all QR sticker orders in the dedicated orders page.",
-      goToOrders: "Go to Orders"
-    }
+      orderManagementDescription:
+        "View and manage all QR sticker orders in the dedicated orders page.",
+      goToOrders: "Go to Orders",
+    },
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,10 +81,10 @@ function AdminDashboardPage() {
     try {
       setIsLoadingStats(true);
       const res = await axiosInstance.get("/api/admin/stats");
-      
+
       // Format revenue with number formatting (no currency text)
       const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat("en-US", {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }).format(amount);
@@ -84,7 +97,10 @@ function AdminDashboardPage() {
         {
           label: admindashTranslations.stats.totalUsers,
           value: res.data.users.total,
-          change: (res.data.users.percentageChange >= 0 ? "+" : "") + res.data.users.percentageChange + "%",
+          change:
+            (res.data.users.percentageChange >= 0 ? "+" : "") +
+            res.data.users.percentageChange +
+            "%",
           icon: Users,
           color: "text-blue-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
@@ -92,7 +108,10 @@ function AdminDashboardPage() {
         {
           label: admindashTranslations.stats.activeMemorials,
           value: res.data.activeMemorials.total,
-          change: (res.data.activeMemorials.percentageChange >= 0 ? "+" : "") + res.data.activeMemorials.percentageChange + "%",
+          change:
+            (res.data.activeMemorials.percentageChange >= 0 ? "+" : "") +
+            res.data.activeMemorials.percentageChange +
+            "%",
           icon: Heart,
           color: "text-red-600",
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
@@ -153,12 +172,13 @@ function AdminDashboardPage() {
   };
   const memorailStatusToggle = async (id) => {
     try {
-      const res = await axiosInstance.patch(`/api/admin/toggle-status-memorial/${id}`);
+      const res = await axiosInstance.patch(
+        `/api/admin/toggle-status-memorial/${id}`
+      );
       fetchAllMemorials();
-      console.log("🚀 ~ memorailStatusToggle ~ res:", res)
-      if (res.data.status == 'active')
-        toast.success(res.data.message);
-      else if (res.data.status == 'inactive') {
+      console.log("🚀 ~ memorailStatusToggle ~ res:", res);
+      if (res.data.status == "active") toast.success(res.data.message);
+      else if (res.data.status == "inactive") {
         toast.error(res.data.message);
       }
     } catch (error) {
@@ -216,7 +236,6 @@ function AdminDashboardPage() {
                 <ProfileDropdown />
               </div>
             </div>
-
           </div>
         </div>
       </header>
@@ -236,9 +255,9 @@ function AdminDashboardPage() {
         </motion.div>
 
         {/* Stats Cards */}
-        <StatsCards 
-          stats={stats} 
-          isLoading={isLoadingStats} 
+        <StatsCards
+          stats={stats}
+          isLoading={isLoadingStats}
           lastRefreshTime={lastRefreshTime}
           onRefresh={handleManualRefresh}
           translations={admindashTranslations.stats}
@@ -253,32 +272,45 @@ function AdminDashboardPage() {
         >
           <Card>
             <CardHeader>
-              <CardTitle>{admindashTranslations.quickAccess?.title || "Quick Access"}</CardTitle>
+              <CardTitle>
+                {admindashTranslations.quickAccess?.title || "Quick Access"}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/admin/testimonials">
                   <Button variant="outline" className="w-full justify-start">
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    {admindashTranslations.quickAccess?.manageTestimonials || "Manage Testimonials"}
+                    {admindashTranslations.quickAccess?.manageTestimonials ||
+                      "Manage Testimonials"}
                   </Button>
                 </Link>
                 <Link href="/admin/adminsubscription">
                   <Button variant="outline" className="w-full justify-start">
                     <Package className="h-4 w-4 mr-2" />
-                    {admindashTranslations.quickAccess?.subscriptionPlans || "Subscription Plans"}
+                    {admindashTranslations.quickAccess?.subscriptionPlans ||
+                      "Subscription Plans"}
                   </Button>
                 </Link>
                 <Link href="/admin/stickers">
                   <Button variant="outline" className="w-full justify-start">
                     <QrCode className="h-4 w-4 mr-2" />
-                    {admindashTranslations.quickAccess?.qrStickers || "QR Stickers"}
+                    {admindashTranslations.quickAccess?.qrStickers ||
+                      "QR Stickers"}
                   </Button>
                 </Link>
                 <Link href="/admin/translations">
                   <Button variant="outline" className="w-full justify-start">
                     <Languages className="h-4 w-4 mr-2" />
-                    {admindashTranslations.quickAccess?.translations || "Language Management"}
+                    {admindashTranslations.quickAccess?.translations ||
+                      "Language Management"}
+                  </Button>
+                </Link>
+                <Link href="/admin/footerManagement">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Languages className="h-4 w-4 mr-2" />
+                    {admindashTranslations.quickAccess?.footerManagement ||
+                      "Footer Management"}
                   </Button>
                 </Link>
               </div>
@@ -326,8 +358,11 @@ function AdminDashboardPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
-                      type='search'
-                      placeholder={admindashTranslations?.userManagement?.searchPlaceholder || "Search users..."}
+                      type="search"
+                      placeholder={
+                        admindashTranslations?.userManagement
+                          ?.searchPlaceholder || "Search users..."
+                      }
                       value={searchQuery}
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
@@ -340,11 +375,11 @@ function AdminDashboardPage() {
                 </div>
               </CardHeader>
               <CardContent>
-
                 {users.length === 0 && hasSearched ? (
                   <div className="text-center py-8">
                     <p className="text-gray-500">
-                      {admindashTranslations.userManagement.noResults || "No users found"}
+                      {admindashTranslations.userManagement.noResults ||
+                        "No users found"}
                     </p>
                   </div>
                 ) : (
@@ -378,7 +413,8 @@ function AdminDashboardPage() {
                     </Button>
                   </div>
                 </div> */}
-                  </>)}
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -399,8 +435,11 @@ function AdminDashboardPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
                     <Input
-                      type='search'
-                      placeholder={admindashTranslations?.recentMemorials?.searchPlaceholder || "Search memorials..."}
+                      type="search"
+                      placeholder={
+                        admindashTranslations?.recentMemorials
+                          ?.searchPlaceholder || "Search memorials..."
+                      }
                       value={searchQueryMemorial}
                       onChange={(e) => {
                         setSearchQueryMemorial(e.target.value);
@@ -409,8 +448,8 @@ function AdminDashboardPage() {
                       }}
                       className="pl-10 text-black"
                     />
-                  </div></div>
-
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <MemorialsTable
@@ -454,28 +493,35 @@ function AdminDashboardPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>{dashboardTranslations?.orders?.title || "QR Sticker Orders"}</CardTitle>
+                    <CardTitle>
+                      {dashboardTranslations?.orders?.title ||
+                        "QR Sticker Orders"}
+                    </CardTitle>
                     <CardDescription>
-                      {dashboardTranslations?.orders?.description || "Manage and track all QR sticker orders"}
+                      {dashboardTranslations?.orders?.description ||
+                        "Manage and track all QR sticker orders"}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Link href="/admin/orders">
                       <Button className="bg-[#547455] hover:bg-[#243b31]">
                         <Package className="h-4 w-4 mr-2" />
-                        {dashboardTranslations?.orders?.viewAllOrders || "View All Orders"}
+                        {dashboardTranslations?.orders?.viewAllOrders ||
+                          "View All Orders"}
                       </Button>
                     </Link>
                     <Link href="/admin/stickers">
                       <Button variant="outline">
                         <Package className="h-4 w-4 mr-2" />
-                        {dashboardTranslations?.orders?.manageStickers || "Manage Stickers"}
+                        {dashboardTranslations?.orders?.manageStickers ||
+                          "Manage Stickers"}
                       </Button>
                     </Link>
                     <Link href="/admin/sticker-types">
                       <Button variant="outline">
                         <Package className="h-4 w-4 mr-2" />
-                        {dashboardTranslations?.orders?.manageTypes || "Manage Types"}
+                        {dashboardTranslations?.orders?.manageTypes ||
+                          "Manage Types"}
                       </Button>
                     </Link>
                   </div>
@@ -484,13 +530,19 @@ function AdminDashboardPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">{dashboardTranslations?.orders?.orderManagement || "Order Management"}</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {dashboardTranslations?.orders?.orderManagement ||
+                      "Order Management"}
+                  </h3>
                   <p className="text-gray-500 mb-4">
-                    {dashboardTranslations?.orders?.orderManagementDescription || "View and manage all QR sticker orders in the dedicated orders page."}
+                    {dashboardTranslations?.orders
+                      ?.orderManagementDescription ||
+                      "View and manage all QR sticker orders in the dedicated orders page."}
                   </p>
                   <Link href="/admin/orders">
                     <Button className="bg-[#547455] hover:bg-[#243b31]">
-                      {dashboardTranslations?.orders?.goToOrders || "Go to Orders"}
+                      {dashboardTranslations?.orders?.goToOrders ||
+                        "Go to Orders"}
                     </Button>
                   </Link>
                 </div>

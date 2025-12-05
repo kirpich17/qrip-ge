@@ -1082,7 +1082,8 @@
       "manageTestimonials": "Управление отзывами",
       "subscriptionPlans": "Тарифные планы",
       "qrStickers": "QR стикеры",
-      "translations": "Управление языками"
+      "translations": "Управление языками",
+      "footerManagement": "Управление футером"
     }
   },
   "languageManagement": {

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Herobanner from './home/herobanner';
-import Howitwork from './home/howitwork';
-import Features from './home/features';
-import Plans from './home/plans';
-import Testimonials from './home/testimonials';
-import PublicMemorials from './home/publicMemorials';
-import { Suspense } from 'react';
+import Herobanner from "./home/herobanner";
+import Howitwork from "./home/howitwork";
+import Features from "./home/features";
+import Plans from "./home/plans";
+import Testimonials from "./home/testimonials";
+import PublicMemorials from "./home/publicMemorials";
+import { Suspense } from "react";
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -39,7 +39,7 @@ const floatingAnimation = {
     transition: {
       duration: 4,
       repeat: Number.POSITIVE_INFINITY,
-      ease: 'easeInOut',
+      ease: "easeInOut",
     },
   },
 };

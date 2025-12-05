@@ -71,7 +71,7 @@ export function UserManagementTable({
                     <Avatar className="h-8 w-8">
                       {/* <AvatarImage src={user.avatar || "/placeholder.svg"} /> */}
                       <AvatarFallback>
-                        {user.firstname[0] + user.lastname[0]}
+                        {/* {user.firstname[0] + user.lastname[0]} */}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -120,16 +120,19 @@ export function UserManagementTable({
                 <TableCell>
                   <Badge
                     variant={
-                      user.accountStatus === "active" ? "default" : "destructive"
+                      user.accountStatus === "active"
+                        ? "default"
+                        : "destructive"
                     }
                     className={
                       user.accountStatus === "active" ? "bg-green-600" : ""
                     }
                   >
-                    {user.accountStatus === "active" 
-                      ? (admindashTranslations.userManagement?.status?.active || "active")
-                      : (admindashTranslations.userManagement?.status?.suspended || "suspended")
-                    }
+                    {user.accountStatus === "active"
+                      ? admindashTranslations.userManagement?.status?.active ||
+                        "active"
+                      : admindashTranslations.userManagement?.status
+                          ?.suspended || "suspended"}
                   </Badge>
                 </TableCell>
                 <TableCell className="">
@@ -162,7 +165,9 @@ export function UserManagementTable({
                         onClick={() => {
                           if (
                             confirm(
-                              admindashTranslations.userManagement?.confirmSuspend || "Are you sure you want to suspend this user?"
+                              admindashTranslations.userManagement
+                                ?.confirmSuspend ||
+                                "Are you sure you want to suspend this user?"
                             )
                           ) {
                             console.log("Suspend user:", user._id);
@@ -173,7 +178,8 @@ export function UserManagementTable({
                         <Ban className="h-4 w-4 mr-2" />
                         {user.accountStatus === "active"
                           ? translations.actionsMenu.suspend
-                          : (admindashTranslations.userManagement?.actionsMenu?.activate || "Activate")}
+                          : admindashTranslations.userManagement?.actionsMenu
+                              ?.activate || "Activate"}
                       </DropdownMenuItem>
 
                       <DropdownMenuItem
@@ -181,7 +187,11 @@ export function UserManagementTable({
                         onClick={() => {
                           if (
                             confirm(
-                              (admindashTranslations.userManagement?.confirmDelete || "Are you sure you want to delete {name}? This action cannot be undone.").replace("{name}", user.name)
+                              (
+                                admindashTranslations.userManagement
+                                  ?.confirmDelete ||
+                                "Are you sure you want to delete {name}? This action cannot be undone."
+                              ).replace("{name}", user.name)
                             )
                           ) {
                             axiosInstance

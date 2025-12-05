@@ -20,42 +20,59 @@ const staggerContainer = {
   },
 };
 
-export function StatsCards({ stats, isLoading, lastRefreshTime, onRefresh, translations }: { stats: any[], isLoading?: boolean, lastRefreshTime?: Date, onRefresh?: () => void, translations?: any }) {
-  console.log("🚀 ~ StatsCards ~ stats:", stats)
-  
+export function StatsCards({
+  stats,
+  isLoading,
+  lastRefreshTime,
+  onRefresh,
+  translations,
+}: {
+  stats: any[];
+  isLoading?: boolean;
+  lastRefreshTime?: Date;
+  onRefresh?: () => void;
+  translations?: any;
+}) {
+  console.log("🚀 ~ StatsCards ~ stats:", stats);
+
   const formatRefreshTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     }).format(date);
   };
 
   return (
     <div className="mb-8">
-       {/* Refresh Status */}
-       {lastRefreshTime && (
-         <div className="mb-4 flex items-center justify-between">
-           <p className="text-sm text-gray-600">
-             {translations?.lastUpdated || 'Last updated'}: {formatRefreshTime(lastRefreshTime)}
-           </p>
-           <div className="flex items-center gap-3">
-             {onRefresh && (
-               <Button
-                 variant="outline"
-                 size="sm"
-                 onClick={onRefresh}
-                 disabled={isLoading}
-                 className="gap-2"
-               >
-                 <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                 {isLoading ? (translations?.refreshing || 'Refreshing...') : (translations?.refresh || 'Refresh')}
-               </Button>
-             )}
-           </div>
-         </div>
-       )}
-      
+      {/* Refresh Status */}
+      {lastRefreshTime && (
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm text-gray-600">
+            {translations?.lastUpdated || "Last updated"}:{" "}
+            {formatRefreshTime(lastRefreshTime)}
+          </p>
+          <div className="flex items-center gap-3">
+            {onRefresh && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onRefresh}
+                disabled={isLoading}
+                className="gap-2"
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                />
+                {isLoading
+                  ? translations?.refreshing || "Refreshing..."
+                  : translations?.refresh || "Refresh"}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       <motion.div
         variants={staggerContainer}
         initial="initial"
@@ -64,7 +81,7 @@ export function StatsCards({ stats, isLoading, lastRefreshTime, onRefresh, trans
       >
         {stats.map((stat, index) => (
           <motion.div key={index} variants={fadeInUp}>
-            <Card className={`${isLoading ? 'opacity-75' : ''}`}>
+            <Card className={`${isLoading ? "opacity-75" : ""}`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -89,7 +106,11 @@ export function StatsCards({ stats, isLoading, lastRefreshTime, onRefresh, trans
                       )}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-full bg-[#efefef] ${stat.color} ${isLoading ? 'animate-pulse' : ''}`}>
+                  <div
+                    className={`p-3 rounded-full bg-[#efefef] ${stat.color} ${
+                      isLoading ? "animate-pulse" : ""
+                    }`}
+                  >
                     <stat.icon className="h-6 w-6" />
                   </div>
                 </div>

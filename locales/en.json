@@ -1047,7 +1047,8 @@
       "title": "Quick Access",
       "manageTestimonials": "Manage Testimonials",
       "subscriptionPlans": "Subscription Plans",
-      "qrStickers": "QR Stickers"
+      "qrStickers": "QR Stickers",
+      "footerManagement": "Footer Management"
     },
     "analytics": {
       "platformGrowth": "Platform Growth",
