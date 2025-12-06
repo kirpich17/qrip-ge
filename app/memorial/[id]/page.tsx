@@ -365,23 +365,32 @@ export default function MemorialPage() {
     const fetchMemorial = async () => {
       if (!params?.id) return;
 
+      // Reset view recording flag when memorial ID changes
       viewRecordedRef.current = false;
 
       try {
         setLoading(true);
-
-        const response = await getSingleMemorial(params.id as string);
+        // First try to get the memorial using the private endpoint (for user's own memorials)
+        // This allows viewing private memorials that the user owns
+        let response;
+        try {
+          response = await getMyMemorialById(params.id as string);
+        } catch (privateError) {
+          // If private endpoint fails, try the public endpoint
+          response = await getSingleMemorial(params.id as string);
+        }
 
         if (response?.status && response.data) {
           setApiMemorial(response.data);
 
+          // Only record view once per memorial load
           if (!viewRecordedRef.current) {
             try {
               await recordMemorialView({
                 memorialId: params.id as string,
                 isScan,
               });
-              viewRecordedRef.current = true;
+              viewRecordedRef.current = true; // Mark as recorded
             } catch (scanError) {
               console.error('Failed to record scan view:', scanError);
             }
@@ -391,6 +400,7 @@ export default function MemorialPage() {
         }
       } catch (err: any) {
         console.error('Error fetching memorial:', err);
+        // Use the specific error message from the API response
         const errorMessage =
           err.response?.data?.message || 'Failed to load memorial data';
         setError(errorMessage);
