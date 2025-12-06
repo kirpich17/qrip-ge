@@ -28,48 +28,52 @@ const Footer = () => {
       </div>
 
       <div className="relative flex flex-wrap justify-between gap-8 sm:gap-12 lg:gap-16 mx-auto max-w-[1440px]">
-        <div className="flex-1 min-w-[220px]">
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-            <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
-            <h3 className="font-bold text-white text-2xl sm:text-3xl lg:text-4xl">
-              {footerTranslations.contact.title}
-            </h3>
-          </div>
+        {isVisiblePhone === false && isVisibleEmail === false ? (
+          ''
+        ) : (
+          <div className="flex-1 min-w-[220px]">
+            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+              <div className="bg-[#4fa167] rounded-full w-1 h-6 sm:h-8"></div>
+              <h3 className="font-bold text-white text-2xl sm:text-3xl lg:text-4xl">
+                {footerTranslations.contact.title}
+              </h3>
+            </div>
 
-          <div className="flex flex-col gap-3 sm:gap-4">
-            {!isLoading && data && phone && isVisiblePhone && (
-              <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
-                <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
-                  <Phone className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
+            <div className="flex flex-col gap-3 sm:gap-4">
+              {!isLoading && data && phone && isVisiblePhone && (
+                <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
+                  <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
+                    <Phone className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-300 text-xs sm:text-sm md:text-base">
+                      {footerTranslations.contact.phoneLabel}
+                    </p>
+                    <p className="font-semibold text-white text-sm sm:text-base md:text-lg">
+                      {phone}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-gray-300 text-xs sm:text-sm md:text-base">
-                    {footerTranslations.contact.phoneLabel}
-                  </p>
-                  <p className="font-semibold text-white text-sm sm:text-base md:text-lg">
-                    {phone}
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
 
-            {!isLoading && data && email && isVisibleEmail && (
-              <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
-                <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
-                  <Mail className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
+              {!isLoading && data && email && isVisibleEmail && (
+                <div className="group flex items-center gap-3 sm:gap-4 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300">
+                  <div className="flex justify-center items-center bg-[#4fa167]/20 group-hover:bg-white rounded-lg w-10 h-10 transition-colors duration-300">
+                    <Mail className="w-5 h-5 text-[#4fa167] group-hover:text-[#243b31]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-300 text-xs sm:text-sm md:text-base">
+                      {footerTranslations.contact.emailLabel}
+                    </p>
+                    <p className="font-semibold text-white text-sm sm:text-base md:text-lg">
+                      {email}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-gray-300 text-xs sm:text-sm md:text-base">
-                    {footerTranslations.contact.emailLabel}
-                  </p>
-                  <p className="font-semibold text-white text-sm sm:text-base md:text-lg">
-                    {email}
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex-1 min-w-[180px]">
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
