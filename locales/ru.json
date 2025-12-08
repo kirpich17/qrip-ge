@@ -2296,30 +2296,31 @@
         "documentUpload": "Загрузка документов",
         "familyTree": "Семейное древо"
       }
-    }
+    },
 
-  "Footer": {
-    "contact": {
-      "title": "Контакты",
-      "phoneLabel": "Телефон",
-      "emailLabel": "Эл. почта"
-    },
-    "navigation": {
-      "title": "Навигация",
-      "links": [
-        { "label": "Главная", "href": "/" },
-        { "label": "Мемориалы", "href": "/memorials" },
-        { "label": "Цены", "href": "/pricing" },
-        { "label": "О нас", "href": "/about" }
-      ]
-    },
-    "social": {
-      "title": "Соц. сети",
-      "links": [
-        { "label": "Facebook", "href": "https://facebook.com" },
-        { "label": "Instagram", "href": "https://instagram.com" }
-      ]
-    },
-    "copyright": "© 2025 Все права защищены"
+    "Footer": {
+      "contact": {
+        "title": "Контакты",
+        "phoneLabel": "Телефон",
+        "emailLabel": "Эл. почта"
+      },
+      "navigation": {
+        "title": "Навигация",
+        "links": [
+          { "label": "Главная", "href": "/" },
+          { "label": "Мемориалы", "href": "/memorials" },
+          { "label": "Цены", "href": "/pricing" },
+          { "label": "О нас", "href": "/about" }
+        ]
+      },
+      "social": {
+        "title": "Соц. сети",
+        "links": [
+          { "label": "Facebook", "href": "https://facebook.com" },
+          { "label": "Instagram", "href": "https://instagram.com" }
+        ]
+      },
+      "copyright": "© 2025 Все права защищены"
+    }
   }
 }

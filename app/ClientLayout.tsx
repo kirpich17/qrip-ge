@@ -1,6 +1,5 @@
 'use client';
 
-import Footer from '@/components/footer/components/composite/page';
 import Header from '@/components/header/page';
 import { usePathname } from 'next/navigation';
 
@@ -18,7 +17,6 @@ export default function ClientLayout({
     <>
       {showHeaderFooter && <Header />}
       {children}
-      {showHeaderFooter && <Footer />}
     </>
   );
 }

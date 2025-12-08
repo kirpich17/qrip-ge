@@ -1,23 +1,24 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../globals.css";
-import ClientLayout from "./ClientLayout";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import '../globals.css';
+import ClientLayout from './ClientLayout';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { QueryProvider } from "./QueryProvider";
-import "@/services/authDebug"; // Import debug utilities
+import { QueryProvider } from './QueryProvider';
+import '@/services/authDebug'; // Import debug utilities
+import Footer from '@/components/footer/components/composite/page';
 // const inter = Inter({ subsets: ["latin"] });
 
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: '--font-inter' // Add this line
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter', // Add this line
 });
 
 export const metadata: Metadata = {
-  title: "QRIP.ge - Digital Memorial Platform",
-  description: "Honor memories forever with QR-based digital memorials",
-  generator: "qrip.ge",
+  title: 'QRIP.ge - Digital Memorial Platform',
+  description: 'Honor memories forever with QR-based digital memorials',
+  generator: 'qrip.ge',
 };
 
 export default function RootLayout({
@@ -26,10 +27,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-  <html lang="en"> 
+    <html lang="en">
       <head>
         {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-77FDP190DR"></script>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-77FDP190DR"
+        ></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -43,10 +47,15 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <LanguageProvider>
-            <QueryProvider> 
-          <ClientLayout>{children}</ClientLayout>
-        <ToastContainer position="top-right" autoClose={5000}   className="toast-container" />
-        </QueryProvider>
+          <QueryProvider>
+            <ClientLayout>{children}</ClientLayout>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              className="toast-container"
+            />
+            <Footer />
+          </QueryProvider>
         </LanguageProvider>
       </body>
     </html>
