@@ -34,10 +34,7 @@ const Header = () => {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link
-              href={'/'}
-              className="flex items-center space-x-2 md:space-x-3"
-            >
+            <Link href="/" className="flex items-center space-x-2 md:space-x-3">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
