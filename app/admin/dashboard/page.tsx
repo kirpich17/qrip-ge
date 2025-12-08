@@ -1,8 +1,8 @@
 // @ts-nocheck
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
   Users,
   Heart,
@@ -14,52 +14,52 @@ import {
   MessageCircle,
   RefreshCw,
   Languages,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Link from "next/link";
-import { useTranslation } from "@/hooks/useTranslate";
-import { StatsCards } from "./StatsCards";
-import { UserManagementTable } from "./UserManagementTable";
-import { MemorialsTable } from "./MemorialsTable";
-import { QrManagement } from "./QrManagement";
-import { AnalyticsCharts } from "./AnalyticsCharts";
-import { PlatformSettings } from "./PlatformSettings";
-import { NotificationModal } from "./NotificationModal";
-import { ProfileDropdown } from "./ProfileDropdown";
-import IsAdminAuth from "@/lib/IsAdminAuth/page";
-import axiosInstance from "@/services/axiosInstance";
-import LanguageDropdown from "@/components/languageDropdown/page";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
+import { useTranslation } from '@/hooks/useTranslate';
+import { StatsCards } from './StatsCards';
+import { UserManagementTable } from './UserManagementTable';
+import { MemorialsTable } from './MemorialsTable';
+import { QrManagement } from './QrManagement';
+import { AnalyticsCharts } from './AnalyticsCharts';
+import { PlatformSettings } from './PlatformSettings';
+import { NotificationModal } from './NotificationModal';
+import { ProfileDropdown } from './ProfileDropdown';
+import IsAdminAuth from '@/lib/IsAdminAuth/page';
+import axiosInstance from '@/services/axiosInstance';
+import LanguageDropdown from '@/components/languageDropdown/page';
 
 function AdminDashboardPage() {
   const { t } = useTranslation();
-  const admindashTranslations = t("admindash", { returnObjects: true }) as any;
+  const admindashTranslations = t('admindash', { returnObjects: true }) as any;
 
-  const dashboardTranslations = t("adminDashboard") || {
+  const dashboardTranslations = t('adminDashboard') || {
     orders: {
-      tabTitle: "Orders",
-      title: "QR Sticker Orders",
-      description: "Manage and track all QR sticker orders",
-      viewAllOrders: "View All Orders",
-      manageStickers: "Manage Stickers",
-      orderManagement: "Order Management",
+      tabTitle: 'Orders',
+      title: 'QR Sticker Orders',
+      description: 'Manage and track all QR sticker orders',
+      viewAllOrders: 'View All Orders',
+      manageStickers: 'Manage Stickers',
+      orderManagement: 'Order Management',
       orderManagementDescription:
-        "View and manage all QR sticker orders in the dedicated orders page.",
-      goToOrders: "Go to Orders",
+        'View and manage all QR sticker orders in the dedicated orders page.',
+      goToOrders: 'Go to Orders',
     },
   };
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchQueryMemorial, setSearchQueryMemorial] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQueryMemorial, setSearchQueryMemorial] = useState('');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [stats, setStats] = useState([]);
   const [recentMemorials, setRecentMemorials] = useState([]);
@@ -80,11 +80,11 @@ function AdminDashboardPage() {
   const fetchStats = async () => {
     try {
       setIsLoadingStats(true);
-      const res = await axiosInstance.get("/api/admin/stats");
+      const res = await axiosInstance.get('/api/admin/stats');
 
       // Format revenue with number formatting (no currency text)
       const formatCurrency = (amount) => {
-        return new Intl.NumberFormat("en-US", {
+        return new Intl.NumberFormat('en-US', {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }).format(amount);
@@ -98,30 +98,30 @@ function AdminDashboardPage() {
           label: admindashTranslations.stats.totalUsers,
           value: res.data.users.total,
           change:
-            (res.data.users.percentageChange >= 0 ? "+" : "") +
+            (res.data.users.percentageChange >= 0 ? '+' : '') +
             res.data.users.percentageChange +
-            "%",
+            '%',
           icon: Users,
-          color: "text-blue-600",
+          color: 'text-blue-600',
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
         },
         {
           label: admindashTranslations.stats.activeMemorials,
           value: res.data.activeMemorials.total,
           change:
-            (res.data.activeMemorials.percentageChange >= 0 ? "+" : "") +
+            (res.data.activeMemorials.percentageChange >= 0 ? '+' : '') +
             res.data.activeMemorials.percentageChange +
-            "%",
+            '%',
           icon: Heart,
-          color: "text-red-600",
+          color: 'text-red-600',
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
         },
         {
           label: admindashTranslations.stats.monthlyRevenue,
           value: formatCurrency(revenueTotal),
-          change: (revenueChange >= 0 ? "+" : "") + revenueChange + "%",
+          change: (revenueChange >= 0 ? '+' : '') + revenueChange + '%',
           icon: Banknote,
-          color: "text-green-600",
+          color: 'text-green-600',
           changeFromLastMonth: admindashTranslations.stats.changeFromLastMonth,
           showCurrencyIcon: true,
         },
@@ -129,7 +129,7 @@ function AdminDashboardPage() {
       setLastRefreshTime(new Date());
     } catch (error) {
       console.log(error);
-      toast.error("Failed to fetch statistics");
+      toast.error('Failed to fetch statistics');
     } finally {
       setIsLoadingStats(false);
     }
@@ -176,9 +176,9 @@ function AdminDashboardPage() {
         `/api/admin/toggle-status-memorial/${id}`
       );
       fetchAllMemorials();
-      console.log("🚀 ~ memorailStatusToggle ~ res:", res);
-      if (res.data.status == "active") toast.success(res.data.message);
-      else if (res.data.status == "inactive") {
+      console.log('🚀 ~ memorailStatusToggle ~ res:', res);
+      if (res.data.status == 'active') toast.success(res.data.message);
+      else if (res.data.status == 'inactive') {
         toast.error(res.data.message);
       }
     } catch (error) {
@@ -203,33 +203,33 @@ function AdminDashboardPage() {
   }, [memorialPage, searchQueryMemorial]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <header className="bg-[#243b31]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="mx-auto px-3 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center sm:space-x-4 space-x-2">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-white rounded-xl"
+                className="bg-white p-2 rounded-xl"
               >
-                <QrCode className="h-5 w-5 text-[#243b31]" />
+                <QrCode className="w-5 h-5 text-[#243b31]" />
               </motion.div>
-              <span className="md:text-2xl  text-xs font-bold text-white">
+              <span className="font-bold text-white text-xs md:text-2xl">
                 {admindashTranslations.header.title}
               </span>
             </div>
-            <div className="flex sm:gap-3 gap-0">
+            <div className="flex gap-0 sm:gap-3">
               <LanguageDropdown />
               <div className="flex items-center space-x-4">
                 {/* <Button
                 variant="ghost"
                 size="sm"
-                className="text-white md:flex hidden gap-1"
+                className="hidden md:flex gap-1 text-white"
                 onClick={() => setIsNotificationOpen(true)}
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="w-4 h-4" />
                 {admindashTranslations.header.notifications}
               </Button> */}
 
@@ -240,7 +240,7 @@ function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
         {/* Welcome */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -248,7 +248,7 @@ function AdminDashboardPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="md:text-3xl text-2xl font-bold mb-2">
+          <h1 className="mb-2 font-bold text-2xl md:text-3xl">
             {admindashTranslations.welcome.title}
           </h1>
           <p>{admindashTranslations.welcome.description}</p>
@@ -273,44 +273,44 @@ function AdminDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {admindashTranslations.quickAccess?.title || "Quick Access"}
+                {admindashTranslations.quickAccess?.title || 'Quick Access'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                 <Link href="/admin/testimonials">
-                  <Button variant="outline" className="w-full justify-start">
-                    <MessageCircle className="h-4 w-4 mr-2" />
+                  <Button variant="outline" className="justify-start w-full">
+                    <MessageCircle className="mr-2 w-4 h-4" />
                     {admindashTranslations.quickAccess?.manageTestimonials ||
-                      "Manage Testimonials"}
+                      'Manage Testimonials'}
                   </Button>
                 </Link>
                 <Link href="/admin/adminsubscription">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Package className="h-4 w-4 mr-2" />
+                  <Button variant="outline" className="justify-start w-full">
+                    <Package className="mr-2 w-4 h-4" />
                     {admindashTranslations.quickAccess?.subscriptionPlans ||
-                      "Subscription Plans"}
+                      'Subscription Plans'}
                   </Button>
                 </Link>
                 <Link href="/admin/stickers">
-                  <Button variant="outline" className="w-full justify-start">
-                    <QrCode className="h-4 w-4 mr-2" />
+                  <Button variant="outline" className="justify-start w-full">
+                    <QrCode className="mr-2 w-4 h-4" />
                     {admindashTranslations.quickAccess?.qrStickers ||
-                      "QR Stickers"}
+                      'QR Stickers'}
                   </Button>
                 </Link>
                 <Link href="/admin/translations">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Languages className="h-4 w-4 mr-2" />
+                  <Button variant="outline" className="justify-start w-full">
+                    <Languages className="mr-2 w-4 h-4" />
                     {admindashTranslations.quickAccess?.translations ||
-                      "Language Management"}
+                      'Language Management'}
                   </Button>
                 </Link>
                 <Link href="/admin/footerManagement">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Languages className="h-4 w-4 mr-2" />
+                  <Button variant="outline" className="justify-start w-full">
+                    <Languages className="mr-2 w-4 h-4" />
                     {admindashTranslations.quickAccess?.footerManagement ||
-                      "Footer Management"}
+                      'Footer Management'}
                   </Button>
                 </Link>
               </div>
@@ -320,7 +320,7 @@ function AdminDashboardPage() {
 
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-6 w-full">
-          <TabsList className="overflow-x-auto md:w-auto w-full">
+          <TabsList className="w-full md:w-auto overflow-x-auto">
             <TabsTrigger
               value="users"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
@@ -337,8 +337,8 @@ function AdminDashboardPage() {
               value="orders"
               className="data-[state=active]:bg-[#547455] data-[state=active]:text-white"
             >
-              <Package className="h-4 w-4 mr-2" />
-              {dashboardTranslations?.orders?.tabTitle || "Orders"}
+              <Package className="mr-2 w-4 h-4" />
+              {dashboardTranslations?.orders?.tabTitle || 'Orders'}
             </TabsTrigger>
           </TabsList>
 
@@ -346,7 +346,7 @@ function AdminDashboardPage() {
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex flex-wrap justify-between items-center gap-3">
                   <div>
                     <CardTitle>
                       {admindashTranslations.userManagement.title}
@@ -356,12 +356,12 @@ function AdminDashboardPage() {
                     </CardDescription>
                   </div>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
+                    <Search className="top-1/2 left-3 absolute w-4 h-4 -translate-y-1/2 transform" />
                     <Input
                       type="search"
                       placeholder={
                         admindashTranslations?.userManagement
-                          ?.searchPlaceholder || "Search users..."
+                          ?.searchPlaceholder || 'Search users...'
                       }
                       value={searchQuery}
                       onChange={(e) => {
@@ -376,10 +376,10 @@ function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 {users.length === 0 && hasSearched ? (
-                  <div className="text-center py-8">
+                  <div className="py-8 text-center">
                     <p className="text-gray-500">
                       {admindashTranslations.userManagement.noResults ||
-                        "No users found"}
+                        'No users found'}
                     </p>
                   </div>
                 ) : (
@@ -390,8 +390,8 @@ function AdminDashboardPage() {
                       userStatusToggle={userStatusToggle}
                       translations={admindashTranslations.userManagement}
                     />
-                    {/* <div className="flex items-center justify-between mt-4">
-                  <span className="text-sm text-gray-600">
+                    {/* <div className="flex justify-between items-center mt-4">
+                  <span className="text-gray-600 text-sm">
                     Page {userPage} of {totalUserPages}
                   </span>
                   <div className="space-x-2">
@@ -423,7 +423,7 @@ function AdminDashboardPage() {
           <TabsContent value="memorials" className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex flex-wrap justify-between items-center gap-3">
                   <div>
                     <CardTitle>
                       {admindashTranslations.recentMemorials.title}
@@ -433,12 +433,12 @@ function AdminDashboardPage() {
                     </CardDescription>
                   </div>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
+                    <Search className="top-1/2 left-3 absolute w-4 h-4 -translate-y-1/2 transform" />
                     <Input
                       type="search"
                       placeholder={
                         admindashTranslations?.recentMemorials
-                          ?.searchPlaceholder || "Search memorials..."
+                          ?.searchPlaceholder || 'Search memorials...'
                       }
                       value={searchQueryMemorial}
                       onChange={(e) => {
@@ -458,8 +458,8 @@ function AdminDashboardPage() {
                   fetchAllMemorials={fetchAllMemorials}
                   translations={admindashTranslations.recentMemorials}
                 />
-                {/* <div className="flex items-center justify-between mt-4">
-                  <span className="text-sm text-gray-600">
+                {/* <div className="flex justify-between items-center mt-4">
+                  <span className="text-gray-600 text-sm">
                     Page {memorialPage} of {totalMemorialPages}
                   </span>
                   <div className="space-x-2">
@@ -491,58 +491,58 @@ function AdminDashboardPage() {
           <TabsContent value="orders" className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <div>
                     <CardTitle>
                       {dashboardTranslations?.orders?.title ||
-                        "QR Sticker Orders"}
+                        'QR Sticker Orders'}
                     </CardTitle>
                     <CardDescription>
                       {dashboardTranslations?.orders?.description ||
-                        "Manage and track all QR sticker orders"}
+                        'Manage and track all QR sticker orders'}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Link href="/admin/orders">
                       <Button className="bg-[#547455] hover:bg-[#243b31]">
-                        <Package className="h-4 w-4 mr-2" />
+                        <Package className="mr-2 w-4 h-4" />
                         {dashboardTranslations?.orders?.viewAllOrders ||
-                          "View All Orders"}
+                          'View All Orders'}
                       </Button>
                     </Link>
                     <Link href="/admin/stickers">
                       <Button variant="outline">
-                        <Package className="h-4 w-4 mr-2" />
+                        <Package className="mr-2 w-4 h-4" />
                         {dashboardTranslations?.orders?.manageStickers ||
-                          "Manage Stickers"}
+                          'Manage Stickers'}
                       </Button>
                     </Link>
                     <Link href="/admin/sticker-types">
                       <Button variant="outline">
-                        <Package className="h-4 w-4 mr-2" />
+                        <Package className="mr-2 w-4 h-4" />
                         {dashboardTranslations?.orders?.manageTypes ||
-                          "Manage Types"}
+                          'Manage Types'}
                       </Button>
                     </Link>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <div className="py-8 text-center">
+                  <Package className="mx-auto mb-4 w-16 h-16 text-gray-400" />
+                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
                     {dashboardTranslations?.orders?.orderManagement ||
-                      "Order Management"}
+                      'Order Management'}
                   </h3>
-                  <p className="text-gray-500 mb-4">
+                  <p className="mb-4 text-gray-500">
                     {dashboardTranslations?.orders
                       ?.orderManagementDescription ||
-                      "View and manage all QR sticker orders in the dedicated orders page."}
+                      'View and manage all QR sticker orders in the dedicated orders page.'}
                   </p>
                   <Link href="/admin/orders">
                     <Button className="bg-[#547455] hover:bg-[#243b31]">
                       {dashboardTranslations?.orders?.goToOrders ||
-                        "Go to Orders"}
+                        'Go to Orders'}
                     </Button>
                   </Link>
                 </div>

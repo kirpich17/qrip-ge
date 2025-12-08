@@ -1,10 +1,10 @@
 // components/dashboard/StatsCards.tsx
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Users, Heart, Banknote, TrendingUp, RefreshCw } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Users, Heart, Banknote, TrendingUp, RefreshCw } from 'lucide-react';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -33,13 +33,13 @@ export function StatsCards({
   onRefresh?: () => void;
   translations?: any;
 }) {
-  console.log("🚀 ~ StatsCards ~ stats:", stats);
+  console.log('🚀 ~ StatsCards ~ stats:', stats);
 
   const formatRefreshTime = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    return new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     }).format(date);
   };
 
@@ -47,9 +47,9 @@ export function StatsCards({
     <div className="mb-8">
       {/* Refresh Status */}
       {lastRefreshTime && (
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            {translations?.lastUpdated || "Last updated"}:{" "}
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-gray-600 text-sm">
+            {translations?.lastUpdated || 'Last updated'}:{' '}
             {formatRefreshTime(lastRefreshTime)}
           </p>
           <div className="flex items-center gap-3">
@@ -62,11 +62,11 @@ export function StatsCards({
                 className="gap-2"
               >
                 <RefreshCw
-                  className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                  className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
                 />
                 {isLoading
-                  ? translations?.refreshing || "Refreshing..."
-                  : translations?.refresh || "Refresh"}
+                  ? translations?.refreshing || 'Refreshing...'
+                  : translations?.refresh || 'Refresh'}
               </Button>
             )}
           </div>
@@ -77,18 +77,19 @@ export function StatsCards({
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:gap-6 gap-4"
+        className="gap-4 md:gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
       >
         {stats.map((stat, index) => (
           <motion.div key={index} variants={fadeInUp}>
-            <Card className={`${isLoading ? "opacity-75" : ""}`}>
+            <Card className={`${isLoading ? 'opacity-75' : ''}`}>
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm font-medium ">{stat.label}</p>
-                    <p className="md:text-3xl text-xl font-bold flex items-center gap-1">
+                    <p className="font-medium text-sm">{stat.label}</p>
+
+                    <div className="flex items-center gap-1 font-bold text-xl md:text-3xl">
                       {isLoading ? (
-                        <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+                        <span className="inline-block bg-gray-200 rounded w-20 h-8 animate-pulse"></span>
                       ) : (
                         <>
                           {stat.showCurrencyIcon && (
@@ -97,21 +98,23 @@ export function StatsCards({
                           {stat.value}
                         </>
                       )}
-                    </p>
-                    <p className="text-sm text-[#547455]">
+                    </div>
+
+                    <div className="text-[#547455] text-sm">
                       {isLoading ? (
-                        <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+                        <span className="inline-block bg-gray-200 rounded w-16 h-4 animate-pulse"></span>
                       ) : (
                         `${stat.change} ${stat.changeFromLastMonth}`
                       )}
-                    </p>
+                    </div>
                   </div>
+
                   <div
                     className={`p-3 rounded-full bg-[#efefef] ${stat.color} ${
-                      isLoading ? "animate-pulse" : ""
+                      isLoading ? 'animate-pulse' : ''
                     }`}
                   >
-                    <stat.icon className="h-6 w-6" />
+                    <stat.icon className="w-6 h-6" />
                   </div>
                 </div>
               </CardContent>
