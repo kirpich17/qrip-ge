@@ -151,6 +151,11 @@
         "step": "02",
         "title": "Generate QR Code",
         "description": "Get a unique QR code that links to the memorial. Print it on durable material for the gravesite or memorial location."
+      },
+      {
+        "step": "03",
+        "title": "Sharing and Saving",
+        "description": "Family members and friends can scan the QR code with any smartphone to view the memorial and share their own memories."
       }
     ]
   },
