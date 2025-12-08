@@ -33,7 +33,6 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-
 export default function AdminProfile() {
   const { t } = useTranslation();
   const adminprofileTranslations = t("adminprofile");
@@ -141,6 +140,7 @@ export default function AdminProfile() {
                 {adminprofileTranslations?.header?.back || "Back to Dashboard"}
               </Link>
             </div>
+
             <div className="flex items-center space-x-2">
               <User className="md:h-6 md:w-6 w-4 h-4 text-white" />
               <span className="md:text-xl text-base font-bold text-white">

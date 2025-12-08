@@ -1,19 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Play, QrCode } from "lucide-react";
-import {
-  FaHeart,
-  FaMemory,
-  FaTree,
-  FaCamera,
-  FaVideo,
-  FaUsers,
-  FaQrcode,
-} from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslate";
 
@@ -55,7 +44,13 @@ const Herobanner = () => {
 
   return (
     <>
-      <section className="px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-no-repeat bg-center sm:py-20 py-10" style={{ backgroundImage: "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.png')" }}>
+      <section
+        className="px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-no-repeat bg-center sm:py-20 py-10"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.png')",
+        }}
+      >
         {/* Background Elements */}
         {/* <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -100,9 +95,7 @@ const Herobanner = () => {
 
                 <h1 className="md:text-3xl text-2xl lg:text-5xl xl:text-6xl font-bold text-white">
                   {heroTranslations?.title1}
-                  <span className="block ">
-                    {heroTranslations?.title2}
-                  </span>
+                  <span className="block ">{heroTranslations?.title2}</span>
                 </h1>
 
                 <p className="text-base md:text-xl text-white leading-relaxed max-w-xl">

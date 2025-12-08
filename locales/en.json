@@ -1052,7 +1052,9 @@
       "title": "Quick Access",
       "manageTestimonials": "Manage Testimonials",
       "subscriptionPlans": "Subscription Plans",
-      "qrStickers": "QR Stickers"
+      "qrStickers": "QR Stickers",
+      "translations": "Language Management",
+      "footerManagement": "Footer Management"
     },
     "analytics": {
       "platformGrowth": "Platform Growth",
@@ -2270,5 +2272,30 @@
       "requireEmailDescription": "Make email address mandatory for testimonial submissions",
       "maxDisplay": "Maximum Display Count"
     }
+  },
+
+  "Footer": {
+    "contact": {
+      "title": "Contact",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email"
+    },
+    "navigation": {
+      "title": "Navigation",
+      "links": [
+        { "label": "Home", "href": "/" },
+        { "label": "Memorials", "href": "/memorials" },
+        { "label": "Pricing", "href": "/pricing" },
+        { "label": "About Us", "href": "/about" }
+      ]
+    },
+    "social": {
+      "title": "Social Media",
+      "links": [
+        { "label": "Facebook", "href": "https://facebook.com" },
+        { "label": "Instagram", "href": "https://instagram.com" }
+      ]
+    },
+    "copyright": "© 2025 All rights reserved"
   }
 }

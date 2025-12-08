@@ -1084,7 +1084,8 @@
       "manageTestimonials": "მიმოხილვების მართვა",
       "subscriptionPlans": "გამოწერის გეგმები",
       "qrStickers": "QR სტიკერები",
-      "translations": "ენის მართვა"
+      "translations": "ენის მართვა",
+      "footerManagement": "ფუტერის მართვა"
     },
     "analytics": {
       "platformGrowth": "პლატფორმის ზრდა",
@@ -2386,5 +2387,30 @@
       "requireEmailDescription": "მოწმობების წარდგენისთვის ელ.ფოსტის მისამართის სავალდებულო გახადვა",
       "maxDisplay": "მაქსიმალური ჩვენების რაოდენობა"
     }
+  },
+
+  "Footer": {
+    "contact": {
+      "title": "კონტაქტი",
+      "phoneLabel": "ტელეფონი",
+      "emailLabel": "ელფოსტა"
+    },
+    "navigation": {
+      "title": "ნავიგაცია",
+      "links": [
+        { "label": "მთავარი", "href": "/" },
+        { "label": "მემორიალები", "href": "/memorials" },
+        { "label": "ფასები", "href": "/pricing" },
+        { "label": "ჩვენს შესახებ", "href": "/about" }
+      ]
+    },
+    "social": {
+      "title": "სოც ქსელები",
+      "links": [
+        { "label": "Facebook", "href": "https://facebook.com" },
+        { "label": "Instagram", "href": "https://instagram.com" }
+      ]
+    },
+    "copyright": "© 2025 ყველა უფლება დაცულია"
   }
 }
