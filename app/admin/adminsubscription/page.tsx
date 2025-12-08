@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Check,
@@ -19,40 +19,40 @@ import {
   Calendar,
   Tag,
   Users,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useTranslation } from '@/hooks/useTranslate';
-import axiosInstance from '@/services/axiosInstance';
-import IsAdminAuth from '@/lib/IsAdminAuth/page';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/hooks/useTranslate";
+import axiosInstance from "@/services/axiosInstance";
+import IsAdminAuth from "@/lib/IsAdminAuth/page";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { format, addDays, addWeeks, addMonths } from 'date-fns';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { toast } from 'sonner';
-import LanguageDropdown from '@/components/languageDropdown/page';
+} from "@/components/ui/popover";
+import { format, addDays, addWeeks, addMonths } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { toast } from "sonner";
+import LanguageDropdown from "@/components/languageDropdown/page";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -79,7 +79,7 @@ type Plan = {
   name: string;
   description: string;
   price: number;
-  planType: 'minimal' | 'medium' | 'premium';
+  planType: "minimal" | "medium" | "premium";
   ctaButtonText: string;
   features: Feature[];
   isActive: boolean;
@@ -95,13 +95,13 @@ type Plan = {
   defaultDuration?: string;
 };
 
-type NewPlan = Omit<Plan, '_id'>;
+type NewPlan = Omit<Plan, "_id">;
 
 // --- PROMO CODE TYPES ---
 type PromoCode = {
   _id: string;
   code: string;
-  discountType: 'percentage' | 'fixed' | 'free';
+  discountType: "percentage" | "fixed" | "free";
   discountValue: number;
   expiryDate: string;
   maxUsage?: number;
@@ -110,13 +110,13 @@ type PromoCode = {
   appliesToPlan: string; // Added to match backend requirement
 };
 
-type NewPromoCode = Omit<PromoCode, '_id' | 'currentUsage'>;
+type NewPromoCode = Omit<PromoCode, "_id" | "currentUsage">;
 
 function AdminSubscription() {
   const { t } = useTranslation();
-  const translations = t('adminSubscriptionPage' as any);
-  const promoTranslations = t('promoCodeManagement' as any);
-  const plansTranslations = t('plansTranslations');
+  const translations = t("adminSubscriptionPage" as any);
+  const promoTranslations = t("promoCodeManagement" as any);
+  const plansTranslations = t("plansTranslations");
 
   const [editingPlan, setEditingPlan] = useState<Plan | NewPlan | null>(null);
   const [isAddingPlan, setIsAddingPlan] = useState(false);
@@ -132,7 +132,7 @@ function AdminSubscription() {
 
   // Promo Code States
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
-  console.log('🚀 ~ AdminSubscription ~ totalPromoCodes:', promoCodes);
+  console.log("🚀 ~ AdminSubscription ~ totalPromoCodes:", promoCodes);
   const [editingPromoCode, setEditingPromoCode] = useState<
     PromoCode | NewPromoCode | null
   >(null);
@@ -143,10 +143,10 @@ function AdminSubscription() {
   const fetchPlans = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get('/api/admin/subscription');
+      const response = await axiosInstance.get("/api/admin/subscription");
       setPlans(response.data);
     } catch (err) {
-      setError('Failed to fetch plans');
+      setError("Failed to fetch plans");
     } finally {
       setIsLoading(false);
     }
@@ -181,13 +181,13 @@ function AdminSubscription() {
       ...plan,
       durationOptions: plan.durationOptions || [
         {
-          duration: '1_month',
+          duration: "1_month",
           price: plan.price,
           discountPercentage: 0,
           isActive: true,
         },
       ],
-      defaultDuration: plan.defaultDuration || '1_month',
+      defaultDuration: plan.defaultDuration || "1_month",
     };
     setEditingPlan(JSON.parse(JSON.stringify(planWithDefaults)));
     setIsAddingPlan(false);
@@ -195,27 +195,27 @@ function AdminSubscription() {
 
   const handleAddPlan = () => {
     const newPlan: NewPlan = {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       price: 0,
-      planType: 'minimal',
-      ctaButtonText: 'Get Started',
+      planType: "minimal",
+      ctaButtonText: "Get Started",
       isActive: true,
       isPopular: false,
-      features: [{ text: 'Biography', included: true }],
+      features: [{ text: "Biography", included: true }],
       maxPhotos: 0,
       allowSlideshow: false,
       allowVideos: false,
       maxVideoDuration: 0,
       durationOptions: [
         {
-          duration: '1_month',
+          duration: "1_month",
           price: 0,
           discountPercentage: 0,
           isActive: true,
         },
       ],
-      defaultDuration: '1_month',
+      defaultDuration: "1_month",
     };
     setEditingPlan(newPlan);
     setIsAddingPlan(true);
@@ -226,19 +226,19 @@ function AdminSubscription() {
 
     const payload = {
       ...editingPlan,
-      features: editingPlan.features.filter((f) => f.text.trim() !== ''),
+      features: editingPlan.features.filter((f) => f.text.trim() !== ""),
     };
 
     try {
       if (isAddingPlan) {
-        await axiosInstance.post('/api/admin/subscription', payload);
-        toast.success('Plan created successfully');
-      } else if ('_id' in editingPlan) {
+        await axiosInstance.post("/api/admin/subscription", payload);
+        toast.success("Plan created successfully");
+      } else if ("_id" in editingPlan) {
         await axiosInstance.put(
           `/api/admin/subscription/${editingPlan._id}`,
           payload
         );
-        toast.success('Plan updated successfully');
+        toast.success("Plan updated successfully");
       }
       fetchPlans();
       setEditingPlan(null);
@@ -283,9 +283,9 @@ function AdminSubscription() {
 
   const addFeatureToPlan = () => {
     if (editingPlan) {
-      handlePlanChange('features', [
+      handlePlanChange("features", [
         ...editingPlan.features,
-        { text: '', included: true },
+        { text: "", included: true },
       ]);
     }
   };
@@ -294,7 +294,7 @@ function AdminSubscription() {
     if (editingPlan) {
       const newFeatures = [...editingPlan.features];
       newFeatures.splice(index, 1);
-      handlePlanChange('features', newFeatures);
+      handlePlanChange("features", newFeatures);
     }
   };
 
@@ -306,20 +306,20 @@ function AdminSubscription() {
     if (editingPlan) {
       const newFeatures = [...editingPlan.features];
       (newFeatures[index] as any)[field] = value;
-      handlePlanChange('features', newFeatures);
+      handlePlanChange("features", newFeatures);
     }
   };
 
   // --- PROMO CODE MANAGEMENT HANDLERS ---
   const handleAddPromoCode = () => {
     const newPromoCode: NewPromoCode = {
-      code: '',
-      discountType: 'percentage',
+      code: "",
+      discountType: "percentage",
       discountValue: 0,
-      expiryDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
+      expiryDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"),
       maxUsage: undefined,
       isActive: true,
-      appliesToPlan: plans.length > 0 ? plans[0]._id : '', // Default to first plan
+      appliesToPlan: plans.length > 0 ? plans[0]._id : "", // Default to first plan
     };
     setEditingPromoCode(newPromoCode);
     setIsAddingPromoCode(true);
@@ -345,14 +345,14 @@ function AdminSubscription() {
 
     try {
       if (isAddingPromoCode) {
-        await axiosInstance.post('/api/admin/promocode', editingPromoCode);
-        toast.success('Promo code created successfully');
-      } else if ('_id' in editingPromoCode) {
+        await axiosInstance.post("/api/admin/promocode", editingPromoCode);
+        toast.success("Promo code created successfully");
+      } else if ("_id" in editingPromoCode) {
         await axiosInstance.put(
           `/api/admin/promocode/${editingPromoCode._id}`,
           editingPromoCode
         );
-        toast.success('Promo code updated successfully');
+        toast.success("Promo code updated successfully");
       }
       fetchPromoCodes(currentPage);
       setEditingPromoCode(null);
@@ -375,7 +375,7 @@ function AdminSubscription() {
       try {
         await axiosInstance.delete(`/api/admin/promocode/${id}`);
         fetchPromoCodes(currentPage);
-        toast.success('Promo code deleted successfully');
+        toast.success("Promo code deleted successfully");
       } catch (err) {
         setError(promoTranslations.errors.failedDelete);
         toast.error(promoTranslations.errors.failedDelete);
@@ -394,7 +394,7 @@ function AdminSubscription() {
 
   const handleExpiryDateSelect = (date: Date | undefined) => {
     if (editingPromoCode && date) {
-      handlePromoCodeChange('expiryDate', format(date, 'yyyy-MM-dd'));
+      handlePromoCodeChange("expiryDate", format(date, "yyyy-MM-dd"));
     }
   };
 
@@ -403,7 +403,7 @@ function AdminSubscription() {
   if (error)
     return (
       <div className="p-8 text-red-500 text-center">
-        {error}{' '}
+        {error}{" "}
         <Button onClick={fetchPlans}>{translations.states.retry}</Button>
       </div>
     );
@@ -474,13 +474,13 @@ function AdminSubscription() {
                     <Input
                       placeholder={translations.modal.placeholders.name}
                       value={editingPlan.name}
-                      onChange={(e) => handlePlanChange('name', e.target.value)}
+                      onChange={(e) => handlePlanChange("name", e.target.value)}
                     />
                     <Textarea
                       placeholder={translations.modal.placeholders.description}
                       value={editingPlan.description}
                       onChange={(e) =>
-                        handlePlanChange('description', e.target.value)
+                        handlePlanChange("description", e.target.value)
                       }
                     />
                     <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
@@ -490,7 +490,7 @@ function AdminSubscription() {
                           placeholder={translations.modal.placeholders.price}
                           value={editingPlan.price}
                           onChange={(e) =>
-                            handlePlanChange('price', Number(e.target.value))
+                            handlePlanChange("price", Number(e.target.value))
                           }
                         />
                         <span className="top-1/2 right-3 absolute text-gray-500 -translate-y-1/2">
@@ -510,8 +510,8 @@ function AdminSubscription() {
                       <div
                         className={`p-3 rounded-lg ${
                           editingPlan.maxPhotos > 0
-                            ? 'bg-green-50'
-                            : 'bg-gray-100'
+                            ? "bg-green-50"
+                            : "bg-gray-100"
                         }`}
                       >
                         <div className="flex justify-between items-center">
@@ -541,7 +541,7 @@ function AdminSubscription() {
                                 value={editingPlan.maxPhotos}
                                 onChange={(e) =>
                                   handlePlanChange(
-                                    'maxPhotos',
+                                    "maxPhotos",
                                     Number(e.target.value)
                                   )
                                 }
@@ -559,7 +559,7 @@ function AdminSubscription() {
                                 id="allowSlideshow"
                                 checked={editingPlan.allowSlideshow}
                                 onCheckedChange={(c) =>
-                                  handlePlanChange('allowSlideshow', c)
+                                  handlePlanChange("allowSlideshow", c)
                                 }
                               />
                             </div>
@@ -570,8 +570,8 @@ function AdminSubscription() {
                       <div
                         className={`p-3 rounded-lg ${
                           editingPlan.allowVideos
-                            ? 'bg-green-50'
-                            : 'bg-gray-100'
+                            ? "bg-green-50"
+                            : "bg-gray-100"
                         }`}
                       >
                         <div className="flex justify-between items-center">
@@ -579,7 +579,7 @@ function AdminSubscription() {
                             htmlFor="allowVideos"
                             className="flex items-center gap-2 font-medium"
                           >
-                            <Video size={16} />{' '}
+                            <Video size={16} />{" "}
                             {translations.modal.videos.label}
                           </label>
                           <Switch
@@ -600,7 +600,7 @@ function AdminSubscription() {
                               value={editingPlan.maxVideoDuration}
                               onChange={(e) =>
                                 handlePlanChange(
-                                  'maxVideoDuration',
+                                  "maxVideoDuration",
                                   Number(e.target.value)
                                 )
                               }
@@ -619,7 +619,7 @@ function AdminSubscription() {
                     </h4>
                     <div className="space-y-2 mb-3">
                       {editingPlan.features.map((feature, index) => {
-                        if (feature?.text !== 'Family Tree') {
+                        if (feature?.text !== "Family Tree") {
                           return (
                             <div
                               key={index}
@@ -630,7 +630,7 @@ function AdminSubscription() {
                                 onChange={(e) =>
                                   updateFeatureInPlan(
                                     index,
-                                    'text',
+                                    "text",
                                     e.target.value
                                   )
                                 }
@@ -641,7 +641,7 @@ function AdminSubscription() {
                               <Switch
                                 checked={feature.included}
                                 onCheckedChange={(c) =>
-                                  updateFeatureInPlan(index, 'included', c)
+                                  updateFeatureInPlan(index, "included", c)
                                 }
                               />
                               <Button
@@ -662,11 +662,11 @@ function AdminSubscription() {
                   <div className="space-y-4 p-4 border rounded-lg">
                     <h4 className="font-semibold text-gray-800">
                       {translations.modal.durationOptions?.title ||
-                        'Duration Options'}
+                        "Duration Options"}
                     </h4>
                     <p className="text-gray-600 text-sm">
                       {translations.modal.durationOptions?.description ||
-                        'Configure different pricing for various subscription durations'}
+                        "Configure different pricing for various subscription durations"}
                     </p>
 
                     <div className="space-y-3">
@@ -678,7 +678,7 @@ function AdminSubscription() {
                           <div className="flex-1">
                             <label className="font-medium text-sm">
                               {translations.modal.durationOptions
-                                ?.durationLabel || 'Duration'}
+                                ?.durationLabel || "Duration"}
                             </label>
                             <Select
                               value={option.duration}
@@ -690,7 +690,7 @@ function AdminSubscription() {
                                   ...newOptions[index],
                                   duration: value,
                                 };
-                                handlePlanChange('durationOptions', newOptions);
+                                handlePlanChange("durationOptions", newOptions);
                               }}
                             >
                               <SelectTrigger className="w-full">
@@ -699,27 +699,27 @@ function AdminSubscription() {
                               <SelectContent>
                                 <SelectItem value="1_month">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['1_month'] || '1 Month'}
+                                    ?.durations?.["1_month"] || "1 Month"}
                                 </SelectItem>
                                 <SelectItem value="3_months">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['3_months'] || '3 Months'}
+                                    ?.durations?.["3_months"] || "3 Months"}
                                 </SelectItem>
                                 <SelectItem value="6_months">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['6_months'] || '6 Months'}
+                                    ?.durations?.["6_months"] || "6 Months"}
                                 </SelectItem>
                                 <SelectItem value="1_year">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['1_year'] || '1 Year'}
+                                    ?.durations?.["1_year"] || "1 Year"}
                                 </SelectItem>
                                 <SelectItem value="2_years">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['2_years'] || '2 Years'}
+                                    ?.durations?.["2_years"] || "2 Years"}
                                 </SelectItem>
                                 <SelectItem value="life_time">
                                   {translations.modal.durationOptions
-                                    ?.durations?.['life_time'] || 'life_time'}
+                                    ?.durations?.["life_time"] || "life_time"}
                                 </SelectItem>
                               </SelectContent>
                             </Select>
@@ -727,7 +727,7 @@ function AdminSubscription() {
                           <div className="flex-1">
                             <label className="font-medium text-sm">
                               {translations.modal.durationOptions?.priceLabel ||
-                                'Price (GEL)'}
+                                "Price (GEL)"}
                             </label>
                             <Input
                               type="number"
@@ -740,14 +740,14 @@ function AdminSubscription() {
                                   ...newOptions[index],
                                   price: Number(e.target.value),
                                 };
-                                handlePlanChange('durationOptions', newOptions);
+                                handlePlanChange("durationOptions", newOptions);
                               }}
                             />
                           </div>
                           <div className="flex-1">
                             <label className="font-medium text-sm">
                               {translations.modal.durationOptions
-                                ?.discountLabel || 'Discount %'}
+                                ?.discountLabel || "Discount %"}
                             </label>
                             <Input
                               type="number"
@@ -762,7 +762,7 @@ function AdminSubscription() {
                                   ...newOptions[index],
                                   discountPercentage: Number(e.target.value),
                                 };
-                                handlePlanChange('durationOptions', newOptions);
+                                handlePlanChange("durationOptions", newOptions);
                               }}
                             />
                           </div>
@@ -777,7 +777,7 @@ function AdminSubscription() {
                                   ...newOptions[index],
                                   isActive: checked,
                                 };
-                                handlePlanChange('durationOptions', newOptions);
+                                handlePlanChange("durationOptions", newOptions);
                               }}
                             />
                             <Button
@@ -788,7 +788,7 @@ function AdminSubscription() {
                                   ...(editingPlan.durationOptions || []),
                                 ];
                                 newOptions.splice(index, 1);
-                                handlePlanChange('durationOptions', newOptions);
+                                handlePlanChange("durationOptions", newOptions);
                               }}
                             >
                               <Trash2 size={16} className="text-red-500" />
@@ -803,19 +803,19 @@ function AdminSubscription() {
                           const newOptions = [
                             ...(editingPlan.durationOptions || []),
                             {
-                              duration: '1_month',
+                              duration: "1_month",
                               price: 0,
                               discountPercentage: 0,
                               isActive: true,
                             },
                           ];
-                          handlePlanChange('durationOptions', newOptions);
+                          handlePlanChange("durationOptions", newOptions);
                         }}
                         className="w-full"
                       >
                         <Plus size={16} className="mr-2" />
                         {translations.modal.durationOptions?.addButton ||
-                          'Add Duration Option'}
+                          "Add Duration Option"}
                       </Button>
                     </div>
                   </div>
@@ -832,7 +832,7 @@ function AdminSubscription() {
                       <Switch
                         id="active"
                         checked={editingPlan.isActive}
-                        onCheckedChange={(c) => handlePlanChange('isActive', c)}
+                        onCheckedChange={(c) => handlePlanChange("isActive", c)}
                       />
                     </div>
                   </div>
@@ -860,9 +860,9 @@ function AdminSubscription() {
                 <Card
                   className={`relative h-full flex flex-col ${
                     plan.isPopular
-                      ? 'border-2 border-[#243b31] shadow-xl'
-                      : 'border'
-                  } ${!plan.isActive ? 'bg-gray-100 opacity-70' : 'bg-white'}`}
+                      ? "border-2 border-[#243b31] shadow-xl"
+                      : "border"
+                  } ${!plan.isActive ? "bg-gray-100 opacity-70" : "bg-white"}`}
                 >
                   {plan.isPopular && (
                     <Badge className="-top-3 left-1/2 absolute bg-[#547455] -translate-x-1/2">
@@ -894,13 +894,13 @@ function AdminSubscription() {
 
                   <CardHeader className="pb-4 text-center">
                     <div className="flex justify-center items-center bg-gray-100 mx-auto mb-4 rounded-full w-16 h-16">
-                      {plan.planType === 'premium' && (
+                      {plan.planType === "premium" && (
                         <Crown className="text-black" size={32} />
                       )}
-                      {plan.planType === 'medium' && (
+                      {plan.planType === "medium" && (
                         <Zap className="text-black" size={32} />
                       )}
-                      {plan.planType === 'minimal' && (
+                      {plan.planType === "minimal" && (
                         <Star className="text-black" size={32} />
                       )}
                     </div>
@@ -916,10 +916,10 @@ function AdminSubscription() {
                         {plan.price} GEL
                       </span>
                       <span className="text-gray-600">
-                        {' '}
-                        /{' '}
+                        {" "}
+                        /{" "}
                         {plan.durationOptions && plan.durationOptions.length > 0
-                          ? translations.card.basePrice || 'base price'
+                          ? translations.card.basePrice || "base price"
                           : translations.card.oneTime}
                       </span>
                     </div>
@@ -928,7 +928,7 @@ function AdminSubscription() {
                       <div className="mt-4">
                         <h5 className="mb-2 font-medium text-gray-700 text-sm">
                           {translations.card.durationOptionsLabel ||
-                            'Duration Options:'}
+                            "Duration Options:"}
                         </h5>
                         <div className="space-y-1">
                           {plan.durationOptions
@@ -942,7 +942,7 @@ function AdminSubscription() {
                                   {translations.modal.durationOptions
                                     ?.durations?.[
                                     option.duration as keyof typeof translations.modal.durationOptions.durations
-                                  ] || option.duration.replace('_', ' ')}
+                                  ] || option.duration.replace("_", " ")}
                                 </span>
                                 <span className="font-medium">
                                   {option.price} GEL
@@ -962,11 +962,11 @@ function AdminSubscription() {
                           <p className="mb-2 text-yellow-800 text-sm">
                             <strong>
                               {translations.card.noDurationOptions?.title ||
-                                'No duration options configured.'}
+                                "No duration options configured."}
                             </strong>
                             <br />
                             {translations.card.noDurationOptions?.description ||
-                              'Add duration options to enable flexible pricing.'}
+                              "Add duration options to enable flexible pricing."}
                           </p>
                           <Button
                             size="sm"
@@ -975,7 +975,7 @@ function AdminSubscription() {
                             className="hover:bg-yellow-100 border-yellow-300 text-yellow-800"
                           >
                             {translations.card.noDurationOptions?.button ||
-                              'Configure Duration Options'}
+                              "Configure Duration Options"}
                           </Button>
                         </div>
                       </div>
@@ -996,7 +996,7 @@ function AdminSubscription() {
                         text={
                           plan.maxPhotos >= 999
                             ? plansTranslations?.[plan.planType]?.features
-                                ?.photoUploads || 'Unlimited Photo Uploads'
+                                ?.photoUploads || "Unlimited Photo Uploads"
                             : plansTranslations?.[plan.planType]?.features
                                 ?.photoUploads ||
                               `${plan.maxPhotos} Photo Uploads`
@@ -1006,7 +1006,7 @@ function AdminSubscription() {
                         included={plan.allowSlideshow}
                         text={
                           plansTranslations?.[plan.planType]?.features
-                            ?.slideshow || 'Photo Slideshow'
+                            ?.slideshow || "Photo Slideshow"
                         }
                       />
                       <FeatureListItem
@@ -1029,16 +1029,16 @@ function AdminSubscription() {
                         if (planTranslations) {
                           // Check if feature text matches any translation key
                           if (
-                            feature.text.toLowerCase().includes('document') ||
+                            feature.text.toLowerCase().includes("document") ||
                             feature.text
                               .toLowerCase()
-                              .includes('document upload')
+                              .includes("document upload")
                           ) {
                             translatedText =
                               planTranslations.documentUpload || feature.text;
                           } else if (
-                            feature.text.toLowerCase().includes('family') ||
-                            feature.text.toLowerCase().includes('family tree')
+                            feature.text.toLowerCase().includes("family") ||
+                            feature.text.toLowerCase().includes("family tree")
                           ) {
                             translatedText =
                               planTranslations.familyTree || feature.text;
@@ -1059,8 +1059,8 @@ function AdminSubscription() {
                       variant="outline"
                       onClick={() => handleEditPlan(plan)}
                     >
-                      <Edit size={16} className="mr-2" />{' '}
-                      {translations.modal.editPlan || 'Edit Plan'}
+                      <Edit size={16} className="mr-2" />{" "}
+                      {translations.modal.editPlan || "Edit Plan"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -1086,7 +1086,7 @@ function AdminSubscription() {
                       onClick={handleAddPromoCode}
                       className="bg-[#243b31] hover:bg-[#547455]"
                     >
-                      <Plus size={16} className="mr-2" />{' '}
+                      <Plus size={16} className="mr-2" />{" "}
                       {promoTranslations.addNewButton}
                     </Button>
                   </div>
@@ -1150,17 +1150,17 @@ function AdminSubscription() {
                                   {promo.code}
                                 </td>
                                 <td className="px-6 py-4 text-gray-500 text-sm whitespace-nowrap">
-                                  {promo.discountType === 'percentage' &&
+                                  {promo.discountType === "percentage" &&
                                     `${promo.discountValue}% Off`}
-                                  {promo.discountType === 'fixed' &&
+                                  {promo.discountType === "fixed" &&
                                     `${promo.discountValue} ${translations.modal.currency} Off`}
-                                  {promo.discountType === 'free' &&
-                                    '100% Off (Free Plan)'}
+                                  {promo.discountType === "free" &&
+                                    "100% Off (Free Plan)"}
                                 </td>
                                 <td className="px-6 py-4 text-gray-500 text-sm whitespace-nowrap">
                                   {format(
                                     new Date(promo.expiryDate),
-                                    'MMM dd, yyyy'
+                                    "MMM dd, yyyy"
                                   )}
                                 </td>
                                 <td className="px-6 py-4 text-gray-500 text-sm whitespace-nowrap">
@@ -1168,12 +1168,12 @@ function AdminSubscription() {
                                     ? `${promo.currentUsage || 0}/${
                                         promo.maxUsage
                                       }`
-                                    : 'Unlimited'}
+                                    : "Unlimited"}
                                 </td>
                                 <td className="px-6 py-4 text-gray-500 text-sm whitespace-nowrap">
                                   <Badge
                                     variant={
-                                      promo.isActive ? 'default' : 'destructive'
+                                      promo.isActive ? "default" : "destructive"
                                     }
                                   >
                                     {promo.isActive
@@ -1212,8 +1212,8 @@ function AdminSubscription() {
                       {totalPages > 1 && (
                         <div className="flex justify-between items-center mt-4">
                           <div className="text-gray-700 text-sm">
-                            Showing {(currentPage - 1) * 10 + 1} to{' '}
-                            {Math.min(currentPage * 10, totalPromoCodes)} of{' '}
+                            Showing {(currentPage - 1) * 10 + 1} to{" "}
+                            {Math.min(currentPage * 10, totalPromoCodes)} of{" "}
                             {totalPromoCodes} entries
                           </div>
                           <div className="flex space-x-2">
@@ -1232,7 +1232,7 @@ function AdminSubscription() {
                               <Button
                                 key={page}
                                 variant={
-                                  currentPage === page ? 'default' : 'outline'
+                                  currentPage === page ? "default" : "outline"
                                 }
                                 size="sm"
                                 onClick={() => fetchPromoCodes(page)}
@@ -1307,7 +1307,7 @@ function AdminSubscription() {
                         value={editingPromoCode.code}
                         onChange={(e) =>
                           handlePromoCodeChange(
-                            'code',
+                            "code",
                             e.target.value.toUpperCase()
                           )
                         }
@@ -1323,8 +1323,8 @@ function AdminSubscription() {
                       <Select
                         value={editingPromoCode.discountType}
                         onValueChange={(
-                          value: 'percentage' | 'fixed' | 'free'
-                        ) => handlePromoCodeChange('discountType', value)}
+                          value: "percentage" | "fixed" | "free"
+                        ) => handlePromoCodeChange("discountType", value)}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select discount type" />
@@ -1338,7 +1338,7 @@ function AdminSubscription() {
                           </SelectItem>
                           <SelectItem value="fixed">
                             {promoTranslations.modal.discountTypeOptions.fixed.replace(
-                              '{currency}',
+                              "{currency}",
                               translations.modal.currency
                             )}
                           </SelectItem>
@@ -1361,7 +1361,7 @@ function AdminSubscription() {
                     <Select
                       value={editingPromoCode.appliesToPlan}
                       onValueChange={(value) =>
-                        handlePromoCodeChange('appliesToPlan', value)
+                        handlePromoCodeChange("appliesToPlan", value)
                       }
                     >
                       <SelectTrigger className="w-full">
@@ -1382,16 +1382,16 @@ function AdminSubscription() {
                   </div>
 
                   {/* Discount Value */}
-                  {editingPromoCode.discountType !== 'free' && (
+                  {editingPromoCode.discountType !== "free" && (
                     <div>
                       <label
                         htmlFor="discountValue"
                         className="block mb-1 font-medium text-gray-700 text-sm"
                       >
                         {promoTranslations.modal.discountValueLabel.replace(
-                          '{symbol}',
-                          editingPromoCode.discountType === 'percentage'
-                            ? '%'
+                          "{symbol}",
+                          editingPromoCode.discountType === "percentage"
+                            ? "%"
                             : translations.modal.currency
                         )}
                       </label>
@@ -1400,12 +1400,12 @@ function AdminSubscription() {
                         type="number"
                         min={0}
                         max={
-                          editingPromoCode.discountType === 'percentage'
+                          editingPromoCode.discountType === "percentage"
                             ? 100
                             : undefined
                         }
                         placeholder={
-                          editingPromoCode.discountType === 'percentage'
+                          editingPromoCode.discountType === "percentage"
                             ? promoTranslations.modal
                                 .discountValuePlaceholderPercentage
                             : promoTranslations.modal
@@ -1414,7 +1414,7 @@ function AdminSubscription() {
                         value={editingPromoCode.discountValue}
                         onChange={(e) =>
                           handlePromoCodeChange(
-                            'discountValue',
+                            "discountValue",
                             Number(e.target.value)
                           )
                         }
@@ -1433,15 +1433,15 @@ function AdminSubscription() {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
-                          variant={'outline'}
+                          variant={"outline"}
                           className={`w-full justify-start text-left font-normal ${
                             !editingPromoCode.expiryDate &&
-                            'text-muted-foreground'
+                            "text-muted-foreground"
                           }`}
                         >
                           <Calendar className="mr-2 w-4 h-4" />
                           {editingPromoCode.expiryDate ? (
-                            format(new Date(editingPromoCode.expiryDate), 'PPP')
+                            format(new Date(editingPromoCode.expiryDate), "PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -1465,7 +1465,7 @@ function AdminSubscription() {
                               handleExpiryDateSelect(addDays(new Date(), 1))
                             }
                           >
-                            {promoTranslations.modal.quickExpiryOptions['1day']}
+                            {promoTranslations.modal.quickExpiryOptions["1day"]}
                           </Button>
                           <Button
                             variant="ghost"
@@ -1475,7 +1475,7 @@ function AdminSubscription() {
                           >
                             {
                               promoTranslations.modal.quickExpiryOptions[
-                                '1week'
+                                "1week"
                               ]
                             }
                           </Button>
@@ -1487,7 +1487,7 @@ function AdminSubscription() {
                           >
                             {
                               promoTranslations.modal.quickExpiryOptions[
-                                '1month'
+                                "1month"
                               ]
                             }
                           </Button>
@@ -1509,10 +1509,10 @@ function AdminSubscription() {
                       type="number"
                       min={1}
                       placeholder={promoTranslations.modal.maxUsagePlaceholder}
-                      value={editingPromoCode.maxUsage || ''}
+                      value={editingPromoCode.maxUsage || ""}
                       onChange={(e) =>
                         handlePromoCodeChange(
-                          'maxUsage',
+                          "maxUsage",
                           e.target.value ? Number(e.target.value) : undefined
                         )
                       }
@@ -1528,7 +1528,7 @@ function AdminSubscription() {
                       id="promoActive"
                       checked={editingPromoCode.isActive}
                       onCheckedChange={(c) =>
-                        handlePromoCodeChange('isActive', c)
+                        handlePromoCodeChange("isActive", c)
                       }
                     />
                   </div>
@@ -1570,7 +1570,7 @@ const FeatureListItem = ({
     )}
     <span
       className={`text-sm ${
-        included ? 'text-gray-700' : 'text-gray-500 line-through'
+        included ? "text-gray-700" : "text-gray-500 line-through"
       }`}
     >
       {text}
