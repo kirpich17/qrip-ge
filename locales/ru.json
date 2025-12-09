@@ -2329,5 +2329,23 @@
       "create": "Создать мемориал",
       "price": "Показать цены мемориалов"
     }
+  },
+
+  "footerSettings": {
+    "title": "Настройки футера",
+    "subtitle": "Управление контактной информацией",
+
+    "contactDetails": "Контактные данные",
+    "phoneLabel": "Телефон",
+    "emailLabel": "Эл. почта",
+
+    "saving": "Сохранение...",
+    "saveChanges": "Сохранить изменения",
+
+    "visibility": "Видимость",
+    "emailVisible": "Email виден",
+    "emailHidden": "Email скрыт",
+    "phoneVisible": "Телефон виден",
+    "phoneHidden": "Телефон скрыт"
   }
 }
