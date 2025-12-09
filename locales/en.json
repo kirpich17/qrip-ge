@@ -2305,5 +2305,23 @@
       "create": "Start creating memorial",
       "price": "Show memorial prices"
     }
+  },
+
+  "footerSettings": {
+    "title": "Footer Settings",
+    "subtitle": "Manage contact information",
+
+    "contactDetails": "Contact Details",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+
+    "visibility": "Visibility",
+    "emailVisible": "Email Visible",
+    "emailHidden": "Email Hidden",
+    "phoneVisible": "Phone Visible",
+    "phoneHidden": "Phone Hidden"
   }
 }
