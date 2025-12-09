@@ -2297,5 +2297,13 @@
       ]
     },
     "copyright": "© 2025 All rights reserved"
+  },
+  "memorialActions": {
+    "heading": "Create a Digital Memorial",
+    "description": "Remember and honor the memories of your loved ones",
+    "buttons": {
+      "create": "Start creating memorial",
+      "price": "Show memorial prices"
+    }
   }
 }

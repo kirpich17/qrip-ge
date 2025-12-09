@@ -2296,31 +2296,38 @@
         "documentUpload": "Загрузка документов",
         "familyTree": "Семейное древо"
       }
+    }
+  },
+  "Footer": {
+    "contact": {
+      "title": "Контакты",
+      "phoneLabel": "Телефон",
+      "emailLabel": "Эл. почта"
     },
-
-    "Footer": {
-      "contact": {
-        "title": "Контакты",
-        "phoneLabel": "Телефон",
-        "emailLabel": "Эл. почта"
-      },
-      "navigation": {
-        "title": "Навигация",
-        "links": [
-          { "label": "Главная", "href": "/" },
-          { "label": "Мемориалы", "href": "/memorials" },
-          { "label": "Цены", "href": "/pricing" },
-          { "label": "О нас", "href": "/about" }
-        ]
-      },
-      "social": {
-        "title": "Соц. сети",
-        "links": [
-          { "label": "Facebook", "href": "https://facebook.com" },
-          { "label": "Instagram", "href": "https://instagram.com" }
-        ]
-      },
-      "copyright": "© 2025 Все права защищены"
+    "navigation": {
+      "title": "Навигация",
+      "links": [
+        { "label": "Главная", "href": "/" },
+        { "label": "Мемориалы", "href": "/memorials" },
+        { "label": "Цены", "href": "/pricing" },
+        { "label": "О нас", "href": "/about" }
+      ]
+    },
+    "social": {
+      "title": "Соц. сети",
+      "links": [
+        { "label": "Facebook", "href": "https://facebook.com" },
+        { "label": "Instagram", "href": "https://instagram.com" }
+      ]
+    },
+    "copyright": "© 2025 Все права защищены"
+  },
+  "memorialActions": {
+    "heading": "Создайте цифровой мемориал",
+    "description": "Помните и храните воспоминания о ваших близких",
+    "buttons": {
+      "create": "Создать мемориал",
+      "price": "Показать цены мемориалов"
     }
   }
 }
