@@ -4,19 +4,30 @@ import { Plus, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/useTranslate';
+import axiosInstance from '@/services/axiosInstance';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const MemorialActions = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const translations = t('memorialActions');
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
 
-  const handleClick = () => {
-    const token = localStorage.getItem('token');
+  const handleCreateDraftMemorial = async () => {
+    setIsCreatingDraft(true);
+    try {
+      const response = await axiosInstance.post('/api/memorials/create-draft');
+      const { memorialId } = response.data;
 
-    if (token) {
-      router.push('/dashboard');
-    } else {
-      router.push('/login');
+      router.push(`/memorial/create/${memorialId}`);
+    } catch (error: any) {
+      console.error('Failed to create draft memorial:', error);
+      toast.error(
+        error.response?.data?.message || 'Failed to create draft memorial'
+      );
+    } finally {
+      setIsCreatingDraft(false);
     }
   };
 
@@ -43,14 +54,14 @@ const MemorialActions = () => {
         </div>
 
         <div className="flex sm:flex-row flex-col justify-center items-center gap-5 sm:gap-8 lg:gap-10 w-full">
-          <Link
-            href="/planDetails"
-            onClick={handleClick}
+          <button
+            onClick={handleCreateDraftMemorial}
+            disabled={isCreatingDraft}
             className="group relative flex justify-center items-center gap-2 hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300"
           >
             <Plus className="w-5 h-5" />
             {translations?.buttons?.create || 'start create memorial'}
-          </Link>
+          </button>
 
           <Link
             href="/planDetails"
