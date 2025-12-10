@@ -1694,7 +1694,7 @@
     "included": "რას შეიცავს",
     "minimal": {
       "name": "მინიმალური პაკეტი",
-      "description": "1 ფოტო + ბიოგრაფია",
+      "description": "",
       "features": {
         "photoUploads": "1 ფოტოს ატვირთვა",
         "familyTree": "საოჯახო ხე"
@@ -1702,7 +1702,7 @@
     },
     "medium": {
       "name": "საშუალო პაკეტი",
-      "description": "მაქსიმუმ 10 ფოტო თითო მემორიალზე + სლაიდშოუ",
+      "description": "",
       "features": {
         "photoUploads": "10 ფოტოს ატვირთვა",
         "slideshow": "ფოტო სლაიდშოუ",
@@ -1711,7 +1711,7 @@
     },
     "premium": {
       "name": "პრემიუმ პაკეტი",
-      "description": "ულიმიტო ფოტოები, სლაიდშოუ, ვიდეოები",
+      "description": "",
       "features": {
         "photoUploads": "ულიმიტო ფოტოების ატვირთვა",
         "slideshow": "ფოტო სლაიდშოუ",
@@ -2419,5 +2419,13 @@
       "create": "მემორიალის შექმნა",
       "price": "მემორიალის ფასები"
     }
+  },
+  "plansDurations": {
+    "1_month": "1 თვე",
+    "3_months": "3 თვე",
+    "6_months": "6 თვე",
+    "1_year": "1 წელი",
+    "2_years": "2 წელი",
+    "life_time": "სამუდამო"
   }
 }

@@ -1633,7 +1633,7 @@
     "included": "What's Included",
     "minimal": {
       "name": "Minimal Plan",
-      "description": "1 photo + biography",
+      "description": "",
       "features": {
         "photoUploads": "1 Photo Uploads",
         "familyTree": "Family Tree"
@@ -1641,7 +1641,7 @@
     },
     "medium": {
       "name": "Medium Plan",
-      "description": "Up to 10 photos per memorial with slideshow",
+      "description": "",
       "features": {
         "photoUploads": "10 Photo Uploads",
         "slideshow": "Photo Slideshow",
@@ -1650,7 +1650,7 @@
     },
     "premium": {
       "name": "Premium Plan",
-      "description": "Unlimited photos, slideshow, videos",
+      "description": "",
       "features": {
         "photoUploads": "Unlimited Photo Uploads",
         "slideshow": "Photo Slideshow",
@@ -2304,5 +2304,13 @@
       "create": "Start creating memorial",
       "price": "Show memorial prices"
     }
+  },
+  "plansDurations": {
+    "1_month": "1 Month",
+    "3_months": "3 Months",
+    "6_months": "6 Months",
+    "1_year": "1 Year",
+    "2_years": "2 Years",
+    "life_time": "Lifetime"
   }
 }

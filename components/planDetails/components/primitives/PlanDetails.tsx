@@ -12,15 +12,17 @@ const PlanDetails = ({
   isLoading: boolean;
 }) => {
   const { t } = useTranslation();
+
   const plansTranslations = t('plansDetailsFeatures');
+  const durationTranslations = t('plansDurations');
 
   const plan = data?.[0];
   const planType = plan?.planType || 'minimal';
   const planTrans = plansTranslations?.[planType] || {};
+
   const features = planTrans?.features ? Object.values(planTrans.features) : [];
 
   const firstDuration = plan?.durationOptions?.[0] || null;
-  const [selectedOption, setSelectedOption] = useState(firstDuration);
 
   if (isLoading) return <PlanSkeleton />;
   if (!plan) return null;
@@ -35,7 +37,7 @@ const PlanDetails = ({
             </p>
 
             <p className="text-primary/70 text-base">
-              {planTrans?.description || 'Plan Description'}
+              {planTrans?.description || ''}
             </p>
           </div>
 
@@ -59,15 +61,22 @@ const PlanDetails = ({
               <h3 className="font-bold text-primary text-lg">
                 {plansTranslations?.price || 'Price'}
               </h3>
-              <ul className="gap-x-6 gap-y-3 grid grid-cols-1 sm:grid-cols-2">
+
+              <ul className="flex flex-col gap-3">
                 {plan?.durationOptions?.map((opt) => (
-                  <li key={opt._id} onClick={() => setSelectedOption(opt)}>
-                    <span className="font-semibold text-[18px] text-primary">
-                      ₾{opt.price}
-                    </span>
-                    <span className="font-light text-[14px] text-primary">
-                      /{opt.duration}
-                    </span>
+                  <li
+                    key={opt._id}
+                    className="bg-primary/5 p-4 border border-primary/10 rounded-xl text-primary"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-base">
+                        {durationTranslations[opt.duration] || opt.duration}
+                      </span>
+
+                      <span className="font-semibold text-xl">
+                        ₾{opt.price}
+                      </span>
+                    </div>
                   </li>
                 ))}
               </ul>
