@@ -8,22 +8,25 @@
     z-index: 1 !important;
     position: relative !important;
   }
-  
+
   .leaflet-container {
     z-index: 1 !important;
     position: relative !important;
   }
-  
+
   .leaflet-popup {
     z-index: 1000 !important;
   }
-  
+
   .leaflet-control {
     z-index: 1000 !important;
   }
-  
+
   /* Ensure header stays above maps */
-  header, nav, .header, .navbar {
+  header,
+  nav,
+  .header,
+  .navbar {
     z-index: 50 !important;
     position: relative !important;
   }
@@ -107,6 +110,10 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-body{
+body {
   word-break: break-all;
+}
+
+html {
+  scroll-behavior: smooth;
 }

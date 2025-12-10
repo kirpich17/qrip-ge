@@ -24,7 +24,7 @@ const PlanDetailsButtons = () => {
   });
 
   return (
-    <div className="relative flex flex-col items-center bg-background-light w-full h-auto min-h-screen overflow-x-hidden text-gray-800 dark:text-gray-200">
+    <div className="relative flex flex-col items-center bg-background-light w-full h-auto min-h-screen overflow-x-hidden text-gray-800">
       <div className="flex justify-center py-10 sm:py-16 md:py-20 w-full">
         <div className="flex flex-col flex-1 px-4 max-w-4xl">
           <div className="flex flex-col items-center gap-3 mb-6 text-center">

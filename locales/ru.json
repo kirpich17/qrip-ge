@@ -2308,9 +2308,8 @@
       "title": "Навигация",
       "links": [
         { "label": "Главная", "href": "/" },
-        { "label": "Мемориалы", "href": "/memorials" },
-        { "label": "Цены", "href": "/pricing" },
-        { "label": "О нас", "href": "/about" }
+        { "label": "Мемориалы", "href": "#memorials" },
+        { "label": "Цены", "href": "/planDetails" }
       ]
     },
     "social": {

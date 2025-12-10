@@ -1,7 +1,7 @@
 export const navigationLinks = [
   { label: 'მთავარი', href: '/' },
   { label: 'მემორიალები', href: '/memorials' },
-  { label: 'ფასები', href: '/pricing' },
+  { label: 'ფასები', href: '/planDetails' },
   { label: 'ჩვენს შესახებ', href: '/about' },
 ];
 export const socialLinks = [

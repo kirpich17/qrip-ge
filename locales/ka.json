@@ -2399,9 +2399,8 @@
       "title": "ნავიგაცია",
       "links": [
         { "label": "მთავარი", "href": "/" },
-        { "label": "მემორიალები", "href": "/memorials" },
-        { "label": "ფასები", "href": "/pricing" },
-        { "label": "ჩვენს შესახებ", "href": "/about" }
+        { "label": "მემორიალები", "href": "#memorials" },
+        { "label": "ფასები", "href": "/planDetails" }
       ]
     },
     "social": {

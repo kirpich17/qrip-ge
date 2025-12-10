@@ -2284,9 +2284,8 @@
       "title": "Navigation",
       "links": [
         { "label": "Home", "href": "/" },
-        { "label": "Memorials", "href": "/memorials" },
-        { "label": "Pricing", "href": "/pricing" },
-        { "label": "About Us", "href": "/about" }
+        { "label": "Memorials", "href": "#memorials" },
+        { "label": "Pricing", "href": "/planDetails" }
       ]
     },
     "social": {
