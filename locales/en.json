@@ -2290,10 +2290,7 @@
     },
     "social": {
       "title": "Social Media",
-      "links": [
-        { "label": "Facebook", "href": "https://facebook.com" },
-        { "label": "Instagram", "href": "https://instagram.com" }
-      ]
+      "links": [{ "label": "Facebook", "href": "https://m.me/qrip.ge" }]
     },
     "copyright": "© 2025 All rights reserved"
   },
