@@ -1,5 +1,36 @@
+'use client';
+
 import { Plus, Tag } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslate';
+import axiosInstance from '@/services/axiosInstance';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+
 const MemorialActions = () => {
+  const router = useRouter();
+  const { t } = useTranslation();
+  const translations = t('memorialActions');
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
+
+  const handleCreateDraftMemorial = async () => {
+    setIsCreatingDraft(true);
+    try {
+      const response = await axiosInstance.post('/api/memorials/create-draft');
+      const { memorialId } = response.data;
+
+      router.push(`/memorial/create/${memorialId}`);
+    } catch (error: any) {
+      console.error('Failed to create draft memorial:', error);
+      toast.error(
+        error.response?.data?.message || 'Failed to create draft memorial'
+      );
+    } finally {
+      setIsCreatingDraft(false);
+    }
+  };
+
   return (
     <div className="relative flex justify-center items-center bg-[#ecefdc] mt-8 lg:mt-20 w-full overflow-hidden">
       <div className="relative flex flex-col justify-center items-center gap-10 lg:gap-16 px-4 sm:px-6 lg:px-8 py-16 lg:py-24 w-full max-w-[1440px]">
@@ -13,28 +44,34 @@ const MemorialActions = () => {
           </div>
 
           <h2 className="font-bold text-gray-900 text-3xl sm:text-4xl lg:text-5xl text-center tracking-tight">
-            შექმენი ციფრული მემორიალი
+            {translations?.heading || 'შექმენი ციფრული მემორიალი'}
           </h2>
 
           <p className="mt-2 max-w-2xl text-gray-600 text-base sm:text-lg text-center">
-            დაიმახსოვრე და აღნიშნე შენი საყვარელი ადამიანების მოგონებები
+            {translations?.description ||
+              'დაიმახსოვრე და აღნიშნე შენი საყვარელი ადამიანების მოგონებები'}
           </p>
         </div>
 
         <div className="flex sm:flex-row flex-col justify-center items-center gap-5 sm:gap-8 lg:gap-10 w-full">
-          <button className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300">
-            <span className="relative flex justify-center items-center gap-2">
-              <Plus className="w-5 h-5" />
-              start create memorial
-            </span>
+          <button
+            onClick={handleCreateDraftMemorial}
+            disabled={isCreatingDraft}
+            className="group relative flex justify-center items-center gap-2 hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300"
+          >
+            <Plus className="w-5 h-5" />
+            {translations?.buttons?.create || 'start create memorial'}
           </button>
 
-          <button className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300">
+          <Link
+            href="/planDetails"
+            className="group relative hover:bg-[#547455] shadow-lg hover:shadow-xl px-8 py-4 border-[#547455] border-2 rounded-2xl w-full sm:w-auto overflow-hidden font-semibold text-[#000000] hover:text-white text-lg transition-all duration-300"
+          >
             <span className="relative flex justify-center items-center gap-2">
               <Tag className="w-5 h-5" />
-              show memorial price
+              {translations?.buttons?.price || 'show memorial price'}
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>

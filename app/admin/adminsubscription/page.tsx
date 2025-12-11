@@ -466,7 +466,6 @@ function AdminSubscription() {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Section: Basic Details */}
                   <div className="space-y-4 p-4 border rounded-lg">
                     <h4 className="font-semibold text-gray-800">
                       {translations.modal.sectionBasic}
@@ -1496,7 +1495,6 @@ function AdminSubscription() {
                     </Popover>
                   </div>
 
-                  {/* Max Usage */}
                   <div>
                     <label
                       htmlFor="maxUsage"

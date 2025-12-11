@@ -1084,7 +1084,8 @@
       "manageTestimonials": "მიმოხილვების მართვა",
       "subscriptionPlans": "გამოწერის გეგმები",
       "qrStickers": "QR სტიკერები",
-      "translations": "ენის მართვა"
+      "translations": "ენის მართვა",
+      "footerManagement": "ფუტერის მართვა"
     },
     "analytics": {
       "platformGrowth": "პლატფორმის ზრდა",
@@ -1644,6 +1645,15 @@
     "heading": "აირჩიეთ თქვენი გეგმა",
     "title": "აირჩიეთ იდეალური გეგმა თქვენი საყვარელი ადამიანების პატივსაცემად"
   },
+  "planDetailsButtons": {
+    "heading": "აირჩიეთ თქვენი გეგმა",
+    "title": "შეადარეთ მინიალური, საშუალო და პრემიუმ ფუნქციები, რათა იპოვოთ თქვენთვის შესაფერისი ვარიანტი.",
+    "buttons": {
+      "minimal": "მინიმალური",
+      "medium": "საშუალო",
+      "premium": "პრემიუმ"
+    }
+  },
   "plansTranslations": {
     "minimal": {
       "name": "მინიმალური გეგმა",
@@ -1676,6 +1686,38 @@
         "videoUploads": "ვიდეოს ატვირთვა (მაქს. 60წმ)",
         "documentUpload": "დოკუმენტის ატვირთვა",
         "familyTree": "ოჯახის ხე"
+      }
+    }
+  },
+  "plansDetailsFeatures": {
+    "price": "ფასი",
+    "included": "რას შეიცავს",
+    "minimal": {
+      "name": "მინიმალური პაკეტი",
+      "description": "",
+      "features": {
+        "photoUploads": "1 ფოტოს ატვირთვა",
+        "familyTree": "საოჯახო ხე"
+      }
+    },
+    "medium": {
+      "name": "საშუალო პაკეტი",
+      "description": "",
+      "features": {
+        "photoUploads": "10 ფოტოს ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "familyTree": "საოჯახო ხე"
+      }
+    },
+    "premium": {
+      "name": "პრემიუმ პაკეტი",
+      "description": "",
+      "features": {
+        "photoUploads": "ულიმიტო ფოტოების ატვირთვა",
+        "slideshow": "ფოტო სლაიდშოუ",
+        "videoUploads": "ვიდეოს ატვირთვა (მაქს 60წმ)",
+        "documentUpload": "დოკუმენტის ატვირთვა",
+        "familyTree": "საოჯახო ხე"
       }
     }
   },
@@ -2345,5 +2387,42 @@
       "requireEmailDescription": "მოწმობების წარდგენისთვის ელ.ფოსტის მისამართის სავალდებულო გახადვა",
       "maxDisplay": "მაქსიმალური ჩვენების რაოდენობა"
     }
+  },
+
+  "Footer": {
+    "contact": {
+      "title": "კონტაქტი",
+      "phoneLabel": "ტელეფონი",
+      "emailLabel": "ელფოსტა"
+    },
+    "navigation": {
+      "title": "ნავიგაცია",
+      "links": [
+        { "label": "მთავარი", "href": "/" },
+        { "label": "მემორიალები", "href": "#memorials" },
+        { "label": "ფასები", "href": "/planDetails" }
+      ]
+    },
+    "social": {
+      "title": "სოც ქსელები",
+      "links": [{ "label": "Facebook", "href": "https://m.me/qrip.ge" }]
+    },
+    "copyright": "© 2025 ყველა უფლება დაცულია"
+  },
+  "memorialActions": {
+    "heading": "შექმენი ციფრული მემორიალი",
+    "description": "დაიმახსოვრე და აღნიშნე შენი საყვარელი ადამიანების მოგონებები",
+    "buttons": {
+      "create": "მემორიალის შექმნა",
+      "price": "მემორიალის ფასები"
+    }
+  },
+  "plansDurations": {
+    "1_month": "1 თვე",
+    "3_months": "3 თვე",
+    "6_months": "6 თვე",
+    "1_year": "1 წელი",
+    "2_years": "2 წელი",
+    "life_time": "სამუდამო"
   }
 }

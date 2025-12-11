@@ -1087,7 +1087,8 @@
       "manageTestimonials": "Управление отзывами",
       "subscriptionPlans": "Тарифные планы",
       "qrStickers": "QR стикеры",
-      "translations": "Управление языками"
+      "translations": "Управление языками",
+      "footerManagement": "Управление футером"
     }
   },
   "languageManagement": {
@@ -2255,5 +2256,82 @@
       "title": "Пока нет отзывов",
       "message": "Станьте первым, кто поделится своим опытом с нашими мемориальными услугами"
     }
+  },
+  "planDetailsButtons": {
+    "heading": "Выберите план",
+    "title": "Сравните функции Базового, Среднего и Премиум планов, чтобы найти подходящий вариант.",
+    "buttons": {
+      "minimal": "Минимальный",
+      "medium": "Средний",
+      "premium": "Премиум"
+    }
+  },
+  "plansDetailsFeatures": {
+    "price": "Цена",
+    "included": "Что входит",
+    "minimal": {
+      "name": "Минимальный план",
+      "description": "",
+      "features": {
+        "photoUploads": "1 загрузка фотографии",
+        "familyTree": "Семейное древо"
+      }
+    },
+    "medium": {
+      "name": "Средний план",
+      "description": "",
+      "features": {
+        "photoUploads": "10 загрузок фотографий",
+        "slideshow": "Фото слайд-шоу",
+        "familyTree": "Семейное древо"
+      }
+    },
+    "premium": {
+      "name": "Премиум план",
+      "description": "",
+      "features": {
+        "photoUploads": "Безлимитные загрузки фотографий",
+        "slideshow": "Фото слайд-шоу",
+        "videoUploads": "Загрузка видео (до 60 сек)",
+        "documentUpload": "Загрузка документов",
+        "familyTree": "Семейное древо"
+      }
+    }
+  },
+  "Footer": {
+    "contact": {
+      "title": "Контакты",
+      "phoneLabel": "Телефон",
+      "emailLabel": "Эл. почта"
+    },
+    "navigation": {
+      "title": "Навигация",
+      "links": [
+        { "label": "Главная", "href": "/" },
+        { "label": "Мемориалы", "href": "#memorials" },
+        { "label": "Цены", "href": "/planDetails" }
+      ]
+    },
+    "social": {
+      "title": "Соц. сети",
+      "links": [{ "label": "Facebook", "href": "https://m.me/qrip.ge" }]
+    },
+    "copyright": "© 2025 Все права защищены"
+  },
+  "memorialActions": {
+    "heading": "Создайте цифровой мемориал",
+    "description": "Помните и храните воспоминания о ваших близких",
+    "buttons": {
+      "create": "Создать мемориал",
+      "price": "Показать цены мемориалов"
+    }
+  },
+  "plansDurations": {
+    "1_month": "1 месяц",
+    "3_months": "3 месяца",
+    "6_months": "6 месяцев",
+    "1_year": "1 год",
+    "2_years": "2 года",
+    "life_time": "Пожизненно"
   }
 }

@@ -1052,7 +1052,9 @@
       "title": "Quick Access",
       "manageTestimonials": "Manage Testimonials",
       "subscriptionPlans": "Subscription Plans",
-      "qrStickers": "QR Stickers"
+      "qrStickers": "QR Stickers",
+      "translations": "Language Management",
+      "footerManagement": "Footer Management"
     },
     "analytics": {
       "platformGrowth": "Platform Growth",
@@ -1582,6 +1584,15 @@
     "heading": "Choose Your Plan",
     "title": " Select the perfect plan to honor your loved ones"
   },
+  "planDetailsButtons": {
+    "heading": "Choose Your Plan",
+    "title": "Compare Basic, Medium, and Premium features to find the right option for you.",
+    "buttons": {
+      "minimal": "Minimal",
+      "medium": "Medium",
+      "premium": "Premium"
+    }
+  },
   "plansTranslations": {
     "minimal": {
       "name": "Minimal Plan",
@@ -1608,6 +1619,38 @@
     "premium": {
       "name": "Premium Plan",
       "description": "Unlimited photos, slideshow, videos",
+      "features": {
+        "photoUploads": "Unlimited Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "videoUploads": "Video Uploads (Max 60s)",
+        "documentUpload": "Document Upload",
+        "familyTree": "Family Tree"
+      }
+    }
+  },
+  "plansDetailsFeatures": {
+    "price": "Price",
+    "included": "What's Included",
+    "minimal": {
+      "name": "Minimal Plan",
+      "description": "",
+      "features": {
+        "photoUploads": "1 Photo Uploads",
+        "familyTree": "Family Tree"
+      }
+    },
+    "medium": {
+      "name": "Medium Plan",
+      "description": "",
+      "features": {
+        "photoUploads": "10 Photo Uploads",
+        "slideshow": "Photo Slideshow",
+        "familyTree": "Family Tree"
+      }
+    },
+    "premium": {
+      "name": "Premium Plan",
+      "description": "",
       "features": {
         "photoUploads": "Unlimited Photo Uploads",
         "slideshow": "Photo Slideshow",
@@ -2229,5 +2272,42 @@
       "requireEmailDescription": "Make email address mandatory for testimonial submissions",
       "maxDisplay": "Maximum Display Count"
     }
+  },
+
+  "Footer": {
+    "contact": {
+      "title": "Contact",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email"
+    },
+    "navigation": {
+      "title": "Navigation",
+      "links": [
+        { "label": "Home", "href": "/" },
+        { "label": "Memorials", "href": "#memorials" },
+        { "label": "Pricing", "href": "/planDetails" }
+      ]
+    },
+    "social": {
+      "title": "Social Media",
+      "links": [{ "label": "Facebook", "href": "https://m.me/qrip.ge" }]
+    },
+    "copyright": "© 2025 All rights reserved"
+  },
+  "memorialActions": {
+    "heading": "Create a Digital Memorial",
+    "description": "Remember and honor the memories of your loved ones",
+    "buttons": {
+      "create": "Start creating memorial",
+      "price": "Show memorial prices"
+    }
+  },
+  "plansDurations": {
+    "1_month": "1 Month",
+    "3_months": "3 Months",
+    "6_months": "6 Months",
+    "1_year": "1 Year",
+    "2_years": "2 Years",
+    "life_time": "Lifetime"
   }
 }

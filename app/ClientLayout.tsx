@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import Footer from "@/components/footer/page";
-import Header from "@/components/header/page";
-import { usePathname } from "next/navigation";
+import Header from '@/components/header/page';
+import { usePathname } from 'next/navigation';
 
-const showHeaderFooterRoutes = ["/", "/about", "/contact", "/memorials"];
+const showHeaderFooterRoutes = ['/', '/about', '/contact', '/memorials'];
 
 export default function ClientLayout({
   children,
@@ -18,7 +17,6 @@ export default function ClientLayout({
     <>
       {showHeaderFooter && <Header />}
       {children}
-      {showHeaderFooter && <Footer />}
     </>
   );
 }

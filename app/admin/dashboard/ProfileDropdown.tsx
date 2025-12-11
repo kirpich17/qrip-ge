@@ -23,7 +23,6 @@ export function ProfileDropdown() {
     router.push("/admin/adminsubscription"); // Change route as needed
   };
 
-
   const handleTermsAndConditionClick = () => {
     router.push("/admin/termAndCondition"); // Change route as needed
   };
