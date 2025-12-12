@@ -110,6 +110,7 @@ const Footer = () => {
           <nav className="flex flex-col gap-2 sm:gap-3">
             {footerTranslations.social.links.map((link: any, index: number) => (
               <Link
+                target="_blank"
                 key={index}
                 href={link.href}
                 className="group flex items-center gap-2 sm:gap-3 hover:bg-[#4fa167] px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-medium text-gray-300 hover:text-white text-sm sm:text-base md:text-lg transition-all duration-300"
