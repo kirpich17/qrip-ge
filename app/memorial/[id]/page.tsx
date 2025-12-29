@@ -360,8 +360,6 @@ export default function MemorialPage() {
   const isScan = searchParams.get('isScan') === 'true';
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [isVideoSlideshowPlaying, setIsVideoSlideshowPlaying] = useState(false);
-  const videoSlideshowIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     const fetchMemorial = async () => {
       if (!params?.id) return;
@@ -422,41 +420,8 @@ export default function MemorialPage() {
   // Slideshow functionality
 
   // Video slideshow functionality
-  useEffect(() => {
-    if (
-      isVideoSlideshowPlaying &&
-      apiMemorial?.videoGallery &&
-      apiMemorial.videoGallery.length > 1
-    ) {
-      videoSlideshowIntervalRef.current = setInterval(() => {
-        setCurrentVideoIndex(
-          (prev) => (prev + 1) % apiMemorial.videoGallery!.length
-        );
-      }, 8000); // 8 წამი ვიდეოებს შორის (შეგიძლიათ შეცვალოთ)
-    } else {
-      if (videoSlideshowIntervalRef.current) {
-        clearInterval(videoSlideshowIntervalRef.current);
-        videoSlideshowIntervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (videoSlideshowIntervalRef.current) {
-        clearInterval(videoSlideshowIntervalRef.current);
-      }
-    };
-  }, [isVideoSlideshowPlaying, apiMemorial?.videoGallery?.length]);
 
   // Auto-start video slideshow თუ მრავალი ვიდეოა
-  useEffect(() => {
-    if (
-      apiMemorial?.videoGallery &&
-      apiMemorial.videoGallery.length > 1 &&
-      !isVideoSlideshowPlaying
-    ) {
-      setIsVideoSlideshowPlaying(true);
-    }
-  }, [apiMemorial?.videoGallery?.length, isVideoSlideshowPlaying]);
 
   // Auto-start slideshow when there are multiple images
   useEffect(() => {
@@ -647,21 +612,19 @@ export default function MemorialPage() {
   };
 
   const nextVideo = () => {
-    if (!apiMemorial.videoGallery?.length) return;
+    if (!apiMemorial?.videoGallery?.length) return;
     setCurrentVideoIndex(
       (prev) => (prev + 1) % apiMemorial.videoGallery.length
     );
-    setIsVideoSlideshowPlaying(false); // პაუზა მანუალურ ურთიერთქმედებაზე
   };
 
   const prevVideo = () => {
-    if (!apiMemorial.videoGallery?.length) return;
+    if (!apiMemorial?.videoGallery?.length) return;
     setCurrentVideoIndex(
       (prev) =>
         (prev - 1 + apiMemorial.videoGallery.length) %
         apiMemorial.videoGallery.length
     );
-    setIsVideoSlideshowPlaying(false);
   };
 
   // Touch handlers for mobile swipe
@@ -1134,7 +1097,6 @@ export default function MemorialPage() {
                                         key={index}
                                         onClick={() => {
                                           setCurrentVideoIndex(index);
-                                          setIsVideoSlideshowPlaying(false);
                                         }}
                                         className={`flex-shrink-0 w-24 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
                                           index === currentVideoIndex
@@ -1160,7 +1122,6 @@ export default function MemorialPage() {
                                       key={index}
                                       onClick={() => {
                                         setCurrentVideoIndex(index);
-                                        setIsVideoSlideshowPlaying(false);
                                       }}
                                       className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                         index === currentVideoIndex
