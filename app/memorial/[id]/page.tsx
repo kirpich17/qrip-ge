@@ -135,7 +135,6 @@ function QRPageTransition({
         ).getFullYear()}`,
       },
     ];
-    // Add up to 2 gallery images if they exist
     if (photoGallery.length > 0) {
       slides.push({
         image: photoGallery[0],
@@ -360,7 +359,7 @@ export default function MemorialPage() {
   const viewRecordedRef = useRef<boolean>(false); // Track if view has been recorded
   const isScan = searchParams.get('isScan') === 'true';
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
-
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   useEffect(() => {
     const fetchMemorial = async () => {
       if (!params?.id) return;
@@ -419,30 +418,10 @@ export default function MemorialPage() {
   }, [isVideoPlaying]);
 
   // Slideshow functionality
-  useEffect(() => {
-    if (
-      isSlideshowPlaying &&
-      apiMemorial?.photoGallery &&
-      apiMemorial.photoGallery.length > 1
-    ) {
-      slideshowIntervalRef.current = setInterval(() => {
-        setCurrentImageIndex(
-          (prev) => (prev + 1) % apiMemorial.photoGallery!.length
-        );
-      }, 3000); // 3 seconds per slide
-    } else {
-      if (slideshowIntervalRef.current) {
-        clearInterval(slideshowIntervalRef.current);
-        slideshowIntervalRef.current = null;
-      }
-    }
 
-    return () => {
-      if (slideshowIntervalRef.current) {
-        clearInterval(slideshowIntervalRef.current);
-      }
-    };
-  }, [isSlideshowPlaying, apiMemorial?.photoGallery?.length]);
+  // Video slideshow functionality
+
+  // Auto-start video slideshow თუ მრავალი ვიდეოა
 
   // Auto-start slideshow when there are multiple images
   useEffect(() => {
@@ -629,6 +608,22 @@ export default function MemorialPage() {
       (prev) =>
         (prev - 1 + apiMemorial.photoGallery.length) %
         apiMemorial.photoGallery.length
+    );
+  };
+
+  const nextVideo = () => {
+    if (!apiMemorial?.videoGallery?.length) return;
+    setCurrentVideoIndex(
+      (prev) => (prev + 1) % apiMemorial.videoGallery.length
+    );
+  };
+
+  const prevVideo = () => {
+    if (!apiMemorial?.videoGallery?.length) return;
+    setCurrentVideoIndex(
+      (prev) =>
+        (prev - 1 + apiMemorial.videoGallery.length) %
+        apiMemorial.videoGallery.length
     );
   };
 
@@ -934,11 +929,148 @@ export default function MemorialPage() {
                       <TabsContent value="video" className="mt-6">
                         {apiMemorial.videoGallery?.length > 0 ? (
                           <div className="space-y-4">
+                            {/* Slideshow Controls - მხოლოდ თუ მრავალი ვიდეოა */}
+                            {apiMemorial.videoGallery.length > 1 && (
+                              <div className="flex justify-center items-center bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={prevVideo}
+                                    className="flex items-center space-x-1"
+                                  >
+                                    <ChevronLeft className="w-4 h-4" />
+                                    <span className="hidden sm:inline text-xs">
+                                      {memorialTranslations?.navigation?.prev ||
+                                        'Prev'}
+                                    </span>
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={nextVideo}
+                                    className="flex items-center space-x-1"
+                                  >
+                                    <span className="hidden sm:inline text-xs">
+                                      {memorialTranslations?.navigation?.next ||
+                                        'Next'}
+                                    </span>
+                                    <ChevronRight className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Main Video */}
                             <div
-                              className="relative bg-black rounded-lg aspect-video overflow-hidden cursor-pointer"
+                              className="group relative bg-black rounded-lg aspect-video overflow-hidden cursor-pointer"
                               onClick={() => setIsVideoDialogOpen(true)}
                             >
-                              {/* Video Error Fallback */}
+                              <video
+                                ref={videoRef}
+                                src={formatVideoUrl(
+                                  apiMemorial.videoGallery[currentVideoIndex]
+                                )}
+                                className="absolute inset-0 w-full h-full object-contain"
+                                muted={isVideoMuted}
+                                poster="/placeholder.svg?height=300&width=500"
+                                onPlay={() => setIsVideoPlaying(true)}
+                                onPause={() => setIsVideoPlaying(false)}
+                                onLoadStart={() => {
+                                  setVideoLoading(true);
+                                  setVideoError(null);
+                                }}
+                                onCanPlay={() => setVideoLoading(false)}
+                                onError={(e) => {
+                                  setVideoLoading(false);
+                                  setVideoError('Video failed to load');
+                                  const fallback = document.getElementById(
+                                    'video-error-fallback'
+                                  );
+                                  if (fallback)
+                                    fallback.classList.remove('hidden');
+                                }}
+                              />
+
+                              {/* Loading */}
+                              {videoLoading && (
+                                <div className="absolute inset-0 flex justify-center items-center bg-black/50">
+                                  <div className="border-white border-b-2 rounded-full w-8 h-8 animate-spin"></div>
+                                </div>
+                              )}
+
+                              {/* Play/Pause Overlay */}
+                              {!videoLoading && !videoError && (
+                                <div className="absolute inset-0 flex justify-center items-center">
+                                  <Button
+                                    size="lg"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (videoRef.current) {
+                                        isVideoPlaying
+                                          ? videoRef.current.pause()
+                                          : videoRef.current.play();
+                                      }
+                                    }}
+                                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white"
+                                  >
+                                    {isVideoPlaying ? (
+                                      <Pause className="w-8 h-8" />
+                                    ) : (
+                                      <Play className="ml-1 w-8 h-8" />
+                                    )}
+                                  </Button>
+                                </div>
+                              )}
+
+                              {/* Mute Button */}
+                              <div className="right-4 bottom-4 absolute">
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsVideoMuted(!isVideoMuted);
+                                  }}
+                                  className="bg-black/50 hover:bg-black/70 text-white"
+                                >
+                                  {isVideoMuted ? (
+                                    <VolumeX className="w-4 h-4" />
+                                  ) : (
+                                    <Volume2 className="w-4 h-4" />
+                                  )}
+                                </Button>
+                              </div>
+
+                              {/* Navigation overlay on hover */}
+                              {apiMemorial.videoGallery.length > 1 && (
+                                <div className="absolute inset-0 flex justify-between items-center opacity-0 group-hover:opacity-100 p-4 transition-opacity duration-300">
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      prevVideo();
+                                    }}
+                                    className="bg-black/50 hover:bg-black/70 text-white"
+                                  >
+                                    <ChevronLeft className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      nextVideo();
+                                    }}
+                                    className="bg-black/50 hover:bg-black/70 text-white"
+                                  >
+                                    <ChevronRight className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              )}
+
+                              {/* Error Fallback */}
                               <div
                                 id="video-error-fallback"
                                 className="hidden absolute inset-0 flex justify-center items-center bg-red-100 p-4 text-red-800"
@@ -953,80 +1085,56 @@ export default function MemorialPage() {
                                   </p>
                                 </div>
                               </div>
-                              <video
-                                ref={videoRef}
-                                src={formatVideoUrl(
-                                  apiMemorial.videoGallery[0]
-                                )}
-                                className="absolute inset-0 w-full h-full object-contain"
-                                muted={isVideoMuted}
-                                poster="/placeholder.svg?height=300&width=500"
-                                onPlay={() => setIsVideoPlaying(true)}
-                                onPause={() => setIsVideoPlaying(false)}
-                                onLoadStart={() => {
-                                  setVideoLoading(true);
-                                  setVideoError(null);
-                                }}
-                                onCanPlay={() => {
-                                  setVideoLoading(false);
-                                }}
-                                onError={(e) => {
-                                  setVideoLoading(false);
-                                  setVideoError('Video failed to load');
-                                  const fallback = document.getElementById(
-                                    'video-error-fallback'
-                                  );
-                                  if (fallback) {
-                                    fallback.classList.remove('hidden');
-                                  }
-                                }}
-                              />
-                              {/* Loading indicator */}
-                              {videoLoading && (
-                                <div className="absolute inset-0 flex justify-center items-center bg-black/50">
-                                  <div className="border-white border-b-2 rounded-full w-8 h-8 animate-spin"></div>
-                                </div>
-                              )}
-
-                              {/* Play/Pause button */}
-                              {!videoLoading && !videoError && (
-                                <div className="absolute inset-0 flex justify-center items-center">
-                                  <Button
-                                    size="lg"
-                                    onClick={() => {
-                                      if (videoRef.current) {
-                                        if (isVideoPlaying) {
-                                          videoRef.current.pause();
-                                        } else {
-                                          videoRef.current.play();
-                                        }
-                                      }
-                                    }}
-                                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white"
-                                  >
-                                    {isVideoPlaying ? (
-                                      <Pause className="w-8 h-8" />
-                                    ) : (
-                                      <Play className="ml-1 w-8 h-8" />
-                                    )}
-                                  </Button>
-                                </div>
-                              )}
-                              <div className="right-4 bottom-4 absolute">
-                                <Button
-                                  variant="secondary"
-                                  size="sm"
-                                  onClick={() => setIsVideoMuted(!isVideoMuted)}
-                                  className="bg-black/50 hover:bg-black/70 text-white"
-                                >
-                                  {isVideoMuted ? (
-                                    <VolumeX className="w-4 h-4" />
-                                  ) : (
-                                    <Volume2 className="w-4 h-4" />
-                                  )}
-                                </Button>
-                              </div>
                             </div>
+
+                            {/* Thumbnail Strip - თუ მრავალი ვიდეოა */}
+                            {apiMemorial.videoGallery.length > 1 && (
+                              <div className="space-y-3">
+                                <div className="flex space-x-2 pb-2 overflow-x-auto scrollbar-hide">
+                                  {apiMemorial.videoGallery.map(
+                                    (videoUrl, index) => (
+                                      <button
+                                        key={index}
+                                        onClick={() => {
+                                          setCurrentVideoIndex(index);
+                                        }}
+                                        className={`flex-shrink-0 w-24 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
+                                          index === currentVideoIndex
+                                            ? 'border-[#547455] ring-2 ring-[#547455]/20'
+                                            : 'border-gray-200 hover:border-gray-300'
+                                        }`}
+                                      >
+                                        <video
+                                          src={formatVideoUrl(videoUrl)}
+                                          className="w-full h-full object-cover"
+                                          muted
+                                          preload="metadata"
+                                        />
+                                      </button>
+                                    )
+                                  )}
+                                </div>
+
+                                {/* Dots */}
+                                <div className="flex justify-center space-x-2">
+                                  {apiMemorial.videoGallery.map((_, index) => (
+                                    <button
+                                      key={index}
+                                      onClick={() => {
+                                        setCurrentVideoIndex(index);
+                                      }}
+                                      className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                        index === currentVideoIndex
+                                          ? 'bg-[#547455] w-6'
+                                          : 'bg-gray-300 hover:bg-gray-400'
+                                      }`}
+                                      aria-label={`Go to video ${index + 1}`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
                             <div>
                               <h3 className="font-semibold text-gray-900">
                                 Memorial Video
@@ -1055,7 +1163,6 @@ export default function MemorialPage() {
                   </CardContent>
                 </Card>
               </motion.div>
-              {/* Biography */}
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
@@ -1257,14 +1364,6 @@ export default function MemorialPage() {
                           </p>
                         </div>
                       )
-                      // ) : (
-                      //   <div className="py-6 text-center">
-                      //     <Lock className="mx-auto mb-2 w-8 h-8 text-gray-300" />
-                      //     <p className="text-gray-600 text-sm">
-                      //       GPS location available with premium
-                      //     </p>
-                      //   </div>
-                      // )
                     }
                   </CardContent>
                 </Card>
@@ -1398,7 +1497,9 @@ export default function MemorialPage() {
         <DialogContent className="bg-black p-0 w-[90vw] sm:w-[80vw] max-w-[90vw] sm:max-w-[80vw]">
           <div className="flex justify-center items-center bg-black w-full h-full">
             <video
-              src={formatVideoUrl(apiMemorial.videoGallery?.[0] || '')}
+              src={formatVideoUrl(
+                apiMemorial.videoGallery?.[currentVideoIndex] || ''
+              )}
               controls
               autoPlay
               className="w-full h-auto max-h-[85vh] object-contain"
