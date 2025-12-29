@@ -998,7 +998,6 @@ export default function MemorialPage() {
                                 </div>
                               )}
 
-                              {/* Play/Pause Overlay */}
                               {!videoLoading && !videoError && (
                                 <div className="absolute inset-0 flex justify-center items-center">
                                   <Button
@@ -1011,7 +1010,7 @@ export default function MemorialPage() {
                                           : videoRef.current.play();
                                       }
                                     }}
-                                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white"
+                                    className="bg-[#8c85858a] hover:bg-white/30 backdrop-blur-sm text-white"
                                   >
                                     {isVideoPlaying ? (
                                       <Pause className="w-8 h-8" />
@@ -1022,7 +1021,6 @@ export default function MemorialPage() {
                                 </div>
                               )}
 
-                              {/* Mute Button */}
                               <div className="right-4 bottom-4 absolute">
                                 <Button
                                   variant="secondary"
@@ -1069,7 +1067,6 @@ export default function MemorialPage() {
                                 </div>
                               )}
 
-                              {/* Error Fallback */}
                               <div
                                 id="video-error-fallback"
                                 className="hidden absolute inset-0 flex justify-center items-center bg-red-100 p-4 text-red-800"
@@ -1086,7 +1083,6 @@ export default function MemorialPage() {
                               </div>
                             </div>
 
-                            {/* Thumbnail Strip - თუ მრავალი ვიდეოა */}
                             {apiMemorial.videoGallery.length > 1 && (
                               <div className="space-y-3">
                                 <div className="flex space-x-2 pb-2 overflow-x-auto scrollbar-hide">
