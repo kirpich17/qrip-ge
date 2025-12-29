@@ -973,7 +973,6 @@ export default function MemorialPage() {
                                 )}
                                 className="absolute inset-0 w-full h-full object-contain"
                                 muted={isVideoMuted}
-                                poster="/placeholder.svg?height=300&width=500"
                                 onPlay={() => setIsVideoPlaying(true)}
                                 onPause={() => setIsVideoPlaying(false)}
                                 onLoadStart={() => {
