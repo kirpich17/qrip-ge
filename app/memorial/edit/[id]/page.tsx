@@ -831,16 +831,6 @@ export default function EditMemorialPage() {
                           onChange={handleProfileImageUpload}
                           className="hidden"
                         />
-                        {/* {profileImagePreview && (
-                          <Button
-                            variant="outline"
-                            className="bg-transparent"
-                            onClick={removeProfileImage}
-                          >
-                            <Trash2 className="mr-2 w-4 h-4" />
-                            Remove Image
-                          </Button>
-                        )} */}
                       </div>
                       {!profileImagePreview && (
                         <p className="text-gray-500 text-sm md:text-left text-center">
@@ -932,7 +922,6 @@ export default function EditMemorialPage() {
                     </div>
                   </div>
 
-                  {/* Interactive Map for Precise Location */}
                   <div className="space-y-4">
                     <Label className="flex items-center font-semibold text-lg">
                       <MapPin className="mr-2 w-5 h-5" />
@@ -993,7 +982,6 @@ export default function EditMemorialPage() {
                       {editMemorialTranslations.basicInfo.awards}
                     </p>
 
-                    {/* Add new achievement */}
                     <div className="flex gap-2">
                       <Input
                         value={newAchievement}
@@ -1020,7 +1008,6 @@ export default function EditMemorialPage() {
                       </Button>
                     </div>
 
-                    {/* List of achievements */}
                     {achievements.length > 0 && (
                       <div className="space-y-2 mt-4">
                         {achievements.map((achievement, index) => (
@@ -1211,7 +1198,6 @@ export default function EditMemorialPage() {
                                 </div>
                               ))}
 
-                              {/* New photos */}
                               {mediaFiles.photos.map((photo, index) => (
                                 <div
                                   key={`new-${index}`}
@@ -1232,90 +1218,6 @@ export default function EditMemorialPage() {
                         </CardContent>
                       </Card>
 
-                      {/* Video Upload */}
-                      {/* <Card className="border-2 border-gray-300 hover:border-gray-400 border-dashed transition-colors">
-                        <CardContent className="flex flex-col justify-center items-center p-6 text-center">
-                          <Video className="mb-4 w-12 h-12 text-gray-400" />
-                          <h3 className="mb-2 font-semibold text-gray-900">
-                            {editMemorialTranslations.media.videos.title}
-                          </h3>
-                          <p className="mb-4 text-gray-500 text-sm">
-                            {editMemorialTranslations.media.videos.description}
-                          </p>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.multiple = true;
-                              input.accept = "video/*";
-                              input.onchange = (e) => {
-                                handleVideosUpload((e.target as HTMLInputElement).files);
-                              };
-                              input.click();
-                            }}
-                          >
-                            <Upload className="mr-2 w-4 h-4" />
-                            {editMemorialTranslations.media.videos.button}
-                          </Button>
-
-                        
-                          {(formData.videoGallery?.length > 0 || mediaFiles.videos.length > 0) && (
-                            <div className="mt-4 w-full">
-                            
-                              {formData.videoGallery?.length > 0 && (
-                                <>
-                                  <p className="mb-2 font-medium text-xs">Existing Videos</p>
-                                  <div className="space-y-1 mb-4">
-                                    {formData.videoGallery.map((videoUrl, index) => (
-                                      <div key={`existing-video-${index}`} className="flex justify-between items-center bg-gray-100 p-2 rounded">
-                                        <div className="flex items-center gap-2">
-                                          <Video className="w-4 h-4 text-gray-500" />
-                                          <span className="flex-1 text-xs truncate">
-                                            {videoUrl.split('/').pop()?.slice(0, 20)}...
-                                          </span>
-                                        </div>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="w-4 h-4"
-                                          onClick={() => handleRemoveExistingVideo(index)}
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
-
-                         
-                              {mediaFiles.videos.length > 0 && (
-                                <>
-                                  <p className="mb-2 font-medium text-xs">New Videos</p>
-                                  <div className="space-y-1">
-                                    {mediaFiles.videos.map((video, index) => (
-                                      <div key={`new-video-${index}`} className="flex justify-between items-center bg-gray-100 p-2 rounded">
-                                        <span className="flex-1 text-xs truncate">{video.title}</span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="w-4 h-4"
-                                          onClick={() => removeVideo(index)}
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card> */}
-
-                      {/* Video Upload Section */}
                       <Card className="border-2 border-gray-300 hover:border-gray-400 border-dashed transition-colors">
                         <CardContent className="flex flex-col justify-center items-center p-6 text-center">
                           <Video className="mb-4 w-12 h-12 text-gray-400" />
@@ -1392,7 +1294,6 @@ export default function EditMemorialPage() {
                             </div>
                           )}
 
-                          {/* New Videos */}
                           {mediaFiles.videos.length > 0 && (
                             <div className="mt-4 w-full">
                               <p className="mb-2 font-medium text-xs">
@@ -1426,91 +1327,6 @@ export default function EditMemorialPage() {
                         </CardContent>
                       </Card>
 
-                      {/* Documents Upload */}
-                      {/* <Card className="border-2 border-gray-300 hover:border-gray-400 border-dashed transition-colors">
-                        <CardContent className="flex flex-col justify-center items-center p-6 text-center">
-                          <FileText className="mb-4 w-12 h-12 text-gray-400" />
-                          <h3 className="mb-2 font-semibold text-gray-900">
-                            {editMemorialTranslations.media.documents.title}
-                          </h3>
-                          <p className="mb-4 text-gray-500 text-sm">
-                            {editMemorialTranslations.media.documents.description}
-                          </p>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.multiple = true;
-                              input.accept = ".pdf,.doc,.docx,.txt";
-                              input.onchange = (e) => {
-                                handleDocumentsUpload((e.target as HTMLInputElement).files);
-                              };
-                              input.click();
-                            }}
-                          >
-                            <Upload className="mr-2 w-4 h-4" />
-                            {editMemorialTranslations.media.documents.button}
-                          </Button>
-
-
-                          {(formData.documents?.length > 0 || mediaFiles.documents.length > 0) && (
-                            <div className="mt-4 w-full">
-                          
-                          
-                              {formData.documents?.length > 0 && (
-                                <>
-                                  <p className="mb-2 font-medium text-xs">Existing Documents</p>
-                                  <div className="space-y-1 mb-4">
-                                    {formData.documents.map((docUrl, index) => (
-                                      <div key={`existing-doc-${index}`} className="flex justify-between items-center bg-gray-100 p-2 rounded">
-                                        <div className="flex items-center gap-2">
-                                          <FileText className="w-4 h-4 text-gray-500" />
-                                          <span className="flex-1 text-xs truncate">
-                                            {docUrl.split('/').pop()?.slice(0, 20)}...
-                                          </span>
-                                        </div>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="w-4 h-4"
-                                          onClick={() => handleRemoveExistingDocument(index)}
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
-
-                     
-                     
-                              {mediaFiles.documents.length > 0 && (
-                                <>
-                                  <p className="mb-2 font-medium text-xs">New Documents</p>
-                                  <div className="space-y-1">
-                                    {mediaFiles.documents.map((doc, index) => (
-                                      <div key={`new-doc-${index}`} className="flex justify-between items-center bg-gray-100 p-2 rounded">
-                                        <span className="flex-1 text-xs truncate">{doc.fileName}</span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="w-4 h-4"
-                                          onClick={() => removeDocument(index)}
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card> */}
-                      {/* Document Upload Section */}
                       <Card className="border-2 border-gray-300 hover:border-gray-400 border-dashed transition-colors">
                         <CardContent className="flex flex-col justify-center items-center p-6 text-center">
                           <FileText className="mb-4 w-12 h-12 text-gray-400" />
@@ -1683,7 +1499,6 @@ export default function EditMemorialPage() {
                         className="bg-[#547455] hover:bg-[#243b31] text-white"
                         onClick={() => {
                           if (isEditingFamilyMember) {
-                            // Update existing member
                             setFormData((prev) => ({
                               ...prev!,
                               familyTree: prev!.familyTree.map((member) =>
@@ -1694,14 +1509,12 @@ export default function EditMemorialPage() {
                             }));
                             setIsEditingFamilyMember(null);
                           } else {
-                            // Add new member
                             setFormData((prev) => ({
                               ...prev!,
                               familyTree: [
                                 ...prev!.familyTree,
                                 {
                                   ...newFamilyMember,
-                                  // _id: `temp-${Date.now()}`
                                 },
                               ],
                             }));
@@ -1789,7 +1602,6 @@ export default function EditMemorialPage() {
             </TabsContent>
           </Tabs>
 
-          {/* Save Button at Bottom */}
           <div className="flex justify-center mt-8">
             <Button
               className="bg-[#547455] hover:bg-[#243b31] px-8 py-3 text-white text-lg"
