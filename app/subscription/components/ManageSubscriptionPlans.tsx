@@ -142,41 +142,41 @@ export default function PlanSelection() {
     }
   }, [plans, planPromoStates]);
 
-  // Check if memorial has videos
-  useEffect(() => {
-    const checkMemorialVideos = async () => {
-      if (memorialId) {
-        console.log('Checking memorial videos for ID:', memorialId);
-        try {
-          const memorialResponse = await axiosInstance.get(
-            `/api/memorials/${memorialId}`
-          );
-          console.log('Full API response:', memorialResponse);
-          const memorial = memorialResponse.data.data;
-          console.log('Memorial data:', memorial);
-          console.log('Video gallery:', memorial.videoGallery);
-          console.log('Video gallery type:', typeof memorial.videoGallery);
-          console.log('Video gallery length:', memorial.videoGallery?.length);
-          console.log(
-            'Video gallery is array:',
-            Array.isArray(memorial.videoGallery)
-          );
+  // // Check if memorial has videos
+  // useEffect(() => {
+  //   const checkMemorialVideos = async () => {
+  //     if (memorialId) {
+  //       console.log('Checking memorial videos for ID:', memorialId);
+  //       try {
+  //         const memorialResponse = await axiosInstance.get(
+  //           `/api/memorials/${memorialId}`
+  //         );
+  //         console.log('Full API response:', memorialResponse);
+  //         const memorial = memorialResponse.data.data;
+  //         console.log('Memorial data:', memorial);
+  //         console.log('Video gallery:', memorial.videoGallery);
+  //         console.log('Video gallery type:', typeof memorial.videoGallery);
+  //         console.log('Video gallery length:', memorial.videoGallery?.length);
+  //         console.log(
+  //           'Video gallery is array:',
+  //           Array.isArray(memorial.videoGallery)
+  //         );
 
-          const hasVideos =
-            memorial.videoGallery && memorial.videoGallery.length > 0;
-          console.log('Has videos:', hasVideos);
-          setMemorialHasVideos(hasVideos);
-        } catch (error: any) {
-          console.error('Error checking memorial videos:', error);
-          console.error('Error details:', error.response?.data);
-        }
-      } else {
-        console.log('No memorialId found');
-      }
-    };
+  //         const hasVideos =
+  //           memorial.videoGallery && memorial.videoGallery.length > 0;
+  //         console.log('Has videos:', hasVideos);
+  //         setMemorialHasVideos(hasVideos);
+  //       } catch (error: any) {
+  //         console.error('Error checking memorial videos:', error);
+  //         console.error('Error details:', error.response?.data);
+  //       }
+  //     } else {
+  //       console.log('No memorialId found');
+  //     }
+  //   };
 
-    checkMemorialVideos();
-  }, [memorialId]);
+  //   checkMemorialVideos();
+  // }, [memorialId]);
 
   // Handle preselected plan
   useEffect(() => {
