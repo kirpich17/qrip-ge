@@ -27,7 +27,7 @@ const Footer = () => {
         <QrCode className="w-28 sm:w-32 h-28 sm:h-32 text-[#4fa167]" />
       </div>
 
-      <div className="relative flex flex-wrap justify-between gap-8 sm:gap-12 lg:gap-16 mx-auto max-w-[1440px]">
+      <div className="relative flex flex-wrap justify-between gap-8 sm:gap-12 lg:gap-16 mx-auto max-w-[1280px]">
         {isVisiblePhone === false && isVisibleEmail === false ? (
           ''
         ) : (

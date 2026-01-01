@@ -149,7 +149,7 @@ export default function PublicMemorials() {
 
   return (
     <div className="bg-gray-50 py-12" id="memorials">
-      <div className="mx-auto px-4 container">
+      <div className="mx-auto px-4 w-full max-w-[1280px] container">
         <h2 className="mb-4 font-bold text-gray-800 text-3xl text-center">
           {publicMemorialsManage.title}
         </h2>
