@@ -640,7 +640,6 @@ export default function MemorialPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
       <header className="top-0 z-[9999] sticky bg-[#243b31]">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex justify-between items-center h-16">
@@ -654,7 +653,7 @@ export default function MemorialPage() {
               </motion.div>
               <span className="font-bold text-white text-2xl">QRIP.ge</span>
             </Link>
-            <div className="flex gap-3">
+            <div className="flex gap-0 md:gap-3">
               <LanguageDropdown />
               <div className="flex items-center space-x-3">
                 <Badge
@@ -664,10 +663,6 @@ export default function MemorialPage() {
                   {apiMemorial.viewsCount?.toLocaleString() || 0}{' '}
                   {memorialTranslations?.header?.views || 'Views'}
                 </Badge>
-                {/* <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4" />
-                {memorialTranslations.header.share}
-              </Button> */}
               </div>
             </div>
           </div>
@@ -681,7 +676,6 @@ export default function MemorialPage() {
           animate="animate"
           className="space-y-8"
         >
-          {/* Hero Section */}
           <motion.div variants={fadeInUp}>
             <Card className="overflow-hidden">
               <CardContent className="p-0">
@@ -747,11 +741,8 @@ export default function MemorialPage() {
             </Card>
           </motion.div>
 
-          {/* Main Content */}
           <div className="gap-8 lg:grid lg:grid-cols-3 w-full max-w-[1440px]">
-            {/* Left Column - Main Content */}
             <div className="space-y-8 lg:col-span-2">
-              {/* Media Gallery */}
               <motion.div variants={fadeInUp}>
                 <Card>
                   <CardHeader>
@@ -832,7 +823,6 @@ export default function MemorialPage() {
                               className="hover:opacity-90 rounded-lg w-full h-96 object-cover transition-opacity duration-300"
                             />
 
-                            {/* Navigation overlay - only show on hover for desktop */}
                             {apiMemorial.photoGallery?.length > 1 && (
                               <div className="absolute inset-0 flex justify-between items-center opacity-0 group-hover:opacity-100 p-4 transition-opacity duration-300">
                                 <Button
@@ -1456,7 +1446,6 @@ export default function MemorialPage() {
               currentIndex={lightboxIndex}
               onIndexChange={(index) => {
                 setLightboxIndex(index);
-                // Update currentImageIndex only if we're viewing gallery images (not profile image)
                 if (index > 0) {
                   setCurrentImageIndex(index - 1);
                 }
