@@ -142,7 +142,6 @@ export default function PublicMemorials() {
     setCurrentPage(1);
   };
 
-  // Format pagination text with current values
   const pageInfoText = publicMemorialsManage.pagination?.pageInfo
     ?.replace('{currentPage}', currentPage)
     ?.replace('{totalPages}', totalPages);

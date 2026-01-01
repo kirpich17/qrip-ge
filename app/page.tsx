@@ -1,13 +1,13 @@
 'use client';
 
 import Herobanner from './home/herobanner';
-import Howitwork from './home/howitwork';
 import Features from './home/features';
 import Testimonials from './home/testimonials';
 import PublicMemorials from './home/publicMemorials';
 import { Suspense } from 'react';
 
 import MemorialActions from './home/MemorialActions';
+import Howitwork from './home/howitwork';
 
 export default function HomePage() {
   return (
@@ -23,4 +23,3 @@ export default function HomePage() {
     </Suspense>
   );
 }
-
