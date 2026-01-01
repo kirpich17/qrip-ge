@@ -11,27 +11,10 @@ const fadeInLeft = {
   transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
 };
 
-const fadeInRight = {
-  initial: { opacity: 0, x: 60 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
-};
-
 const staggerContainer = {
   animate: {
     transition: {
       staggerChildren: 0.15,
-    },
-  },
-};
-
-const floatingAnimation = {
-  animate: {
-    y: [-10, 10, -10],
-    transition: {
-      duration: 4,
-      repeat: Number.POSITIVE_INFINITY,
-      ease: 'easeInOut',
     },
   },
 };
@@ -46,7 +29,7 @@ const Herobanner = () => {
         className="relative bg-cover bg-no-repeat bg-center px-4 sm:px-6 lg:px-8 py-10 sm:py-20 overflow-hidden"
         style={{
           backgroundImage:
-            "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.png')",
+            "linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url('/hero-bg.webp')",
         }}
       >
         <div className="relative mx-auto max-w-7xl">
